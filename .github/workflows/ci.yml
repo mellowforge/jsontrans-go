@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        go: ['1.25.x', stable]
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: ${{ matrix.go }}
+      - name: Formatting
+        run: |
+          files=$(gofmt -l .)
+          if [ -n "$files" ]; then echo "$files"; exit 1; fi
+      - run: go vet ./...
+      - run: go test ./...
+      - run: go test -race ./...
+
+  fuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.25.x'
+      - run: go test ./jsonpath -run '^$' -fuzz '^FuzzCompileAndEval$' -fuzztime=10s
+      - run: go test ./jsonata -run '^$' -fuzz '^FuzzCompileAndEval$' -fuzztime=10s
+
+  reference:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.25.x'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: conformance/oracle/package-lock.json
+      - run: npm ci --ignore-scripts --prefix conformance/oracle
+      - run: go test -tags oracle ./conformance -run TestJSONataReference

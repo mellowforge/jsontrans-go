@@ -1,0 +1,9 @@
+.DS_Store
+.superpowers/
+.serena/
+.worktrees/
+coverage.out
+*.test
+*.prof
+/bin/
+/conformance/oracle/node_modules/

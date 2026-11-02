@@ -1,0 +1,7 @@
+{
+  "name": "jsontrans-reference-oracle",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Development-only pinned JSONata reference; never a Go runtime dependency",
+  "dependencies": { "jsonata": "2.2.2" }
+}

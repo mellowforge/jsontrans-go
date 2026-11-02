@@ -1,0 +1,11 @@
+# JSONata implementation status
+
+The pinned JSONata 2.2.2 fixture runner currently passes all 1,291 fixture files. This is evidence for the pinned cases, not proof that every JSONata behavior or resource edge case is implemented correctly. Do not release until all project compatibility and verification gates pass.
+
+The handwritten parser and interpreter support paths and predicates, array construction and keep flags, grouping and ordering, index/focus bindings and parent ancestry, lexical functions and signatures, tail-call trampolining, partial application, function composition, transforms, regular expression literals, and native built-ins. Inputs and bindings are detached and validated; numeric inputs are normalized to binary64. Evaluations use local context, budgets, clocks, and matcher state. `EvalRaw` can return callable values; `Invoke` invokes them under a fresh budget. `WithEvaluationDepth` optionally enables an evaluation-frame guard.
+
+`conformance/jsonata_test.go` discovers all pinned fixture JSON files, including array-form cases, external expression files, datasets, bindings, absent input, undefined results and expected native error codes/tokens. It exposes group names as Go subtests and has no failure allowlist. The runner explicitly grants trusted fixtures a larger 100-million-step, ten-second budget; per-case time and expression-depth settings are applied separately from production defaults. Large fixtures also receive higher collection and conversion-depth limits. Source JSON object order and unpaired UTF-16 escapes are preserved when loading fixtures.
+
+The latest full pinned run passed with `go test ./conformance -run TestJSONataConformance -count=1`. A ten-second `FuzzCompileAndEval` run passed after the last parser changes. Regression tests cover shared-array work limits, input numeric overflow, output cycle detection, returned function and transform lifetimes, concurrent invocation, source positions, object ordering, and representative language semantics. Project-wide normal, race, formatting, vet, and relevant fuzz checks must be repeated after all parallel work finishes.
+
+The implementation was developed with the JSONata reference source as an algorithmic reference: © IBM Corp. 2016, 2017, JSONata project, MIT license. The pinned upstream license is included in `conformance/testdata/jsonata/LICENSE`.

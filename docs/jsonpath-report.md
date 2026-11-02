@@ -1,0 +1,13 @@
+# JSONPath implementation report
+
+The native engine and offline runner execute all 715 cases in the pinned JSONPath CTS, applying two guarded, documented RFC errata; `go test ./conformance -run TestJSONPathCTS -count=1` passed. The runner tests every case, accepts only a fixture-provided result ordering, decodes numbers as `json.Number`, and compares them semantically.
+
+The engine supports selectors, descendants, filters, typed standard and instance-local host functions, detached input and output, cancellation, resource budgets, and exact decimal comparison without expanding numeric exponents. Engine and program expose configured limits. Regression tests cover those interfaces, concurrency, extension result validation, deep parsing, extreme exponents, Unicode I-Regexp categories, and large repeat counts.
+
+Checks run: scoped JSONPath and CTS tests under the race detector passed. The compile/evaluation and I-Regexp fuzz targets passed repeated bounded runs. Repository-wide normal and race tests, including the complete pinned JSONata suite, also pass.
+
+The CTS result is executable compatibility evidence rather than an exhaustive proof of every RFC input. The runner applies the two corrections described in [conformance/ERRATA.md](../conformance/ERRATA.md), following RFC 9485's literal semantics for `^` and `$`; the pinned snapshot remains unmodified. Independent review and regression tests additionally cover syntax, Unicode character classes, repetitions and execution budgets. Go's regexp compilation/matching checks cancellation and `RegexTimeout` around an individual operation; it cannot interrupt that operation midway. RE2's matching algorithm is linear. Deep or unusually large comparisons are charged proportionally before comparison; cancellation is not polled inside every individual string operation. These are the documented cooperative execution limits selected for this library.
+
+A focused review pass added regression coverage and fixes for long logical expressions, selector parsing budgets, invalid parenthesized filter syntax and repeated negation, I-Regexp nested and zero-padded repetition, invalid character-class ranges, and literal `^`/`$` matching. Expanded repetitions that exceed configured resource limits report a limit error. Compiled logical expression evaluation charges steps and depth before descending.
+
+A follow-up review replaced character-class byte heuristics with rune-aware RFC 9485 CCE1 parsing. Regression tests cover invalid Unicode and category endpoints and valid Unicode ranges, categories, and escaped hyphens. Targeted race checks and a 10-second I-Regexp fuzz run passed.
