@@ -344,3 +344,22 @@ func TestReferenceTupleStreamStepFlattening(t *testing.T) {
 		{`a.b@$o.[$o.c, 1]`, `{"a":{"b":[{"c":5}]}}`, `[5,1]`},
 	})
 }
+
+// Parent references inside group-by keys and values are never bound to the
+// grouped step, so they are undefined; paths inside a pair still supply
+// their own parents.
+func TestReferenceParentInsideGroupBy(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`a.b{"k": %}`, `{"a":{"b":1}}`, `{}`},
+		{`a.b{"k": %.x}`, `{"a":{"b":1,"x":5}}`, `{}`},
+		{`a.b{"k": $}`, `{"a":{"b":1}}`, `{"k":1}`},
+		{`a.b{$string($): %.x}`, `{"a":{"b":1,"x":5}}`, `{}`},
+		{`a.b{%.x: $}`, `{"a":{"b":1,"x":5}}`, `{}`},
+		{`a.b.c{"k": %.x}`, `{"a":{"b":{"c":1,"x":7}}}`, `{}`},
+		{`a.b{"k": $sum(%.x)}`, `{"a":{"b":[1,2],"x":5}}`, `{}`},
+		{`a.b{"k": c.%.x}`, `{"a":{"b":{"c":1,"x":9}}}`, `{"k":9}`},
+		{`a.b.{"k": %.x}`, `{"a":{"b":1,"x":5}}`, `{"k":5}`},
+		{`a.b.%{"k": x}`, `{"a":{"b":1,"x":5}}`, `{"k":5}`},
+		{`a.b{"k": %%}`, `{"a":{"b":1}}`, `ERR S0211`},
+	})
+}

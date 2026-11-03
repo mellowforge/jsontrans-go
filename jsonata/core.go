@@ -908,6 +908,9 @@ type evaluator struct {
 	// configured holds the engine limits, the defaults for later Invoke calls
 	// of functions created by this evaluation.
 	configured budget.Limits
+	// unboundParent makes a parent reference without a derivable parent
+	// undefined. JSONata never binds parents into group-by pairs.
+	unboundParent bool
 }
 
 func seq(v Value) []Value {
@@ -1092,6 +1095,9 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 
 		return v, nil
 	case "parent":
+		if e.ancestor == nil && e.unboundParent {
+			return Undefined, nil
+		}
 		if e.ancestor == nil {
 			return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "S0217", Position: n.pos, Cause: fmt.Errorf("parent unavailable")}
 		}
@@ -1435,7 +1441,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		for _, item := range e.pathItems(v) {
 			for i := 1; i < len(n.children); i += 2 {
 				value, vars := unwrapTuple(item)
-				k, err := e.evalWithVars(n.children[i], value, vars)
+				k, err := e.evalGroupPair(n.children[i], value, vars)
 				if err != nil {
 					return nil, err
 				}
@@ -1479,7 +1485,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			for k, v := range groupedVars {
 				bindings[k] = collapse(v)
 			}
-			value, err := e.evalWithVars(g.value, collapse(values), bindings)
+			value, err := e.evalGroupPair(g.value, collapse(values), bindings)
 			if err != nil {
 				return nil, err
 			}
@@ -2351,6 +2357,15 @@ func unwrapTuple(v Value) (Value, map[string]Value) {
 		return t.value, t.vars
 	}
 	return v, nil
+}
+
+// evalGroupPair evaluates a group-by key or value without the grouped step's
+// parent; paths inside the pair still bind their own parents.
+func (e *evaluator) evalGroupPair(n *node, focus Value, vars map[string]Value) (Value, error) {
+	ancestor, unbound := e.ancestor, e.unboundParent
+	e.ancestor, e.unboundParent = nil, true
+	defer func() { e.ancestor, e.unboundParent = ancestor, unbound }()
+	return e.evalWithVars(n, focus, vars)
 }
 func (e *evaluator) evalWithVars(n *node, focus Value, vars map[string]Value) (Value, error) {
 	if vars == nil {
