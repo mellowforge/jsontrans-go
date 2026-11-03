@@ -106,3 +106,93 @@ func TestBatchResolvedOptionsStayPrivate(t *testing.T) {
 		t.Fatalf("limits escaped: %#v, seen %v", l, p.seen)
 	}
 }
+
+type limitsProcessor struct{ seen *[]Limits }
+
+func (p limitsProcessor) Limits() Limits { l := DefaultLimits(); l.MaxSteps = 77; return l }
+func (p limitsProcessor) Compile(context.Context, string) (Program, error) {
+	return limitsRecorder(p), nil
+}
+
+// limitsRecorder deliberately does not implement LimitsProvider: only its
+// processor reports configured limits.
+type limitsRecorder limitsProcessor
+
+func (p limitsRecorder) Eval(_ context.Context, _ any, o EvalOptions) (Result, error) {
+	if o.Limits == nil {
+		*p.seen = append(*p.seen, Limits{})
+	} else {
+		*p.seen = append(*p.seen, *o.Limits)
+	}
+	return Result{Value: true, Defined: true}, nil
+}
+
+// Registry-configured limits reach external adapters on prepared paths, with
+// or without a per-call override.
+func TestPreparedExternalReceivesConfiguredLimits(t *testing.T) {
+	ctx := context.Background()
+	var seen []Limits
+	x, err := New(map[string]Processor{"x": limitsProcessor{seen: &seen}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := x.Compile(ctx, "x", "e")
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, err := x.CompileBatch(ctx, "x", []string{"e"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	d, err := PrepareJSON(ctx, []byte(`null`), PrepareOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, o := range []EvalOptions{{}, {Limits: &Limits{MaxDepth: 5}}} {
+		if _, err := EvalPrepared(ctx, p, d, o); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := b.EvalPrepared(ctx, d, nil, o); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if len(seen) != 4 {
+		t.Fatalf("calls: %d", len(seen))
+	}
+	for i, l := range seen {
+		if l.MaxSteps != 77 || (i >= 2) != (l.MaxDepth == 5) {
+			t.Fatalf("call %d received %+v", i, l)
+		}
+	}
+}
+
+// A per-call override marks native requests as customized, which disables
+// engine fast paths; default calls stay uncustomized on both paths.
+func TestPreparedOverrideMarksNativeRequestCustomized(t *testing.T) {
+	ctx := context.Background()
+	var customized []bool
+	p := &setupProgram{configured: DefaultLimits()}
+	p.handler = prepared.NewReusable(p, func(req prepared.Request) (prepared.Result, error) {
+		customized = append(customized, req.Customized)
+		return prepared.Result{Value: true, Defined: true, Bytes: 4}, nil
+	})
+	b, err := NewBatch([]Program{p})
+	if err != nil {
+		t.Fatal(err)
+	}
+	d, err := PrepareJSON(ctx, []byte(`null`), PrepareOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, o := range []EvalOptions{{}, {Limits: &Limits{MaxSteps: 500}}} {
+		if _, err := EvalPrepared(ctx, p, d, o); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := b.EvalPrepared(ctx, d, nil, o); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if !reflect.DeepEqual(customized, []bool{false, false, true, true}) {
+		t.Fatalf("customized flags: %v", customized)
+	}
+}
