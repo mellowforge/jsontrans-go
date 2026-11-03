@@ -8,7 +8,10 @@ in the adapter package; the root package never imports adapters.
 Register instances explicitly with `jsontrans.New(map[string]jsontrans.Processor{
 "custom": processor})`. The transformer snapshots the map. Use an optional
 `Limits() jsontrans.Limits` method on engines and programs to expose configured
-defaults to common wrappers. Zero limit fields select library defaults.
+defaults to common wrappers. Configured limits are defaults, not hard maximums:
+`EvalOptions.Limits` replaces each nonzero field for one evaluation, raising or
+lowering it. Zero fields in engine options select library defaults; zero fields
+in an override keep the configured value.
 
 Compiled state must be immutable. Create evaluation state per call; snapshot
 configuration and function registrations when compiling. Do not mutate inputs
@@ -27,6 +30,7 @@ each evaluation behind this contract. Tengo is not a v1 dependency or engine.
 JSONata exposes `CompileRaw`, `EvalRaw`, `Callable`, and `Invoke` for language
 values such as functions. Invoke creates a fresh bounded evaluation so returned
 closures and transforms remain usable after their original evaluation finishes.
+Its limits default to those of the engine that created the function.
 Register host functions with `jsonata.WithFunction`; JSONPath's `WithFunction`
 uses its RFC Value/Logical/Nodes type declarations. These are language-specific
 extension APIs, separate from the common JSON contract.

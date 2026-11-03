@@ -3,10 +3,10 @@ package jsonata
 import (
 	"math"
 	"reflect"
-	"strings"
 
 	"github.com/mellowforge/jsontrans-go"
 	"github.com/mellowforge/jsontrans-go/internal/budget"
+	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
 )
 
 // fastPlan retains only immutable syntax. Unsupported runtime shapes fall back.
@@ -336,12 +336,6 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 					return nil, false
 				}
 				if ok && found && v.Kind() == "array" {
-					if arg.op == "." && v.Len() == 0 {
-						if n.children[0].val == "$count" {
-							return float64(0), true
-						}
-						return Undefined, true
-					}
 					if evalErr = bd.Collection(v.Len()); evalErr != nil {
 						return nil, false
 					}
@@ -459,12 +453,12 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 			equal := false
 			if x, ok := a.(string); ok {
 				if y, ok := b.(string); ok {
-					cmp, err := fastCompareStrings(x, y, budgetCheck(bd))
+					var err error
+					equal, err = fastEqualStrings(x, y, budgetCheck(bd))
 					if err != nil {
 						evalErr = err
 						return nil, false
 					}
-					equal = cmp == 0
 				} else {
 					equal = reflect.DeepEqual(a, b)
 				}
@@ -494,7 +488,7 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 					return nil, false
 				}
 				var err error
-				cmp, err = fastCompareStrings(x, y, budgetCheck(bd))
+				cmp, err = jsonvalue.CompareUTF16(x, y, budgetCheck(bd))
 				if err != nil {
 					evalErr = err
 					return nil, false
@@ -526,25 +520,21 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 }
 
 // Compare bounded chunks so cancellation is observed during large string comparisons.
-func fastCompareStrings(a, b string, check func() error) (int, error) {
-	for len(a) > 0 && len(b) > 0 {
-		if err := check(); err != nil {
-			return 0, err
-		}
-		n := len(a)
-		if len(b) < n {
-			n = len(b)
-		}
-		if n > 4096 {
-			n = 4096
-		}
-		if c := strings.Compare(a[:n], b[:n]); c != 0 {
-			return c, nil
-		}
-		a = a[n:]
-		b = b[n:]
+func fastEqualStrings(a, b string, check func() error) (bool, error) {
+	if len(a) != len(b) {
+		return false, nil
 	}
-	return strings.Compare(a, b), nil
+	for len(a) > 0 {
+		if err := check(); err != nil {
+			return false, err
+		}
+		n := min(len(a), 4096)
+		if a[:n] != b[:n] {
+			return false, nil
+		}
+		a, b = a[n:], b[n:]
+	}
+	return true, nil
 }
 func budgetCheck(b *budget.Budget) func() error { return b.Step }
 

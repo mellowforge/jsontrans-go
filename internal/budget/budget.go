@@ -10,8 +10,10 @@ import (
 
 var ErrLimit = errors.New("resource limit exceeded")
 
-// Limits are positive ceilings. Zero fields select defaults; negative fields
-// are invalid. Larger positive values permit trusted workloads.
+// Limits bound one compilation or evaluation. Engine options set defaults, and
+// a per-evaluation override replaces each nonzero field, raising or lowering
+// it. Zero fields keep the base value (library defaults when there is none);
+// negative fields are invalid. Larger positive values permit trusted workloads.
 type Limits struct {
 	Timeout            time.Duration
 	MaxExpressionBytes int

@@ -18,6 +18,7 @@ import (
 
 	"github.com/mellowforge/jsontrans-go"
 	"github.com/mellowforge/jsontrans-go/internal/budget"
+	"github.com/mellowforge/jsontrans-go/internal/errchain"
 	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
 	"github.com/mellowforge/jsontrans-go/internal/prepared"
 )
@@ -179,7 +180,7 @@ func (p *Program) evaluateOwned(input Value, bindings map[string]any, b *budget.
 			vars[strings.TrimPrefix(k, "$")] = v
 		}
 	}
-	ev := evaluator{b: b, root: input, vars: vars, env: environment{builtins: p.engine.builtins, functions: p.engine.functions}, now: time.Now(), trackParents: p.trackParents, objectOrder: map[uintptr]objectOrderEntry{}, depth: newDepthTracker(p.engine.evaluationDepth)}
+	ev := evaluator{b: b, root: input, vars: vars, env: environment{builtins: p.engine.builtins, functions: p.engine.functions}, configured: p.engine.limits, now: time.Now(), trackParents: p.trackParents, objectOrder: map[uintptr]objectOrderEntry{}, depth: newDepthTracker(p.engine.evaluationDepth)}
 	v, err := ev.eval(p.root, input)
 	if err != nil {
 		return nil, 0, err
@@ -294,6 +295,11 @@ type parser struct {
 func (p *parser) fail(code string) {
 	if p.err == nil {
 		p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: code, Position: p.t.pos, Token: p.t.val, Cause: fmt.Errorf("unexpected token %q", p.t.val)}
+	}
+}
+func (p *parser) failAt(code string, position int, cause error) {
+	if p.err == nil {
+		p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: code, Position: position, Cause: cause}
 	}
 }
 func (p *parser) next() {
@@ -566,35 +572,39 @@ func (p *parser) parse(min int) *node {
 		}
 		p.expect("|")
 	case "/":
+		// Mirrors JSONata 2.2.2 scanRegex: the literal ends at a slash preceded
+		// by an even number of backslashes outside (), [] and {} nesting, where
+		// a bracket preceded by a backslash does not count.
 		start := t.pos
-		i := start
-		inClass := false
-		escaped := false
-		for i < len(p.s) {
-			c := p.s[i]
-			if escaped {
-				escaped = false
-				i++
-				continue
+		i, depth := start, 0
+		closing := func(i int) bool {
+			if p.s[i] != '/' || depth != 0 {
+				return false
 			}
-			if c == '\\' {
-				escaped = true
-				i++
-				continue
+			backslashes := 0
+			for i-backslashes-1 >= 0 && p.s[i-backslashes-1] == '\\' {
+				backslashes++
 			}
-			if c == '[' {
-				inClass = true
+			return backslashes%2 == 0
+		}
+		for ; i < len(p.s) && !closing(i); i++ {
+			switch p.s[i] {
+			case '(', '[', '{':
+				if p.s[i-1] != '\\' {
+					depth++
+				}
+			case ')', ']', '}':
+				if p.s[i-1] != '\\' {
+					depth--
+				}
 			}
-			if c == ']' {
-				inClass = false
-			}
-			if c == '/' && !inClass {
-				break
-			}
-			i++
 		}
 		if i >= len(p.s) {
-			p.fail("S0302")
+			p.failAt("S0302", len(p.s), errors.New("unterminated regular expression"))
+			return n
+		}
+		if i == start {
+			p.failAt("S0301", i, errors.New("empty regular expression"))
 			return n
 		}
 		pattern := p.s[start:i]
@@ -603,8 +613,17 @@ func (p *parser) parse(min int) *node {
 		for i < len(p.s) && (p.s[i] == 'i' || p.s[i] == 'm') {
 			i++
 		}
+		matcher := RegexMatcher{Pattern: pattern, Flags: p.s[flagStart:i]}
+		if _, err := matcher.compile(&CallContext{Budget: p.b}); err != nil {
+			if errors.Is(err, errInvalidRegex) {
+				p.failAt("", start, err)
+			} else if p.err == nil {
+				p.err = err
+			}
+			return n
+		}
 		n.op = "regex"
-		n.val = RegexMatcher{Pattern: pattern, Flags: p.s[flagStart:i]}
+		n.val = matcher
 		p.i = i
 		p.next()
 	case "*", "**":
@@ -814,6 +833,9 @@ type evaluator struct {
 	vars         map[string]Value
 	env          environment
 	now          time.Time
+	// configured holds the engine limits, the defaults for later Invoke calls
+	// of functions created by this evaluation.
+	configured budget.Limits
 }
 
 func seq(v Value) []Value {
@@ -1455,8 +1477,9 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 						sortErr = &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2007", Position: n.pos, Cause: fmt.Errorf("sort key types differ")}
 						return false
 					}
-					less = x < y
-					greater = x > y
+					c, _ := jsonvalue.CompareUTF16(x, y, nil)
+					less = c < 0
+					greater = c > 0
 				default:
 					sortErr = &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2008", Position: n.pos, Cause: fmt.Errorf("invalid sort key")}
 					return false
@@ -1558,8 +1581,15 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		var out Sequence
 		_, keepResult := v.(kept)
 		items := e.pathItems(v)
+		// JSONata keeps a lone empty array produced by the final step. An
+		// enclosing step receives it as an empty item list, which still ends the
+		// path. Tuple streams keep their existing flattening.
+		emptyArrays, tupleStream := 0, e.trackParents
 		for _, item := range items {
 			value, vars := unwrapTuple(item)
+			if vars != nil {
+				tupleStream = true
+			}
 			previous := e.ancestor
 			if t, ok := item.(tuple); ok {
 				e.ancestor = t.ancestor
@@ -1605,6 +1635,20 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 					for _, v := range x {
 						add(v)
 					}
+				case []any:
+					// Data arrays flatten into the step result; constructed
+					// arrays stay nested, as in the reference.
+					step := n.children[1]
+					if step.op == "keep" && step.children[0].op == "array" {
+						add(x)
+						break
+					}
+					if len(x) == 0 {
+						emptyArrays++
+					}
+					for _, v := range x {
+						add(v)
+					}
 				default:
 					add(x)
 				}
@@ -1617,6 +1661,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				continue
 			}
 			if values, ok := r.([]any); ok && len(values) == 0 && n.children[1].op != "array" {
+				emptyArrays++
 				continue
 			}
 			if values, ok := r.([]any); ok && n.children[1].op == "name" && len(items) > 1 {
@@ -1636,7 +1681,16 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		if err := e.b.Collection(len(out)); err != nil {
 			return nil, err
 		}
+		if len(out) == 0 && emptyArrays == 1 && !tupleStream {
+			if keepResult {
+				return kept{[]any{}}, nil
+			}
+			return []any{}, nil
+		}
 		if keepResult {
+			if len(out) == 0 {
+				return Undefined, nil
+			}
 			return kept{out}, nil
 		}
 		return collapse(out), nil
@@ -1669,13 +1723,13 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			if !ok {
 				return nil, fmt.Errorf("not a function")
 			}
-			args := []Value{e.stripTuples(left)}
+			args := []Value{e.argument(left)}
 			for _, c := range right.children[1:] {
 				v, err := e.eval(c, focus)
 				if err != nil {
 					return nil, err
 				}
-				args = append(args, e.stripTuples(v))
+				args = append(args, e.argument(v))
 			}
 			result, err := e.invoke(fn, args, focus)
 			if err != nil {
@@ -1744,7 +1798,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			if err != nil {
 				return nil, err
 			}
-			args = append(args, e.stripTuples(v))
+			args = append(args, e.argument(v))
 		}
 		if hasPlaceholder {
 			return partial{fn: fn, args: args}, nil
@@ -1833,15 +1887,16 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 	case "<", ">", "<=", ">=":
 		if x, ok := a.(string); ok {
 			if y, ok := b.(string); ok {
+				c, _ := jsonvalue.CompareUTF16(x, y, nil)
 				switch n.op {
 				case "<":
-					return x < y, nil
+					return c < 0, nil
 				case ">":
-					return x > y, nil
+					return c > 0, nil
 				case "<=":
-					return x <= y, nil
+					return c <= 0, nil
 				case ">=":
-					return x >= y, nil
+					return c >= 0, nil
 				}
 			}
 		}
@@ -2118,7 +2173,7 @@ func (e *evaluator) evalTail(n *node, focus Value) (result Value, err error) {
 			if err != nil {
 				return nil, err
 			}
-			args = append(args, e.stripTuples(v))
+			args = append(args, e.argument(v))
 		}
 		return tailCall{fn: fn, args: args}, nil
 	}
@@ -2477,13 +2532,35 @@ type objectOrderEntry struct {
 	keys  []string
 }
 
+// definingLimits returns the configured limits of the engine whose evaluation
+// created fn. Functions without one use the library defaults.
+func definingLimits(fn Callable) budget.Limits {
+	switch f := fn.(type) {
+	case *closure:
+		if f.eval != nil {
+			return f.eval.configured
+		}
+	case *transform:
+		if f.eval != nil {
+			return f.eval.configured
+		}
+	case partial:
+		return definingLimits(f.fn)
+	case composed:
+		return definingLimits(f.first)
+	}
+	return budget.DefaultLimits()
+}
+
 // Invoke calls a raw JSONata function with a fresh, evaluation-local budget.
-// JSON-shaped arguments are detached before calling the function.
+// Limits default to those of the engine whose evaluation created fn, and
+// opts.Limits may raise or lower them. JSON-shaped arguments are detached
+// before calling the function.
 func Invoke(ctx context.Context, fn Callable, args []Value, opts jsontrans.EvalOptions) (Value, error) {
 	if fn == nil {
 		return nil, fmt.Errorf("nil function")
 	}
-	limits, err := budget.Resolve(budget.DefaultLimits(), opts.Limits)
+	limits, err := budget.Resolve(definingLimits(fn), opts.Limits)
 	if err != nil {
 		return nil, err
 	}
@@ -2650,6 +2727,22 @@ func (e *Engine) Limits() jsontrans.Limits { return e.limits }
 // Limits returns the program's configured resource limits.
 func (p *Program) Limits() jsontrans.Limits { return p.engine.limits }
 
+// argument prepares a function argument: tuple bindings are removed and a
+// keep-array result ([] suffix) becomes an ordinary array.
+func (e *evaluator) argument(v Value) Value {
+	v = e.stripTuples(v)
+	if k, ok := v.(kept); ok {
+		switch x := k.value.(type) {
+		case Sequence:
+			return []any(x)
+		case []any:
+			return x
+		default:
+			return []any{x}
+		}
+	}
+	return v
+}
 func (e *evaluator) stripTuples(v Value) Value {
 	if e.walkErr != nil {
 		return Undefined
@@ -2748,25 +2841,37 @@ func convertNodePositions(root *node, source string, b *budget.Budget) error {
 	return walk(root)
 }
 func convertCompilePosition(err error, source string) error {
-	var native *jsontrans.Error
-	if errors.As(err, &native) {
+	if native, ok := err.(*jsontrans.Error); ok {
 		copy := *native
 		copy.Position = utf16Position(source, copy.Position)
 		return &copy
 	}
 	return err
 }
+
+// callErrorPosition attributes a function failure to the call site. A JSONata
+// diagnostic keeps its code and gains a missing position; other errors,
+// including another processor's diagnostics, become this call's cause.
 func callErrorPosition(err error, pos int) error {
 	if err == nil {
 		return nil
 	}
-	var native *jsontrans.Error
-	if errors.As(err, &native) && native.Position == 0 {
-		copy := *native
-		copy.Position = pos
-		return &copy
+	own := func(e *jsontrans.Error) bool { return e.Processor == "" || e.Processor == "jsonata" }
+	native, ok := errchain.Find(err, own)
+	if !ok {
+		return &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Position: pos, Cause: err}
 	}
-	return err
+	if native == err && native.Position != 0 {
+		return err
+	}
+	out := *native
+	if out.Position == 0 {
+		out.Position = pos
+	}
+	if native != err {
+		out.Cause = err
+	}
+	return &out
 }
 
 // decodeStringLiteral retains unpaired UTF-16 surrogates as WTF-8 bytes so

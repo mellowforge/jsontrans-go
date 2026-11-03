@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/mellowforge/jsontrans-go/internal/budget"
+	"github.com/mellowforge/jsontrans-go/internal/errchain"
 	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
 )
 
@@ -84,19 +85,35 @@ func New(processors map[string]Processor) (*Transformer, error) {
 	return x, nil
 }
 
+// diagnostic attributes err to the processor registered as name. A *Error the
+// processor returns directly is its own (engines name themselves, which may
+// differ from the registry name) and is completed rather than wrapped again.
+// Deeper in a chain, only a diagnostic without a processor or with this name
+// lends its fields to a wrapper that keeps the whole chain; other processors'
+// diagnostics stay reachable as the cause.
 func diagnostic(name, phase string, err error) error {
 	if err == nil {
 		return nil
 	}
-	var native *Error
-	if errors.As(err, &native) {
-		copy := *native
-		if copy.Processor == "" {
-			copy.Processor = name
+	native, direct := err.(*Error)
+	if !direct {
+		var ok bool
+		native, ok = errchain.Find(err, func(e *Error) bool { return e.Processor == "" || e.Processor == name })
+		if !ok {
+			return &Error{Processor: name, Phase: phase, Cause: err}
 		}
-		return &copy
 	}
-	return &Error{Processor: name, Phase: phase, Cause: err}
+	out := *native
+	if out.Processor == "" {
+		out.Processor = name
+	}
+	if out.Phase == "" {
+		out.Phase = phase
+	}
+	if !direct {
+		out.Cause = err
+	}
+	return &out
 }
 
 func (x *Transformer) Compile(ctx context.Context, name, expression string) (Program, error) {

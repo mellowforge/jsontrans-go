@@ -267,3 +267,74 @@ func stringToken(d *json.Decoder, data []byte) (json.Token, error) {
 	}
 	return s, nil
 }
+
+// CompareUTF16 orders WTF-8 strings by UTF-16 code units, as JavaScript does.
+// UTF-8 byte order differs for U+E000..U+FFFF against supplementary characters
+// and for isolated surrogates. A non-nil check runs before each 4096-byte chunk
+// of the common prefix and every 4096 code units after it.
+func CompareUTF16(a, b string, check func() error) (int, error) {
+	const chunk = 4096
+	i := 0
+	for i < len(a) && i < len(b) {
+		if check != nil {
+			if err := check(); err != nil {
+				return 0, err
+			}
+		}
+		end := min(len(a), len(b), i+chunk)
+		if a[i:end] == b[i:end] {
+			i = end
+			continue
+		}
+		for a[i] == b[i] {
+			i++
+		}
+		break
+	}
+	continuation := func(s string) bool { return i < len(s) && s[i]&0xc0 == 0x80 }
+	for i > 0 && (continuation(a) || continuation(b)) {
+		i--
+	}
+	ua, ub := utf16Units{s: a[i:]}, utf16Units{s: b[i:]}
+	for n := 1; ; n++ {
+		if check != nil && n%chunk == 0 {
+			if err := check(); err != nil {
+				return 0, err
+			}
+		}
+		x, okA := ua.next()
+		y, okB := ub.next()
+		switch {
+		case !okA && !okB:
+			return 0, nil
+		case !okA || okB && x < y:
+			return -1, nil
+		case !okB || x > y:
+			return 1, nil
+		}
+	}
+}
+
+type utf16Units struct {
+	s   string
+	low uint16
+}
+
+func (u *utf16Units) next() (uint16, bool) {
+	if u.low != 0 {
+		x := u.low
+		u.low = 0
+		return x, true
+	}
+	if u.s == "" {
+		return 0, false
+	}
+	r, n := DecodeRune(u.s)
+	u.s = u.s[n:]
+	if r >= 0x10000 {
+		r -= 0x10000
+		u.low = uint16(0xdc00 + r&0x3ff)
+		return uint16(0xd800 + r>>10), true
+	}
+	return uint16(r), true
+}

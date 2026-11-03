@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"math/big"
 	"sort"
+
+	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
 )
 
 func builtinHigherOrder(m map[string]Callable) {
@@ -208,7 +210,8 @@ func builtinObjects(m map[string]Callable) {
 			}
 			switch x := out[i].(type) {
 			case string:
-				return x < out[j].(string)
+				c, _ := jsonvalue.CompareUTF16(x, out[j].(string), nil)
+				return c < 0
 			case float64:
 				return x < out[j].(float64)
 			}

@@ -485,11 +485,57 @@ func (e *evaluation) evalQuery(q *query, current any) ([]any, error) {
 	}
 	return nodes, nil
 }
-func children(v any) []any {
+
+// Strings and keys containing isolated surrogates arrive as lossless
+// UTF16String/UTF16Object wrappers; to JSONPath they are ordinary JSON values.
+func asString(v any) (string, bool) {
 	switch x := v.(type) {
-	case []any:
-		return x
+	case string:
+		return x, true
+	case jsonvalue.UTF16String:
+		return string(x), true
+	}
+	return "", false
+}
+func asObject(v any) (map[string]any, bool) {
+	switch x := v.(type) {
 	case map[string]any:
+		return x, true
+	case jsonvalue.UTF16Object:
+		return map[string]any(x), true
+	}
+	return nil, false
+}
+
+// characterCount counts code points, treating each isolated surrogate as one.
+func characterCount(s string) int {
+	n := 0
+	for len(s) > 0 {
+		_, size := jsonvalue.DecodeRune(s)
+		s = s[size:]
+		n++
+	}
+	return n
+}
+
+// matchSubject lets RE2 consume each isolated surrogate as one character.
+func matchSubject(s string) string {
+	if utf8.ValidString(s) {
+		return s
+	}
+	out := make([]byte, 0, len(s))
+	for len(s) > 0 {
+		r, size := jsonvalue.DecodeRune(s)
+		if r >= 0xd800 && r <= 0xdfff {
+			r = utf8.RuneError
+		}
+		out = utf8.AppendRune(out, r)
+		s = s[size:]
+	}
+	return string(out)
+}
+func children(v any) []any {
+	if x, ok := asObject(v); ok {
 		keys := make([]string, 0, len(x))
 		for k := range x {
 			keys = append(keys, k)
@@ -501,6 +547,9 @@ func children(v any) []any {
 		}
 		return out
 	}
+	if x, ok := v.([]any); ok {
+		return x
+	}
 	return nil
 }
 func (e *evaluation) selectNode(s selector, v any) ([]any, error) {
@@ -510,7 +559,7 @@ func (e *evaluation) selectNode(s selector, v any) ([]any, error) {
 	out := []any{}
 	switch s.kind {
 	case 'n':
-		if m, ok := v.(map[string]any); ok {
+		if m, ok := asObject(v); ok {
 			if x, ok := m[s.name]; ok {
 				out = append(out, x)
 			}
@@ -875,8 +924,8 @@ func compare(a, b any) (int, bool) {
 			return 0, true
 		}
 	}
-	if x, ok := a.(string); ok {
-		if y, ok := b.(string); ok {
+	if x, ok := asString(a); ok {
+		if y, ok := asString(b); ok {
 			return strings.Compare(x, y), true
 		}
 	}
@@ -885,6 +934,19 @@ func compare(a, b any) (int, bool) {
 func equal(a, b any) bool {
 	if c, ok := compare(a, b); ok {
 		return c == 0
+	}
+	if x, ok := asObject(a); ok {
+		y, ok := asObject(b)
+		if !ok || len(x) != len(y) {
+			return false
+		}
+		for k, v := range x {
+			w, ok := y[k]
+			if !ok || !equal(v, w) {
+				return false
+			}
+		}
+		return true
 	}
 	switch x := a.(type) {
 	case Nothing:
@@ -902,18 +964,6 @@ func equal(a, b any) bool {
 		}
 		for i := range x {
 			if !equal(x[i], y[i]) {
-				return false
-			}
-		}
-		return true
-	case map[string]any:
-		y, ok := b.(map[string]any)
-		if !ok || len(x) != len(y) {
-			return false
-		}
-		for k, v := range x {
-			w, ok := y[k]
-			if !ok || !equal(v, w) {
 				return false
 			}
 		}
@@ -947,22 +997,25 @@ func (x call) eval(e *evaluation, c any) (any, error) {
 	case "value":
 		return value(a[0]), nil
 	case "length":
-		switch v := value(a[0]).(type) {
-		case string:
-			return json.Number(strconv.Itoa(utf8.RuneCountInString(v))), nil
-		case []any:
-			return json.Number(strconv.Itoa(len(v))), nil
-		case map[string]any:
-			return json.Number(strconv.Itoa(len(v))), nil
+		v := value(a[0])
+		if s, ok := asString(v); ok {
+			return json.Number(strconv.Itoa(characterCount(s))), nil
+		}
+		if m, ok := asObject(v); ok {
+			return json.Number(strconv.Itoa(len(m))), nil
+		}
+		if l, ok := v.([]any); ok {
+			return json.Number(strconv.Itoa(len(l))), nil
 		}
 		return Nothing{}, nil
 	case "match", "search":
 		started := time.Now()
-		s, ok := value(a[0]).(string)
+		s, ok := asString(value(a[0]))
 		if !ok {
 			return false, nil
 		}
-		pat, ok := value(a[1]).(string)
+		s = matchSubject(s)
+		pat, ok := asString(value(a[1]))
 		if !ok {
 			return false, nil
 		}
@@ -1409,20 +1462,21 @@ func chargeComparison(b *budget.Budget, v any) error {
 	}
 	defer b.Leave()
 	n := 0
-	switch x := v.(type) {
-	case string:
-		n = len(x)
-	case json.Number:
-		n = len(x)
-	case []any:
-		for _, v := range x {
+	if s, ok := asString(v); ok {
+		n = len(s)
+	} else if m, ok := asObject(v); ok {
+		for k, v := range m {
+			n += len(k)
 			if err := chargeComparison(b, v); err != nil {
 				return err
 			}
 		}
-	case map[string]any:
-		for k, v := range x {
-			n += len(k)
+	}
+	switch x := v.(type) {
+	case json.Number:
+		n = len(x)
+	case []any:
+		for _, v := range x {
 			if err := chargeComparison(b, v); err != nil {
 				return err
 			}

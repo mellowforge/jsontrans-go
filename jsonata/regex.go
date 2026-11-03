@@ -1,6 +1,7 @@
 package jsonata
 
 import (
+	"errors"
 	"fmt"
 	"github.com/mellowforge/jsontrans-go"
 	"github.com/mellowforge/jsontrans-go/internal/budget"
@@ -31,7 +32,13 @@ func (r RegexMatcher) Call(c *CallContext, a []Value) (Value, error) {
 	}
 	return r.search(c, units, 0, false)
 }
-func (r RegexMatcher) search(c *CallContext, units []rune, start int, subsequent bool) (Value, error) {
+
+// errInvalidRegex marks patterns the reference rejects with an uncoded
+// SyntaxError when tokenizing.
+var errInvalidRegex = errors.New("invalid regular expression")
+
+// compile returns a fresh matcher, so timeouts stay evaluation-local.
+func (r RegexMatcher) compile(c *CallContext) (*regexp2.Regexp, error) {
 	opts := regexp2.ECMAScript
 	if strings.Contains(r.Flags, "i") {
 		opts |= regexp2.IgnoreCase
@@ -51,7 +58,14 @@ func (r RegexMatcher) search(c *CallContext, units []rune, start int, subsequent
 	}
 	re, err := regexp2.Compile(pattern, opts)
 	if err != nil {
-		return nil, fmt.Errorf("invalid regex: %w", err)
+		return nil, fmt.Errorf("%w: %w", errInvalidRegex, err)
+	}
+	return re, nil
+}
+func (r RegexMatcher) search(c *CallContext, units []rune, start int, subsequent bool) (Value, error) {
+	re, err := r.compile(c)
+	if err != nil {
+		return nil, err
 	}
 	timeout := 50 * time.Millisecond
 	if c.Budget != nil {

@@ -222,8 +222,9 @@ func formatNumber(c *CallContext, n float64, picture string, opts map[string]any
 	}
 	var positions []int
 	count := 0
-	for i := len([]rune(ip)) - 1; i >= 0; i-- {
-		x := []rune(ip)[i]
+	ipRunes := []rune(ip)
+	for i := len(ipRunes) - 1; i >= 0; i-- {
+		x := ipRunes[i]
 		if x == group {
 			positions = append(positions, count)
 		} else if x == digit || x >= zero && x < zero+10 {
@@ -240,18 +241,18 @@ func formatNumber(c *CallContext, n float64, picture string, opts map[string]any
 			}
 		}
 	}
+	var irregular map[int]bool
+	if !regular {
+		irregular = make(map[int]bool, len(positions))
+		for _, p := range positions {
+			irregular[p] = true
+		}
+	}
 	ib := boundedStringBuilder{c: c}
 	for i, x := range integer {
 		remaining := len(integer) - i
 		if i > 0 {
-			insert := regular && step > 0 && remaining%step == 0
-			if !regular {
-				for _, p := range positions {
-					if remaining == p {
-						insert = true
-					}
-				}
-			}
+			insert := regular && step > 0 && remaining%step == 0 || irregular[remaining]
 			if insert {
 				ib.WriteRune(group)
 			}

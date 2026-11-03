@@ -6,6 +6,9 @@ Defaults are a 1-second timeout, 64 KiB expressions, depth 256, one million
 steps, 100,000 items per collection, 16 MiB input/output, and a 50 ms regex
 timeout. Configure larger positive limits for trusted workloads.
 
+Configured limits are defaults. `EvalOptions.Limits` can raise or lower them for
+one evaluation, so applications must not pass untrusted limit overrides.
+
 These controls are not OS memory isolation or guaranteed immediate termination.
 Some library operations can only check cancellation before and after a call.
 Applications requiring hard isolation should run the library in supervised

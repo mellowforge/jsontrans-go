@@ -170,8 +170,10 @@ func (p *checkedProgram) EvalPrepared(ctx context.Context, d *Document, o EvalOp
 }
 
 // A registry wrapper validates under its own configuration while a forwarded
-// native program still executes under its engine configuration. Both ceilings
-// apply; regex timing belongs to the engine that actually executes regex work.
+// native program still executes under its engine configuration. The stricter
+// configured value applies after both are resolved with any per-evaluation
+// override, so an override raises both; regex timing belongs to the engine that
+// actually executes regex work.
 func intersectNativeLimits(wrapper, native Limits) Limits {
 	native.Timeout = min(wrapper.Timeout, native.Timeout)
 	native.MaxExpressionBytes = min(wrapper.MaxExpressionBytes, native.MaxExpressionBytes)

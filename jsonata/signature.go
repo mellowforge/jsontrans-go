@@ -243,7 +243,9 @@ func (f *signatureCallable) Call(c *CallContext, args []Value) (Value, error) {
 	validated, err := f.signature.validate(args, c.Focus)
 	if err != nil {
 		if e, ok := err.(*jt.Error); ok {
-			e.Token = f.name
+			copy := *e
+			copy.Token = f.name
+			return nil, &copy
 		}
 		return nil, err
 	}

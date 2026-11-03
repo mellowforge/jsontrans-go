@@ -451,3 +451,34 @@ func TestBuiltinSubstringNaNLength(t *testing.T) {
 		t.Fatalf("got %#v, %v", got, err)
 	}
 }
+
+// Long pictures must finish within the default one-second timeout: grouping
+// analysis was quadratic in the picture length and charged no work.
+func TestBuiltinFormatNumberLongPictureWithinDefaultTimeout(t *testing.T) {
+	irregular := strings.Repeat("0,00,", 8000) + "0"
+	tests := []struct {
+		name, picture, want string
+	}{
+		{"optional digits", strings.Repeat("#", 60000) + "0", "1"},
+		{"irregular grouping", irregular, irregular[:len(irregular)-1] + "1"},
+	}
+	engine, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	program, err := engine.Compile(context.Background(), `$formatNumber(1, p)`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := program.Eval(context.Background(), map[string]any{"p": tt.picture}, jsontrans.EvalOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got.Value != tt.want {
+				t.Fatalf("got %d bytes, want %d bytes", len(got.Value.(string)), len(tt.want))
+			}
+		})
+	}
+}
