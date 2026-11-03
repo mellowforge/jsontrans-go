@@ -1,0 +1,44 @@
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	jt "github.com/mellowforge/jsontrans-go"
+	js "github.com/mellowforge/jsontrans-go/javascript"
+	"time"
+)
+
+func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	e, err := js.New(ctx, js.Config{GuestMemoryBytes: 8 << 20})
+	if err != nil {
+		panic(err)
+	}
+	defer e.Close()
+	healthy, err := e.Compile(ctx, `()=>42`)
+	if err != nil {
+		panic(err)
+	}
+	for _, tc := range []struct{ name, source string }{{"array-shrink-grow", `()=>{const a=[{a:1},{b:2},{c:3},{d:4},{e:5}];a.length=2;a.length=5;a.push({f:6});return typeof a[3]}`}, {"proxy-size-overflow", `()=>Reflect.ownKeys(new Proxy({}, {ownKeys(){return {length:536870913,0:'x'}}}))`}} {
+		p, err := e.Compile(ctx, tc.source)
+		if err != nil {
+			panic(err)
+		}
+		call, stop := context.WithTimeout(ctx, 100*time.Millisecond)
+		result, err := p.Eval(call, nil, jt.EvalOptions{})
+		stop()
+		message := ""
+		if err != nil {
+			message = err.Error()
+			if len(message) > 3000 {
+				message = message[:3000]
+			}
+		}
+		recovery, re := healthy.Eval(ctx, nil, jt.EvalOptions{})
+		out := map[string]any{"case": tc.name, "result": result, "error": message, "recovery": recovery, "recovery_error": fmt.Sprint(re)}
+		data, _ := json.Marshal(out)
+		fmt.Println(string(data))
+	}
+}

@@ -45,6 +45,12 @@ all owned probes, race/fuzz/stress tests and platform checks. Do not replace the
 guest with an unverified binary. See the [JavaScript hardening record](docs/javascript-hardening.md)
 and [execution contract](docs/javascript-execution-contract.md).
 
+The [2026-11-03 dependency review](docs/javascript-security-review.md) records
+unresolved QuickJS memory-safety findings and affected native-core `x/text`
+requirements. The current JavaScript pin is a production-release blocker.
+A clean Go scan does not cover the embedded C engine or clear omitted local
+replacement dependencies. See the linked remediation plan before updating pins.
+
 Do not disclose exploitable vulnerabilities in public issues. Before public
 release, maintainers must enable private vulnerability reporting on the GitHub
 repository and identify a monitored contact route there. Releases currently

@@ -1,0 +1,79 @@
+{
+  "modules": [
+    {
+      "Path": "github.com/mellowforge/jsontrans-go/javascript",
+      "Main": true,
+      "GoVersion": "1.26.0"
+    },
+    {
+      "Path": "github.com/dlclark/regexp2/v2",
+      "Version": "v2.12.0",
+      "GoVersion": "1.25",
+      "Sum": "h1:GsCgDZZeHluUDHASr2yqQonZk4Tma5LFmLH9CSsFFEE=",
+      "GoModSum": "h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU="
+    },
+    {
+      "Path": "github.com/mellowforge/jsontrans-go",
+      "Version": "v1.1.1-0.20261103173822-e9b9c0c71fe0",
+      "GoVersion": "1.26.0"
+    },
+    {
+      "Path": "github.com/tetratelabs/wazero",
+      "Version": "v1.9.0",
+      "GoVersion": "1.22.0",
+      "Sum": "h1:IcZ56OuxrtaEz8UYNRHBrUa9bYeX9oVY93KspZZBf/I=",
+      "GoModSum": "h1:TSbcXCfFP0L2FGkRPxHphadXPjo1T6W+CseNNY7EkjM="
+    },
+    {
+      "Path": "golang.org/x/mod",
+      "Version": "v0.34.0"
+    },
+    {
+      "Path": "golang.org/x/sync",
+      "Version": "v0.20.0"
+    },
+    {
+      "Path": "golang.org/x/text",
+      "Version": "v0.36.0",
+      "GoVersion": "1.25.0",
+      "Sum": "h1:JfKh3XmcRPqZPKevfXVpI1wXPTqbkE5f7JA92a55Yxg=",
+      "GoModSum": "h1:NIdBknypM8iqVmPiuco0Dh6P5Jcdk8lJL0CUebqK164="
+    },
+    {
+      "Path": "golang.org/x/tools",
+      "Version": "v0.43.0"
+    }
+  ],
+  "production_example_runtime_modules": [
+    "github.com/mellowforge/jsontrans-go",
+    "github.com/mellowforge/jsontrans-go/javascript",
+    "github.com/tetratelabs/wazero"
+  ],
+  "guest": {
+    "quickjs_commit": "d01ca4491fb24ccfeccb4c7394e28a3b21fd5986",
+    "source_url": "https://codeload.github.com/quickjs-ng/quickjs/tar.gz/d01ca4491fb24ccfeccb4c7394e28a3b21fd5986",
+    "source_sha256": "40be727abd6f7d24911b6a33fc3d25603a3f89eee183f74ffe6ca8d5619d9922",
+    "sdk_version": "34.0",
+    "sdk_assets": {
+      "arm64-macos": "9c59398106b417f8f14913380fdf0097a8cc0ff4af9eb3ce0065a859e88d49e9",
+      "x86_64-linux": "b761e3a0721dbae9c09a0059e5fdb2bf917d1b4a8a7b430fb3b5aafb0984b2c4"
+    },
+    "abi_version": 2,
+    "artifact_sha256": "29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e",
+    "sdk_llvm_commit": "895aa2c896ada719451be2e3673c83da8ddf1141",
+    "sdk_wasi_libc_commit": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13"
+  },
+  "guest_version_header": "0.10.1",
+  "guest_bytes": 929138,
+  "guest_notice_sha256": {
+    "LICENSE.cloudlibc": "c8b789cf5a746611e6300a0cc7750dbf92b61912a709d04e639245f7290656d0",
+    "LICENSE.compiler-rt": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d",
+    "COPYRIGHT.musl": "b870108ec5e7790e9f9919064f1b9421d62d5f9b0e6c230c6adf7ea2da62e97b",
+    "LICENSE.wasi-apache-llvm": "a6c48161a09acc75a0e25503bab66a731eb5fba5392ed4bb4743e4ba5085327a",
+    "LICENSE.wasi-libc": "2711a8b5a5cdfef0e639f96c1aca12ae23d7d64a02d0507f1bdf14d2b27bbc3a",
+    "LICENSE.quickjs": "dd84ca2eb21e6f50dd86f38007c4e008cac274b01d3b9682b1cbbedaebb26896",
+    "NOTICE.dlmalloc": "854638742c93abbd4ec57d2e9b306d29b30a71705ca43e68c6f584084797034e",
+    "LICENSE.wasi-apache": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+    "LICENSE.wasi-mit": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+  }
+}
