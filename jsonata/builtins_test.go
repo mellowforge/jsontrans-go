@@ -7,6 +7,7 @@ import (
 	"github.com/mellowforge/jsontrans-go/internal/budget"
 	"math"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -480,5 +481,30 @@ func TestBuiltinFormatNumberLongPictureWithinDefaultTimeout(t *testing.T) {
 				t.Fatalf("got %d bytes, want %d bytes", len(got.Value.(string)), len(tt.want))
 			}
 		})
+	}
+}
+
+// Padding an invalid date's NaN components is charged like any other output,
+// so a huge picture width cannot bypass the limits.
+func TestInvalidDatePaddingHonorsLimits(t *testing.T) {
+	engine, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, picture := range []string{"[Y,999999999]", "[Y,99999999999999999999]"} {
+		program, err := engine.Compile(context.Background(), `$fromMillis(0/0, p)`)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var before, after runtime.MemStats
+		runtime.ReadMemStats(&before)
+		_, err = program.Eval(context.Background(), map[string]any{"p": picture}, jsontrans.EvalOptions{})
+		runtime.ReadMemStats(&after)
+		if !errors.Is(err, budget.ErrLimit) {
+			t.Errorf("%s: got %v, want ErrLimit", picture, err)
+		}
+		if allocated := after.TotalAlloc - before.TotalAlloc; allocated > 64<<20 {
+			t.Errorf("%s: allocated %d bytes before failing", picture, allocated)
+		}
 	}
 }

@@ -244,7 +244,7 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, in
 		return z, nil
 	}
 	if invalid {
-		return invalidDateMarker(comp, pic, width)
+		return invalidDateMarker(c, comp, pic, width)
 	}
 	var n int
 	switch comp {
@@ -374,7 +374,7 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, in
 
 // invalidDateMarker formats a component of an invalid date as the reference
 // does: numbers are NaN, zero-padded to the picture's digits or minimum width.
-func invalidDateMarker(comp byte, pic, width string) (string, error) {
+func invalidDateMarker(c *CallContext, comp byte, pic, width string) (string, error) {
 	switch comp {
 	case 'P':
 		if pic == "N" {
@@ -397,12 +397,24 @@ func invalidDateMarker(comp byte, pic, width string) (string, error) {
 	}
 	pad := countIntegerDigits(pic)
 	if width != "" {
-		if minimum, err := strconv.Atoi(strings.Split(width, "-")[0]); err == nil && minimum > pad {
+		part := strings.Split(width, "-")[0]
+		minimum, err := strconv.Atoi(part)
+		if err != nil && part != "" && strings.Trim(part, "0123456789") == "" {
+			return "", fmt.Errorf("%w: picture width", budget.ErrLimit)
+		}
+		if err == nil && minimum > pad {
 			pad = minimum
 		}
 	}
 	s := "NaN"
 	if pad > len(s) {
+		// Charge the padding before building it, as for valid dates.
+		if err := builtinCollection(c, pad); err != nil {
+			return "", err
+		}
+		if err := builtinOutput(c, pad); err != nil {
+			return "", err
+		}
 		s = strings.Repeat("0", pad-len(s)) + s
 	}
 	return s, nil
