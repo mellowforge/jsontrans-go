@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"testing/synctest"
 	"time"
 )
 
@@ -75,13 +76,8 @@ func TestOwnedRuntimeCancellationAndRecovery(t *testing.T) {
 	if _, err = e.Compile(ctx, `42`); !errors.Is(err, context.Canceled) {
 		t.Fatalf("canceled compile: %v", err)
 	}
-	large := strings.Repeat("void 0;", 8000)
-	ctx, cancel = context.WithTimeout(context.Background(), time.Millisecond)
-	_, err = e.Compile(ctx, large)
-	cancel()
-	if !errors.Is(err, context.DeadlineExceeded) {
-		t.Fatalf("source compilation: %v", err)
-	}
+	// In-flight compilation cancellation is synchronized with native guest
+	// progress below; finite source can legitimately compile within a millisecond.
 }
 func TestOwnedRuntimeCapAndIndependence(t *testing.T) {
 	for _, pages := range []uint32{128, 1024} {
@@ -157,27 +153,94 @@ func TestCloseInterruptsActiveOwnedGuest(t *testing.T) {
 }
 
 func TestSourceCompileCancellationInsideInitializedGuest(t *testing.T) {
-	e, err := New(context.Background(), Config{Timeout: semanticTestTimeout})
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer e.Close()
-	m, err := e.instantiate(context.Background())
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer m.Close(context.Background())
-	source := []byte(strings.Repeat("void 0;", 8000))
-	ptr, err := transfer(context.Background(), m, source, maxTransfer)
-	if err != nil {
-		t.Fatal(err)
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond)
-	defer cancel()
-	_, err = call(ctx, m, "abi_compile", ptr, uint64(len(source)), 0)
-	if err == nil || !errors.Is(e.failure(ctx, err), context.DeadlineExceeded) {
-		t.Fatalf("in-flight compile: %v", err)
-	}
+	synctest.Test(t, func(t *testing.T) {
+		type progressKey struct{}
+		type progress struct {
+			inside  bool
+			reached chan api.Module
+			release chan struct{}
+		}
+		factory := experimental.FunctionListenerFactoryFunc(func(def api.FunctionDefinition) experimental.FunctionListener {
+			isCompile := false
+			for _, name := range def.ExportNames() {
+				isCompile = isCompile || name == "abi_compile"
+			}
+			return experimental.FunctionListenerFunc(func(ctx context.Context, m api.Module, _ api.FunctionDefinition, _ []uint64, _ experimental.StackIterator) {
+				p, _ := ctx.Value(progressKey{}).(*progress)
+				if p == nil {
+					return
+				}
+				if isCompile {
+					p.inside = true
+				} else if p.inside {
+					// Stop at the first nested C call after abi_compile has
+					// entered, not during initialization or source transfer.
+					p.inside = false
+					p.reached <- m
+					<-p.release
+				}
+			})
+		})
+		e, err := New(experimental.WithFunctionListenerFactory(context.Background(), factory), Config{Timeout: semanticTestTimeout})
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer e.Close()
+		for _, source := range []string{`42`, strings.Repeat("void 0;", 8000)} {
+			for _, direct := range []bool{true, false} {
+				func() {
+					p := &progress{reached: make(chan api.Module, 1), release: make(chan struct{})}
+					ctx, cancel := context.WithCancel(context.WithValue(context.Background(), progressKey{}, p))
+					defer cancel()
+					var m api.Module
+					var ptr uint64
+					if direct {
+						m, err = e.instantiate(context.Background())
+						if err != nil {
+							t.Fatal(err)
+						}
+						defer m.Close(context.Background())
+						ptr, err = transfer(context.Background(), m, []byte(source), maxTransfer)
+						if err != nil {
+							t.Fatal(err)
+						}
+					}
+					done := make(chan struct{})
+					var callErr error
+					var compiled []byte
+					var release sync.Once
+					unblock := func() { release.Do(func() { close(p.release) }) }
+					defer func() { unblock(); <-done }()
+					go func() {
+						defer close(done)
+						if direct {
+							_, callErr = call(ctx, m, "abi_compile", ptr, uint64(len(source)), 0)
+						} else {
+							compiled, callErr = e.Compile(ctx, source)
+						}
+					}()
+					select {
+					case guest := <-p.reached:
+						cancel()
+						synctest.Wait()
+						if !guest.IsClosed() {
+							t.Fatal("caller cancellation did not close the active compiler guest")
+						}
+					case <-done:
+						t.Fatalf("compile did not reach the cancellation barrier: %v", callErr)
+					}
+					unblock()
+					<-done
+					if callErr == nil || !errors.Is(e.failure(ctx, callErr), context.Canceled) || len(compiled) != 0 {
+						t.Fatalf("in-flight compile (direct=%v, source bytes=%d): %v", direct, len(source), callErr)
+					}
+				}()
+				if _, err := e.Compile(context.Background(), `42`); err != nil {
+					t.Fatalf("compiler did not recover with a fresh guest: %v", err)
+				}
+			}
+		}
+	})
 }
 
 func TestConcurrentEnginesHaveIndependentHeapLimits(t *testing.T) {
