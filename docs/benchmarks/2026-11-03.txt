@@ -1,0 +1,63 @@
+jsontrans-go standalone measurements — 2026-11-03 (Asia/Yerevan)
+Commit: b6172c64dc049d033376f80579a24ebab9c0d8da
+Production SHA-256: 8db647f75d39c4b3d89f274cdb7ee452118f2033e436f33a4a36ca1a7e3286de
+go version go1.25.13 darwin/arm64
+1 KiB fixture; five 300ms samples per operation; production limits; default GOMAXPROCS.
+Working directory: benchmarks/comparison (relative to the repository root).
+Compiled expressions and reusable result destination allocated outside timers.
+reused_doc excludes preparation; prepare_and_batch includes validation, ownership and indexing.
+All times are for the whole expression batch. Shared development machine.
+
+Command: GOTOOLCHAIN=local go test -tags 'prepared batch' -run '^$' -bench '^BenchmarkCompiledBatch$/^1024$/^simple$/^N64$/^(reused_doc|prepare_and_batch)$/^reused_dst$' -benchmem -benchtime=300ms -count=5
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkCompiledBatch/1024/simple/N64/reused_doc/reused_dst-18         	   34982	     10110 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/1024/simple/N64/reused_doc/reused_dst-18         	   35857	     10030 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/1024/simple/N64/reused_doc/reused_dst-18         	   35781	     10042 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/1024/simple/N64/reused_doc/reused_dst-18         	   35854	     10003 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/1024/simple/N64/reused_doc/reused_dst-18         	   35866	     10099 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/1024/simple/N64/prepare_and_batch/reused_dst-18  	   25110	     14388 ns/op	   12272 B/op	      90 allocs/op
+BenchmarkCompiledBatch/1024/simple/N64/prepare_and_batch/reused_dst-18  	   25076	     14312 ns/op	   12272 B/op	      90 allocs/op
+BenchmarkCompiledBatch/1024/simple/N64/prepare_and_batch/reused_dst-18  	   24678	     15943 ns/op	   12272 B/op	      90 allocs/op
+BenchmarkCompiledBatch/1024/simple/N64/prepare_and_batch/reused_dst-18  	   22790	     17099 ns/op	   12273 B/op	      90 allocs/op
+BenchmarkCompiledBatch/1024/simple/N64/prepare_and_batch/reused_dst-18  	   21540	     17542 ns/op	   12272 B/op	      90 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	5.568s
+
+Command: GOTOOLCHAIN=local go test -tags 'prepared batch' -run '^$' -bench '^BenchmarkCompiledBatch$/^1024$/^mixed$/^N16$/^(reused_doc|prepare_and_batch)$/^reused_dst$' -benchmem -benchtime=300ms -count=5
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkCompiledBatch/1024/mixed/N16/reused_doc/reused_dst-18         	   43242	      8018 ns/op	    3588 B/op	     120 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/reused_doc/reused_dst-18         	   47829	      7295 ns/op	    3587 B/op	     120 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/reused_doc/reused_dst-18         	   49026	      7119 ns/op	    3587 B/op	     120 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/reused_doc/reused_dst-18         	   50044	      7264 ns/op	    3587 B/op	     120 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/reused_doc/reused_dst-18         	   49914	      7256 ns/op	    3587 B/op	     120 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/prepare_and_batch/reused_dst-18  	   32194	     11028 ns/op	   14569 B/op	     142 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/prepare_and_batch/reused_dst-18  	   32991	     10822 ns/op	   14569 B/op	     142 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/prepare_and_batch/reused_dst-18  	   32770	     10937 ns/op	   14569 B/op	     142 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/prepare_and_batch/reused_dst-18  	   33582	     10731 ns/op	   14569 B/op	     142 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/prepare_and_batch/reused_dst-18  	   33586	     10774 ns/op	   14569 B/op	     142 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	4.925s
+
+Command: GOTOOLCHAIN=local go test -tags 'prepared batch' -run '^$' -bench '^BenchmarkCompiledBatch$/^1024$/^unique$/^N64$/^(reused_doc|prepare_and_batch)$/^reused_dst$' -benchmem -benchtime=300ms -count=5
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkCompiledBatch/1024/unique/N64/reused_doc/reused_dst-18         	   43122	      7662 ns/op	     384 B/op	       4 allocs/op
+BenchmarkCompiledBatch/1024/unique/N64/reused_doc/reused_dst-18         	   47086	      7641 ns/op	     384 B/op	       4 allocs/op
+BenchmarkCompiledBatch/1024/unique/N64/reused_doc/reused_dst-18         	   47126	      7656 ns/op	     384 B/op	       4 allocs/op
+BenchmarkCompiledBatch/1024/unique/N64/reused_doc/reused_dst-18         	   46784	      7638 ns/op	     384 B/op	       4 allocs/op
+BenchmarkCompiledBatch/1024/unique/N64/reused_doc/reused_dst-18         	   47184	      7776 ns/op	     384 B/op	       4 allocs/op
+BenchmarkCompiledBatch/1024/unique/N64/prepare_and_batch/reused_dst-18  	   27230	     13236 ns/op	   11360 B/op	      26 allocs/op
+BenchmarkCompiledBatch/1024/unique/N64/prepare_and_batch/reused_dst-18  	   26769	     13744 ns/op	   11360 B/op	      26 allocs/op
+BenchmarkCompiledBatch/1024/unique/N64/prepare_and_batch/reused_dst-18  	   26296	     14706 ns/op	   11360 B/op	      26 allocs/op
+BenchmarkCompiledBatch/1024/unique/N64/prepare_and_batch/reused_dst-18  	   24270	     13244 ns/op	   11360 B/op	      26 allocs/op
+BenchmarkCompiledBatch/1024/unique/N64/prepare_and_batch/reused_dst-18  	   22110	     15533 ns/op	   11360 B/op	      26 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	5.246s
