@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/mellowforge/jsontrans-go"
 	"github.com/mellowforge/jsontrans-go/internal/budget"
@@ -128,7 +129,9 @@ func FuzzCompileAndEval(f *testing.F) {
 		f.Add(s)
 	}
 	f.Fuzz(func(t *testing.T, expr string) {
-		e, err := New(WithLimits(jsontrans.Limits{MaxExpressionBytes: 4096, MaxSteps: 10000, MaxDepth: 64, MaxCollectionItems: 1000}))
+		// Short time limits keep any single input from still running when the
+		// fuzzing budget ends, which the fuzzer reports as a deadline failure.
+		e, err := New(WithLimits(jsontrans.Limits{MaxExpressionBytes: 4096, MaxSteps: 10000, MaxDepth: 64, MaxCollectionItems: 1000, Timeout: 100 * time.Millisecond, RegexTimeout: 10 * time.Millisecond}))
 		if err != nil {
 			t.Fatal(err)
 		}
