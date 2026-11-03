@@ -5,6 +5,13 @@ This module keeps the original QJS/Goja baselines and forwards OwnedQuickJS and
 NewOwned calls to the canonical public module; applications use its New(ctx, Config).
 Historical observations below remain unchanged.
 
+Since the [2026-11-04 Go dependency update](../../docs/javascript-go-security-updates.md),
+QJS runs through an [assessment-only compatibility copy](internal/qjscompat/README.md)
+of v0.0.6. It fixes cross-runtime compiled-module reuse for Wazero v1.12 without
+changing the baseline Wasm bytes. Fresh runtimes now incur additional validation
+work; historical QJS timings describe the original wrapper. This remains an
+unsafe comparison backend, excluded from the public module.
+
 
 This optional development module evaluates synchronous function-expression
 transformers using QuickJS/Wazero and Goja. It is **not a supported processor or

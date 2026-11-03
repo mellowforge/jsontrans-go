@@ -21,6 +21,16 @@
 - Keep package/runtime boundaries intact, including outside-checkout consumption and CGO-free builds.
 - Do not loosen cancellation tests, budgets, import restrictions or conformance checks to accommodate the runtime update.
 
+## Approved assessment compatibility amendment
+
+Full verification reproduced a Wazero v1.12 cross-runtime type-ID mismatch in
+the historical QJS wrapper. The user explicitly approved an assessment-only fix.
+Keep a provenance-tracked internal copy of QJS v0.0.6 with its unchanged Wasm;
+compile into the destination runtime before installing imports, sharing cached
+machine code. Retain the original upstream module in the advisory scan graph.
+Do not modify the public owned adapter or its execution contract. Historical
+comparison timings remain historical; account for new validation overhead.
+
 ### Task 1: Update dependencies with scanner RED/GREEN
 
 **Files:** root/public/assessment go.mod and go.sum.

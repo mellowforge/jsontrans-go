@@ -1,0 +1,31 @@
+--- qjs-v0.0.6/runtime.go
++++ qjscompat/runtime.go
+@@ -120,6 +120,19 @@
+ 		cachedRuntimeConfig,
+ 	)
+ 
++	// Local assessment patch: Wazero v1.12 function type IDs are runtime-local.
++	// Reuse cached machine code, but decode/compile into the destination runtime
++	// before installing imports. Never instantiate compiledQJSModule from the
++	// other runtime. The pinned Wasm bytes and historical options are unchanged.
++	qjsBytes := option.QuickJSWasmBytes
++	if len(qjsBytes) == 0 {
++		qjsBytes = wasmBytes
++	}
++	localCompiled, err := runtime.wrt.CompileModule(option.Context, qjsBytes)
++	if err != nil {
++		return nil, fmt.Errorf("failed to compile runtime-local qjs module: %w", err)
++	}
++
+ 	if _, err := wsp1.Instantiate(option.Context, runtime.wrt); err != nil {
+ 		return nil, fmt.Errorf("failed to instantiate WASI: %w", err)
+ 	}
+@@ -137,7 +150,7 @@
+ 		WithDirMount(runtime.option.CWD, "/")
+ 	if runtime.module, err = runtime.wrt.InstantiateModule(
+ 		option.Context,
+-		compiledQJSModule,
++		localCompiled,
+ 		wazero.NewModuleConfig().
+ 			WithStartFunctions(option.StartFunctionName).
+ 			WithSysWalltime().

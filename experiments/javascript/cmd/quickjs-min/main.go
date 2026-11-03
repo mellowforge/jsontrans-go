@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/fastschema/qjs"
+	qjs "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat"
 )
 
 func main() {

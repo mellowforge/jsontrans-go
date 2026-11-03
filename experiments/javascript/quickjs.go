@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/fastschema/qjs"
 	jt "github.com/mellowforge/jsontrans-go"
+	qjs "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat"
 )
 
 func (e *Engine) newQuick(ctx context.Context) (*qjs.Runtime, error) {

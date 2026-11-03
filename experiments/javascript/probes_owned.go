@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"encoding/json"
-	"github.com/fastschema/qjs"
 	jt "github.com/mellowforge/jsontrans-go"
+	qjs "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat"
 )
 
 func probeOwned(e *Engine, name string) (o Observation, handled bool) {
