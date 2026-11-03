@@ -16,8 +16,11 @@ type Batch struct {
 	plan    prepared.BatchPlan
 }
 
-// BatchError identifies the first failing expression using a zero-based index.
-// Cause preserves native diagnostics and supports errors.Is and errors.As.
+// BatchError identifies the first failing expression using a zero-based index,
+// including a deadline or cancellation noticed while that expression ran.
+// Failures not tied to an expression, such as invalid options or document
+// limits, are returned unwrapped. Cause preserves native diagnostics and
+// supports errors.Is and errors.As.
 type BatchError struct {
 	Index int
 	Cause error
@@ -168,9 +171,7 @@ func (b *Batch) EvalPrepared(ctx context.Context, d *Document, dst []Result, o E
 		bytes += size
 		dst[i] = result
 	}
-	if err = outer.Check(); err != nil {
-		clear(dst)
-		return nil, &BatchError{Index: count - 1, Cause: err}
-	}
+	// Each expression checks the overall deadline before it starts and when it
+	// returns, so cancellation is attributed to the expression that was running.
 	return dst, nil
 }

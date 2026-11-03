@@ -75,8 +75,11 @@ each concurrent call, and do not alias destination storage with bindings.
 Passing nil destination requests fresh result storage. Results own their data
 independently of the document and of other batch results.
 
-On the first error, evaluation stops, returns nil results and a `*BatchError`
-with zero-based Index and wrapped Cause. Populated destination slots are
+On the first error, evaluation stops and returns nil results. A failure while an
+expression runs, including the overall deadline or cancellation noticed before
+it starts or as it returns, is a `*BatchError` with that zero-based Index and the
+wrapped Cause. Failures not tied to an expression (nil arguments, invalid
+options, program count, document limits) are returned unwrapped. Populated destination slots are
 cleared; other destination contents after an error are unspecified. Native
 diagnostics and `errors.Is`/`errors.As` continue through the wrapper. External
 programs get independent binding snapshots and the usual result validation.

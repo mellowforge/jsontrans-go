@@ -47,7 +47,9 @@ compiles an ordered batch. Call `batch.EvalPrepared(ctx, document, dst, options)
 to reuse a `[]jsontrans.Result` destination across documents. `NewBatch(programs)`
 also accepts already compiled programs from different processors. Each call has
 an overall deadline and keeps each expression's configured limits. Batch errors
-identify the first failing expression with a zero-based `BatchError.Index`.
+identify the first failing expression with a zero-based `BatchError.Index`;
+failures not tied to an expression, such as invalid options, are returned
+unwrapped.
 
 The Go-value API accepts `map[string]any`, `[]any`, nil, strings, booleans,
 finite built-in numeric types, and `json.Number`. It rejects cycles, arbitrary

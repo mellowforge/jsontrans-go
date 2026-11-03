@@ -484,3 +484,44 @@ func TestJSONPathBatchCancelsCapturedFunctionContexts(t *testing.T) {
 		t.Fatal("last JSONPath callback scope still active")
 	}
 }
+
+// Failures during an expression, including a deadline or cancellation that
+// occurs while it runs, identify that expression; batch-level validation
+// failures are returned unwrapped.
+func TestBatchErrorAttribution(t *testing.T) {
+	d := batchDocument(t)
+	value := batchFunc(func(context.Context, jt.EvalOptions) (jt.Result, error) {
+		return jt.Result{Value: "v", Defined: true}, nil
+	})
+	for name, tc := range map[string]struct{ cancelAt, want int }{
+		"cancelled during the first expression": {0, 0},
+		"cancelled during the last expression":  {1, 1},
+	} {
+		t.Run(name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			programs := []jt.Program{value, value}
+			programs[tc.cancelAt] = batchFunc(func(context.Context, jt.EvalOptions) (jt.Result, error) {
+				cancel()
+				return jt.Result{Value: "late", Defined: true}, nil
+			})
+			b, _ := jt.NewBatch(programs)
+			dst := make([]jt.Result, 2)
+			got, err := b.EvalPrepared(ctx, d, dst, jt.EvalOptions{})
+			var be *jt.BatchError
+			if got != nil || !errors.Is(err, context.Canceled) || !errors.As(err, &be) || be.Index != tc.want {
+				t.Fatalf("got %v, %v", got, err)
+			}
+			if dst[0] != (jt.Result{}) || dst[1] != (jt.Result{}) {
+				t.Fatalf("destination not cleared: %#v", dst)
+			}
+		})
+	}
+	t.Run("invalid options", func(t *testing.T) {
+		b, _ := jt.NewBatch([]jt.Program{value})
+		_, err := b.EvalPrepared(context.Background(), d, nil, jt.EvalOptions{Limits: &jt.Limits{MaxSteps: -1}})
+		var be *jt.BatchError
+		if err == nil || errors.As(err, &be) {
+			t.Fatalf("got %v", err)
+		}
+	})
+}
