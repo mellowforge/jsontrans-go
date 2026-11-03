@@ -1,0 +1,169 @@
+{
+  "platform": "macOS-27.2-arm64-arm-64bit",
+  "cases": [
+    {
+      "backend": "owned-quickjs",
+      "case": "cold-start",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+      "duration_ns": 210008334,
+      "go_heap_bytes": 43320936,
+      "peak_rss_bytes": 59457536
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "compile-cancel",
+      "status": "PASS",
+      "detail": "source compilation context=context deadline exceeded error=owned-quickjs compile [] at 0: context deadline exceeded",
+      "duration_ns": 185996291,
+      "go_heap_bytes": 37359312,
+      "peak_rss_bytes": 59588608
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cancel-loop",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 266215000,
+      "go_heap_bytes": 48811400,
+      "peak_rss_bytes": 59670528
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cancel-regex",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 266213375,
+      "go_heap_bytes": 50148128,
+      "peak_rss_bytes": 60735488
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cancel-conversion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 264794375,
+      "go_heap_bytes": 6610928,
+      "peak_rss_bytes": 60178432
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "recursion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=owned-quickjs evaluate [] at 0: wasm error: out of bounds memory access\nwasm stack trace:\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$125(i32,i64,i64,i64,i32,i32,i32) i64\n\t... maybe followed by omitted frames",
+      "duration_ns": 191035333,
+      "go_heap_bytes": 25190424,
+      "peak_rss_bytes": 86999040
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "allocation-cap",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=owned-quickjs evaluate [] at 0: QuickJS: InternalError: out of memory",
+      "duration_ns": 189079291,
+      "go_heap_bytes": 42437400,
+      "peak_rss_bytes": 58261504
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "guest-memory",
+      "status": "PASS",
+      "detail": "Wasm + runtime max 1024 pages (64 MiB), no shared configuration; result={\"defined\":true,\"value\":41943040} error=<nil>",
+      "duration_ns": 193277542,
+      "guest_before_bytes": 2097152,
+      "guest_after_bytes": 43188224,
+      "go_heap_bytes": 47418720,
+      "peak_rss_bytes": 103825408
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cleanup",
+      "status": "PASS",
+      "detail": "canceled guest discarded, runtime/cache Close=<nil>; evaluation=context deadline exceeded",
+      "duration_ns": 215083042,
+      "go_heap_bytes": 42028120,
+      "peak_rss_bytes": 58179584
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "host-capabilities",
+      "status": "PASS",
+      "detail": "pinned artifact has zero host imports; runtime instantiates no WASI, filesystem, output streams or Go callback module",
+      "duration_ns": 185591666,
+      "go_heap_bytes": 35148224,
+      "peak_rss_bytes": 57835520
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cache-cancellation",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 500447833,
+      "go_heap_bytes": 11550032,
+      "peak_rss_bytes": 91652096
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "unicode",
+      "status": "PASS",
+      "detail": "[\"\\ud800\",\"\\ud800\",\"\ud83d\ude00\",\"\\udfff\"]",
+      "duration_ns": 187913792,
+      "go_heap_bytes": 4333632,
+      "peak_rss_bytes": 60391424
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "numbers",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"9007199254740992\", Defined:true}; error=<nil>",
+      "duration_ns": 191581875,
+      "go_heap_bytes": 42084240,
+      "peak_rss_bytes": 59015168
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "exceptions",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=owned-quickjs evaluate [] at 0: QuickJS: TypeError: sentinel",
+      "duration_ns": 188835458,
+      "go_heap_bytes": 41336720,
+      "peak_rss_bytes": 61472768
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "conversion-limits",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=owned-quickjs evaluate [] at 0: resource limit exceeded\nQuickJS: Error: JSONTRANS_LIMIT: output depth\nowned-quickjs evaluate [] at 0: resource limit exceeded\nQuickJS: Error: JSONTRANS_LIMIT: collection\nowned-quickjs evaluate [] at 0: resource limit exceeded\nQuickJS: Error: JSONTRANS_LIMIT: output bytes",
+      "duration_ns": 189782166,
+      "go_heap_bytes": 49064480,
+      "peak_rss_bytes": 61440000
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "limits-forwarding",
+      "status": "FAIL",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=js evaluate [] at 0: unsupported option: JS instruction and per-regex limits",
+      "duration_ns": 188424417,
+      "go_heap_bytes": 46842904,
+      "peak_rss_bytes": 60768256
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "prepared-fallback",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+      "duration_ns": 189470666,
+      "go_heap_bytes": 42348064,
+      "peak_rss_bytes": 58310656
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "exception-coercion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 265875291,
+      "go_heap_bytes": 48728752,
+      "peak_rss_bytes": 59768832
+    }
+  ]
+}

@@ -52,7 +52,12 @@ func Probe(backend Backend, name string) (o Observation) {
 		return
 	}
 	defer e.Close()
-	if name == "cache-cancellation" {
+	if backend == OwnedQuickJS {
+		if value, handled := probeOwned(e, name); handled {
+			return value
+		}
+	}
+	if name == "cache-cancellation" && backend != OwnedQuickJS {
 		if backend == Goja {
 			o.Status = "N/A"
 			o.Detail = "no wrapper-wide cancellation config cache"

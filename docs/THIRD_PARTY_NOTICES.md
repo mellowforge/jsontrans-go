@@ -19,3 +19,8 @@ solely for the separate development reference job and is not linked into Go code
 The optional JavaScript development module has separate dependency pins, artifact
 provenance and licensing notes in [its README](../experiments/javascript/README.md).
 It does not alter the native library dependency graph.
+
+The owned experimental Wasm guest additionally retains QuickJS-ng and linked
+WASI C-runtime/LLVM compiler-runtime notices in
+[its guest directory](../experiments/javascript/internal/quickjswasm/guest).
+Source, toolchain and artifact hashes are pinned in `lock.json` there.

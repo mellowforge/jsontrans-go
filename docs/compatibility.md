@@ -3,14 +3,16 @@
 Targets: JSONPath RFC 9535 (including RFC 9485 I-Regexp), JSONata 2.2.2.
 See conformance/README.md for immutable fixture revisions. Upstream source
 informs native implementations; Node and the JavaScript implementation are
-test tools only. There are no complete-language runtime dependencies.
+test tools only for the native engines. The root module has no complete-language
+runtime dependencies; JavaScript experiments remain in a separate module.
 
 The pinned JSONata suite passes all 1,291 fixture files (1,686 cases), and the
 JSONPath suite passes all 715 cases with the two explicit errata below. The
 Node-only reference job additionally compares selected expressions, operator
 combinations and the JSONata fast plans against JSONata 2.2.2. A reference
-error without a code must match a Go error that also has none. No public
-release has been published.
+error without a code must match a Go error that also has none. The native-library
+release [v1.1.0](https://github.com/mellowforge/jsontrans-go/releases/tag/v1.1.0)
+requires Go 1.26. Experimental JavaScript is not part of its supported processor API.
 
 Pinned suites execute both ordinary evaluation and prepared evaluation for
 every representable JSON input. JSONata fixtures with undefined input retain the

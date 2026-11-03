@@ -53,8 +53,9 @@ allocation-growth probe is recorded as a **failed gate by audit**, without
 executing it. Every other case is executed or explicitly marked inapplicable;
 failures are retained in JSON, including watchdog kills. `--strict` makes gate
 failure visible to automation. Ordinary unit tests avoid deliberate hangs.
-Trusted semantic fixtures raise the timeout to 10 seconds so race-instrumented
-Wasm compilation does not consume the production one-second default.
+Trusted semantic fixtures raise the timeout to 10 seconds, or 100 seconds in race builds, so instrumented Wasm compilation
+does not consume the production one-second default. Explicit cancellation
+deadlines are unchanged.
 
 Import audit and artifact fingerprint:
 
@@ -79,8 +80,9 @@ done
 ```
 
 `cmd/goja-min` and `cmd/quickjs-min` isolate the embedded engine's minimum size
-cost. The full assessment binary links **both** engines and the root helpers;
-it is not the binary cost of a future single-engine production adapter.
+cost. The original assessment binary linked **both baseline** engines and root helpers;
+the current command additionally links the owned backend. The historical result
+is not the binary cost of a future single-engine production adapter.
 
 Recorded measurements are in [testdata/results](testdata/results). RSS is
 process-wide, includes Go and executable/compiler memory, and is distinct from
@@ -96,7 +98,44 @@ See [go.mod](go.mod), [go.sum](go.sum) and the build dependency manifest in
 a 1,038,767-byte Wasm artifact; its SHA-256 and imports are recorded by the audit.
 QJS, QuickJS-ng, Goja and regexp2 use MIT licenses; Wazero uses Apache-2.0;
 Go text, sourcemap and pprof carry BSD licenses. Original licenses remain in their
-module source distributions. No upstream engine source or artifact is copied into
-this repository. Rebuilding the Wasm engine requires an upstream source checkout
+module source distributions. The original QJS/Goja assessment copied no engine
+source or artifact. The later
+owned checkpoint checks in its generated guest and linked-runtime notices under
+`internal/quickjswasm`; its source/toolchain pins are recorded separately. Rebuilding the baseline QJS
+artifact requires an upstream source checkout
 with its submodule, WASI SDK, CMake, Make and Binaryen `wasm-opt`; production
 must establish a reproducible artifact build and provenance before adoption.
+
+## Owned runtime checkpoint
+
+The additional `owned-quickjs` backend uses a project-owned QuickJS-ng/Wazero ABI.
+It is experimental and has one remaining public integration gate. See the
+[checkpoint report](../../docs/quickjs-runtime-foundation.md) for its time-snapshot
+profile, resource guarantees, measurements and remaining work. Original backend
+results remain unchanged; new evidence is under `testdata/results/owned`.
+
+```sh
+CGO_ENABLED=0 go build -o /tmp/jsontrans-owned-assess ./cmd/assess
+python3 run_probes.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs --output testdata/results/owned/probes.json
+# Expected exit 1: registry limit forwarding remains an explicitly failed gate.
+python3 run_probes.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs --strict --output /tmp/owned-full.json
+python3 measure_cold.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs --output testdata/results/owned/cold.json
+GOMAXPROCS=1 go test -run '^$' -bench '^BenchmarkLifecycle/owned-quickjs' -benchmem -benchtime=200ms -count=5 -cpu=1 > testdata/results/owned/bench.txt
+GOMAXPROCS=1 go test ./internal/quickjswasm -run '^$' -bench '^BenchmarkOwnedRuntimeInitialization$' -benchmem -benchtime=200ms -count=5 -cpu=1 >> testdata/results/owned/bench.txt
+GOMAXPROCS=1 go test ./internal/quickjswasm -run '^$' -bench '^BenchmarkOwnedRuntimeClose$' -benchmem -benchtime=100x -count=5 -cpu=1 >> testdata/results/owned/bench.txt
+python3 summarize.py --results testdata/results/owned
+go test -run '^$' -fuzz '^FuzzOwnedStringConversion$' -fuzztime=200x -parallel=2
+go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzOwnedCompile$' -fuzztime=200x -parallel=2
+```
+
+Rebuild the embedded guest with Python 3.12+ (first run downloads about 180 MiB
+of checksummed SDK tools). Compare with the committed artifact:
+
+```sh
+python3 internal/quickjswasm/guest/build.py --output /tmp/owned-quickjs.wasm
+cmp internal/quickjswasm/quickjs.wasm /tmp/owned-quickjs.wasm
+```
+
+The guest directory retains QuickJS and linked C-runtime licenses and component
+pins. Baseline QJS/Goja imports are assessment dependencies; the owned runtime
+package imports neither implementation and creates no host capability modules.

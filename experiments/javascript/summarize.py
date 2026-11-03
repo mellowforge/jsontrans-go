@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Summarize five benchmark samples; raw observations remain authoritative."""
-import collections, json, pathlib, re, statistics
-root = pathlib.Path(__file__).parent / 'testdata/results'
+import argparse, collections, json, pathlib, re, statistics
+parser = argparse.ArgumentParser()
+parser.add_argument("--results", type=pathlib.Path, default=pathlib.Path(__file__).parent / "testdata/results")
+args = parser.parse_args()
+root = args.results
 rows = collections.defaultdict(list)
 for line in (root / 'bench.txt').read_text().splitlines():
     match = re.match(r'(Benchmark\S+)\s+\d+\s+([\d.]+) ns/op\s+(?:[\d.]+ MB/s\s+)?(\d+) B/op\s+(\d+) allocs/op', line)

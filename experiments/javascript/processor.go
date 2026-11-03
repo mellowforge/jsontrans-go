@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	jt "github.com/mellowforge/jsontrans-go"
+	"github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm"
 	"github.com/mellowforge/jsontrans-go/internal/budget"
 	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
 )
@@ -20,8 +21,9 @@ import (
 type Backend string
 
 const (
-	QuickJS Backend = "quickjs"
-	Goja    Backend = "goja"
+	QuickJS      Backend = "quickjs"
+	Goja         Backend = "goja"
+	OwnedQuickJS Backend = "owned-quickjs"
 )
 
 type Config struct {
@@ -33,6 +35,7 @@ type Engine struct {
 	backend Backend
 	config  Config
 	dir     string
+	owned   *quickjswasm.Engine
 }
 type Program struct {
 	engine      *Engine
@@ -45,7 +48,7 @@ type Program struct {
 var bridge string
 
 func New(backend Backend, c Config) (*Engine, error) {
-	if backend != QuickJS && backend != Goja {
+	if backend != QuickJS && backend != Goja && backend != OwnedQuickJS {
 		return nil, fmt.Errorf("unknown backend %q", backend)
 	}
 	if c.Limits.MaxSteps != 0 || c.Limits.RegexTimeout != 0 {
@@ -62,11 +65,21 @@ func New(backend Backend, c Config) (*Engine, error) {
 	if c.GuestMemoryBytes == 0 {
 		c.GuestMemoryBytes = 64 << 20
 	}
-	if c.GuestStackBytes == 0 {
+	if c.GuestStackBytes == 0 && backend != OwnedQuickJS {
 		c.GuestStackBytes = 1 << 20
 	}
 	if c.GuestMemoryBytes < 0 || c.GuestStackBytes < 0 {
 		return nil, jt.ErrLimit
+	}
+	if backend == OwnedQuickJS {
+		if c.GuestMemoryBytes%65536 != 0 || c.GuestMemoryBytes < 2<<20 || c.GuestMemoryBytes > 64<<20 || c.GuestStackBytes != 0 {
+			return nil, fmt.Errorf("%w: owned guest memory 2..64 MiB in pages; explicit JS stack quotas unsupported", jt.ErrUnsupported)
+		}
+		owned, err := quickjswasm.New(context.Background(), quickjswasm.Config{MemoryPages: uint32(c.GuestMemoryBytes / 65536), Timeout: l.Timeout})
+		if err != nil {
+			return nil, err
+		}
+		return &Engine{backend: backend, config: c, owned: owned}, nil
 	}
 	dir, err := os.MkdirTemp("", "jsontrans-js-empty-")
 	if err != nil {
@@ -75,8 +88,14 @@ func New(backend Backend, c Config) (*Engine, error) {
 	return &Engine{backend: backend, config: c, dir: dir}, nil
 }
 
-// Close removes the assessment's empty mount. Calls must have finished first.
-func (e *Engine) Close() error       { return os.Remove(e.dir) }
+// Close releases owned runtime resources, or removes the baseline wrapper mount.
+// Baseline-wrapper calls must have finished first.
+func (e *Engine) Close() error {
+	if e.owned != nil {
+		return e.owned.Close()
+	}
+	return os.Remove(e.dir)
+}
 func (e *Engine) Limits() jt.Limits  { return e.config.Limits }
 func (p *Program) Limits() jt.Limits { return p.engine.Limits() }
 func (e *Engine) Compile(ctx context.Context, expr string) (jt.Program, error) {
@@ -90,7 +109,12 @@ func (e *Engine) Compile(ctx context.Context, expr string) (jt.Program, error) {
 	}
 	p := &Program{engine: e}
 	source := "(" + expr + "\n)"
-	if e.backend == Goja {
+	if e.backend == OwnedQuickJS {
+		p.quick, err = e.owned.Compile(b.Context(), source)
+		if err == nil {
+			p.quickBridge, err = e.owned.Compile(b.Context(), bridge)
+		}
+	} else if e.backend == Goja {
 		p.goja, err = compileGoja(source)
 	} else {
 		p.quick, p.quickBridge, err = e.compileQuick(b.Context(), source)
@@ -146,7 +170,9 @@ func (p *Program) Eval(ctx context.Context, input any, o jt.EvalOptions) (result
 		return result, err
 	}
 	var text string
-	if p.engine.backend == Goja {
+	if p.engine.backend == OwnedQuickJS {
+		text, err = p.engine.owned.Eval(b.Context(), p.quick, p.quickBridge, in, vars, quickjswasm.Limits{Depth: l.MaxDepth, Items: l.MaxCollectionItems, Bytes: l.MaxOutputBytes, Work: l.MaxSteps})
+	} else if p.engine.backend == Goja {
 		text, err = p.runGoja(b.Context(), in, vars, l)
 	} else {
 		text, err = p.runQuick(b.Context(), in, vars, l)

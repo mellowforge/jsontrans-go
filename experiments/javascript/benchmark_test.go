@@ -25,7 +25,7 @@ func workload() (map[string]any, []byte) {
 	return input, data
 }
 func BenchmarkLifecycle(b *testing.B) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		b.Run(string(backend), func(b *testing.B) {
 			e, err := New(backend, Config{})
 			if err != nil {
@@ -55,23 +55,26 @@ func BenchmarkLifecycle(b *testing.B) {
 					}
 				}
 			})
-			b.Run("runtime-init", func(b *testing.B) {
-				b.ReportAllocs()
-				for b.Loop() {
-					if backend == QuickJS {
-						rt, err := e.newQuick(ctx)
-						if err != nil {
-							b.Fatal(err)
-						}
-						rt.Close()
-					} else {
-						vm := goja.New()
-						if _, err := vm.RunString("1+1"); err != nil {
-							b.Fatal(err)
+			if backend != OwnedQuickJS {
+				b.Run("runtime-init", func(b *testing.B) {
+					b.ReportAllocs()
+					for b.Loop() {
+						if backend == QuickJS {
+							rt, err := e.newQuick(ctx)
+							if err != nil {
+								b.Fatal(err)
+							}
+							rt.Close()
+						} else {
+							vm := goja.New()
+							if _, err := vm.RunString("1+1"); err != nil {
+								b.Fatal(err)
+							}
 						}
 					}
-				}
-			})
+				})
+			}
+
 			b.Run("eval-go-value", func(b *testing.B) {
 				b.ReportAllocs()
 				for b.Loop() {

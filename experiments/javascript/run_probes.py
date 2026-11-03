@@ -5,13 +5,20 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--binary', default='/tmp/jsontrans-js-assess')
 parser.add_argument('--output', default='testdata/results/probes.json')
 parser.add_argument('--strict', action='store_true')
+parser.add_argument('--backend', action='append', choices=['quickjs','goja','owned-quickjs'])
+parser.add_argument('--case', dest='selected_cases', action='append')
 args = parser.parse_args()
 cases = ['cold-start', 'compile-cancel', 'cancel-loop', 'cancel-regex', 'cancel-conversion',
          'recursion', 'allocation-cap', 'guest-memory', 'cleanup', 'host-capabilities',
          'cache-cancellation', 'unicode', 'numbers', 'exceptions', 'conversion-limits',
          'limits-forwarding', 'prepared-fallback', 'exception-coercion']
 rows = []
-for backend in ['quickjs', 'goja']:
+if args.selected_cases:
+    unknown = set(args.selected_cases) - set(cases)
+    if unknown:
+        parser.error('unknown cases: ' + ', '.join(sorted(unknown)))
+    cases = args.selected_cases
+for backend in args.backend or ['quickjs', 'goja']:
     for case in cases:
         try:
             child = subprocess.run([args.binary, '-backend', backend, '-probe', case],

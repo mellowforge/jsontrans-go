@@ -24,5 +24,5 @@ register functions exposing capabilities that expression authors should not have
 
 Do not disclose exploitable vulnerabilities in public issues. Before public
 release, maintainers must enable private vulnerability reporting on the GitHub
-repository and identify a monitored contact route there. This project currently
-has no supported public releases.
+repository and identify a monitored contact route there. Releases currently reside in a private repository. JavaScript experiments
+have not been released as a supported processor.
