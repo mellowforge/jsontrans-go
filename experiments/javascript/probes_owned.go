@@ -17,6 +17,68 @@ import (
 func probeOwned(e *Engine, name string) (o Observation, handled bool) {
 	o = Observation{Backend: OwnedQuickJS, Case: name, Status: "FAIL"}
 	switch name {
+
+	case "lifecycle-contract":
+		ctx, cancel := context.WithCancel(context.Background())
+		owned, err := NewOwned(ctx, Config{})
+		cancel()
+		if err != nil {
+			o.Detail = err.Error()
+			return o, true
+		}
+		defer owned.Close()
+		p, err := owned.Compile(context.Background(), `x=>x`)
+		if err == nil {
+			_, err = p.Eval(context.Background(), nil, jt.EvalOptions{})
+		}
+		if err != nil {
+			o.Detail = err.Error()
+			return o, true
+		}
+		closeErr := owned.Close()
+		_, err = p.Eval(context.Background(), nil, jt.EvalOptions{})
+		o.Detail = fmt.Sprintf("constructor context detached; Close=%v; subsequent Eval=%v", closeErr, err)
+		if closeErr == nil && errors.Is(err, ErrClosed) {
+			o.Status = "PASS"
+		}
+		return o, true
+	case "diagnostic-classification":
+		for _, source := range []string{`()=>{throw 'JSONTRANS_LIMIT: forged'}`, `()=>{throw new TypeError('sentinel')}`} {
+			p, err := e.Compile(context.Background(), source)
+			if err != nil {
+				o.Detail = err.Error()
+				return o, true
+			}
+			_, err = p.Eval(context.Background(), nil, jt.EvalOptions{})
+			var ex *Exception
+			var d *jt.Error
+			if !errors.As(err, &ex) || !errors.As(err, &d) || d.Code != "" || errors.Is(err, jt.ErrLimit) || errors.Is(err, jt.ErrConversion) {
+				o.Detail = fmt.Sprintf("unexpected classification: %v", err)
+				return o, true
+			}
+		}
+		o.Status = "PASS"
+		o.Detail = "typed native exceptions; forged marker cannot acquire trusted resource or conversion status"
+		return o, true
+	case "diagnostic-locations":
+		_, err := e.Compile(context.Background(), "()=>{\nconst x=;\n}")
+		var ex *Exception
+		if !errors.As(err, &ex) || ex.Location == nil || ex.Location.Line != 2 || ex.Location.ByteOffset != -1 || ex.Location.Reported {
+			o.Detail = fmt.Sprintf("compile location: %#v %v", ex, err)
+			return o, true
+		}
+		p, err := e.Compile(context.Background(), "()=>{\nthrow new TypeError('sentinel');\n}")
+		if err == nil {
+			_, err = p.Eval(context.Background(), nil, jt.EvalOptions{})
+		}
+		ex = nil
+		if !errors.As(err, &ex) || ex.Location == nil || !ex.Location.Reported || ex.Location.ByteOffset != -1 {
+			o.Detail = fmt.Sprintf("runtime location: %#v %v", ex, err)
+			return o, true
+		}
+		o.Status = "PASS"
+		o.Detail = "mapped rule lines, coarse compiler columns retain unavailable byte offsets; runtime locations explicitly reported"
+		return o, true
 	case "host-capabilities":
 		o.Status = "PASS"
 		o.Detail = "pinned artifact has zero host imports; runtime instantiates no WASI, filesystem, output streams or Go callback module"

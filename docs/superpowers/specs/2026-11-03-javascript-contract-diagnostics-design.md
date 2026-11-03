@@ -1,6 +1,6 @@
 # JavaScript execution contract and diagnostics
 
-Status: proposed for review; this document authorizes no production release.
+Status: approved for implementation; this document authorizes no production release.
 First implementation PR after registry integration, based on merged `b03b7c6`.
 
 ## Intent and scope
