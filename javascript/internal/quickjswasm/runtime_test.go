@@ -231,7 +231,11 @@ func TestSourceCompileCancellationInsideInitializedGuest(t *testing.T) {
 					}
 					unblock()
 					<-done
-					if callErr == nil || !errors.Is(e.failure(ctx, callErr), context.Canceled) || len(compiled) != 0 {
+					normalized := callErr
+					if direct {
+						normalized = e.failure(ctx, callErr)
+					}
+					if callErr == nil || !errors.Is(normalized, context.Canceled) || len(compiled) != 0 {
 						t.Fatalf("in-flight compile (direct=%v, source bytes=%d): %v", direct, len(source), callErr)
 					}
 				}()
