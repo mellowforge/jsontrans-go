@@ -145,3 +145,29 @@ Explicit steps and regex-timeout requests remain unsupported. Historical
 in [`testdata/results/registry/probes.json`](testdata/results/registry/probes.json).
 CI runs all 18 owned probes in strict mode. See the
 [follow-up report](../../docs/registry-limit-forwarding.md).
+
+The owned constructor `NewOwned(ctx, Config)` uses ctx only for initialization.
+Its engine owns its caches and must be closed by the caller. Close stops
+admission, cancels and drains entire admitted calls, then closes runtime resources.
+Per-call timeout overrides replace configured rule timeouts; the caller context
+can stop the call earlier. The owned profile retains a UTC time snapshot per
+guest and guest-local noncryptographic Math.random; time does not advance inside
+an evaluation. Compilation does not execute function-expression initializers.
+
+## Execution contract follow-up
+
+The [owned execution contract](../../docs/javascript-execution-contract.md)
+defines NewOwned, complete-call Close, effective timeouts and typed Exception
+diagnostics. The full strict owned assessment now has 21 required cases.
+Compiler columns in the pinned engine are coarse; offsets remain unavailable.
+ABI v2 is rebuilt and capability-free; this is still an experiment.
+
+```sh
+CGO_ENABLED=0 go build -o /tmp/jsontrans-contract-assess ./cmd/assess
+python3 run_probes.py --binary /tmp/jsontrans-contract-assess --backend owned-quickjs --strict --output testdata/results/contract/probes.json
+go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzDiagnosticRecord$' -fuzztime=1000x -parallel=2
+go test -run '^$' -fuzz '^FuzzRuleLocation$' -fuzztime=1000x -parallel=2
+```
+
+The editable [processor atlas](https://www.figma.com/board/lTXgmGOWS3Hmh6IQzzmMmB)
+covers native JSONPath, native JSONata, experimental JS and common prepared/batch APIs.

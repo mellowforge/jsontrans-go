@@ -13,6 +13,10 @@ The native library's [v1.1.0 release](https://github.com/mellowforge/jsontrans-g
 is tagged at verified merged commit `c0519ea48d8022721b0d847e3def176d5a99e361`.
 This new prototype is subsequent work and is not included in that release.
 
+The subsequent [execution contract](javascript-execution-contract.md) adds
+owned lifecycle/typed diagnostics and ABI v2. Artifact/measurement numbers below
+remain the historical ABI v1 checkpoint.
+
 ## What changed
 
 `experiments/javascript/internal/quickjswasm` owns its Go/Wazero boundary and a

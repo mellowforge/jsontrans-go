@@ -38,6 +38,7 @@ type Config struct {
 type Limits struct {
 	Depth, Items, Bytes int
 	Work                int64
+	Timeout             time.Duration
 }
 type Stats struct{ GuestBefore, GuestAfter uint32 }
 type Engine struct {
@@ -68,8 +69,6 @@ func New(ctx context.Context, c Config) (*Engine, error) {
 	if c.MemoryPages < 32 || c.MemoryPages > 1024 || c.Timeout < 0 {
 		return nil, fmt.Errorf("%w: owned guest pages 32..1024 and positive timeout", jt.ErrUnsupported)
 	}
-	ctx, cancel := context.WithTimeout(ctx, c.Timeout)
-	defer cancel()
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
@@ -135,14 +134,17 @@ func (e *Engine) Close() error {
 	})
 	return e.closeErr
 }
-func (e *Engine) operation(ctx context.Context) (context.Context, func(), error) {
+func (e *Engine) operation(ctx context.Context, timeout time.Duration) (context.Context, func(), error) {
 	if ctx == nil {
 		return nil, nil, errors.New("nil context")
 	}
 	if e.closed.Load() {
 		return nil, nil, ErrClosed
 	}
-	ctx, cancel := context.WithTimeout(ctx, e.config.Timeout)
+	if timeout == 0 {
+		timeout = e.config.Timeout
+	}
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	stop := context.AfterFunc(e.ctx, cancel)
 	done := func() { stop(); cancel() }
 	if err := ctx.Err(); err != nil {
@@ -164,7 +166,7 @@ func (e *Engine) instantiate(ctx context.Context) (api.Module, error) {
 	if err != nil {
 		return fail(err)
 	}
-	if version != 1 {
+	if version != 2 {
 		return fail(errors.New("guest ABI version mismatch"))
 	}
 	now := uint64(time.Now().UnixMicro())
@@ -229,7 +231,7 @@ func output(ctx context.Context, m api.Module, maximum int) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if status != 0 && maximum > 65536 {
+	if status != 0 {
 		maximum = 65536
 	}
 	if length > uint64(maximum) {
@@ -248,15 +250,33 @@ func output(ctx context.Context, m api.Module, maximum int) ([]byte, error) {
 		return nil, err
 	}
 	if status != 0 {
-		return nil, fmt.Errorf("QuickJS: %s", owned)
+		if status != 1 {
+			return nil, errors.New("invalid owned diagnostic status")
+		}
+		f, err := decodeFailure(ctx, owned)
+		if err != nil {
+			return nil, err
+		}
+		return nil, f
 	}
 	return owned, nil
 }
 func (e *Engine) Compile(ctx context.Context, source string) ([]byte, error) {
+	return e.CompileNamed(ctx, source, "rule.js")
+}
+func (e *Engine) CompileNamed(ctx context.Context, source, name string) ([]byte, error) {
+	var kind uint64
+	switch name {
+	case "rule.js":
+	case "bridge.js":
+		kind = 1
+	default:
+		return nil, errors.New("unsupported source name")
+	}
 	if len(source) > maxTransfer {
 		return nil, fmt.Errorf("%w: source transfer bytes", jt.ErrLimit)
 	}
-	ctx, done, err := e.operation(ctx)
+	ctx, done, err := e.operation(ctx, e.config.Timeout)
 	if err != nil {
 		return nil, err
 	}
@@ -270,7 +290,7 @@ func (e *Engine) Compile(ctx context.Context, source string) ([]byte, error) {
 	if err != nil {
 		return nil, e.failure(ctx, err)
 	}
-	if _, err = call(ctx, m, "abi_compile", ptr, uint64(len(source))); err != nil {
+	if _, err = call(ctx, m, "abi_compile", ptr, uint64(len(source)), kind); err != nil {
 		return nil, e.failure(ctx, err)
 	}
 	code, err := output(ctx, m, maxBytecode)
@@ -287,7 +307,7 @@ func (e *Engine) EvalStats(ctx context.Context, rule, bridge []byte, input, bind
 	if l.Depth <= 0 || uint64(l.Depth) > math.MaxUint32 || l.Items <= 0 || uint64(l.Items) > math.MaxUint32 || l.Bytes <= 0 || l.Bytes > maxTransfer || l.Work <= 0 || l.Work > math.MaxUint32 {
 		return "", stats, fmt.Errorf("%w: ABI conversion limits", jt.ErrUnsupported)
 	}
-	ctx, done, err := e.operation(ctx)
+	ctx, done, err := e.operation(ctx, l.Timeout)
 	if err != nil {
 		return "", stats, err
 	}

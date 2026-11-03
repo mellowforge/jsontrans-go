@@ -7,8 +7,8 @@
     "arm64-macos": "9c59398106b417f8f14913380fdf0097a8cc0ff4af9eb3ce0065a859e88d49e9",
     "x86_64-linux": "b761e3a0721dbae9c09a0059e5fdb2bf917d1b4a8a7b430fb3b5aafb0984b2c4"
   },
-  "abi_version": 1,
-  "artifact_sha256": "16fb2a9c4233a4d216e103f86ba25f53516ee1b8e358e4a41cb62056f08ae4ae",
+  "abi_version": 2,
+  "artifact_sha256": "29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e",
   "sdk_llvm_commit": "895aa2c896ada719451be2e3673c83da8ddf1141",
   "sdk_wasi_libc_commit": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13"
 }

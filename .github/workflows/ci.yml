@@ -80,6 +80,8 @@ jobs:
 
       - run: go test -run '^$' -fuzz '^FuzzOwnedStringConversion$' -fuzztime=200x -parallel=2
       - run: go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzOwnedCompile$' -fuzztime=200x -parallel=2
+      - run: go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzDiagnosticRecord$' -fuzztime=1000x -parallel=2
+      - run: go test -run '^$' -fuzz '^FuzzRuleLocation$' -fuzztime=1000x -parallel=2
 
   quickjs-guest-reproducibility:
     runs-on: ubuntu-latest
