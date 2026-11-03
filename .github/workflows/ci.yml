@@ -36,7 +36,8 @@ jobs:
           go-version: '1.25.x'
       # Execution counts, not durations: a timed -fuzztime can report its own
       # normal expiry as "context deadline exceeded" (a race in the Go fuzz
-      # coordinator). The counts are roughly 10s each on ubuntu-latest.
+      # coordinator). The counts match the executions the earlier 10s runs
+      # completed on ubuntu-latest.
       - run: go test ./jsonpath -run '^$' -fuzz '^FuzzCompileAndEval$' -fuzztime=40000x
       - run: go test ./jsonata -run '^$' -fuzz '^FuzzCompileAndEval$' -fuzztime=14000x
       - run: go test ./internal/document -run '^$' -fuzz '^FuzzPrepareAndMaterialize$' -fuzztime=27000x
