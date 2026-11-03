@@ -65,27 +65,26 @@ Median of three benchmark samples:
 
 | Public operation | Time/op | Go B/op | Go allocations/op |
 |---|---:|---:|---:|
-| NewClose | 186.245 ms | 45,023,124 | 76,740 |
-| Compile | 2.537 ms | 4,519,985 | 1,146 |
-| Eval | 0.845 ms | 2,293,292 | 675 |
-| EvalJSON | 0.846 ms | 2,300,390 | 805 |
-| PreparedFallback | 0.850 ms | 2,297,244 | 736 |
-| PreparedBatch4 | 3.360 ms | 9,186,721 | 2,909 |
+| NewClose | 184.418 ms | 45,023,124 | 76,740 |
+| Compile | 2.582 ms | 4,523,359 | 1,146 |
+| Eval | 0.808 ms | 2,293,310 | 675 |
+| EvalJSON | 0.783 ms | 2,300,396 | 806 |
+| PreparedFallback | 0.774 ms | 2,297,294 | 737 |
+| PreparedBatch4 | 3.074 ms | 9,186,913 | 2,910 |
 
 The final soak checked 40,000 mixed iterations plus 40,000 recovery
 evaluations and 10 first evaluations across ten engine lifecycles, four workers,
-in 63.04 seconds. Each outcome category occurred 8,000 times.
-Median construction was 189.00 ms and the median first constant-expression
-Eval was 1.101 ms. Post-close/post-GC samples ranged from
-0.38 to 1.00 MiB retained Go heap; each sample had one goroutine.
-Maximum process RSS was 79,937,536 bytes (76.23 MiB), separately measured by macOS time.
+in 62.34 seconds. Each outcome category occurred 8,000 times.
+Median construction was 187.80 ms and the median first constant-expression
+Eval was 1.067 ms. Post-close/post-GC samples ranged from
+0.38 to 0.95 MiB retained Go heap; each sample had one goroutine.
+Maximum process RSS was 88,031,232 bytes (83.95 MiB), separately measured by macOS time.
 The soak deliberately uses an 8 MiB cap; benchmark engines use the 64 MiB default.
 
 Stripped, CGO-free darwin/arm64 binaries were 1,641,362 bytes for the trivial
 Go CLI and 6,289,730 bytes for the public-adapter example: a
 4,648,368-byte increase (4.43 MiB). This includes the adapter and its
 required core/runtime code, rather than isolating the embedded guest alone.
-
 
 Raw [benchmark output](../javascript/testdata/hardening/bench-darwin-arm64.txt),
 [soak JSON](../javascript/testdata/hardening/soak-darwin-arm64.json),

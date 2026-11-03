@@ -1,6 +1,6 @@
 {
   "date": "2026-11-03",
-  "measurement_source_commit": "e16880431ef7edaa9e790eb4819cfe655de3d282",
+  "measurement_source_commit": "da6cf31f1c403d2c563ed7092797ba9d1d0df1b4",
   "go_version": "go1.26.10",
   "platform": "darwin/arm64",
   "cpu": "Apple M5 Max",
@@ -9,37 +9,37 @@
   "benchmark_benchtime": "300ms",
   "benchmark_medians": {
     "NewClose": [
-      186244958,
+      184418271,
       45023124,
       76740
     ],
     "Compile": [
-      2537411,
-      4519985,
+      2581862,
+      4523359,
       1146
     ],
     "Eval": [
-      844926,
-      2293292,
+      807932,
+      2293310,
       675
     ],
     "EvalJSON": [
-      845623,
-      2300390,
-      805
+      782831,
+      2300396,
+      806
     ],
     "PreparedFallback": [
-      849883,
-      2297244,
-      736
+      773910,
+      2297294,
+      737
     ],
     "PreparedBatch4": [
-      3360350,
-      9186721,
-      2909
+      3073538,
+      9186913,
+      2910
     ]
   },
-  "soak_peak_rss_bytes": 79937536,
+  "soak_peak_rss_bytes": 88031232,
   "binary_bytes": {
     "jsontrans-js-bare": 1641362,
     "jsontrans-js-owned-min": 6289730
