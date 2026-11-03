@@ -3,25 +3,21 @@ package main
 import (
 	"context"
 	"fmt"
-
-	"github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm"
+	jt "github.com/mellowforge/jsontrans-go"
+	js "github.com/mellowforge/jsontrans-go/javascript"
 )
 
 func main() {
 	ctx := context.Background()
-	e, err := quickjswasm.New(ctx, quickjswasm.Config{})
+	e, err := js.New(ctx, js.Config{})
 	if err != nil {
 		panic(err)
 	}
 	defer e.Close()
-	rule, err := e.Compile(ctx, `()=>1+1`)
+	p, err := e.Compile(ctx, `()=>1+1`)
 	if err != nil {
 		panic(err)
 	}
-	codec, err := e.Compile(ctx, `rule=>JSON.stringify(rule())`)
-	if err != nil {
-		panic(err)
-	}
-	result, err := e.Eval(ctx, rule, codec, `null`, `{}`, quickjswasm.Limits{Depth: 256, Items: 100000, Bytes: 1024, Work: 1000000})
-	fmt.Println(result, err)
+	r, err := p.Eval(ctx, nil, jt.EvalOptions{})
+	fmt.Println(r.Value, err)
 }

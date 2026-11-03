@@ -7,7 +7,8 @@ toolchain go1.26.10
 require (
 	github.com/dop251/goja v0.0.0-20261102223426-a177d211bf60
 	github.com/fastschema/qjs v0.0.6
-	github.com/mellowforge/jsontrans-go v0.0.0
+	github.com/mellowforge/jsontrans-go v1.1.1-0.20261103173822-e9b9c0c71fe0
+	github.com/mellowforge/jsontrans-go/javascript v0.0.0-extraction
 	github.com/tetratelabs/wazero v1.9.0
 )
 
@@ -19,3 +20,5 @@ require (
 )
 
 replace github.com/mellowforge/jsontrans-go => ../..
+
+replace github.com/mellowforge/jsontrans-go/javascript => ../../javascript
