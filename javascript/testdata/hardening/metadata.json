@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-03",
+  "measurement_source_commit": "e16880431ef7edaa9e790eb4819cfe655de3d282",
+  "go_version": "go1.26.10",
+  "platform": "darwin/arm64",
+  "cpu": "Apple M5 Max",
+  "gomaxprocs": 18,
+  "benchmark_samples": 3,
+  "benchmark_benchtime": "300ms",
+  "benchmark_medians": {
+    "NewClose": [
+      186244958,
+      45023124,
+      76740
+    ],
+    "Compile": [
+      2537411,
+      4519985,
+      1146
+    ],
+    "Eval": [
+      844926,
+      2293292,
+      675
+    ],
+    "EvalJSON": [
+      845623,
+      2300390,
+      805
+    ],
+    "PreparedFallback": [
+      849883,
+      2297244,
+      736
+    ],
+    "PreparedBatch4": [
+      3360350,
+      9186721,
+      2909
+    ]
+  },
+  "soak_peak_rss_bytes": 79937536,
+  "binary_bytes": {
+    "jsontrans-js-bare": 1641362,
+    "jsontrans-js-owned-min": 6289730
+  },
+  "wasm_sha256": "29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e",
+  "notes": [
+    "Benchmark runs completed separately from soak.",
+    "Go memory samples are not RSS.",
+    "Construction includes a fresh engine-local Wasm compilation cache; process startup is excluded."
+  ]
+}

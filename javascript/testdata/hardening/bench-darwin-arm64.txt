@@ -1,0 +1,24 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: Apple M5 Max
+BenchmarkJavaScript/NewClose-18         	       2	 196142312 ns/op	45039944 B/op	   76774 allocs/op
+BenchmarkJavaScript/NewClose-18         	       2	 186244958 ns/op	45023124 B/op	   76740 allocs/op
+BenchmarkJavaScript/NewClose-18         	       2	 183600166 ns/op	45011176 B/op	   76735 allocs/op
+BenchmarkJavaScript/Compile-18          	     141	   2537411 ns/op	 4520926 B/op	    1148 allocs/op
+BenchmarkJavaScript/Compile-18          	     142	   2517281 ns/op	 4519908 B/op	    1146 allocs/op
+BenchmarkJavaScript/Compile-18          	     130	   2742405 ns/op	 4519985 B/op	    1146 allocs/op
+BenchmarkJavaScript/Eval-18             	     421	    870261 ns/op	 2293369 B/op	     675 allocs/op
+BenchmarkJavaScript/Eval-18             	     412	    844926 ns/op	 2293265 B/op	     675 allocs/op
+BenchmarkJavaScript/Eval-18             	     432	    835093 ns/op	 2293292 B/op	     675 allocs/op
+BenchmarkJavaScript/EvalJSON-18         	     420	    847278 ns/op	 2300390 B/op	     805 allocs/op
+BenchmarkJavaScript/EvalJSON-18         	     422	    845623 ns/op	 2300379 B/op	     805 allocs/op
+BenchmarkJavaScript/EvalJSON-18         	     427	    840608 ns/op	 2300392 B/op	     805 allocs/op
+BenchmarkJavaScript/PreparedFallback-18 	     422	    847649 ns/op	 2297241 B/op	     736 allocs/op
+BenchmarkJavaScript/PreparedFallback-18 	     411	    853735 ns/op	 2297244 B/op	     736 allocs/op
+BenchmarkJavaScript/PreparedFallback-18 	     420	    849883 ns/op	 2297266 B/op	     736 allocs/op
+BenchmarkJavaScript/PreparedBatch4-18   	     100	   3612897 ns/op	 9186466 B/op	    2909 allocs/op
+BenchmarkJavaScript/PreparedBatch4-18   	     100	   3360350 ns/op	 9186924 B/op	    2909 allocs/op
+BenchmarkJavaScript/PreparedBatch4-18   	     100	   3336457 ns/op	 9186721 B/op	    2908 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/javascript	7.111s
