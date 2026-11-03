@@ -5,6 +5,12 @@ module extraction. It tests the existing [execution contract](javascript-executi
 the module remains a **preview**. It does not introduce pooling, new capabilities,
 quotas, dependency updates or a release.
 
+A Windows gate exposed loss of trusted conversion classification after tight
+guest-heap exhaustion. A local linked-node exhaustion regression reproduces it.
+The bridge now initializes traversal closures before user execution and returns
+reserved trusted-failure outcomes directly, avoiding QuickJS backtrace
+allocation while throwing a private token. Guest/ABI/source/SDK pins are unchanged.
+
 ## Checks
 
 Public-engine tests use test-only Wazero function listeners to observe admitted

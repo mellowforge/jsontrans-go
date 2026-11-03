@@ -142,3 +142,22 @@ func TestOwnedDiagnosticHeapExhaustionPreservesOrigin(t *testing.T) {
 		})
 	}
 }
+
+func TestOwnedConversionAfterTightHeapExhaustion(t *testing.T) {
+	e, err := New(context.Background(), Config{GuestMemoryBytes: 8 << 20, Limits: jt.Limits{Timeout: semanticTestTimeout}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer e.Close()
+	// Retain small linked nodes instead of stopping at a failed large buffer or
+	// array resize. The returned primitive exists before the heap is exhausted.
+	p, err := e.Compile(context.Background(), `()=>{const result=1n;globalThis.keep=null;try{for(;;)keep={next:keep}}catch(e){}return result}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = p.Eval(context.Background(), nil, jt.EvalOptions{})
+	var d *jt.Error
+	if !errors.Is(err, jt.ErrConversion) || !errors.As(err, &d) || d.Phase != jt.PhaseOutput {
+		t.Fatalf("lost trusted conversion after tight exhaustion: %v", err)
+	}
+}

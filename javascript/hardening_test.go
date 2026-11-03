@@ -209,6 +209,8 @@ func TestPublicHostileResultsAndRecovery(t *testing.T) {
 		`()=>{const a=[];a[1]=1;return a}`, `()=>{const a=[1];a.extra=2;return a}`,
 		`()=>({[Symbol('x')]:1})`, `()=>({get x(){throw new Error('must not run')}})`,
 		`()=>{const x={};x.self=x;return x}`,
+		`()=>[[[1n]]]`,
+		`()=>[1n,new Proxy({}, {ownKeys(){throw new Error('must not visit tail')}})]`,
 	} {
 		t.Run(source, func(t *testing.T) {
 			p, err := e.Compile(context.Background(), source)
@@ -233,6 +235,8 @@ func TestPublicHostileResultsAndRecovery(t *testing.T) {
 		{`()=>[1,2,3]`, jt.Limits{MaxCollectionItems: 2}},
 		{`()=>({a:{b:1}})`, jt.Limits{MaxDepth: 2}},
 		{`()=>'abcdefgh'`, jt.Limits{MaxOutputBytes: 4}},
+		{`()=>[["abcdefgh"]]`, jt.Limits{MaxOutputBytes: 4}},
+		{`()=>({a:[{b:1}]})`, jt.Limits{MaxDepth: 2}},
 	} {
 		p, err := e.Compile(context.Background(), tc.source)
 		if err != nil {
