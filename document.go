@@ -53,11 +53,12 @@ func EvalPrepared(ctx context.Context, p Program, d *Document, o EvalOptions) (R
 }
 
 type preparedEntry struct {
-	program          Program
-	native           *prepared.Handler
-	configured       Limits
-	nativeConfigured Limits
-	name             string
+	program     Program
+	native      *prepared.Handler
+	configured  Limits
+	name        string
+	customized  bool
+	reuseBudget bool
 }
 
 func newPreparedEntry(p Program) (preparedEntry, error) {
@@ -65,7 +66,7 @@ func newPreparedEntry(p Program) (preparedEntry, error) {
 	if err != nil {
 		return preparedEntry{}, err
 	}
-	entry := preparedEntry{program: p, configured: l}
+	entry := preparedEntry{program: p, configured: l, customized: l != DefaultLimits()}
 	// Only the private registry wrapper may be unwrapped. An external embedding
 	// wrapper must retain its public dispatch and conversion boundary.
 	if checked, ok := p.(*checkedProgram); ok {
@@ -74,53 +75,64 @@ func newPreparedEntry(p Program) (preparedEntry, error) {
 	}
 	entry.native = prepared.Lookup(entry.program)
 	if entry.native != nil {
-		entry.nativeConfigured, err = effectiveLimits(entry.program, nil)
+		native, err := effectiveLimits(entry.program, nil)
 		if err != nil {
 			return preparedEntry{}, err
 		}
+		// Resolving an override after this intersection is equivalent to
+		// resolving it on both configurations first: nonzero fields replace
+		// both ceilings. Regex timing always belongs to the native engine.
+		entry.configured = intersectNativeLimits(l, native)
+		entry.customized = entry.customized || native != DefaultLimits()
+		entry.reuseBudget = entry.native.ReusableBudget() && !entry.customized
 	}
 	return entry, nil
 }
-func (e preparedEntry) eval(ctx context.Context, d *Document, o EvalOptions, plan prepared.BatchPlan, state any, index int, scratch *budget.Budget) (r Result, size int, err error) {
+func (e *preparedEntry) eval(ctx context.Context, d *Document, o EvalOptions, plan prepared.BatchPlan, state any, index int, scratch *budget.Budget) (Result, int, error) {
+	if o.Limits == nil {
+		return e.evalResolved(ctx, d, o, &e.configured, plan, state, index, scratch)
+	}
+	l, err := budget.Resolve(e.configured, o.Limits)
+	if err != nil {
+		if e.name != "" {
+			err = diagnostic(e.name, PhaseEvaluate, err)
+		}
+		return Result{}, 0, err
+	}
+	return e.evalResolved(ctx, d, o, &l, plan, state, index, scratch)
+}
+
+// evalResolved consumes a configuration resolved for this call. The caller may
+// reuse that immutable value, but expression budgets and bindings remain local.
+func (e *preparedEntry) evalResolved(ctx context.Context, d *Document, o EvalOptions, l *Limits, plan prepared.BatchPlan, state any, index int, scratch *budget.Budget) (r Result, size int, err error) {
 	defer func() {
 		if e.name != "" {
 			err = diagnostic(e.name, PhaseEvaluate, err)
 		}
 	}()
-	l, err := budget.Resolve(e.configured, o.Limits)
-	if err != nil {
-		return Result{}, 0, err
-	}
 	if e.native != nil {
 		return e.evalNative(ctx, d, o, l, plan, state, index, scratch)
 	}
-	return e.evalExternal(ctx, d, o, l)
+	return e.evalExternal(ctx, d, o, *l)
 }
-func (e preparedEntry) evalNative(ctx context.Context, d *Document, o EvalOptions, l Limits, plan prepared.BatchPlan, state any, index int, scratch *budget.Budget) (Result, int, error) {
-	if e.nativeConfigured != e.configured {
-		native, err := budget.Resolve(e.nativeConfigured, o.Limits)
-		if err != nil {
-			return Result{}, 0, err
-		}
-		l = intersectNativeLimits(l, native)
-	}
-	customized := o.Limits != nil || e.configured != DefaultLimits() || e.nativeConfigured != DefaultLimits()
+func (e *preparedEntry) evalNative(ctx context.Context, d *Document, o EvalOptions, l *Limits, plan prepared.BatchPlan, state any, index int, scratch *budget.Budget) (Result, int, error) {
+	customized := e.customized || o.Limits != nil
 	callback := e.native.Eval
 	if plan != nil {
 		callback = func(req prepared.Request) (prepared.Result, error) { return plan.Eval(index, req, state) }
 	}
 	var result prepared.Result
 	var err error
-	if scratch != nil && e.native.ReusableBudget() && !customized && o.Bindings == nil && d.Stats().Nodes < prepared.SmallDocumentNodes {
-		result, err = prepared.EvaluateInto(scratch, ctx, d, o.Bindings, l, customized, callback)
+	if scratch != nil && e.reuseBudget && o.Limits == nil && o.Bindings == nil && d.Stats().Nodes < prepared.SmallDocumentNodes {
+		result, err = prepared.EvaluateInto(scratch, ctx, d, o.Bindings, *l, customized, callback)
 	} else {
-		result, err = prepared.Evaluate(ctx, d, o.Bindings, l, customized, callback)
+		result, err = prepared.Evaluate(ctx, d, o.Bindings, *l, customized, callback)
 	}
 	return Result{Value: result.Value, Defined: result.Defined}, result.Bytes, err
 }
 
 // Keep external option pointers and callback scopes off the native dispatch path.
-func (e preparedEntry) evalExternal(ctx context.Context, d *Document, o EvalOptions, l Limits) (r Result, size int, err error) {
+func (e *preparedEntry) evalExternal(ctx context.Context, d *Document, o EvalOptions, l Limits) (r Result, size int, err error) {
 	if err = d.CheckLimits(ctx, l); err != nil {
 		return Result{}, 0, err
 	}
@@ -135,7 +147,7 @@ func (e preparedEntry) evalExternal(ctx context.Context, d *Document, o EvalOpti
 			return Result{}, 0, err
 		}
 	}
-	if o.Limits != nil || e.configured != DefaultLimits() {
+	if o.Limits != nil || e.customized {
 		o.Limits = &l
 	}
 	if p, ok := e.program.(PreparedProgram); ok {

@@ -1,0 +1,10 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkCompiledBatch/1024/mixed/N16/reused_doc/new_dst-18         	   48104	      7423 ns/op	    3972 B/op	     121 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/reused_doc/reused_dst-18      	   48934	      7509 ns/op	    3588 B/op	     120 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/prepare_and_batch/new_dst-18  	   30523	     12093 ns/op	   14953 B/op	     143 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/prepare_and_batch/reused_dst-18         	   30015	     11641 ns/op	   14569 B/op	     142 allocs/op
+BenchmarkCompiledBatch/1024/mixed/N16/gnata_warmed-18                         	   37921	      9290 ns/op	   12184 B/op	     251 allocs/op
+PASS

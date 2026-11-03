@@ -1,0 +1,36 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/new_dst-18         	   25987	      9526 ns/op	    3972 B/op	     121 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/new_dst-18         	   28126	      9330 ns/op	    3972 B/op	     121 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/new_dst-18         	   24960	     10233 ns/op	    3972 B/op	     121 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/new_dst-18         	   25063	     10131 ns/op	    3972 B/op	     121 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/new_dst-18         	   25440	      9817 ns/op	    3972 B/op	     121 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/reused_dst-18      	   24712	     10047 ns/op	    3587 B/op	     120 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/reused_dst-18      	   25149	      9534 ns/op	    3588 B/op	     120 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/reused_dst-18      	   24727	     10047 ns/op	    3588 B/op	     120 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/reused_dst-18      	   24734	     10160 ns/op	    3587 B/op	     120 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/reused_doc/reused_dst-18      	   23196	      9436 ns/op	    3587 B/op	     120 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/new_dst-18  	   10000	     23526 ns/op	   22130 B/op	     143 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/new_dst-18  	   10000	     23450 ns/op	   22129 B/op	     143 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/new_dst-18  	   10000	     23702 ns/op	   22131 B/op	     143 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/new_dst-18  	   10000	     22840 ns/op	   22130 B/op	     143 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/new_dst-18  	   10000	     22138 ns/op	   22129 B/op	     143 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/reused_dst-18         	   10000	     21738 ns/op	   21745 B/op	     142 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/reused_dst-18         	   10000	     20954 ns/op	   21746 B/op	     142 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/reused_dst-18         	   10000	     20613 ns/op	   21746 B/op	     142 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/reused_dst-18         	   10000	     20902 ns/op	   21745 B/op	     142 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/prepare_and_batch/reused_dst-18         	   10000	     21185 ns/op	   21746 B/op	     142 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_warmed-18                         	   10000	     23545 ns/op	   19864 B/op	     251 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_warmed-18                         	   10000	     23448 ns/op	   19864 B/op	     251 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_warmed-18                         	    9638	     23224 ns/op	   19864 B/op	     251 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_warmed-18                         	   10000	     23373 ns/op	   19864 B/op	     251 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_warmed-18                         	   10000	     22553 ns/op	   19864 B/op	     251 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_validate_warmed-18                	    6403	     38141 ns/op	   19886 B/op	     251 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_validate_warmed-18                	    6363	     39182 ns/op	   19885 B/op	     251 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_validate_warmed-18                	    6660	     39991 ns/op	   19886 B/op	     251 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_validate_warmed-18                	    6375	     38428 ns/op	   19886 B/op	     251 allocs/op
+BenchmarkCompiledBatch/8192/mixed/N16/gnata_validate_warmed-18                	    7573	     38644 ns/op	   19885 B/op	     251 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	8.711s

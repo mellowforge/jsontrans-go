@@ -95,3 +95,20 @@ Distinct scalar 64 improves 20.48 to 13.29 us including preparation; reused-docu
 latency 15.64 to 8.89 us with unchanged four allocations/384 B. Full checks and
 independent review passed; all 420 timing samples and unchanged hashes recorded
 in docs/performance.md. No release/publication.
+
+## 2026-11-03: Invoke result fixes and batch setup experiment
+
+- Raw Invoke results now use output rather than input size limits and preserve
+  native non-finite numbers. Strict input/registered-host validation is retained.
+- Output sizing uses normalized numeric values; canonical key collisions and
+  sequence-conversion failures are rejected. Regressions and a raw-result fuzz
+  target cover these boundaries.
+- Prepared entries combine immutable configuration at construction; batch calls
+  reuse adjacent equivalent override resolution and avoid copying limit structs.
+  Per-expression budgets, cancellation checks and callback scope ownership remain.
+- Retained after 570 accepted samples across broad and alternating-order runs.
+  Document-reuse confirmation medians improve 8% simple, 3% mixed and 14% distinct
+  predicates; preparation-inclusive results are mixed and documented in full.
+  Allocation counts are unchanged. No general throughput improvement is claimed.
+- Full tests, race, vet, formatting, oracle/parity and bounded fuzz checks pass.
+  Independent review findings were addressed with RED→GREEN regressions; none deferred.

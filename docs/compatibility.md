@@ -99,7 +99,8 @@ These are deliberate and documented rather than conformance failures:
 
 - Non-finite arithmetic results (for example `1e308 * 10`) are values inside
   the language, as in the reference, but cannot be returned as JSON and fail
-  with `ErrConversion`.
+  with `ErrConversion`. Raw `Invoke` results preserve these numbers, including
+  inside containers, and use output rather than input size limits.
 - Host function results are validated: Go numbers become JSONata numbers, and
   unsupported types, cycles, NaN and Infinity fail with `ErrConversion`. The
   JavaScript reference passes host values through unchanged.

@@ -17,6 +17,7 @@ CASES = [(1024, "simple", n) for n in (4, 16, 64)] + [
     (1024, "mixed", 16), (1024, "unique", 64),
     (8192, "mixed", 16), (65536, "simple", 64),
 ]
+LABEL = "Deadline-pass"
 ENV = dict(os.environ, GOTOOLCHAIN="local", GOCACHE="/tmp/jsontrans-go-build")
 
 
@@ -70,13 +71,13 @@ def main():
     (OUT / "source-after.txt").write_text(str(after) + "\n")
     assert hashes == after, "runtime source changed during measurement"
     with (OUT / "medians.csv").open("w", newline="") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, lineterminator="\n")
         writer.writerow(["source", "bytes", "workload", "rules", "operation", "samples",
                          "ns/op", "B/op", "allocs/op", "min-ns/op", "max-ns/op"])
         for key, rows in sorted(samples.items()):
             values = [statistics.median(column) for column in zip(*rows)]
             writer.writerow([*key, len(rows), *values, min(r[0] for r in rows), max(r[0] for r in rows)])
-    lines = ["# Deadline-pass matched measurements", "",
+    lines = [f"# {LABEL} matched measurements", "",
              "Five 200 ms samples per row; medians in microseconds per document/batch.",
              "Preparation-inclusive rows reuse the destination; all safety defaults active.", "",
              "| KiB | Workload | Rules | Before prepare+batch | After prepare+batch | Warmed gnata | Before reused doc | After reused doc | After B/allocs (reused doc) |",

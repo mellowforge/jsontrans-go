@@ -119,3 +119,23 @@ source tree and go.mod/go.sum to a disposable directory and apply
 production files affected by this pass. Its resulting runtime hash must match
 the recorded prior hash. Reconstruction was verified before reporting results.
 Do not run other CPU-intensive checks during timed sampling.
+
+## Batch setup experiment
+
+`python3 -B run-setup.py` reuses the matched deadline harness for seven fixture
+cases, six operation modes and five 200ms samples per mode. Results, runtime
+hashes and environment details are written to `testdata/results/setup/`.
+The pre-optimization runtime is commit `127e13f`, which already contains the
+Invoke result fixes. Reconstruct it from the repository root with `git archive
+127e13f | tar -x -C /absolute/path/to/empty-directory`, then set
+`SETUP_BEFORE_SOURCE=/absolute/path/to/empty-directory` when running the script.
+The default snapshot location is `/private/tmp/jsontrans-before-setup`.
+Keep other CPU-intensive checks stopped during measurement. The script verifies
+all 420 samples and checks that both runtime hashes remain unchanged.
+
+The initial broad setup run encountered machine-load variation also visible in
+gnata controls. `python3 -B confirm-setup.py` checks the three 1 KiB workloads
+with fixed harness binaries, alternating before/current order each round.
+It records five 300ms samples per operation (150 total, including both result
+destination modes and warmed gnata) in `testdata/results/setup/confirmation/`.
+Both runs are retained; neither is an isolated performance or significance claim.

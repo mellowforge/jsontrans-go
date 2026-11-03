@@ -1,0 +1,9 @@
+Measured 2026-11-03 (Asia/Yerevan)
+Before commit: 127e13fc164bbbc4c0afdadf62a90b9ad39d22a7
+Current: before commit plus batch.go/document.go setup consolidation
+Host: macOS-27.2-arm64-arm-64bit
+CPU: Apple M5 Max (go benchmark header)
+go version go1.25.13 darwin/arm64
+GOTOOLCHAIN=local; GOMAXPROCS default (18); five 200ms samples per operation
+Compilation and schema warm-up excluded; reused/new destinations; validation controls included
+Shared development machine; do not infer statistical significance or larger collection behavior.
