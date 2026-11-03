@@ -2,7 +2,7 @@
 
 This optional development module evaluates synchronous function-expression
 transformers using QuickJS/Wazero and Goja. It is **not a supported processor or
-sandbox**. Both candidates currently fail required gates; see the
+sandbox**. The original QJS and Goja candidates fail required gates; see the
 [assessment and production plan](../../docs/javascript-assessment.md).
 
 The root library imports neither candidate. JSONPath and JSONata remain native
@@ -22,9 +22,8 @@ The experimental API deliberately rejects explicitly supplied `MaxSteps` and
 `RegexTimeout` evaluation overrides: it cannot promise JS instruction counting
 or a separate per-regex deadline. Default step accounting applies to Go/bridge
 conversion, **not JS execution**. Wall-clock cancellation and QuickJS allocator
-limits are evaluated separately. Other unsupported controls, structured error
-positions and resolved-option forwarding still require production work. Do not
-use this module for untrusted execution.
+limits are evaluated separately. Other unsupported controls and structured error positions still require
+production work. Do not use this module for untrusted execution.
 
 ## Reproduce
 
@@ -109,7 +108,7 @@ must establish a reproducible artifact build and provenance before adoption.
 ## Owned runtime checkpoint
 
 The additional `owned-quickjs` backend uses a project-owned QuickJS-ng/Wazero ABI.
-It is experimental and has one remaining public integration gate. See the
+It is experimental. The registry follow-up passes all 18 recorded probes. See the
 [checkpoint report](../../docs/quickjs-runtime-foundation.md) for its time-snapshot
 profile, resource guarantees, measurements and remaining work. Original backend
 results remain unchanged; new evidence is under `testdata/results/owned`.
@@ -117,7 +116,7 @@ results remain unchanged; new evidence is under `testdata/results/owned`.
 ```sh
 CGO_ENABLED=0 go build -o /tmp/jsontrans-owned-assess ./cmd/assess
 python3 run_probes.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs --output testdata/results/owned/probes.json
-# Expected exit 1: registry limit forwarding remains an explicitly failed gate.
+# Current acceptance run: all 18 probes must pass.
 python3 run_probes.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs --strict --output /tmp/owned-full.json
 python3 measure_cold.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs --output testdata/results/owned/cold.json
 GOMAXPROCS=1 go test -run '^$' -bench '^BenchmarkLifecycle/owned-quickjs' -benchmem -benchtime=200ms -count=5 -cpu=1 > testdata/results/owned/bench.txt
@@ -139,3 +138,10 @@ cmp internal/quickjswasm/quickjs.wasm /tmp/owned-quickjs.wasm
 The guest directory retains QuickJS and linked C-runtime licenses and component
 pins. Baseline QJS/Goja imports are assessment dependencies; the owned runtime
 package imports neither implementation and creates no host capability modules.
+
+Registry limit forwarding now uses the optional root `EvalLimitSupport` contract.
+Explicit steps and regex-timeout requests remain unsupported. Historical
+`results/owned/probes.json` is retained; the full post-fix strict run is recorded
+in [`testdata/results/registry/probes.json`](testdata/results/registry/probes.json).
+CI runs all 18 owned probes in strict mode. See the
+[follow-up report](../../docs/registry-limit-forwarding.md).

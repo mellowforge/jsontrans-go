@@ -12,8 +12,9 @@ import (
 // Batch is an immutable ordered snapshot of compiled programs. It is safe for
 // concurrent evaluations with separate destinations and caller-owned bindings.
 type Batch struct {
-	entries []preparedEntry
-	plan    prepared.BatchPlan
+	entries     []preparedEntry
+	plan        prepared.BatchPlan
+	unsupported LimitSet
 }
 
 // BatchError identifies the first failing expression using a zero-based index,
@@ -60,6 +61,7 @@ func newBatch(ctx context.Context, programs []Program) (*Batch, error) {
 			return nil, &BatchError{Index: i, Cause: err}
 		}
 		b.entries[i] = entry
+		b.unsupported |= entry.unsupported
 		handlers[i] = entry.native
 	}
 	b.plan = prepared.CompileBatch(ctx, handlers)
@@ -134,6 +136,20 @@ func (b *Batch) EvalPrepared(ctx context.Context, d *Document, dst []Result, o E
 	defer outer.Close()
 	if err = outer.Collection(len(b.entries)); err != nil {
 		return nil, err
+	}
+	if b.unsupported&specifiedLimits(o.Limits) != 0 {
+		for i := range b.entries {
+			entry := &b.entries[i]
+			if err = outer.Check(); err != nil {
+				return nil, err
+			}
+			if err = rejectUnsupportedLimits(entry.unsupported, o.Limits); err != nil {
+				if entry.name != "" {
+					err = diagnostic(entry.name, PhaseEvaluate, err)
+				}
+				return nil, &BatchError{Index: i, Cause: err}
+			}
+		}
 	}
 	if err = d.CheckLimits(outer.Context(), limits); err != nil {
 		return nil, err

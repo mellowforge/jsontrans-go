@@ -38,6 +38,14 @@ each expression; reusable budget scratch is limited to certified pure handlers.
 The document index uses shared arenas, preserving the same public Node readers
 and exact/lossless JSON representation. Nil and zero-value documents are rejected.
 
+External programs may declare unsupported evaluation limit fields through
+`EvalLimitSupport`. Registry, JSON, prepared and batch helpers reject explicit
+unsupported overrides and omit unsupported synthesized fields, while retaining
+common conversion budgets. Programs without this optional interface retain
+legacy behavior. See [adapter guidance](adapters.md). The experimental owned
+QuickJS backend now passes all 18 recorded probes; this is a feasibility gate,
+not a supported production JavaScript API.
+
 Additional conservative plans cover nested scalar projections, scalar filters,
 and numeric arithmetic projection sums. Batch-local singular-prefix memoization
 contains document nodes only, with bounded compile work/scratch and no global

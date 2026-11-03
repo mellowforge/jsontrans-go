@@ -72,13 +72,10 @@ jobs:
       - run: go test ./...
       - run: go test -race ./...
       - run: CGO_ENABLED=0 go build -o /tmp/jsontrans-owned-assess ./cmd/assess
-      - name: Owned guest resource gates
+      - name: Full owned JavaScript assessment gates
         run: >-
           python3 run_probes.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs
-          --case compile-cancel --case cancel-loop --case cancel-regex --case cancel-conversion
-          --case allocation-cap --case guest-memory --case cleanup --case host-capabilities
-          --case cache-cancellation --case exception-coercion
-          --strict --output /tmp/owned-runtime-gates.json
+          --strict --output /tmp/owned-full-gates.json
       - run: go test -run '^$' -fuzz '^FuzzStringConversion$' -fuzztime=1000x -parallel=2
 
       - run: go test -run '^$' -fuzz '^FuzzOwnedStringConversion$' -fuzztime=200x -parallel=2

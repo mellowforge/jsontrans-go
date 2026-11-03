@@ -1,9 +1,13 @@
 # Owned QuickJS/Wazero checkpoint — 2026-11-03
 
-The experimental owned runtime passes **17 of 18** recorded assessment probes,
+At this checkpoint, the experimental owned runtime passed **17 of 18** recorded assessment probes,
 including all ten selected resource/capability gates. The one remaining probe
-failure is registry limit forwarding. This is a successful runtime checkpoint,
+failure was registry limit forwarding. This is a successful runtime checkpoint,
 **not a production JavaScript processor or a claim of complete JavaScript conformance**.
+
+The [registry follow-up](registry-limit-forwarding.md) resolves that failure:
+all **18 of 18** recorded probes now pass. The measurements and original probe
+results below describe the earlier checkpoint and remain unchanged.
 
 The native library's [v1.1.0 release](https://github.com/mellowforge/jsontrans-go/releases/tag/v1.1.0)
 is tagged at verified merged commit `c0519ea48d8022721b0d847e3def176d5a99e361`.
@@ -141,14 +145,11 @@ linear memory contributes to Go B/op; the library does not claim zero allocation
 
 ## Remaining work and next decision
 
-The full probe runner retains **one failed gate**: the root registry forwards
-resolved MaxSteps and RegexTimeout values, which the JS adapter must reject.
-Do not turn off that rejection or silently reinterpret JS execution guarantees.
-The ten-case CI subset is explicitly the runtime resource/capability gate, not
-an assertion that the full processor passes acceptance.
+The registry follow-up resolves original versus synthesized limits through an
+additive capability contract. CI now requires all 18 owned probes to pass;
+historical results retain the original forwarding failure for provenance.
 
-The next stage is the production adapter design: resolve original versus effective
-limit settings through a narrow additive capability contract, choose clock
+The next stage is the production adapter design: choose clock
 semantics, complete structured diagnostics and source mapping, and define engine
 ownership/Close behavior for callers. Then implement the optional public module,
 fuzz/stress it further, audit/update the embedded engine before production, and
