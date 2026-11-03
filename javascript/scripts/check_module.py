@@ -30,6 +30,23 @@ def run(command, *, cwd, env, capture=False):
     return p.stdout if capture else ''
 
 
+def download_core(go, version, work, env, repository):
+    # Go discovers short pseudo-version revisions through advertised branches.
+    # PR checkouts are detached and have no local heads. Advertise the immutable
+    # minimum commit in a private mirror, leaving the checkout untouched.
+    mirror = work / 'core-source.git'
+    run(['git', 'clone', '--mirror', '--no-hardlinks', str(repository), str(mirror)], cwd=work, env=env, capture=True)
+    pseudo = re.search(r'-([0-9a-f]{12})$', version)
+    ref = pseudo.group(1) if pseudo else 'refs/tags/' + version
+    commit = run(['git', '--git-dir', str(mirror), 'rev-parse', ref + '^{commit}'], cwd=work, env=env, capture=True).strip()
+    run(['git', '--git-dir', str(mirror), 'update-ref', 'refs/heads/module-minimum', commit], cwd=work, env=env)
+    # Environment-only Git rewrite; never modify caller Git configuration.
+    fetch = env | dict(GOPROXY='direct', GONOPROXY=CORE, GIT_ALLOW_PROTOCOL='file',
+                       GIT_CONFIG_COUNT='1', GIT_CONFIG_KEY_0='url.' + mirror.as_uri() + '.insteadOf',
+                       GIT_CONFIG_VALUE_0='https://github.com/mellowforge/jsontrans-go')
+    run([go, 'mod', 'download', CORE + '@' + version], cwd=work, env=fetch)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--module-dir', type=Path, default=ROOT / 'javascript')
@@ -46,12 +63,8 @@ def main():
         cache = work / 'cache'
         env = original | dict(GOWORK='off', GOTOOLCHAIN='local', GOMODCACHE=str(cache),
                               GOSUMDB='off', GOPRIVATE=CORE, CGO_ENABLED='0')
-        # Canonical module archive and pseudo-version validation by Go itself.
-        # Environment-only Git rewrite; never modify caller Git configuration.
-        fetch = env | dict(GOPROXY='direct', GONOPROXY=CORE, GIT_ALLOW_PROTOCOL='file',
-                           GIT_CONFIG_COUNT='1', GIT_CONFIG_KEY_0='url.' + ROOT.as_uri() + '.insteadOf',
-                           GIT_CONFIG_VALUE_0='https://github.com/mellowforge/jsontrans-go')
-        run([go, 'mod', 'download', CORE + '@' + core_version], cwd=work, env=fetch)
+        # Canonical archive and pseudo-version validation by Go itself.
+        download_core(go, core_version, work, env, ROOT)
         proxy = work / 'proxy'
         versions = proxy / MODULE / '@v'
         versions.mkdir(parents=True)

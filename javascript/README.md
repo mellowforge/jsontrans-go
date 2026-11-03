@@ -83,13 +83,15 @@ From this directory:
 go test ./...
 go test -race ./...
 go vet ./...
+python3 scripts/test_check_module.py
 python3 scripts/check_module.py
 go test -run '^$' -fuzz '^FuzzOwnedStringConversion$' -fuzztime=200x -parallel=2
 go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzOwnedCompile$' -fuzztime=200x -parallel=2
 ```
 
 Run tests first to cache normal dependencies. The packaging checker builds a
-module-zip fixture, uses Go's normal local-Git fetch to validate the minimum
+module-zip fixture, uses a private Git mirror advertising the pinned commit, then Go's normal
+local-Git fetch to validate the minimum
 core version, then builds/runs an outside consumer with no replace/workspace,
 a fresh module cache and CGO disabled. It runs the executable from an empty
 working directory and checks dependency isolation. It requires full Git history
