@@ -23,7 +23,7 @@ go test ./jsonata  -run '^$' -fuzz '^FuzzCompileAndEval$' -fuzztime=10s
 go test ./internal/document -run '^$' -fuzz '^FuzzPrepareAndMaterialize$' -fuzztime=10s
 ```
 
-Also fuzz the target closest to a change: `FuzzIRegexp` (`./jsonpath`), `FuzzPreparedNestedPlans` (`./jsonata`), `FuzzJSONHelpers` (root).
+Also fuzz the target closest to a change: `FuzzIRegexp` (`./jsonpath`), `FuzzPreparedNestedPlans` (`./jsonata`), `FuzzInvokeResultJSON` (`./jsonata`, Invoke/raw results), `FuzzJSONHelpers` (root).
 
 Single tests and conformance cases:
 

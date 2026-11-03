@@ -216,11 +216,16 @@ func TestInvokeNormalizedNumericSizeIsCumulative(t *testing.T) {
 	}
 }
 
+// FuzzInvokeResultJSON checks exact output sizing against encoding/json. The
+// shape byte also wraps the value with raw-only parts: a Sequence container and
+// a trailing NaN token, which together cost the same bytes as "[v,0]".
 func FuzzInvokeResultJSON(f *testing.F) {
 	for _, s := range []string{`null`, `1`, `"\n"`, `{"x":[1,2]}`, `["abc",false,{}]`} {
-		f.Add(s)
+		for shape := range uint8(4) {
+			f.Add(s, shape)
+		}
 	}
-	f.Fuzz(func(t *testing.T, s string) {
+	f.Fuzz(func(t *testing.T, s string, shape uint8) {
 		if len(s) > 2048 {
 			return
 		}
@@ -232,19 +237,50 @@ func FuzzInvokeResultJSON(f *testing.F) {
 		if err != nil {
 			return
 		}
-		fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
-		opts := jt.EvalOptions{Limits: &jt.Limits{MaxInputBytes: 1, MaxOutputBytes: len(encoded), MaxDepth: 4096}}
-		got, err := jsonata.Invoke(context.Background(), fn, nil, opts)
-		if err != nil || !reflect.DeepEqual(got, value) {
-			t.Fatalf("raw result mismatch: %#v, %v; want %#v", got, err, value)
+		want, size := value, len(encoded)
+		if shape&1 != 0 {
+			want, size = []any{value, math.NaN()}, size+4
 		}
-		if len(encoded) > 1 {
+		if shape&2 != 0 {
+			want, size = jsonata.Sequence{want}, size+2
+		}
+		fn := constant(want)
+		opts := jt.EvalOptions{Limits: &jt.Limits{MaxInputBytes: 1, MaxOutputBytes: size, MaxDepth: 4096}}
+		got, err := jsonata.Invoke(context.Background(), fn, nil, opts)
+		if err != nil || !rawEqual(got, want) {
+			t.Fatalf("raw result mismatch: %#v, %v; want %#v", got, err, want)
+		}
+		if size > 1 {
 			opts.Limits.MaxOutputBytes--
 			if got, err := jsonata.Invoke(context.Background(), fn, nil, opts); got != nil || !errors.Is(err, jt.ErrLimit) {
 				t.Fatalf("size limit ignored: %#v, %v", got, err)
 			}
 		}
 	})
+}
+
+// rawEqual is reflect.DeepEqual that also treats NaN as equal to NaN.
+func rawEqual(a, b any) bool {
+	switch x := a.(type) {
+	case float64:
+		y, ok := b.(float64)
+		return ok && (x == y || math.IsNaN(x) && math.IsNaN(y))
+	case []any:
+		y, ok := b.([]any)
+		if !ok || len(x) != len(y) {
+			return false
+		}
+		for i := range x {
+			if !rawEqual(x[i], y[i]) {
+				return false
+			}
+		}
+		return true
+	case jsonata.Sequence:
+		y, ok := b.(jsonata.Sequence)
+		return ok && rawEqual([]any(x), []any(y))
+	}
+	return reflect.DeepEqual(a, b)
 }
 
 // A container reused by sibling values is not a cycle.
