@@ -132,6 +132,7 @@ func New(options ...Option) (runtime *Runtime, err error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to compile runtime-local qjs module: %w", err)
 	}
+	defer localCompiled.Close(option.Context)
 
 	if _, err := wsp1.Instantiate(option.Context, runtime.wrt); err != nil {
 		return nil, fmt.Errorf("failed to instantiate WASI: %w", err)

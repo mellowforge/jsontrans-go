@@ -23,7 +23,7 @@
     "value.go": "b012995c37cfa57d2538a19f19168c361782491bbb47b5b1608ea668cf23abf0"
   },
   "patched_files": {
-    "runtime.go": "cee730f5b41ae1a2abb359ebc7983da7f3d914e812bd1c05595840222688ab67"
+    "runtime.go": "6e9449dc653f209a29f7795d1af52c89973f260a20701f98a51c786e448f16ea"
   },
   "quickjs_submodule": "d01ca4491fb24ccfeccb4c7394e28a3b21fd5986",
   "quickjs_license_source": "https://github.com/quickjs-ng/quickjs/blob/d01ca4491fb24ccfeccb4c7394e28a3b21fd5986/LICENSE"

@@ -114,14 +114,16 @@ private reporting route before considering a production release.
 
 ## Independent review disposition
 
-The whole-branch review found no critical or important issues. One nonblocking
-assessment-only cleanup is deferred: the additional runtime-local QJS
-`CompiledModule` acquisition is not explicitly closed, so its shared-cache
-reference count grows with runtime construction. The existing process-lifetime
-global cache masks practical memory impact for the fixed guest; this is an
-ownership imbalance, not a claim of bounded cleanup. A follow-up should balance
-the acquisition, update the recorded patch/hash and verify repeated runtimes.
-The public adapter's separately owned runtime/cache lifecycle is unchanged.
+The whole-branch review found no critical or important issues. Its initially
+deferred assessment-only cache-reference cleanup is now fixed: each additional
+runtime-local QJS `CompiledModule` is closed when construction returns, including
+failure paths. The instantiated guest remains usable, as Wazero permits closing
+the compilation handle after instantiation. The regression reproduced two
+references before the fix and now verifies that only the deliberate global cache
+owner remains after successful construction or host-function setup failure.
+The recorded patch and source hash are updated. The public adapter's separately
+owned runtime/cache lifecycle is unchanged; inherited QJS cleanup limitations
+are not addressed by balancing this added acquisition.
 
 The review retained these scope decisions: inherited QJS capability/cleanup
 limitations remain assessment-only; QuickJS security/terminal-error work remains

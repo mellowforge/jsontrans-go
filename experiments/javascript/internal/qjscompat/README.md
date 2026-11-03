@@ -31,3 +31,9 @@ Upstream filesystem mounts, host imports, shared configuration/cache machinery
 and cleanup behavior remain comparison limitations. This patch does not harden
 QJS or make it suitable for untrusted execution. Do not copy it into production
 or use its historical assessment failures as accepted public-adapter behavior.
+
+The runtime-local compilation handle is closed on both successful construction
+and later setup failure. This balances its additional shared-cache reference
+while preserving the global cache owner and the instantiated guest. A pinned
+Wazero cache-inspection regression verifies that balance and a live evaluation;
+the broader inherited cleanup limitations above remain unchanged.
