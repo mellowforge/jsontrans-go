@@ -38,6 +38,7 @@ type Config struct {
 type Limits struct {
 	Depth, Items, Bytes int
 	Work                int64
+	Timeout             time.Duration
 }
 type Stats struct{ GuestBefore, GuestAfter uint32 }
 type Engine struct {
@@ -133,14 +134,17 @@ func (e *Engine) Close() error {
 	})
 	return e.closeErr
 }
-func (e *Engine) operation(ctx context.Context) (context.Context, func(), error) {
+func (e *Engine) operation(ctx context.Context, timeout time.Duration) (context.Context, func(), error) {
 	if ctx == nil {
 		return nil, nil, errors.New("nil context")
 	}
 	if e.closed.Load() {
 		return nil, nil, ErrClosed
 	}
-	ctx, cancel := context.WithTimeout(ctx, e.config.Timeout)
+	if timeout == 0 {
+		timeout = e.config.Timeout
+	}
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	stop := context.AfterFunc(e.ctx, cancel)
 	done := func() { stop(); cancel() }
 	if err := ctx.Err(); err != nil {
@@ -254,7 +258,7 @@ func (e *Engine) Compile(ctx context.Context, source string) ([]byte, error) {
 	if len(source) > maxTransfer {
 		return nil, fmt.Errorf("%w: source transfer bytes", jt.ErrLimit)
 	}
-	ctx, done, err := e.operation(ctx)
+	ctx, done, err := e.operation(ctx, e.config.Timeout)
 	if err != nil {
 		return nil, err
 	}
@@ -285,7 +289,7 @@ func (e *Engine) EvalStats(ctx context.Context, rule, bridge []byte, input, bind
 	if l.Depth <= 0 || uint64(l.Depth) > math.MaxUint32 || l.Items <= 0 || uint64(l.Items) > math.MaxUint32 || l.Bytes <= 0 || l.Bytes > maxTransfer || l.Work <= 0 || l.Work > math.MaxUint32 {
 		return "", stats, fmt.Errorf("%w: ABI conversion limits", jt.ErrUnsupported)
 	}
-	ctx, done, err := e.operation(ctx)
+	ctx, done, err := e.operation(ctx, l.Timeout)
 	if err != nil {
 		return "", stats, err
 	}

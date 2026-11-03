@@ -145,3 +145,11 @@ Explicit steps and regex-timeout requests remain unsupported. Historical
 in [`testdata/results/registry/probes.json`](testdata/results/registry/probes.json).
 CI runs all 18 owned probes in strict mode. See the
 [follow-up report](../../docs/registry-limit-forwarding.md).
+
+The owned constructor `NewOwned(ctx, Config)` uses ctx only for initialization.
+Its engine owns its caches and must be closed by the caller. Close stops
+admission, cancels and drains entire admitted calls, then closes runtime resources.
+Per-call timeout overrides replace configured rule timeouts; the caller context
+can stop the call earlier. The owned profile retains a UTC time snapshot per
+guest and guest-local noncryptographic Math.random; time does not advance inside
+an evaluation. Compilation does not execute function-expression initializers.

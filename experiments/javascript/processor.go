@@ -179,7 +179,7 @@ func (p *Program) eval(ctx context.Context, input any, o jt.EvalOptions) (result
 	}
 	var text string
 	if p.engine.backend == OwnedQuickJS {
-		text, err = p.engine.owned.Eval(b.Context(), p.quick, p.quickBridge, in, vars, quickjswasm.Limits{Depth: l.MaxDepth, Items: l.MaxCollectionItems, Bytes: l.MaxOutputBytes, Work: l.MaxSteps})
+		text, err = p.engine.owned.Eval(b.Context(), p.quick, p.quickBridge, in, vars, quickjswasm.Limits{Depth: l.MaxDepth, Items: l.MaxCollectionItems, Bytes: l.MaxOutputBytes, Work: l.MaxSteps, Timeout: l.Timeout})
 	} else if p.engine.backend == Goja {
 		text, err = p.runGoja(b.Context(), in, vars, l)
 	} else {
