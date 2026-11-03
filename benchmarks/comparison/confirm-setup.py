@@ -16,6 +16,10 @@ spec.loader.exec_module(runner)
 BEFORE = Path(os.environ.get("SETUP_BEFORE_SOURCE", "/private/tmp/jsontrans-before-setup"))
 OUT = HERE / "testdata/results/setup/confirmation"
 CASES = [("simple", 64), ("mixed", 16), ("unique", 64)]
+SAMPLES = 5
+# Benchmark sub-operations matched by the pattern below, per source version.
+OPERATIONS = ["reused_doc/new_dst", "reused_doc/reused_dst", "prepare_and_batch/new_dst",
+              "prepare_and_batch/reused_dst", "gnata_warmed"]
 ROW = re.compile(r"^BenchmarkCompiledBatch/1024/(\w+)/N(\d+)/(.+)-\d+\s+\d+\s+([\d.]+) ns/op\s+([\d.]+) B/op\s+([\d.]+) allocs/op$")
 
 
@@ -29,16 +33,12 @@ def run(cmd):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    hashes = {"before": runner.source_hash(BEFORE), "current": runner.source_hash(runner.ROOT)}
+    hashes = runner.source_hashes(BEFORE)
     (OUT / "source-before.txt").write_text(str(hashes) + "\n")
     samples = {}
     with tempfile.TemporaryDirectory(prefix="jsontrans-setup-confirm-") as temp:
         temp = Path(temp)
-        mod = temp / "before.mod"
-        mod.write_text((HERE / "go.mod").read_text().replace(
-            "replace github.com/mellowforge/jsontrans-go => ../..",
-            f"replace github.com/mellowforge/jsontrans-go => {BEFORE}"))
-        mod.with_suffix(".sum").write_bytes((HERE / "go.sum").read_bytes())
+        mod = runner.write_before_modfile(temp, BEFORE)
         binaries = {v: temp / f"{v}.test" for v in ("before", "current")}
         for version, binary in binaries.items():
             cmd = ["go", "test", "-c", "-tags", "prepared batch", "-o", str(binary)]
@@ -46,7 +46,7 @@ def main():
                 cmd += [f"-modfile={mod}"]
             run(cmd)
         for kind, n in CASES:
-            for sample in range(5):
+            for sample in range(SAMPLES):
                 order = ("before", "current") if sample % 2 == 0 else ("current", "before")
                 for version in order:
                     print(f"{kind}/N{n} sample {sample + 1} {version}", flush=True)
@@ -60,11 +60,11 @@ def main():
                             workload, count, op, ns, byte_count, allocs = match.groups()
                             key = (version, workload, int(count), op)
                             samples.setdefault(key, []).append(tuple(map(float, (ns, byte_count, allocs))))
-    assert len(samples) == 30, len(samples)
-    assert all(len(rows) == 5 for rows in samples.values())
-    after = {"before": runner.source_hash(BEFORE), "current": runner.source_hash(runner.ROOT)}
+    runner.require(len(samples) == len(CASES) * 2 * len(OPERATIONS), f"unexpected operation count {len(samples)}")
+    runner.require(all(len(rows) == SAMPLES for rows in samples.values()), "missing samples")
+    after = runner.source_hashes(BEFORE)
     (OUT / "source-after.txt").write_text(str(after) + "\n")
-    assert hashes == after, "runtime source changed"
+    runner.require(hashes == after, "runtime source changed")
     with (OUT / "medians.csv").open("w", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
         writer.writerow(["source", "workload", "rules", "operation", "samples", "ns/op", "B/op", "allocs/op", "min-ns/op", "max-ns/op"])
@@ -82,7 +82,7 @@ def main():
         values = [median(v, kind, n, op) for v, op in [("before", prep), ("current", prep), ("current", "gnata_warmed"), ("before", reuse), ("current", reuse)]]
         lines.append(f"| {kind} | {n} | " + " | ".join(f"{v:.2f}" for v in values) + " |")
     (OUT / "summary.md").write_text("\n".join(lines) + "\n")
-    print("Verified 150 samples; unchanged runtime hashes.", flush=True)
+    print(f"Verified {sum(map(len, samples.values()))} samples; unchanged runtime hashes.", flush=True)
 
 
 if __name__ == "__main__":
