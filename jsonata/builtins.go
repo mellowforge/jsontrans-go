@@ -22,6 +22,41 @@ import (
 func builtinError(code, name string) error {
 	return &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: code, Token: name, Cause: fmt.Errorf("%s: %s", name, code)}
 }
+
+// jsSliceIndex resolves a relative index as JavaScript's Array.prototype.slice
+// does: NaN is 0, fractions truncate, and negatives count from the end.
+func jsSliceIndex(index float64, length int) int {
+	if math.IsNaN(index) {
+		return 0
+	}
+	index = math.Trunc(index)
+	if index < 0 {
+		return int(math.Max(float64(length)+index, 0))
+	}
+	return int(math.Min(index, float64(length)))
+}
+
+// jsUint32 converts as JavaScript's ToUint32, which String.prototype.split
+// applies to its limit.
+func jsUint32(f float64) int {
+	if math.IsNaN(f) || math.IsInf(f, 0) {
+		return 0
+	}
+	m := math.Mod(math.Trunc(f), 1<<32)
+	if m < 0 {
+		m += 1 << 32
+	}
+	return int(m)
+}
+
+// countLimit converts a positive limit that the reference compares as
+// count < limit: fractions round up and Infinity means no limit (-1).
+func countLimit(f float64) int {
+	if math.IsInf(f, 1) {
+		return -1
+	}
+	return floatToInt(math.Ceil(f))
+}
 func builtinArg(a []Value, i int) Value {
 	if i < len(a) {
 		return a[i]
@@ -60,7 +95,11 @@ func builtinBool(c *CallContext, v Value) (bool, error) {
 		case bool:
 			return x, nil
 		case float64:
-			return x != 0, nil
+			// As the reference's isNumeric: infinity is D1001, NaN is false.
+			if math.IsInf(x, 0) {
+				return false, builtinError("D1001", "boolean")
+			}
+			return x != 0 && !math.IsNaN(x), nil
 		case string:
 			return len(x) > 0, nil
 		case []any:
@@ -73,13 +112,17 @@ func builtinBool(c *CallContext, v Value) (bool, error) {
 			}
 			active[id] = true
 			defer delete(active, id)
+			// The reference casts every element of a longer array, so a later
+			// element can still raise an error.
+			any := false
 			for _, y := range x {
 				yes, err := visit(y)
-				if err != nil || yes {
-					return yes, err
+				if err != nil {
+					return false, err
 				}
+				any = any || yes
 			}
-			return false, nil
+			return any, nil
 		case Sequence:
 			if len(x) == 0 {
 				return false, nil
@@ -90,13 +133,17 @@ func builtinBool(c *CallContext, v Value) (bool, error) {
 			}
 			active[id] = true
 			defer delete(active, id)
+			// The reference casts every element of a longer array, so a later
+			// element can still raise an error.
+			any := false
 			for _, y := range x {
 				yes, err := visit(y)
-				if err != nil || yes {
-					return yes, err
+				if err != nil {
+					return false, err
 				}
+				any = any || yes
 			}
-			return false, nil
+			return any, nil
 		case map[string]any:
 			return len(x) > 0, nil
 		}
@@ -271,8 +318,13 @@ func builtins() map[string]Callable {
 					return math.Sqrt(f), nil
 				default:
 					p := float64(0)
-					if x, ok := builtinArg(a, 1).(float64); ok {
+					if x, ok := builtinArg(a, 1).(float64); ok && !math.IsNaN(x) {
 						p = x
+					}
+					// The reference shifts by building "<mantissa>e<exponent+p>"; a
+					// fractional or exponent-form precision makes that text NaN.
+					if p != math.Trunc(p) || math.Abs(p) >= 1e21 {
+						return math.NaN(), nil
 					}
 					return builtinRound(f, floatToInt(p)), nil
 				}
@@ -382,24 +434,24 @@ func builtins() map[string]Callable {
 		}
 		offsets := regexCodePointOffsets(units)
 		count := len(offsets) - 1
-		i := floatToInt(start)
-		if i < 0 {
-			i += count
+		// Ported from the reference, which slices a code-point array.
+		if float64(count)+start < 0 {
+			start = 0
 		}
-		if i < 0 {
-			i = 0
-		}
-		if i > count {
-			i = count
-		}
+		i := jsSliceIndex(start, count)
 		end := count
 		if n, ok := builtinArg(a, 2).(float64); ok {
-			if n <= 0 || math.IsNaN(n) {
+			if n <= 0 {
 				return "", nil
 			}
-			if n < float64(end-i) {
-				end = i + floatToInt(n)
+			endIndex := float64(count) + start + n
+			if start >= 0 {
+				endIndex = start + n
 			}
+			end = jsSliceIndex(endIndex, count)
+		}
+		if end <= i {
+			return "", nil
 		}
 		return regexUnitsString(units[offsets[i]:offsets[end]]), nil
 	})
@@ -785,7 +837,12 @@ func builtins() map[string]Callable {
 			}
 		}
 		base = math.RoundToEven(base)
-		if math.IsNaN(base) || base < 2 || base > 36 {
+		if math.IsNaN(base) {
+			// The reference's range check misses NaN; Number.toString then
+			// throws a RangeError without a JSONata code.
+			return nil, errors.New("formatBase: radix must be between 2 and 36")
+		}
+		if base < 2 || base > 36 {
 			return nil, builtinError("D3100", "formatBase")
 		}
 		f = math.RoundToEven(f)
@@ -821,17 +878,20 @@ func builtinRound(f float64, precision int) float64 {
 	s := strconv.FormatFloat(f, 'e', -1, 64)
 	parts := strings.Split(s, "e")
 	ex, _ := strconv.Atoi(parts[1])
-	shifted, err := strconv.ParseFloat(parts[0]+"e"+strconv.Itoa(ex+precision), 64)
-	if err != nil {
-		return f
+	// Like JavaScript's Number(text), overflow is ±Inf and underflow is 0.
+	shifted, _ := strconv.ParseFloat(parts[0]+"e"+strconv.Itoa(ex+precision), 64)
+	if math.IsInf(shifted, 0) {
+		// The reference shifts back through Infinity.toString(), which is NaN.
+		return math.NaN()
 	}
 	rounded := math.RoundToEven(shifted)
 	s = strconv.FormatFloat(rounded, 'e', -1, 64)
 	parts = strings.Split(s, "e")
 	ex, _ = strconv.Atoi(parts[1])
-	result, err := strconv.ParseFloat(parts[0]+"e"+strconv.Itoa(ex-precision), 64)
-	if err != nil {
-		return f
+	result, _ := strconv.ParseFloat(parts[0]+"e"+strconv.Itoa(ex-precision), 64)
+	if result == 0 {
+		// The reference returns 0 for -0, since JSON has no negative zero.
+		return 0
 	}
 	return result
 }
@@ -861,7 +921,7 @@ func builtinStringValue(c *CallContext, v Value) (Value, error) {
 				return n, nil
 			}
 		}
-		return x, nil
+		return x + 0, nil // -0 prints as 0
 	case []any:
 		if err := builtinCollection(c, len(x)); err != nil {
 			return nil, err

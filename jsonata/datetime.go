@@ -2,8 +2,10 @@
 package jsonata
 
 import (
+	"errors"
 	"fmt"
 	"github.com/mellowforge/jsontrans-go/internal/budget"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -55,24 +57,27 @@ func builtinDateTime(m map[string]Callable) {
 func dateFromMillis(c *CallContext, n float64, picture, timezone Value) (Value, error) {
 	offset := 0
 	if z, ok := timezone.(string); ok && z != "" {
-		sign := 1
-		if strings.HasPrefix(z, "-") {
-			sign = -1
-		}
-		z = strings.TrimPrefix(strings.TrimPrefix(z, "-"), "+")
-		z = strings.ReplaceAll(z, ":", "")
-		v, e := strconv.Atoi(z)
-		if e != nil {
+		// As the reference: parseInt(timezone), then floor(v/100) hours and
+		// v%100 minutes, so "-0530" is -06:30 and "+05:30" is +00:05.
+		v, ok := jsParseInt(z)
+		if !ok {
 			return nil, builtinError("D3134", "fromMillis")
 		}
-		if len(z) <= 2 {
-			offset = sign * v * 60
-		} else {
-			offset = sign * (v/100*60 + v%100)
+		hours := v / 100
+		if v < 0 && v%100 != 0 {
+			hours--
 		}
+		offset = hours*60 + v%100
 	}
+	// JavaScript dates span ±8.64e15 ms after the offset is applied; beyond
+	// that every component of the reference's Date is NaN.
+	local := n + float64(offset)*60000
+	invalid := math.IsNaN(local) || math.Abs(local) > 8.64e15
 	t := time.UnixMilli(floatToInt64(n)).In(time.FixedZone("", offset*60))
 	p, ok := picture.(string)
+	if !ok && (invalid || t.Year() < 0 || t.Year() > 9999) {
+		p, ok = isoDatePicture, true
+	}
 	if !ok {
 		s := t.Format("2006-01-02T15:04:05.000")
 		if offset == 0 {
@@ -126,7 +131,7 @@ func dateFromMillis(c *CallContext, n float64, picture, timezone Value) (Value, 
 			if marker == "" {
 				return nil, builtinError("D3132", "fromMillis")
 			}
-			v, e := dateFormatMarker(c, t, marker, offset)
+			v, e := dateFormatMarker(c, t, marker, offset, invalid)
 			if e != nil {
 				return nil, e
 			}
@@ -145,7 +150,38 @@ func dateFromMillis(c *CallContext, n float64, picture, timezone Value) (Value, 
 	}
 	return b.String(), nil
 }
-func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int) (string, error) {
+
+// isoDatePicture is the reference's default $fromMillis picture.
+const isoDatePicture = "[Y0001]-[M01]-[D01]T[H01]:[m01]:[s01].[f001][Z01:01t]"
+
+// jsParseInt reads a leading signed decimal integer as JavaScript's parseInt
+// does, ignoring the rest. It reports false when there are no digits or more
+// than nine.
+func jsParseInt(s string) (int, bool) {
+	s = strings.TrimLeft(s, " \t\n\r")
+	sign := 1
+	if s != "" && (s[0] == '+' || s[0] == '-') {
+		if s[0] == '-' {
+			sign = -1
+		}
+		s = s[1:]
+	}
+	digits := 0
+	for digits < len(s) && s[digits] >= '0' && s[digits] <= '9' {
+		digits++
+	}
+	if digits == 0 || digits > 9 {
+		return 0, false
+	}
+	v, _ := strconv.Atoi(s[:digits])
+	return sign * v, true
+}
+
+// errInvalidDate marks presentations of an invalid date that the reference
+// cannot format either: it fails without a JSONata code.
+var errInvalidDate = errors.New("fromMillis: date outside the representable range")
+
+func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, invalid bool) (string, error) {
 	comp := marker[0]
 	pic := marker[1:]
 	originalPic := pic
@@ -206,6 +242,9 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int) (s
 			z = "GMT" + z
 		}
 		return z, nil
+	}
+	if invalid {
+		return invalidDateMarker(comp, pic, width)
 	}
 	var n int
 	switch comp {
@@ -283,6 +322,13 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int) (s
 		}
 		return s, nil
 	}
+	if comp == 'Y' && width == "" {
+		// §9.8.4.4 as the reference applies it: a picture with two or more
+		// digits keeps that many trailing year digits.
+		if digits := strings.Count(pic, "#") + countIntegerDigits(pic); digits >= 2 {
+			n %= int(math.Pow10(min(digits, 18)))
+		}
+	}
 	ord := strings.HasSuffix(pic, "o")
 	if ord {
 		pic = strings.TrimSuffix(pic, "o") + ";o"
@@ -322,6 +368,42 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int) (s
 				s = s[len(s)-max:]
 			}
 		}
+	}
+	return s, nil
+}
+
+// invalidDateMarker formats a component of an invalid date as the reference
+// does: numbers are NaN, zero-padded to the picture's digits or minimum width.
+func invalidDateMarker(comp byte, pic, width string) (string, error) {
+	switch comp {
+	case 'P':
+		if pic == "N" {
+			return "AM", nil
+		}
+		return "am", nil
+	case 'C', 'E':
+		return "ISO", nil
+	case 'f':
+		return "NaN", nil
+	case 'Y', 'X', 'M', 'x', 'w', 'D', 'd', 'F', 'W', 'H', 'h', 'm', 's':
+	default:
+		return "", builtinError("D3132", "fromMillis")
+	}
+	if pic == "o" {
+		return "", builtinError("D3130", "formatInteger")
+	}
+	if strings.Trim(pic, "0123456789#") != "" {
+		return "", errInvalidDate
+	}
+	pad := countIntegerDigits(pic)
+	if width != "" {
+		if minimum, err := strconv.Atoi(strings.Split(width, "-")[0]); err == nil && minimum > pad {
+			pad = minimum
+		}
+	}
+	s := "NaN"
+	if pad > len(s) {
+		s = strings.Repeat("0", pad-len(s)) + s
 	}
 	return s, nil
 }
@@ -545,7 +627,15 @@ func dateParsePicture(c *CallContext, s, p string) (Value, error) {
 			hour += 12
 		}
 	}
+	// Like JavaScript's Date.UTC, times beyond ±8.64e15 ms are NaN. Bound the
+	// year first so time.Date cannot overflow into an in-range result.
+	if year < -300000 || year > 300000 {
+		return math.NaN(), nil
+	}
 	t := time.Date(year, time.Month(month), day, hour, min, sec, millis*1e6, time.FixedZone("", offset*60))
+	if ms := t.UnixMilli(); ms < -8.64e15 || ms > 8.64e15 {
+		return math.NaN(), nil
+	}
 	return float64(t.UnixMilli()), nil
 }
 

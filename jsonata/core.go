@@ -1033,6 +1033,19 @@ func collapse(v Sequence) Value {
 	}
 	return v
 }
+
+// truthAny casts every element, as the reference does, so a later element can
+// still raise an error.
+func (e *evaluator) truthAny(values []Value) bool {
+	any := false
+	for _, v := range values {
+		any = e.truth(v) || any
+		if e.walkErr != nil {
+			return false
+		}
+	}
+	return any
+}
 func (e *evaluator) truth(v Value) bool {
 	if e.walkErr != nil {
 		return false
@@ -1055,25 +1068,16 @@ func (e *evaluator) truth(v Value) bool {
 	case string:
 		return x != ""
 	case float64:
-		return x != 0
+		// As the reference's isNumeric: infinity is D1001, NaN is false.
+		if math.IsInf(x, 0) {
+			e.walkErr = evalError("D1001", 0, "", fmt.Errorf("number out of range"))
+			return false
+		}
+		return x != 0 && !math.IsNaN(x)
 	case []any:
-		for _, v := range x {
-			if e.truth(v) {
-				return true
-			}
-			if e.walkErr != nil {
-				return false
-			}
-		}
+		return e.truthAny(x)
 	case Sequence:
-		for _, v := range x {
-			if e.truth(v) {
-				return true
-			}
-			if e.walkErr != nil {
-				return false
-			}
-		}
+		return e.truthAny(x)
 	case map[string]any:
 		return len(x) > 0
 	}
@@ -1665,9 +1669,15 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				return nil, err
 			}
 			indices := seq(r)
+			// As the reference's isNumeric: NaN is not a number here and an
+			// infinite index is D1001.
 			numeric := len(indices) > 0
 			for _, x := range indices {
-				if _, ok := x.(float64); !ok {
+				f, ok := x.(float64)
+				if ok && math.IsInf(f, 0) {
+					return nil, evalError("D1001", n.pos, "", fmt.Errorf("index out of range"))
+				}
+				if !ok || math.IsNaN(f) {
 					numeric = false
 					break
 				}
@@ -2326,7 +2336,7 @@ func stringValue(v Value, b *budget.Budget) (string, error) {
 	case string:
 		return x, nil
 	case float64:
-		return strconv.FormatFloat(x, 'g', 15, 64), nil
+		return strconv.FormatFloat(x+0, 'g', 15, 64), nil
 	case nil:
 		return "null", nil
 	case bool:
@@ -2670,6 +2680,9 @@ func materializeChecked(v Value, b *budget.Budget) (Value, error) {
 				out[k] = y
 			}
 			return out, nil
+		case float64:
+			// JSON has no negative zero; the reference prints -0 as 0.
+			return x + 0, nil
 		default:
 			return v, nil
 		}

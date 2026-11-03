@@ -31,8 +31,8 @@ func builtinStrings(m map[string]Callable) {
 			if x < 0 {
 				return nil, builtinError("D3020", "split")
 			}
-			limit = floatToInt(x)
-			if limit == 0 {
+			// The reference passes the limit to String.prototype.split.
+			if limit = jsUint32(x); !(x > 0) || limit == 0 {
 				return []any{}, nil
 			}
 		}

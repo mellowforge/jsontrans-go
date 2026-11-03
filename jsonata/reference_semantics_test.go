@@ -375,3 +375,146 @@ func TestReferenceRangeRejectsNonFiniteEndpoints(t *testing.T) {
 		{`[1..2.5]`, `{}`, `ERR T2004`},
 	})
 }
+
+// Numeric arguments that are NaN, infinite, huge or fractional follow the
+// reference's JavaScript conversions. NaN results are checked as x = x, which
+// is false only for NaN.
+func TestReferenceNonFiniteAndFractionalArguments(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`[1,2,3][0/0]`, `{}`, `undefined`},
+		{`[1,2,3][1/0]`, `{}`, `ERR D1001`},
+		{`[1,2,3][-1/0]`, `{}`, `ERR D1001`},
+		{`[1,2,3][1e300]`, `{}`, `undefined`},
+		{`$substring("foo", 1/0)`, `{}`, `""`},
+		{`$substring("foo", -1/0)`, `{}`, `"foo"`},
+		{`$substring("foo", 0/0)`, `{}`, `"foo"`},
+		{`$substring("abc", 0/0, 2)`, `{}`, `""`},
+		{`$substring("abc", 1, 0/0)`, `{}`, `""`},
+		{`$substring("abc", 1, 1/0)`, `{}`, `"bc"`},
+		{`$substring("abc", -1/0, 2)`, `{}`, `"ab"`},
+		{`$substring("abc", 1.7, 1.2)`, `{}`, `"b"`},
+		{`$substring("abcdef", -2.5, 2)`, `{}`, `"e"`},
+		{`$split("a,b,c", ",", 0/0)`, `{}`, `[]`},
+		{`$split("a,b,c", ",", 1/0)`, `{}`, `[]`},
+		{`$split("a,b,c", ",", 1e300)`, `{}`, `[]`},
+		{`$split("a,b,c", ",", 4294967296)`, `{}`, `[]`},
+		{`$split("a,b,c", ",", 4294967297)`, `{}`, `["a"]`},
+		{`$split("a,b,c", ",", 2.7)`, `{}`, `["a","b"]`},
+		{`$split("a,b,c", /,/, 0/0)`, `{}`, `[]`},
+		{`$split("a,b,c", /,/, 1/0)`, `{}`, `["a","b","c"]`},
+		{`$split("a,b,c", /,/, 1.5)`, `{}`, `["a","b"]`},
+		{`$split("a,b,c", /,/, 0.5)`, `{}`, `["a"]`},
+		{`$count($match("aaa", /a/, 0/0))`, `{}`, `0`},
+		{`$count($match("aaa", /a/, 1/0))`, `{}`, `3`},
+		{`$count($match("aaa", /a/, 1.5))`, `{}`, `2`},
+		{`$count($match("aaa", /a/, 0.5))`, `{}`, `1`},
+		{`$replace("aaa", "a", "b", 0/0)`, `{}`, `"aaa"`},
+		{`$replace("aaa", "a", "b", 1/0)`, `{}`, `"bbb"`},
+		{`$replace("aaa", "a", "b", 1.5)`, `{}`, `"bba"`},
+		{`$replace("aaa", /a/, "b", 0/0)`, `{}`, `"aaa"`},
+		{`$replace("aaa", /a/, "b", 1.5)`, `{}`, `"bba"`},
+		{`$replace("aaa", /a/, "b", 0.5)`, `{}`, `"baa"`},
+		{`$round(1.5, 1/0) = $round(1.5, 1/0)`, `{}`, `false`},
+		{`$round(1.5, 1e300) = $round(1.5, 1e300)`, `{}`, `false`},
+		{`$round(1.5, 2.7) = $round(1.5, 2.7)`, `{}`, `false`},
+		{`$round(1.5, 400) = $round(1.5, 400)`, `{}`, `false`},
+		{`$round(1.5, 0/0)`, `{}`, `2`},
+		{`$round(1.25, 1)`, `{}`, `1.2`},
+		{`$round(123.456, -1)`, `{}`, `120`},
+		{`$round(1.5, -400)`, `{}`, `0`},
+		{`$formatBase(10, 2.9)`, `{}`, `"101"`},
+		{`$formatBase(10, 36.5)`, `{}`, `"a"`},
+		{`$formatBase(10, 2.5)`, `{}`, `"1010"`},
+		{`$formatBase(2.5, 10)`, `{}`, `"2"`},
+		{`$formatBase(10, 0/0)`, `{}`, `ERR uncoded`},
+		{`$formatBase(10, 1/0)`, `{}`, `ERR D3100`},
+	})
+}
+
+// Dates beyond JavaScript's range of ±8.64e15 ms are invalid: their numeric
+// components format as NaN. Fixed-width years keep their last digits, and
+// timezones are read as parseInt(tz) with floor(v/100) hours and v%100 minutes.
+func TestReferenceDateRangeAndTimezoneArithmetic(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`$fromMillis(8.64e15)`, `{}`, `"5760-09-13T00:00:00.000Z"`},
+		{`$fromMillis(-8.64e15)`, `{}`, `"-1821-04-20T00:00:00.000Z"`},
+		{`$fromMillis(8.64e15+1)`, `{}`, `"0NaN-NaN-NaNTNaN:NaN:NaN.NaNZ"`},
+		{`$fromMillis(0/0)`, `{}`, `"0NaN-NaN-NaNTNaN:NaN:NaN.NaNZ"`},
+		{`$fromMillis(1/0)`, `{}`, `"0NaN-NaN-NaNTNaN:NaN:NaN.NaNZ"`},
+		{`$fromMillis(253402300800000)`, `{}`, `"0000-01-01T00:00:00.000Z"`},
+		{`$fromMillis(0/0, "[Y0001]-[M01]-[D01] [H01]:[m01]:[s01].[f001] [P] [Z] [z] [E] [C] [d] [W] [X] [F1]", "+0100")`, `{}`, `"0NaN-NaN-NaN NaN:NaN:NaN.NaN am +01:00 GMT+01:00 ISO ISO NaN NaN NaN NaN"`},
+		{`$fromMillis(0/0, "[Y]")`, `{}`, `"NaN"`},
+		{`$fromMillis(0/0, "[M]")`, `{}`, `"NaN"`},
+		{`$fromMillis(0/0, undefined, "-0530")`, `{}`, `"0NaN-NaN-NaNTNaN:NaN:NaN.NaN-06:30"`},
+		{`$fromMillis(8.64e15, "[Y0001]")`, `{}`, `"5760"`},
+		{`$fromMillis(8.64e15, "[Y]")`, `{}`, `"275760"`},
+		{`$fromMillis(1e15, "[Y01]")`, `{}`, `"58"`},
+		{`$fromMillis(1e15, "[Y,2]")`, `{}`, `"58"`},
+		{`$fromMillis(-8.64e15, "[Y01]")`, `{}`, `"-21"`},
+		{`$toMillis("99999999999999999999-01-01", "[Y]-[M]-[D]") = $toMillis("99999999999999999999-01-01", "[Y]-[M]-[D]")`, `{}`, `false`},
+		{`$toMillis("275760-09-13", "[Y]-[M]-[D]")`, `{}`, `8640000000000000`},
+		{`$toMillis("275760-09-14", "[Y]-[M]-[D]") = 0`, `{}`, `false`},
+		{`$fromMillis(0, "[H01]:[m01] [Z]", "+0530")`, `{}`, `"05:30 +05:30"`},
+		{`$fromMillis(0, "[H01]:[m01] [Z]", "-0530")`, `{}`, `"17:30 -06:30"`},
+		{`$fromMillis(0, "[H01]:[m01] [Z]", "-0030")`, `{}`, `"22:30 -01:30"`},
+		{`$fromMillis(0, "[H01]:[m01] [Z]", "+1400")`, `{}`, `"14:00 +14:00"`},
+		{`$fromMillis(0, "[H01]:[m01] [Z]", "-1200")`, `{}`, `"12:00 -12:00"`},
+		{`$fromMillis(0, "[H01]:[m01] [Z]", "+05")`, `{}`, `"00:05 +00:05"`},
+		{`$fromMillis(0, "[H01]:[m01] [Z]", "-05")`, `{}`, `"22:55 -01:05"`},
+		{`$fromMillis(0, "[H01]:[m01] [Z]", "+05:30")`, `{}`, `"00:05 +00:05"`},
+		{`$fromMillis(0, undefined, "-0530")`, `{}`, `"1969-12-31T17:30:00.000-06:30"`},
+	})
+}
+
+// NaN is falsy, as JavaScript's Boolean(NaN).
+func TestReferenceNaNIsFalsy(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`$boolean(0/0)`, `{}`, `false`},
+		{`(0/0) ? 1 : 2`, `{}`, `2`},
+		{`$not(0/0)`, `{}`, `true`},
+		{`(0/0) and true`, `{}`, `false`},
+		{`$boolean([0/0])`, `{}`, `false`},
+	})
+}
+
+// The boolean cast rejects infinite numbers with D1001 in every boolean
+// context, including any element of an array, and $round never returns -0.
+func TestReferenceInfiniteTruthinessAndNegativeZero(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`(1/0) ? 1 : 2`, `{}`, `ERR D1001`},
+		{`(1/0) and true`, `{}`, `ERR D1001`},
+		{`true and (1/0)`, `{}`, `ERR D1001`},
+		{`(1/0) or false`, `{}`, `ERR D1001`},
+		{`$not(1/0)`, `{}`, `ERR D1001`},
+		{`$boolean(1/0)`, `{}`, `ERR D1001`},
+		{`$boolean([1/0])`, `{}`, `ERR D1001`},
+		{`$boolean([0, 1/0])`, `{}`, `ERR D1001`},
+		{`$boolean([1, 1/0])`, `{}`, `ERR D1001`},
+		{`$exists(1/0)`, `{}`, `true`},
+		{`[1,2,3][$ > 1/0]`, `{}`, `undefined`},
+		{`$string($round(-0.4))`, `{}`, `"0"`},
+		{`$string($round(-1, -1))`, `{}`, `"0"`},
+	})
+}
+
+// Negative zero survives arithmetic but, as in JavaScript, prints as 0 in
+// results and strings.
+func TestReferenceNegativeZeroAtBoundaries(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`0 * -1`, `{}`, `0`},
+		{`-0`, `{}`, `0`},
+		{`$floor(-0)`, `{}`, `0`},
+		{`[0 * -1]`, `{}`, `[0]`},
+		{`{"a": 0 * -1}`, `{}`, `{"a":0}`},
+		{`$string(0 * -1)`, `{}`, `"0"`},
+		{`$string([0 * -1])`, `{}`, `"[0]"`},
+		{`$string({"a": 0 * -1})`, `{}`, `"{\"a\":0}"`},
+		{`0 * -1 & ""`, `{}`, `"0"`},
+		{`1/(0 * -1) < 0`, `{}`, `true`},
+		{`a`, `{"a":-0}`, `0`},
+		{`a * 1`, `{"a":-0}`, `0`},
+		{`$string(a)`, `{"a":-0}`, `"0"`},
+		{`b.a`, `{"b":[{"a":-0},{"a":1}]}`, `[0,1]`},
+		{`a = 0`, `{"a":-0}`, `true`},
+	})
+}

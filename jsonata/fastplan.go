@@ -259,7 +259,8 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 						case "boolean":
 							value, _ = child.Boolean()
 						case "number":
-							value, _ = child.Binary64()
+							x, _ := child.Binary64()
+							value = x + 0 // -0 prints as 0, as in the reference
 						case "string":
 							x, _ := child.Text()
 							value = x
@@ -309,7 +310,7 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 				return x, true
 			case "number":
 				x, _ := v.Binary64()
-				return x, true
+				return x + 0, true // -0 prints as 0, as in the reference
 			case "string":
 				x, _ := v.Text()
 				return x, true
@@ -417,7 +418,7 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 			case bool:
 				return x
 			case float64:
-				return x != 0
+				return x != 0 && !math.IsNaN(x)
 			case string:
 				return x != ""
 			}
@@ -653,7 +654,8 @@ func (p *fastPlan) evalProjection(root jsontrans.Node, b *budget.Budget) (jsontr
 			case "boolean":
 				v, _ = child.Boolean()
 			case "number":
-				v, _ = child.Binary64()
+				x, _ := child.Binary64()
+				v = x + 0 // -0 prints as 0, as in the reference
 			case "string":
 				v, _ = child.Text()
 			default:

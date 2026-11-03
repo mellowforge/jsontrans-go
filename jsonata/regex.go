@@ -163,7 +163,10 @@ func builtinRegex(m map[string]Callable) {
 			if n < 0 {
 				return nil, builtinError("D3020", "split")
 			}
-			limit = floatToInt(n)
+			limit = 0
+			if n > 0 {
+				limit = countLimit(n)
+			}
 		}
 		if limit == 0 {
 			return []any{}, nil
@@ -240,7 +243,10 @@ func builtinRegex(m map[string]Callable) {
 			if n < 0 {
 				return nil, builtinError("D3040", "match")
 			}
-			limit = floatToInt(n)
+			limit = 0
+			if n > 0 {
+				limit = countLimit(n)
+			}
 		}
 		if limit == 0 {
 			return Undefined, nil
@@ -378,7 +384,10 @@ func builtinReplace(c *CallContext, a []Value) (Value, error) {
 		if n < 0 {
 			return nil, builtinError("D3011", "replace")
 		}
-		limit = floatToInt(n)
+		limit = 0
+		if n > 0 {
+			limit = countLimit(n)
+		}
 	}
 	if limit == 0 {
 		return s, nil
