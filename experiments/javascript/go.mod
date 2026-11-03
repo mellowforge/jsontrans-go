@@ -9,13 +9,14 @@ require (
 	github.com/fastschema/qjs v0.0.6
 	github.com/mellowforge/jsontrans-go v1.1.1-0.20261103173822-e9b9c0c71fe0
 	github.com/mellowforge/jsontrans-go/javascript v0.0.0-extraction
-	github.com/tetratelabs/wazero v1.9.0
+	github.com/tetratelabs/wazero v1.12.0
 )
 
 require (
 	github.com/dlclark/regexp2/v2 v2.12.0 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
+	golang.org/x/sys v0.44.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 )
 
