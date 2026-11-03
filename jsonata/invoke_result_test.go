@@ -6,11 +6,17 @@ import (
 	"errors"
 	"math"
 	"reflect"
+	"strings"
 	"testing"
 
 	jt "github.com/mellowforge/jsontrans-go"
 	"github.com/mellowforge/jsontrans-go/jsonata"
 )
+
+// constant returns a raw host function that yields v unchanged.
+func constant(v jsonata.Value) jsonata.Callable {
+	return jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return v, nil }}
+}
 
 func resultFunction(t *testing.T, expression string) jsonata.Callable {
 	t.Helper()
@@ -47,6 +53,9 @@ func TestInvokeResultExactOutputSize(t *testing.T) {
 		{`function(){["abcd","efgh"]}`, 15},
 		{`function(){{"x":[1,2]}}`, 11},
 		{`function(){"\ud800"}`, 8},
+		{`function(){{"":0}}`, 6},
+		{`function(){{"":0,"a":0}}`, 12},
+		{`function(){{"k":0/0}}`, 7},
 	} {
 		t.Run(tc.expr, func(t *testing.T) {
 			fn := resultFunction(t, tc.expr)
@@ -236,4 +245,100 @@ func FuzzInvokeResultJSON(f *testing.F) {
 			}
 		}
 	})
+}
+
+// A container reused by sibling values is not a cycle.
+func TestInvokeRawResultSharedSiblings(t *testing.T) {
+	s := []any{float64(1)}
+	m := map[string]any{"a": float64(1)}
+	for _, value := range []any{[]any{s, s}, []any{m, m}, map[string]any{"x": s, "y": s}, map[string]any{"x": m, "y": m}} {
+		got, err := jsonata.Invoke(context.Background(), constant(value), nil, jt.EvalOptions{})
+		if err != nil || !reflect.DeepEqual(got, value) {
+			t.Fatalf("shared sibling rejected: %#v, %v", got, err)
+		}
+	}
+	got, err := jsonata.Invoke(context.Background(), resultFunction(t, `($a := [[1]]; function(){[$a, $a]})`), nil, jt.EvalOptions{})
+	if err != nil || !reflect.DeepEqual(got, []any{[]any{float64(1)}, []any{float64(1)}}) {
+		t.Fatalf("language sibling rejected: %#v, %v", got, err)
+	}
+}
+
+func TestInvokeRejectsArrayCycleResult(t *testing.T) {
+	cycle := make([]any, 1)
+	cycle[0] = cycle
+	got, err := jsonata.Invoke(context.Background(), constant(cycle), nil, jt.EvalOptions{})
+	if got != nil || !errors.Is(err, jt.ErrInvalidInput) {
+		t.Fatalf("array cycle accepted: %#v, %v", got, err)
+	}
+}
+
+func TestInvokeRawResultCollectionLimit(t *testing.T) {
+	for _, value := range []any{
+		[]any{float64(1), float64(2), float64(3)},
+		map[string]any{"a": float64(1), "b": float64(2), "c": float64(3)},
+	} {
+		if _, err := jsonata.Invoke(context.Background(), constant(value), nil, jt.EvalOptions{Limits: &jt.Limits{MaxCollectionItems: 3}}); err != nil {
+			t.Fatalf("collection at the limit rejected: %v", err)
+		}
+		got, err := jsonata.Invoke(context.Background(), constant(value), nil, jt.EvalOptions{Limits: &jt.Limits{MaxCollectionItems: 2}})
+		if got != nil || !errors.Is(err, jt.ErrLimit) {
+			t.Fatalf("collection limit ignored: %#v, %v", got, err)
+		}
+	}
+}
+
+// Public UTF-16 types become ordinary language strings and objects.
+func TestInvokeRawResultUTF16Types(t *testing.T) {
+	lone := "\xed\xa0\x80"
+	for _, tc := range []struct{ value, want any }{
+		{jt.UTF16String(lone), lone},
+		{[]any{jt.UTF16String(lone)}, []any{lone}},
+		{jt.UTF16Object{lone: jt.UTF16String(lone)}, map[string]any{lone: lone}},
+	} {
+		got, err := jsonata.Invoke(context.Background(), constant(tc.value), nil, jt.EvalOptions{})
+		if err != nil || !reflect.DeepEqual(got, tc.want) {
+			t.Fatalf("UTF-16 value %#v: %#v, %v", tc.value, got, err)
+		}
+	}
+	got, err := jsonata.Invoke(context.Background(), constant(jt.UTF16Object{lone: math.Inf(1)}), nil, jt.EvalOptions{})
+	m, ok := got.(map[string]any)
+	if err != nil || !ok || !math.IsInf(m[lone].(float64), 1) {
+		t.Fatalf("UTF-16 object lost raw value: %#v, %v", got, err)
+	}
+}
+
+func TestInvokeRawResultNilContainersAreNull(t *testing.T) {
+	for _, value := range []any{[]any(nil), map[string]any(nil)} {
+		got, err := jsonata.Invoke(context.Background(), constant(value), nil, jt.EvalOptions{})
+		if err != nil || got != nil {
+			t.Fatalf("nil container %#v: %#v, %v", value, got, err)
+		}
+	}
+}
+
+// Language-only scalars occupy a nesting level like any JSON value.
+func TestInvokeRawLanguageScalarDepth(t *testing.T) {
+	for depth := 1; depth <= 6; depth++ {
+		l := jt.Limits{MaxDepth: depth}
+		_, jsonErr := jsonata.Invoke(context.Background(), constant([]any{[]any{float64(1)}}), nil, jt.EvalOptions{Limits: &l})
+		_, rawErr := jsonata.Invoke(context.Background(), constant([]any{[]any{math.NaN()}}), nil, jt.EvalOptions{Limits: &l})
+		if (jsonErr == nil) != (rawErr == nil) {
+			t.Fatalf("depth %d: JSON %v, raw %v", depth, jsonErr, rawErr)
+		}
+	}
+}
+
+// Long json.Number spellings consume evaluation steps while being checked.
+func TestInvokeLongNumberResultChargesSteps(t *testing.T) {
+	short, long := json.Number("1.0"), json.Number("1."+strings.Repeat("0", 40000))
+	steps := int64(1)
+	for ; steps < 100; steps++ {
+		if _, err := jsonata.Invoke(context.Background(), constant(short), nil, jt.EvalOptions{Limits: &jt.Limits{MaxSteps: steps}}); err == nil {
+			break
+		}
+	}
+	got, err := jsonata.Invoke(context.Background(), constant(long), nil, jt.EvalOptions{Limits: &jt.Limits{MaxSteps: steps}})
+	if got != nil || !errors.Is(err, jt.ErrLimit) {
+		t.Fatalf("long number charged no steps at MaxSteps %d: %#v, %v", steps, got, err)
+	}
 }
