@@ -69,6 +69,12 @@ root dependency is the real merged version
 `v1.1.1-0.20261103173822-e9b9c0c71fe0`, containing registry limit forwarding;
 released core v1.1.0 is too old for this adapter. Go 1.26 or newer is required.
 
+The [dependency/security review](../docs/javascript-security-review.md) identifies
+unsafe patterns in the current embedded QuickJS source and a reproducible guest
+trap. The current pin blocks production release. The linked remediation plan
+covers Go dependency updates and an explicit QuickJS terminal-error migration;
+these upgrades have not yet been applied.
+
 The local `replace github.com/mellowforge/jsontrans-go => ..` is a development
 convenience only. Consumers ignore it and resolve the real minimum version.
 The module reuses the repository's root internal budget/JSON utilities through

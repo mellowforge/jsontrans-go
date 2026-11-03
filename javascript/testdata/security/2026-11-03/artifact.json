@@ -1,0 +1,69 @@
+{
+  "sha256": "29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e",
+  "bytes": 929138,
+  "all_kind_import_count": 0,
+  "exports": [
+    {
+      "name": "memory",
+      "kind": 2,
+      "index": 0
+    },
+    {
+      "name": "_initialize",
+      "kind": 0,
+      "index": 1
+    },
+    {
+      "name": "abi_version",
+      "kind": 0,
+      "index": 1011
+    },
+    {
+      "name": "abi_output_ptr",
+      "kind": 0,
+      "index": 1012
+    },
+    {
+      "name": "abi_output_len",
+      "kind": 0,
+      "index": 1013
+    },
+    {
+      "name": "abi_status",
+      "kind": 0,
+      "index": 1014
+    },
+    {
+      "name": "abi_alloc",
+      "kind": 0,
+      "index": 1015
+    },
+    {
+      "name": "abi_free",
+      "kind": 0,
+      "index": 1016
+    },
+    {
+      "name": "abi_init",
+      "kind": 0,
+      "index": 1017
+    },
+    {
+      "name": "abi_compile",
+      "kind": 0,
+      "index": 1018
+    },
+    {
+      "name": "abi_eval",
+      "kind": 0,
+      "index": 1023
+    }
+  ],
+  "memory": {
+    "minimum_pages": 32,
+    "maximum_pages": 1024,
+    "page_bytes": 65536
+  },
+  "rebuild_byte_identical": true,
+  "SDK": "34.0"
+}

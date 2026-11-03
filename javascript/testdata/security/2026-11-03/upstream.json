@@ -1,0 +1,282 @@
+{
+  "quickjs_advisories": [
+    {
+      "ghsa_id": "GHSA-v647-xff9-jxf7",
+      "cve_id": null,
+      "summary": "Error stack: CallSite insertion OOM causes a heap use-after-free",
+      "severity": "low",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-v647-xff9-jxf7",
+      "published_at": "2026-07-31T15:10:22Z",
+      "updated_at": "2026-07-31T15:10:22Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "",
+            "name": "quickjs-ng"
+          },
+          "vulnerable_version_range": "< 0.16.0",
+          "patched_versions": "0.16.0",
+          "vulnerable_functions": []
+        }
+      ]
+    },
+    {
+      "ghsa_id": "GHSA-crgj-9jv8-xfhq",
+      "cve_id": null,
+      "summary": "Promise: reject-function OOM causes a heap use-after-free",
+      "severity": "low",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-crgj-9jv8-xfhq",
+      "published_at": "2026-07-31T15:08:18Z",
+      "updated_at": "2026-07-31T15:08:18Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "",
+            "name": "quickjs-ng"
+          },
+          "vulnerable_version_range": "< 0.16.0",
+          "patched_versions": "0.16.0",
+          "vulnerable_functions": []
+        }
+      ]
+    },
+    {
+      "ghsa_id": "GHSA-rxpx-wj25-jhqq",
+      "cve_id": null,
+      "summary": "RegExp: alternation OOM causes a heap out-of-bounds write",
+      "severity": "high",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-rxpx-wj25-jhqq",
+      "published_at": "2026-07-31T15:09:24Z",
+      "updated_at": "2026-07-31T15:09:24Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "",
+            "name": "quickjs-ng"
+          },
+          "vulnerable_version_range": ">= 0.15.1",
+          "patched_versions": "0.16.0",
+          "vulnerable_functions": []
+        }
+      ]
+    },
+    {
+      "ghsa_id": "GHSA-3jf7-4qfx-xc2h",
+      "cve_id": null,
+      "summary": "JSON.stringify: rope indentation leaks a heap address",
+      "severity": "medium",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-3jf7-4qfx-xc2h",
+      "published_at": "2026-07-31T15:06:44Z",
+      "updated_at": "2026-07-31T15:06:44Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "",
+            "name": "quickjs-ng"
+          },
+          "vulnerable_version_range": "< 0.16.0",
+          "patched_versions": "0.16.0",
+          "vulnerable_functions": []
+        }
+      ]
+    },
+    {
+      "ghsa_id": "GHSA-wm7w-r6qf-3c9w",
+      "cve_id": null,
+      "summary": "BigInt memory leak in Atomics.store when SharedArrayBuffer is detached during operation",
+      "severity": "medium",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-wm7w-r6qf-3c9w",
+      "published_at": "2026-07-31T15:05:41Z",
+      "updated_at": "2026-07-31T15:05:41Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "other",
+            "name": "quickjs-ng"
+          },
+          "vulnerable_version_range": "<= 0.8.0",
+          "patched_versions": "0.16.0",
+          "vulnerable_functions": []
+        }
+      ]
+    },
+    {
+      "ghsa_id": "GHSA-9wv5-5cgr-grj6",
+      "cve_id": null,
+      "summary": "Integer overflow in TypedArray.prototype.sort leads to heap buffer overflow on 32-bit",
+      "severity": "high",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-9wv5-5cgr-grj6",
+      "published_at": "2026-07-31T15:04:57Z",
+      "updated_at": "2026-07-31T15:04:57Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "other",
+            "name": "quickjs-ng"
+          },
+          "vulnerable_version_range": "<= 0.8.0",
+          "patched_versions": "0.16.0",
+          "vulnerable_functions": []
+        }
+      ]
+    },
+    {
+      "ghsa_id": "GHSA-jp52-chwg-2p9p",
+      "cve_id": null,
+      "summary": "Heap buffer overflow in js_proxy_get_own_property_names via integer overflow on 32-bit",
+      "severity": "high",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-jp52-chwg-2p9p",
+      "published_at": "2026-07-31T15:04:09Z",
+      "updated_at": "2026-07-31T15:04:09Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "other",
+            "name": "quickjs-ng"
+          },
+          "vulnerable_version_range": "<= 0.8.0",
+          "patched_versions": "0.16.0",
+          "vulnerable_functions": []
+        }
+      ]
+    },
+    {
+      "ghsa_id": "GHSA-52gx-967m-hxp3",
+      "cve_id": null,
+      "summary": "Use-after-free in js_array_buffer_transfer on external ArrayBuffers",
+      "severity": "high",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-52gx-967m-hxp3",
+      "published_at": "2026-07-31T15:02:03Z",
+      "updated_at": "2026-07-31T15:02:23Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "",
+            "name": "quickjs-ng"
+          },
+          "vulnerable_version_range": "<= 0.15.1",
+          "patched_versions": "0.16.0",
+          "vulnerable_functions": []
+        },
+        {
+          "package": {
+            "ecosystem": "rust",
+            "name": "rquickjs"
+          },
+          "vulnerable_version_range": "<=0.12.1",
+          "patched_versions": "",
+          "vulnerable_functions": []
+        },
+        {
+          "package": {
+            "ecosystem": "rust",
+            "name": "rquickjs-sys"
+          },
+          "vulnerable_version_range": "<= 0.12.1",
+          "patched_versions": "",
+          "vulnerable_functions": []
+        }
+      ]
+    },
+    {
+      "ghsa_id": "GHSA-r6vf-p8wr-4vg9",
+      "cve_id": null,
+      "summary": "Use-After-Free in set_array_length",
+      "severity": "high",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-r6vf-p8wr-4vg9",
+      "published_at": "2026-06-04T15:07:57Z",
+      "updated_at": "2026-06-04T15:07:57Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "",
+            "name": ""
+          },
+          "vulnerable_version_range": "< 0.14.0",
+          "patched_versions": "",
+          "vulnerable_functions": []
+        }
+      ]
+    },
+    {
+      "ghsa_id": "GHSA-m53g-qx47-3h38",
+      "cve_id": null,
+      "summary": "quickjs RCE via js_array_toReversed() dense-array copy constructor",
+      "severity": "critical",
+      "html_url": "https://github.com/quickjs-ng/quickjs/security/advisories/GHSA-m53g-qx47-3h38",
+      "published_at": "2026-05-28T10:29:17Z",
+      "updated_at": "2026-05-28T12:33:09Z",
+      "withdrawn_at": null,
+      "vulnerabilities": [
+        {
+          "package": {
+            "ecosystem": "",
+            "name": "quickjs-ng/quickjs"
+          },
+          "vulnerable_version_range": "<0.14.1",
+          "patched_versions": "0.15.0",
+          "vulnerable_functions": []
+        }
+      ]
+    }
+  ],
+  "quickjs_api_response_sha256": "f3df96f2a204eb821de2eb89e28ea63c5726aef83ef8bb4eb3712f97afabbe3d",
+  "published_advisory_counts": {
+    "quickjs": 10,
+    "wazero": 0,
+    "wasi_sdk": 0,
+    "wasi_libc": 0
+  },
+  "advisory_scope_note": "Empty published-advisory endpoints do not prove absence of vulnerabilities. Public version ranges are not treated as exact source-ancestry proof.",
+  "quickjs_current_commit": "d01ca4491fb24ccfeccb4c7394e28a3b21fd5986",
+  "quickjs_target": {
+    "sha": "d7215b0ad3fc2c562e8317fd9bca058fd4863804",
+    "type": "commit",
+    "url": "https://api.github.com/repos/quickjs-ng/quickjs/git/commits/d7215b0ad3fc2c562e8317fd9bca058fd4863804"
+  },
+  "quickjs_target_version": "v0.18.0",
+  "wazero_target_version": "v1.12.0",
+  "sdk_submodules": [
+    {
+      "path": "src/config",
+      "sha": "f992bcc08219edb283d2ab31dd3871a4a0e8220e",
+      "type": "file"
+    },
+    {
+      "path": "src/llvm-pr-168449.patch",
+      "sha": "f5b873844ff19e98027f30b3611a4af300732ec1",
+      "type": "file"
+    },
+    {
+      "path": "src/llvm-pr-186054.patch",
+      "sha": "61ffe2ef0d0dab57a1a9de52c771db5696a22a55",
+      "type": "file"
+    },
+    {
+      "path": "src/llvm-project",
+      "sha": "895aa2c896ada719451be2e3673c83da8ddf1141",
+      "type": "file"
+    },
+    {
+      "path": "src/llvm-undo-part-of-194317.patch",
+      "sha": "a5c74c0366b02899940fee6a9f409eb87ae36f7f",
+      "type": "file"
+    },
+    {
+      "path": "src/wasi-libc",
+      "sha": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13",
+      "type": "file"
+    }
+  ],
+  "private_reporting_api": "404 Not Found; capability/status could not be verified, not interpreted as disabled",
+  "repository_visibility": "private"
+}
