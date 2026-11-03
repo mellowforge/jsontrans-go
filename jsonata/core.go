@@ -23,12 +23,19 @@ import (
 	"github.com/mellowforge/jsontrans-go/internal/prepared"
 )
 
+// Engine compiles JSONata expressions. Create it with New; a zero Engine
+// rejects compilation.
 type Engine struct {
 	limits          jsontrans.Limits
 	functions       map[string]Callable
 	builtins        map[string]Callable
 	evaluationDepth int
 }
+
+var (
+	errNotConstructed = errors.New("jsonata: engine or program not created by New or Compile")
+	errNoEvaluation   = errors.New("jsonata: function values must be called through Invoke")
+)
 
 // Option configures New. Options act on construction state only, so they
 // cannot alter an engine that is already in use.
@@ -114,7 +121,7 @@ func (h hostFunction) Call(c *CallContext, args []Value) (Value, error) {
 		if _, own := errchain.Find(err, func(e *jsontrans.Error) bool { return e.Processor == "" || e.Processor == "jsonata" }); own {
 			return nil, err
 		}
-		return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Token: h.name, Cause: err}
+		return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Token: h.name, Cause: err}
 	}
 	if IsUndefined(v) {
 		return v, nil
@@ -136,6 +143,8 @@ func (h hostFunction) Call(c *CallContext, args []Value) (Value, error) {
 	return out[0], nil
 }
 
+// Program is an immutable compiled expression, safe for concurrent
+// evaluation. Obtain it from Compile or CompileRaw.
 type Program struct {
 	root         *node
 	engine       *Engine
@@ -152,6 +161,9 @@ func (e *Engine) Compile(ctx context.Context, expr string) (jsontrans.Program, e
 // CompileRaw compiles a JSONata expression whose results may also be
 // language values, such as functions, through EvalRaw.
 func (e *Engine) CompileRaw(ctx context.Context, expr string) (*Program, error) {
+	if e == nil || e.builtins == nil {
+		return nil, errNotConstructed
+	}
 	b, err := budget.New(ctx, e.limits)
 	if err != nil {
 		return nil, err
@@ -212,6 +224,9 @@ func (p *Program) EvalRaw(ctx context.Context, input any, opts jsontrans.EvalOpt
 	return v, p.wrapTimebox(err)
 }
 func (p *Program) evaluate(ctx context.Context, input any, opts jsontrans.EvalOptions, raw bool) (Value, error) {
+	if p == nil || p.engine == nil {
+		return nil, errNotConstructed
+	}
 	if !raw && IsUndefined(input) {
 		return nil, fmt.Errorf("%w: undefined is not JSON", jsontrans.ErrInvalidInput)
 	}
@@ -383,12 +398,12 @@ type parser struct {
 
 func (p *parser) fail(code string) {
 	if p.err == nil {
-		p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: code, Position: p.t.pos, Token: p.t.val, Cause: fmt.Errorf("unexpected token %q", p.t.val)}
+		p.err = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: code, Position: p.t.pos, Token: p.t.val, Cause: fmt.Errorf("unexpected token %q", p.t.val)}
 	}
 }
 func (p *parser) failAt(code string, position int, cause error) {
 	if p.err == nil {
-		p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: code, Position: position, Cause: cause}
+		p.err = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: code, Position: position, Cause: cause}
 	}
 }
 func (p *parser) next() {
@@ -595,7 +610,7 @@ func (p *parser) parse(min int) *node {
 			n.children = p.list(")")
 			for _, param := range n.children {
 				if param.op != "variable" {
-					p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: "S0208", Position: param.pos, Cause: fmt.Errorf("function parameter must be a variable")}
+					p.err = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: "S0208", Position: param.pos, Cause: fmt.Errorf("function parameter must be a variable")}
 					return n
 				}
 			}
@@ -760,7 +775,7 @@ func (p *parser) parse(min int) *node {
 		switch op.kind {
 		case "#", "@":
 			if p.t.kind != "variable" || p.t.val == "$" || p.t.val == "$$" {
-				p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: "S0214", Position: op.pos, Token: op.val, Cause: fmt.Errorf("binding requires variable")}
+				p.err = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: "S0214", Position: op.pos, Token: op.val, Cause: fmt.Errorf("binding requires variable")}
 				break
 			}
 			if op.kind == "@" {
@@ -776,7 +791,7 @@ func (p *parser) parse(min int) *node {
 					code = "S0216"
 				}
 				if code != "" {
-					p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: code, Position: op.pos, Token: op.val, Cause: fmt.Errorf("invalid focus binding")}
+					p.err = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: code, Position: op.pos, Token: op.val, Cause: fmt.Errorf("invalid focus binding")}
 					return n
 				}
 			}
@@ -785,7 +800,7 @@ func (p *parser) parse(min int) *node {
 			n = &node{op: op.kind, val: name, pos: op.pos, children: []*node{n}}
 		case "{":
 			if n.op == "group" {
-				p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: "S0210", Position: op.pos, Token: op.val, Cause: fmt.Errorf("grouping must be final")}
+				p.err = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: "S0210", Position: op.pos, Token: op.val, Cause: fmt.Errorf("grouping must be final")}
 				return n
 			}
 			group := &node{op: "group", pos: op.pos, children: []*node{n}}
@@ -823,7 +838,7 @@ func (p *parser) parse(min int) *node {
 			n = sortNode
 		case "[":
 			if n.op == "group" {
-				p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: "S0209", Position: op.pos, Token: op.val, Cause: fmt.Errorf("filter after grouping")}
+				p.err = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: "S0209", Position: op.pos, Token: op.val, Cause: fmt.Errorf("filter after grouping")}
 				return n
 			}
 			if p.t.kind == "]" {
@@ -837,7 +852,7 @@ func (p *parser) parse(min int) *node {
 			n = &node{op: "call", pos: op.pos, children: append([]*node{n}, p.list(")")...)}
 		case ":=":
 			if n.op != "variable" {
-				p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: "S0212", Position: op.pos, Token: op.val, Cause: fmt.Errorf("assignment requires variable")}
+				p.err = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: "S0212", Position: op.pos, Token: op.val, Cause: fmt.Errorf("assignment requires variable")}
 				return n
 			}
 			n = &node{op: op.val, pos: op.pos, children: []*node{n, p.parse(prec - 1)}}
@@ -851,7 +866,7 @@ func (p *parser) parse(min int) *node {
 				if p.t.kind == "name" {
 					code = "S0201"
 				}
-				p.err = &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: code, Position: right.pos, Cause: fmt.Errorf("numeric path step")}
+				p.err = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: code, Position: right.pos, Cause: fmt.Errorf("numeric path step")}
 				return n
 			}
 			for x := right; x != nil; {
@@ -1116,13 +1131,13 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			return Undefined, nil
 		}
 		if e.ancestor == nil {
-			return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "S0217", Position: n.pos, Cause: fmt.Errorf("parent unavailable")}
+			return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "S0217", Position: n.pos, Cause: fmt.Errorf("parent unavailable")}
 		}
 		return tuple{value: e.ancestor.value, ancestor: e.ancestor.up}, nil
 	case "undefined":
 		return Undefined, nil
 	case "placeholder":
-		return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "S0211", Position: n.pos, Cause: fmt.Errorf("placeholder outside function arguments")}
+		return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "S0211", Position: n.pos, Cause: fmt.Errorf("placeholder outside function arguments")}
 	case "number", "string", "literal", "regex":
 		return n.val, nil
 	case "variable":
@@ -1289,11 +1304,11 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			k = e.stripTuples(k)
 			s, ok := k.(string)
 			if !ok {
-				return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T1003", Position: n.pos, Cause: fmt.Errorf("object key must be string")}
+				return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T1003", Position: n.pos, Cause: fmt.Errorf("object key must be string")}
 			}
 			s = jsonvalue.CanonicalString(s)
 			if seen[s] {
-				return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "D1009", Position: n.pos, Cause: fmt.Errorf("duplicate object key")}
+				return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "D1009", Position: n.pos, Cause: fmt.Errorf("duplicate object key")}
 			}
 			if err := e.b.Collection(len(seen) + 1); err != nil {
 				return nil, err
@@ -1335,7 +1350,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		if f, ok := v.(float64); ok {
 			return -f, nil
 		}
-		return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "D1002", Position: n.pos, Token: "-", Cause: fmt.Errorf("numeric operand required")}
+		return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "D1002", Position: n.pos, Token: "-", Cause: fmt.Errorf("numeric operand required")}
 	case "@":
 		stage := n.children[0]
 		parents := []Value{focus}
@@ -1468,7 +1483,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				k = e.stripTuples(k)
 				key, ok := k.(string)
 				if !ok {
-					return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T1003", Position: n.pos, Cause: fmt.Errorf("group key must be string")}
+					return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T1003", Position: n.pos, Cause: fmt.Errorf("group key must be string")}
 				}
 				key = jsonvalue.CanonicalString(key)
 				g := groups[key]
@@ -1479,7 +1494,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 					g = &groupEntry{value: n.children[i+1], index: i}
 					groups[key] = g
 				} else if g.index != i {
-					return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "D1009", Position: n.pos, Cause: fmt.Errorf("duplicate group key")}
+					return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "D1009", Position: n.pos, Cause: fmt.Errorf("duplicate group key")}
 				}
 				if err := e.b.Collection(len(g.items) + 1); err != nil {
 					return nil, err
@@ -1567,7 +1582,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 					return false
 				}
 				if !valid(a) || !valid(b) {
-					sortErr = &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2008", Position: n.pos, Cause: fmt.Errorf("invalid sort key")}
+					sortErr = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T2008", Position: n.pos, Cause: fmt.Errorf("invalid sort key")}
 					return false
 				}
 				var less, greater bool
@@ -1575,7 +1590,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				case float64:
 					y, ok := b.(float64)
 					if !ok {
-						sortErr = &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2007", Position: n.pos, Cause: fmt.Errorf("sort key types differ")}
+						sortErr = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T2007", Position: n.pos, Cause: fmt.Errorf("sort key types differ")}
 						return false
 					}
 					less = x < y
@@ -1583,14 +1598,14 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				case string:
 					y, ok := b.(string)
 					if !ok {
-						sortErr = &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2007", Position: n.pos, Cause: fmt.Errorf("sort key types differ")}
+						sortErr = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T2007", Position: n.pos, Cause: fmt.Errorf("sort key types differ")}
 						return false
 					}
 					c, _ := jsonvalue.CompareUTF16(x, y, nil)
 					less = c < 0
 					greater = c > 0
 				default:
-					sortErr = &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2008", Position: n.pos, Cause: fmt.Errorf("invalid sort key")}
+					sortErr = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T2008", Position: n.pos, Cause: fmt.Errorf("invalid sort key")}
 					return false
 				}
 				if less || greater {
@@ -1899,7 +1914,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		}
 		fn, ok := v.(Callable)
 		if !ok {
-			return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2006", Position: n.pos, Cause: fmt.Errorf("chain requires function")}
+			return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T2006", Position: n.pos, Cause: fmt.Errorf("chain requires function")}
 		}
 		if f, ok := left.(Callable); ok {
 			return composed{first: f, second: fn}, nil
@@ -1907,7 +1922,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		return e.invoke(fn, []Value{left}, focus)
 	case "call":
 		if n.children[0].op == "parent" && e.ancestor == nil {
-			return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T1006", Position: n.pos, Cause: fmt.Errorf("not a function")}
+			return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T1006", Position: n.pos, Cause: fmt.Errorf("not a function")}
 		}
 		f, err := e.eval(n.children[0], focus)
 		if err != nil {
@@ -1932,7 +1947,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 					break
 				}
 			}
-			return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: code, Position: n.pos, Cause: fmt.Errorf("not a function")}
+			return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: code, Position: n.pos, Cause: fmt.Errorf("not a function")}
 		}
 		args := make([]Value, 0, len(n.children)-1)
 		hasPlaceholder := false
@@ -2056,7 +2071,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			}
 			x, ok := v.(float64)
 			if !ok || x != math.Trunc(x) {
-				return &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: code, Position: n.pos, Token: "..", Cause: fmt.Errorf("range endpoint must be an integer")}
+				return &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: code, Position: n.pos, Token: "..", Cause: fmt.Errorf("range endpoint must be an integer")}
 			}
 			return nil
 		}
@@ -2068,7 +2083,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		}
 		if !IsUndefined(a) && !IsUndefined(b) {
 			if b.(float64)-a.(float64)+1 > 1e7 {
-				return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "D2014", Position: n.pos, Token: "..", Cause: fmt.Errorf("range too large")}
+				return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "D2014", Position: n.pos, Token: "..", Cause: fmt.Errorf("range too large")}
 			}
 		}
 	}
@@ -2078,14 +2093,14 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				continue
 			}
 			if number, ok := v.(float64); ok && (math.IsInf(number, 0) || math.IsNaN(number)) {
-				return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "D1001", Position: n.pos, Token: n.op, Cause: fmt.Errorf("nonfinite number")}
+				return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "D1001", Position: n.pos, Token: n.op, Cause: fmt.Errorf("nonfinite number")}
 			}
 			if _, ok := v.(float64); !ok {
 				code := "T2001"
 				if i == 1 {
 					code = "T2002"
 				}
-				return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: code, Position: n.pos, Token: n.op, Cause: fmt.Errorf("numeric operand required")}
+				return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: code, Position: n.pos, Token: n.op, Cause: fmt.Errorf("numeric operand required")}
 			}
 		}
 	}
@@ -2097,7 +2112,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			switch v.(type) {
 			case float64, string:
 			default:
-				return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2010", Position: n.pos, Token: n.op, Cause: fmt.Errorf("invalid comparison")}
+				return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T2010", Position: n.pos, Token: n.op, Cause: fmt.Errorf("invalid comparison")}
 			}
 		}
 	}
@@ -2124,7 +2139,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				code = "T2009"
 			}
 		}
-		return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: code, Position: n.pos, Token: n.op, Cause: fmt.Errorf("numeric operands required")}
+		return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: code, Position: n.pos, Token: n.op, Cause: fmt.Errorf("numeric operands required")}
 	}
 	switch n.op {
 	case "..":
@@ -2186,6 +2201,9 @@ type closure struct {
 
 func (c *closure) Arity() int { return len(c.params) }
 func (c *closure) Call(ctx *CallContext, args []Value) (Value, error) {
+	if ctx == nil || ctx.Budget == nil || ctx.state == nil {
+		return nil, errNoEvaluation
+	}
 	current := c
 	for {
 		if err := ctx.Budget.Step(); err != nil {
@@ -2203,7 +2221,7 @@ func (c *closure) Call(ctx *CallContext, args []Value) (Value, error) {
 			if p.op != "variable" {
 				return nil, fmt.Errorf("invalid parameter")
 			}
-			v := Undefined
+			var v Value = Undefined
 			if i < len(args) {
 				v = args[i]
 			}
@@ -2294,7 +2312,7 @@ func (e *evaluator) evalTail(n *node, focus Value) (result Value, err error) {
 		return e.evalTail(n.children[len(n.children)-1], focus)
 	case "call":
 		if n.children[0].op == "parent" && e.ancestor == nil {
-			return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T1006", Position: n.pos, Cause: fmt.Errorf("not a function")}
+			return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T1006", Position: n.pos, Cause: fmt.Errorf("not a function")}
 		}
 		f, err := e.eval(n.children[0], focus)
 		if err != nil {
@@ -2468,6 +2486,9 @@ type transform struct {
 
 func (t *transform) Arity() int { return 1 }
 func (t *transform) Call(ctx *CallContext, args []Value) (Value, error) {
+	if ctx == nil || ctx.Budget == nil || ctx.state == nil {
+		return nil, errNoEvaluation
+	}
 	if len(args) == 0 || IsUndefined(args[0]) {
 		return Undefined, nil
 	}
@@ -2520,7 +2541,7 @@ func (t *transform) Call(ctx *CallContext, args []Value) (Value, error) {
 		if !IsUndefined(update) {
 			changes, ok := update.(map[string]any)
 			if !ok {
-				return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2011", Position: t.expr.pos, Cause: fmt.Errorf("transform update requires object")}
+				return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T2011", Position: t.expr.pos, Cause: fmt.Errorf("transform update requires object")}
 			}
 			for k, v := range changes {
 				object[k] = v
@@ -2535,7 +2556,7 @@ func (t *transform) Call(ctx *CallContext, args []Value) (Value, error) {
 				for _, key := range seq(del) {
 					s, ok := key.(string)
 					if !ok {
-						return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "T2012", Position: t.expr.pos, Cause: fmt.Errorf("transform delete requires string")}
+						return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T2012", Position: t.expr.pos, Cause: fmt.Errorf("transform delete requires string")}
 					}
 					delete(object, s)
 				}
@@ -2686,7 +2707,7 @@ func checkParentSteps(root *node) error {
 		}
 		if n.op == "." && stepBase(n.children[1]).op == "parent" {
 			if _, bad := seekParent(n.children[0], 1); bad != nil {
-				return &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: "S0217", Position: bad.pos, Cause: fmt.Errorf("parent cannot be derived from this expression")}
+				return &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseCompile, Code: "S0217", Position: bad.pos, Cause: fmt.Errorf("parent cannot be derived from this expression")}
 			}
 		}
 		for _, c := range n.children {
@@ -3096,7 +3117,7 @@ func callErrorPosition(err error, pos int) error {
 	own := func(e *jsontrans.Error) bool { return e.Processor == "" || e.Processor == "jsonata" }
 	native, ok := errchain.Find(err, own)
 	if !ok {
-		return &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Position: pos, Cause: err}
+		return &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Position: pos, Cause: err}
 	}
 	if native == err && native.Position != 0 {
 		return err
@@ -3173,8 +3194,8 @@ func decodeStringLiteral(raw string) (string, error) {
 }
 
 func (p *Program) wrapTimebox(err error) error {
-	if err != nil && p.engine.evaluationDepth > 0 && errors.Is(err, context.DeadlineExceeded) {
-		return &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: "U1001", Cause: fmt.Errorf("%w: %w", jsontrans.ErrLimit, err)}
+	if err != nil && p != nil && p.engine != nil && p.engine.evaluationDepth > 0 && errors.Is(err, context.DeadlineExceeded) {
+		return &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "U1001", Cause: fmt.Errorf("%w: %w", jsontrans.ErrLimit, err)}
 	}
 	return err
 }

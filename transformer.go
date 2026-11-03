@@ -79,14 +79,32 @@ type JSONResult struct {
 	Defined bool
 }
 
+// Phases reported in Error.Phase.
+const (
+	PhaseCompile  = "compile"
+	PhaseEvaluate = "evaluate"
+	PhaseInput    = "input"    // decoding or converting input
+	PhaseBindings = "bindings" // converting evaluation bindings
+	PhaseOutput   = "output"   // converting or encoding a result
+)
+
 // Error retains native diagnostic information and wraps the original cause.
 type Error struct {
+	// Processor names the reporting engine, or the registry name when the
+	// engine did not name itself.
 	Processor string
-	Phase     string
-	Code      string
-	Position  int
-	Token     string
-	Cause     error
+	// Phase is one of the Phase constants.
+	Phase string
+	// Code is the language's native error code, such as JSONata "S0202" or
+	// JSONPath "syntax"; it is empty when the language defines none.
+	Code string
+	// Position is the native source position: UTF-16 code units for JSONata,
+	// as the reference reports, and bytes for JSONPath. It is zero when the
+	// failure has no source position.
+	Position int
+	// Token is the offending token or function name, when known.
+	Token string
+	Cause error
 }
 
 func (e *Error) Error() string {
@@ -103,7 +121,7 @@ type Transformer struct{ processors map[string]Processor }
 func New(processors map[string]Processor) (*Transformer, error) {
 	x := &Transformer{processors: make(map[string]Processor, len(processors))}
 	for name, p := range processors {
-		if strings.TrimSpace(name) == "" || nilValue(p) {
+		if strings.TrimSpace(name) == "" || strings.TrimSpace(name) != name || nilValue(p) {
 			return nil, fmt.Errorf("invalid processor registration %q", name)
 		}
 		x.processors[name] = p
@@ -145,31 +163,34 @@ func diagnostic(name, phase string, err error) error {
 // Compile compiles expression with the named processor under its configured
 // limits. Errors are *Error diagnostics attributed to that processor.
 func (x *Transformer) Compile(ctx context.Context, name, expression string) (Program, error) {
+	if x == nil {
+		return nil, errors.New("nil transformer")
+	}
 	p, ok := x.processors[name]
 	if !ok {
-		return nil, diagnostic(name, "compile", ErrUnknownProcessor)
+		return nil, diagnostic(name, PhaseCompile, ErrUnknownProcessor)
 	}
 	l, err := effectiveLimits(p, nil)
 	if err != nil {
-		return nil, diagnostic(name, "compile", err)
+		return nil, diagnostic(name, PhaseCompile, err)
 	}
 	b, err := budget.New(ctx, l)
 	if err != nil {
-		return nil, diagnostic(name, "compile", err)
+		return nil, diagnostic(name, PhaseCompile, err)
 	}
 	defer b.Close()
 	if err = b.Expression(expression); err != nil {
-		return nil, diagnostic(name, "compile", err)
+		return nil, diagnostic(name, PhaseCompile, err)
 	}
 	program, err := p.Compile(b.Context(), expression)
 	if err != nil {
-		return nil, diagnostic(name, "compile", err)
+		return nil, diagnostic(name, PhaseCompile, err)
 	}
 	if err = b.Check(); err != nil {
-		return nil, diagnostic(name, "compile", err)
+		return nil, diagnostic(name, PhaseCompile, err)
 	}
 	if nilValue(program) {
-		return nil, diagnostic(name, "compile", errors.New("processor returned nil program"))
+		return nil, diagnostic(name, PhaseCompile, errors.New("processor returned nil program"))
 	}
 	return &checkedProgram{name: name, program: program, configured: l}, nil
 }
@@ -191,7 +212,7 @@ func (x *Transformer) ProcessJSON(ctx context.Context, name string, input []byte
 		return JSONResult{}, err
 	}
 	r, err := EvalJSON(ctx, p, input, options)
-	return r, diagnostic(name, "json", err)
+	return r, diagnostic(name, PhaseEvaluate, err)
 }
 
 // EvalJSON decodes input, evaluates p and encodes the result. Serialized object
@@ -217,12 +238,12 @@ func EvalJSON(ctx context.Context, p Program, input []byte, options EvalOptions)
 	defer b.Close()
 	v, err := jsonvalue.Decode(input, b)
 	if err != nil {
-		return JSONResult{}, &Error{Phase: "input", Cause: err}
+		return JSONResult{}, &Error{Phase: PhaseInput, Cause: err}
 	}
 	if options.Bindings != nil {
 		detached, err := jsonvalue.Clone(options.Bindings, b, b.Limits.MaxInputBytes)
 		if err != nil {
-			return JSONResult{}, &Error{Phase: "bindings", Cause: err}
+			return JSONResult{}, &Error{Phase: PhaseBindings, Cause: err}
 		}
 		options.Bindings = bindingsMap(detached)
 	}
@@ -238,7 +259,7 @@ func EvalJSON(ctx context.Context, p Program, input []byte, options EvalOptions)
 	}
 	data, err := jsonvalue.Encode(r.Value, b)
 	if err != nil {
-		return JSONResult{}, &Error{Phase: "output", Cause: fmt.Errorf("%w: %w", ErrConversion, err)}
+		return JSONResult{}, &Error{Phase: PhaseOutput, Cause: fmt.Errorf("%w: %w", ErrConversion, err)}
 	}
 	return JSONResult{Value: data, Defined: true}, nil
 }
@@ -276,40 +297,40 @@ func (p *checkedProgram) Limits() Limits { return p.configured }
 func (p *checkedProgram) Eval(ctx context.Context, input any, options EvalOptions) (Result, error) {
 	l, err := effectiveLimits(p, options.Limits)
 	if err != nil {
-		return Result{}, diagnostic(p.name, "evaluate", err)
+		return Result{}, diagnostic(p.name, PhaseEvaluate, err)
 	}
 	b, err := budget.New(ctx, l)
 	if err != nil {
-		return Result{}, diagnostic(p.name, "evaluate", err)
+		return Result{}, diagnostic(p.name, PhaseEvaluate, err)
 	}
 	defer b.Close()
 	v, err := jsonvalue.Clone(input, b, b.Limits.MaxInputBytes)
 	if err != nil {
-		return Result{}, diagnostic(p.name, "input", err)
+		return Result{}, diagnostic(p.name, PhaseInput, err)
 	}
 	if options.Bindings != nil {
 		detached, err := jsonvalue.Clone(options.Bindings, b, b.Limits.MaxInputBytes)
 		if err != nil {
-			return Result{}, diagnostic(p.name, "bindings", err)
+			return Result{}, diagnostic(p.name, PhaseBindings, err)
 		}
 		options.Bindings = bindingsMap(detached)
 	}
 	r, err := p.program.Eval(b.Context(), v, options)
 	if err != nil {
-		return Result{}, diagnostic(p.name, "evaluate", err)
+		return Result{}, diagnostic(p.name, PhaseEvaluate, err)
 	}
 	if err = b.Check(); err != nil {
-		return Result{}, diagnostic(p.name, "evaluate", err)
+		return Result{}, diagnostic(p.name, PhaseEvaluate, err)
 	}
 	if !r.Defined {
 		return Result{}, nil
 	}
 	r.Value, err = jsonvalue.Clone(r.Value, b, b.Limits.MaxOutputBytes)
 	if err != nil {
-		return Result{}, diagnostic(p.name, "output", fmt.Errorf("%w: %w", ErrConversion, err))
+		return Result{}, diagnostic(p.name, PhaseOutput, fmt.Errorf("%w: %w", ErrConversion, err))
 	}
 	if err = b.Check(); err != nil {
-		return Result{}, diagnostic(p.name, "evaluate", err)
+		return Result{}, diagnostic(p.name, PhaseEvaluate, err)
 	}
 	return r, nil
 }

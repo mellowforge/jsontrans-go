@@ -22,9 +22,9 @@ type functionSignature struct {
 }
 
 func signatureError(code string, index int) error {
-	phase, position := "evaluate", 0
+	phase, position := jt.PhaseEvaluate, 0
 	if strings.HasPrefix(code, "S") {
-		phase = "compile"
+		phase = jt.PhaseCompile
 		position = index
 	}
 	return &jt.Error{Processor: "jsonata", Phase: phase, Code: code, Position: position, Cause: fmt.Errorf("function signature argument %d", index)}

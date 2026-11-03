@@ -95,7 +95,7 @@ func Lookup(candidate any) *Handler {
 		return nil
 	}
 	h := p.NativePrepared()
-	if h == nil || reflect.ValueOf(h.owner) != v {
+	if h == nil || h.owner != candidate {
 		return nil
 	}
 	return h

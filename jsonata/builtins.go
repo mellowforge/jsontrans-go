@@ -20,7 +20,7 @@ import (
 )
 
 func builtinError(code, name string) error {
-	return &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: code, Token: name, Cause: fmt.Errorf("%s: %s", name, code)}
+	return &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: code, Token: name, Cause: fmt.Errorf("%s: %s", name, code)}
 }
 func builtinArg(a []Value, i int) Value {
 	if i < len(a) {
@@ -762,10 +762,10 @@ func builtins() map[string]Callable {
 		}
 		code := "D3121"
 		var native *jsontrans.Error
-		if errors.As(err, &native) && native.Phase == "compile" {
+		if errors.As(err, &native) && native.Phase == jsontrans.PhaseCompile {
 			code = "D3120"
 		}
-		return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Code: code, Token: "eval", Cause: err}
+		return nil, &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: code, Token: "eval", Cause: err}
 	})
 	add("formatBase", 2, func(c *CallContext, a []Value) (Value, error) {
 		v := builtinArg(a, 0)

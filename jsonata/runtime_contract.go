@@ -10,10 +10,13 @@ import (
 // Value is a JSONata runtime value. JSON arrays are []any; Sequence represents
 // the implicit result sequence and must not be confused with an explicit array.
 type Value = any
-type undefinedValue struct{}
+type undefinedValue uint8
 
-var Undefined Value = undefinedValue{}
+// Undefined is JSONata's missing value, distinct from JSON null. It is a
+// constant, so no package can redefine what missing means.
+const Undefined = undefinedValue(0)
 
+// IsUndefined reports whether v is the missing value.
 func IsUndefined(v Value) bool { _, ok := v.(undefinedValue); return ok }
 
 type Sequence []Value

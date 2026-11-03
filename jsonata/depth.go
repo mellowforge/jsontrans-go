@@ -15,7 +15,7 @@ func (d *depthTracker) enter() error {
 		return nil
 	}
 	if d.current >= d.limit {
-		return &jt.Error{Processor: "jsonata", Phase: "evaluate", Code: "U1001", Cause: fmt.Errorf("%w: expression depth", jt.ErrLimit)}
+		return &jt.Error{Processor: "jsonata", Phase: jt.PhaseEvaluate, Code: "U1001", Cause: fmt.Errorf("%w: expression depth", jt.ErrLimit)}
 	}
 	d.current++
 	return nil

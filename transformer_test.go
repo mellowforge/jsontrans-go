@@ -286,3 +286,19 @@ func TestAdjacentSurrogatesCanonicalizeToUnicode(t *testing.T) {
 		t.Fatalf("noncanonical object key: %#v", result.Value)
 	}
 }
+
+func TestNilTransformerAndPaddedNames(t *testing.T) {
+	var x *jt.Transformer
+	if _, err := x.Compile(context.Background(), "identity", ""); err == nil {
+		t.Error("nil transformer compiled")
+	}
+	if _, err := x.Process(context.Background(), "identity", nil, "", jt.EvalOptions{}); err == nil {
+		t.Error("nil transformer processed")
+	}
+	if _, err := x.ProcessJSON(context.Background(), "identity", []byte(`1`), "", jt.EvalOptions{}); err == nil {
+		t.Error("nil transformer processed JSON")
+	}
+	if _, err := jt.New(map[string]jt.Processor{"identity ": identity{}}); err == nil {
+		t.Error("padded processor name accepted")
+	}
+}

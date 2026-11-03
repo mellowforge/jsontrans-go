@@ -84,7 +84,7 @@ func newPreparedEntry(p Program) (preparedEntry, error) {
 func (e preparedEntry) eval(ctx context.Context, d *Document, o EvalOptions, plan prepared.BatchPlan, state any, index int, scratch *budget.Budget) (r Result, size int, err error) {
 	defer func() {
 		if e.name != "" {
-			err = diagnostic(e.name, "evaluate", err)
+			err = diagnostic(e.name, PhaseEvaluate, err)
 		}
 	}()
 	l, err := budget.Resolve(e.configured, o.Limits)

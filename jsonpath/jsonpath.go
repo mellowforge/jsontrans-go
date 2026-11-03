@@ -119,7 +119,7 @@ func (e *Engine) Compile(ctx context.Context, s string) (jsontrans.Program, erro
 		return nil, err
 	}
 	if !utf8.ValidString(s) {
-		return nil, &jsontrans.Error{Processor: "jsonpath", Phase: "compile", Code: "syntax", Cause: errors.New("invalid UTF-8")}
+		return nil, &jsontrans.Error{Processor: "jsonpath", Phase: jsontrans.PhaseCompile, Code: "syntax", Cause: errors.New("invalid UTF-8")}
 	}
 	p := parser{s: s, b: b, funcs: e.functions}
 	q, err := p.query(false)
@@ -198,7 +198,7 @@ type parser struct {
 }
 
 func (p *parser) fail(msg string) error {
-	return &jsontrans.Error{Processor: "jsonpath", Phase: "compile", Code: "syntax", Position: p.i, Cause: errors.New(msg)}
+	return &jsontrans.Error{Processor: "jsonpath", Phase: jsontrans.PhaseCompile, Code: "syntax", Position: p.i, Cause: errors.New(msg)}
 }
 func (p *parser) space() {
 	for p.i < len(p.s) && strings.ContainsRune(" \t\r\n", rune(p.s[p.i])) {

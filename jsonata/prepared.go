@@ -2,7 +2,6 @@ package jsonata
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/mellowforge/jsontrans-go"
@@ -17,8 +16,8 @@ func (p *Program) NativePrepared() *prepared.Handler { return p.prepared }
 
 // EvalPrepared evaluates a compiled JSONata expression over a validated document.
 func (p *Program) EvalPrepared(ctx context.Context, d *jsontrans.Document, opts jsontrans.EvalOptions) (jsontrans.Result, error) {
-	if p == nil {
-		return jsontrans.Result{}, errors.New("nil prepared program")
+	if p == nil || p.engine == nil {
+		return jsontrans.Result{}, errNotConstructed
 	}
 	limits, err := budget.Resolve(p.engine.limits, opts.Limits)
 	if err != nil {

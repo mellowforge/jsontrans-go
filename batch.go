@@ -87,21 +87,21 @@ func (x *Transformer) CompileBatch(ctx context.Context, processorName string, ex
 	}
 	processor, ok := x.processors[processorName]
 	if !ok {
-		return nil, diagnostic(processorName, "compile", ErrUnknownProcessor)
+		return nil, diagnostic(processorName, PhaseCompile, ErrUnknownProcessor)
 	}
 	limits, err := effectiveLimits(processor, nil)
 	if err != nil {
-		return nil, diagnostic(processorName, "compile", err)
+		return nil, diagnostic(processorName, PhaseCompile, err)
 	}
 	scope, err := budget.New(ctx, limits)
 	if err != nil {
-		return nil, diagnostic(processorName, "compile", err)
+		return nil, diagnostic(processorName, PhaseCompile, err)
 	}
 	defer scope.Close()
 	programs := make([]Program, len(expressions))
 	for i, expression := range expressions {
 		if err = scope.Step(); err != nil {
-			return nil, &BatchError{Index: i, Cause: diagnostic(processorName, "compile", err)}
+			return nil, &BatchError{Index: i, Cause: diagnostic(processorName, PhaseCompile, err)}
 		}
 		p, err := x.Compile(scope.Context(), processorName, expression)
 		if err != nil {
@@ -111,7 +111,7 @@ func (x *Transformer) CompileBatch(ctx context.Context, processorName string, ex
 	}
 	batch, err := newBatch(scope.Context(), programs)
 	if err != nil {
-		return nil, diagnostic(processorName, "compile", err)
+		return nil, diagnostic(processorName, PhaseCompile, err)
 	}
 	return batch, nil
 }
