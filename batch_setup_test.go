@@ -63,8 +63,12 @@ func TestBatchAlternatingResolvedConfigurations(t *testing.T) {
 					t.Error(err)
 					return
 				}
+				if len(got) != len(tc.wants) {
+					t.Errorf("results: %d, want %d", len(got), len(tc.wants))
+					return
+				}
 				for i, r := range got {
-					if !reflect.DeepEqual(r.Value, tc.wants[i]) {
+					if !r.Defined || !reflect.DeepEqual(r.Value, tc.wants[i]) {
 						t.Errorf("entry %d: %#v, want %#v", i, r.Value, tc.wants[i])
 					}
 				}
@@ -194,5 +198,43 @@ func TestPreparedOverrideMarksNativeRequestCustomized(t *testing.T) {
 	}
 	if !reflect.DeepEqual(customized, []bool{false, false, true, true}) {
 		t.Fatalf("customized flags: %v", customized)
+	}
+}
+
+// A wrapper that raises a ceiling or sets only a regex timeout customizes the
+// entry even though the intersected native limits stay at the defaults.
+func TestPreparedWrapperCustomizationWithDefaultEffectiveLimits(t *testing.T) {
+	ctx := context.Background()
+	d, err := PrepareJSON(ctx, []byte(`null`), PrepareOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	raised, regex := DefaultLimits(), DefaultLimits()
+	raised.MaxSteps *= 2
+	regex.RegexTimeout *= 2
+	for _, wrapper := range []Limits{raised, regex} {
+		var customized []bool
+		native := &setupProgram{configured: DefaultLimits()}
+		native.handler = prepared.NewReusable(native, func(req prepared.Request) (prepared.Result, error) {
+			if req.Limits != DefaultLimits() {
+				t.Errorf("effective limits %+v", req.Limits)
+			}
+			customized = append(customized, req.Customized)
+			return prepared.Result{Value: true, Defined: true, Bytes: 4}, nil
+		})
+		p := &checkedProgram{name: "test", program: native, configured: wrapper}
+		b, err := NewBatch([]Program{p})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := EvalPrepared(ctx, p, d, EvalOptions{}); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := b.EvalPrepared(ctx, d, nil, EvalOptions{}); err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(customized, []bool{true, true}) {
+			t.Fatalf("wrapper %+v: customized %v", wrapper, customized)
+		}
 	}
 }

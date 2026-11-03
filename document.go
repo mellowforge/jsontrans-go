@@ -52,6 +52,15 @@ func EvalPrepared(ctx context.Context, p Program, d *Document, o EvalOptions) (R
 	return r, err
 }
 
+// preparedEntry is built only by newPreparedEntry and is read-only afterwards:
+// a Batch shares its entries across concurrent EvalPrepared calls.
+//
+//   - configured is the effective base: wrapper ∩ native for native entries,
+//     with the native RegexTimeout, otherwise the wrapper's limits.
+//   - customized records whether any configuration source is non-default. It is
+//     NOT configured != DefaultLimits(): a raised wrapper ceiling or a
+//     wrapper-only RegexTimeout is customized even when configured is default.
+//   - reuseBudget caches native.ReusableBudget() && !customized.
 type preparedEntry struct {
 	program     Program
 	native      *prepared.Handler
@@ -102,8 +111,9 @@ func (e *preparedEntry) eval(ctx context.Context, d *Document, o EvalOptions, pl
 	return e.evalResolved(ctx, d, o, &l, plan, state, index, scratch)
 }
 
-// evalResolved consumes a configuration resolved for this call. The caller may
-// reuse that immutable value, but expression budgets and bindings remain local.
+// evalResolved consumes a configuration resolved for this call. l may alias the
+// entry's shared configuration and must not be written through; callers may
+// reuse it across entries, but budgets and bindings stay per expression.
 func (e *preparedEntry) evalResolved(ctx context.Context, d *Document, o EvalOptions, l *Limits, plan prepared.BatchPlan, state any, index int, scratch *budget.Budget) (r Result, size int, err error) {
 	defer func() {
 		if e.name != "" {
