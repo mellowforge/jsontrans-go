@@ -1,0 +1,91 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/experiments/javascript
+cpu: Apple M5 Max
+BenchmarkLifecycle/quickjs/compile 	      85	   2895080 ns/op	 1522979 B/op	    1573 allocs/op
+BenchmarkLifecycle/quickjs/compile 	      84	   3157732 ns/op	 1520769 B/op	    1569 allocs/op
+BenchmarkLifecycle/quickjs/compile 	      78	   3240167 ns/op	 1521607 B/op	    1569 allocs/op
+BenchmarkLifecycle/quickjs/compile 	      78	   3217978 ns/op	 1520551 B/op	    1569 allocs/op
+BenchmarkLifecycle/quickjs/compile 	      81	   3383945 ns/op	 1521457 B/op	    1569 allocs/op
+BenchmarkLifecycle/quickjs/runtime-init         	     100	   2240153 ns/op	  768958 B/op	    1384 allocs/op
+BenchmarkLifecycle/quickjs/runtime-init         	     100	   2128204 ns/op	  768100 B/op	    1384 allocs/op
+BenchmarkLifecycle/quickjs/runtime-init         	     100	   2305162 ns/op	  767973 B/op	    1384 allocs/op
+BenchmarkLifecycle/quickjs/runtime-init         	      97	   2328494 ns/op	  768163 B/op	    1384 allocs/op
+BenchmarkLifecycle/quickjs/runtime-init         	     100	   2343139 ns/op	  771581 B/op	    1384 allocs/op
+BenchmarkLifecycle/quickjs/eval-go-value        	      84	   3181162 ns/op	 1687725 B/op	    2980 allocs/op
+BenchmarkLifecycle/quickjs/eval-go-value        	      80	   3143395 ns/op	 1688205 B/op	    2981 allocs/op
+BenchmarkLifecycle/quickjs/eval-go-value        	      80	   3082368 ns/op	 1687561 B/op	    2980 allocs/op
+BenchmarkLifecycle/quickjs/eval-go-value        	      85	   3050205 ns/op	 1688252 B/op	    2981 allocs/op
+BenchmarkLifecycle/quickjs/eval-go-value        	      88	   2950593 ns/op	 1688309 B/op	    2981 allocs/op
+BenchmarkLifecycle/quickjs/eval-json            	      85	   3130910 ns/op	 1975533 B/op	   10969 allocs/op
+BenchmarkLifecycle/quickjs/eval-json            	      82	   3084239 ns/op	 1975525 B/op	   10969 allocs/op
+BenchmarkLifecycle/quickjs/eval-json            	      86	   3101020 ns/op	 1975905 B/op	   10969 allocs/op
+BenchmarkLifecycle/quickjs/eval-json            	      86	   3064045 ns/op	 1975524 B/op	   10969 allocs/op
+BenchmarkLifecycle/quickjs/eval-json            	      86	   3087266 ns/op	 1978576 B/op	   10969 allocs/op
+BenchmarkLifecycle/quickjs/prepared-fallback    	      90	   2950855 ns/op	 1803603 B/op	    5351 allocs/op
+BenchmarkLifecycle/quickjs/prepared-fallback    	      91	   2930590 ns/op	 1800676 B/op	    5351 allocs/op
+BenchmarkLifecycle/quickjs/prepared-fallback    	      88	   2954810 ns/op	 1799596 B/op	    5351 allocs/op
+BenchmarkLifecycle/quickjs/prepared-fallback    	      90	   3043274 ns/op	 1800141 B/op	    5351 allocs/op
+BenchmarkLifecycle/quickjs/prepared-fallback    	      88	   2945738 ns/op	 1799596 B/op	    5351 allocs/op
+BenchmarkLifecycle/quickjs/json-roundtrip       	      19	  12586162 ns/op	 2474351 B/op	   22164 allocs/op
+BenchmarkLifecycle/quickjs/json-roundtrip       	      19	  12629702 ns/op	 2474346 B/op	   22164 allocs/op
+BenchmarkLifecycle/quickjs/json-roundtrip       	      19	  12577226 ns/op	 2474347 B/op	   22164 allocs/op
+BenchmarkLifecycle/quickjs/json-roundtrip       	      19	  12562965 ns/op	 2474344 B/op	   22164 allocs/op
+BenchmarkLifecycle/quickjs/json-roundtrip       	      19	  12543836 ns/op	 2474344 B/op	   22164 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N4        	      22	  11348316 ns/op	 7197732 B/op	   21272 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N4        	      24	  11317191 ns/op	 7197710 B/op	   21272 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N4        	      24	  11340648 ns/op	 7197692 B/op	   21271 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N4        	      24	  11328868 ns/op	 7197693 B/op	   21271 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N4        	      24	  11405543 ns/op	 7197691 B/op	   21271 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N16       	       5	  48551592 ns/op	28790836 B/op	   85077 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N16       	       5	  45989408 ns/op	28789156 B/op	   85073 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N16       	       5	  48061992 ns/op	28789188 B/op	   85074 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N16       	       5	  48214067 ns/op	28802273 B/op	   85074 allocs/op
+BenchmarkLifecycle/quickjs/sequential-N16       	       5	  45348417 ns/op	28789156 B/op	   85073 allocs/op
+BenchmarkLifecycle/goja/compile                 	    2709	    134388 ns/op	  153984 B/op	    2331 allocs/op
+BenchmarkLifecycle/goja/compile                 	    2756	    131359 ns/op	  153984 B/op	    2331 allocs/op
+BenchmarkLifecycle/goja/compile                 	    2766	    132983 ns/op	  153984 B/op	    2331 allocs/op
+BenchmarkLifecycle/goja/compile                 	    2794	    130210 ns/op	  153984 B/op	    2331 allocs/op
+BenchmarkLifecycle/goja/compile                 	    2320	    133265 ns/op	  153984 B/op	    2331 allocs/op
+BenchmarkLifecycle/goja/runtime-init            	  251438	      2108 ns/op	    5184 B/op	      50 allocs/op
+BenchmarkLifecycle/goja/runtime-init            	  256184	      2097 ns/op	    5184 B/op	      50 allocs/op
+BenchmarkLifecycle/goja/runtime-init            	  237405	      2214 ns/op	    5184 B/op	      50 allocs/op
+BenchmarkLifecycle/goja/runtime-init            	  245547	      2167 ns/op	    5184 B/op	      50 allocs/op
+BenchmarkLifecycle/goja/runtime-init            	  250041	      2117 ns/op	    5184 B/op	      50 allocs/op
+BenchmarkLifecycle/goja/eval-go-value           	    1045	    293467 ns/op	  272162 B/op	    7086 allocs/op
+BenchmarkLifecycle/goja/eval-go-value           	    1131	    293351 ns/op	  272154 B/op	    7086 allocs/op
+BenchmarkLifecycle/goja/eval-go-value           	    1099	    287796 ns/op	  272153 B/op	    7086 allocs/op
+BenchmarkLifecycle/goja/eval-go-value           	    1154	    284880 ns/op	  272153 B/op	    7086 allocs/op
+BenchmarkLifecycle/goja/eval-go-value           	    1124	    288283 ns/op	  272153 B/op	    7086 allocs/op
+BenchmarkLifecycle/goja/eval-json               	     512	    584698 ns/op	  560114 B/op	   15075 allocs/op
+BenchmarkLifecycle/goja/eval-json               	     524	    577650 ns/op	  560114 B/op	   15075 allocs/op
+BenchmarkLifecycle/goja/eval-json               	     524	    583925 ns/op	  560114 B/op	   15075 allocs/op
+BenchmarkLifecycle/goja/eval-json               	     520	    582216 ns/op	  560114 B/op	   15075 allocs/op
+BenchmarkLifecycle/goja/eval-json               	     530	    578890 ns/op	  560114 B/op	   15075 allocs/op
+BenchmarkLifecycle/goja/prepared-fallback       	     908	    364154 ns/op	  384185 B/op	    9457 allocs/op
+BenchmarkLifecycle/goja/prepared-fallback       	     920	    371743 ns/op	  384185 B/op	    9457 allocs/op
+BenchmarkLifecycle/goja/prepared-fallback       	     912	    376438 ns/op	  384185 B/op	    9457 allocs/op
+BenchmarkLifecycle/goja/prepared-fallback       	     915	    379388 ns/op	  384185 B/op	    9457 allocs/op
+BenchmarkLifecycle/goja/prepared-fallback       	     909	    384368 ns/op	  384185 B/op	    9457 allocs/op
+BenchmarkLifecycle/goja/json-roundtrip          	      81	   4641988 ns/op	 4522515 B/op	   80086 allocs/op
+BenchmarkLifecycle/goja/json-roundtrip          	      82	   4568272 ns/op	 4522520 B/op	   80086 allocs/op
+BenchmarkLifecycle/goja/json-roundtrip          	      84	   4679668 ns/op	 4522517 B/op	   80086 allocs/op
+BenchmarkLifecycle/goja/json-roundtrip          	      84	   4745073 ns/op	 4522520 B/op	   80086 allocs/op
+BenchmarkLifecycle/goja/json-roundtrip          	      87	   4675805 ns/op	 4522520 B/op	   80086 allocs/op
+BenchmarkLifecycle/goja/sequential-N4           	     180	   1446452 ns/op	 1475879 B/op	   36655 allocs/op
+BenchmarkLifecycle/goja/sequential-N4           	     183	   1422401 ns/op	 1475879 B/op	   36655 allocs/op
+BenchmarkLifecycle/goja/sequential-N4           	     186	   1456701 ns/op	 1475879 B/op	   36655 allocs/op
+BenchmarkLifecycle/goja/sequential-N4           	     178	   1443129 ns/op	 1475880 B/op	   36655 allocs/op
+BenchmarkLifecycle/goja/sequential-N4           	     186	   1454660 ns/op	 1475878 B/op	   36655 allocs/op
+BenchmarkLifecycle/goja/sequential-N16          	      61	   5805704 ns/op	 5906175 B/op	  146669 allocs/op
+BenchmarkLifecycle/goja/sequential-N16          	      61	   5745668 ns/op	 5906175 B/op	  146669 allocs/op
+BenchmarkLifecycle/goja/sequential-N16          	      60	   5657114 ns/op	 5906178 B/op	  146669 allocs/op
+BenchmarkLifecycle/goja/sequential-N16          	      60	   5867983 ns/op	 5906174 B/op	  146669 allocs/op
+BenchmarkLifecycle/goja/sequential-N16          	      60	   5764437 ns/op	 5906174 B/op	  146669 allocs/op
+BenchmarkInputConversion                        	    3661	     90124 ns/op	  42.09 MB/s	   68812 B/op	    1196 allocs/op
+BenchmarkInputConversion                        	    3688	     89999 ns/op	  42.14 MB/s	   68812 B/op	    1196 allocs/op
+BenchmarkInputConversion                        	    3634	     89517 ns/op	  42.37 MB/s	   68812 B/op	    1196 allocs/op
+BenchmarkInputConversion                        	    3685	     90168 ns/op	  42.07 MB/s	   68812 B/op	    1196 allocs/op
+BenchmarkInputConversion                        	    3739	     91801 ns/op	  41.32 MB/s	   68812 B/op	    1196 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/experiments/javascript	28.097s

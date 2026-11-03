@@ -1,0 +1,104 @@
+{
+  "BenchmarkLifecycle/quickjs/compile": {
+    "samples": 5,
+    "ns_op": 3217978.0,
+    "bytes_op": 1521457,
+    "allocs_op": 1569
+  },
+  "BenchmarkLifecycle/quickjs/runtime-init": {
+    "samples": 5,
+    "ns_op": 2305162.0,
+    "bytes_op": 768163,
+    "allocs_op": 1384
+  },
+  "BenchmarkLifecycle/quickjs/eval-go-value": {
+    "samples": 5,
+    "ns_op": 3082368.0,
+    "bytes_op": 1688205,
+    "allocs_op": 2981
+  },
+  "BenchmarkLifecycle/quickjs/eval-json": {
+    "samples": 5,
+    "ns_op": 3087266.0,
+    "bytes_op": 1975533,
+    "allocs_op": 10969
+  },
+  "BenchmarkLifecycle/quickjs/prepared-fallback": {
+    "samples": 5,
+    "ns_op": 2950855.0,
+    "bytes_op": 1800141,
+    "allocs_op": 5351
+  },
+  "BenchmarkLifecycle/quickjs/json-roundtrip": {
+    "samples": 5,
+    "ns_op": 12577226.0,
+    "bytes_op": 2474346,
+    "allocs_op": 22164
+  },
+  "BenchmarkLifecycle/quickjs/sequential-N4": {
+    "samples": 5,
+    "ns_op": 11340648.0,
+    "bytes_op": 7197693,
+    "allocs_op": 21271
+  },
+  "BenchmarkLifecycle/quickjs/sequential-N16": {
+    "samples": 5,
+    "ns_op": 48061992.0,
+    "bytes_op": 28789188,
+    "allocs_op": 85074
+  },
+  "BenchmarkLifecycle/goja/compile": {
+    "samples": 5,
+    "ns_op": 132983.0,
+    "bytes_op": 153984,
+    "allocs_op": 2331
+  },
+  "BenchmarkLifecycle/goja/runtime-init": {
+    "samples": 5,
+    "ns_op": 2117.0,
+    "bytes_op": 5184,
+    "allocs_op": 50
+  },
+  "BenchmarkLifecycle/goja/eval-go-value": {
+    "samples": 5,
+    "ns_op": 288283.0,
+    "bytes_op": 272153,
+    "allocs_op": 7086
+  },
+  "BenchmarkLifecycle/goja/eval-json": {
+    "samples": 5,
+    "ns_op": 582216.0,
+    "bytes_op": 560114,
+    "allocs_op": 15075
+  },
+  "BenchmarkLifecycle/goja/prepared-fallback": {
+    "samples": 5,
+    "ns_op": 376438.0,
+    "bytes_op": 384185,
+    "allocs_op": 9457
+  },
+  "BenchmarkLifecycle/goja/json-roundtrip": {
+    "samples": 5,
+    "ns_op": 4675805.0,
+    "bytes_op": 4522520,
+    "allocs_op": 80086
+  },
+  "BenchmarkLifecycle/goja/sequential-N4": {
+    "samples": 5,
+    "ns_op": 1446452.0,
+    "bytes_op": 1475879,
+    "allocs_op": 36655
+  },
+  "BenchmarkLifecycle/goja/sequential-N16": {
+    "samples": 5,
+    "ns_op": 5764437.0,
+    "bytes_op": 5906175,
+    "allocs_op": 146669
+  },
+  "BenchmarkInputConversion": {
+    "samples": 5,
+    "ns_op": 90124.0,
+    "bytes_op": 68812,
+    "allocs_op": 1196
+  }
+}

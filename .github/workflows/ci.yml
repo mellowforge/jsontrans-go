@@ -11,7 +11,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go: ['1.25.x', stable]
+        go: ['1.26.x', stable]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
-          go-version: '1.25.x'
+          go-version: '1.26.x'
       # Execution counts, not durations: a timed -fuzztime can report its own
       # normal expiry as "context deadline exceeded" (a race in the Go fuzz
       # coordinator). The counts match the executions the earlier 10s runs
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
-          go-version: '1.25.x'
+          go-version: '1.26.x'
       - uses: actions/setup-node@v6
         with:
           node-version: '22'
@@ -56,3 +56,20 @@ jobs:
           cache-dependency-path: conformance/oracle/package-lock.json
       - run: npm ci --ignore-scripts --prefix conformance/oracle
       - run: go test -tags oracle ./conformance ./jsonata
+
+  javascript-assessment:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: experiments/javascript
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: experiments/javascript/go.sum
+      - run: go vet ./...
+      - run: go test ./...
+      - run: go test -race ./...
+      - run: CGO_ENABLED=0 go build ./cmd/assess
+      - run: go test -run '^$' -fuzz '^FuzzStringConversion$' -fuzztime=1000x -parallel=2
