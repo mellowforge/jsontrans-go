@@ -163,7 +163,7 @@ func builtinRegex(m map[string]Callable) {
 			if n < 0 {
 				return nil, builtinError("D3020", "split")
 			}
-			limit = int(n)
+			limit = floatToInt(n)
 		}
 		if limit == 0 {
 			return []any{}, nil
@@ -192,7 +192,7 @@ func builtinRegex(m map[string]Callable) {
 			if !sok || !eok || !nok {
 				return nil, builtinError("T1010", "split")
 			}
-			i, j := int(start), int(end)
+			i, j := floatToInt(start), floatToInt(end)
 			if i < pos || j < i || j > len(units) {
 				return nil, builtinError("T1010", "split")
 			}
@@ -240,7 +240,7 @@ func builtinRegex(m map[string]Callable) {
 			if n < 0 {
 				return nil, builtinError("D3040", "match")
 			}
-			limit = int(n)
+			limit = floatToInt(n)
 		}
 		if limit == 0 {
 			return Undefined, nil
@@ -378,7 +378,7 @@ func builtinReplace(c *CallContext, a []Value) (Value, error) {
 		if n < 0 {
 			return nil, builtinError("D3011", "replace")
 		}
-		limit = int(n)
+		limit = floatToInt(n)
 	}
 	if limit == 0 {
 		return s, nil
@@ -426,7 +426,7 @@ func builtinReplace(c *CallContext, a []Value) (Value, error) {
 		}
 		start, _ := obj["start"].(float64)
 		end, _ := obj["end"].(float64)
-		i, j := int(start), int(end)
+		i, j := floatToInt(start), floatToInt(end)
 		if i < pos || j < i || j > len(units) {
 			return nil, builtinError("T1010", "replace")
 		}

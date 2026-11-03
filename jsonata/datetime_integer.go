@@ -310,9 +310,9 @@ func integerWords(n float64, prev, ordinal bool) string {
 	}
 	if n <= 19 {
 		if ordinal {
-			return prefix + integerOrd[int(n)]
+			return prefix + integerOrd[floatToInt(n)]
 		}
-		return prefix + integerFew[int(n)]
+		return prefix + integerFew[floatToInt(n)]
 	}
 	if n < 100 {
 		t := int(n / 10)

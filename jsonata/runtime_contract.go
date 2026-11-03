@@ -2,6 +2,7 @@ package jsonata
 
 import (
 	"context"
+	"math"
 	"time"
 
 	"github.com/mellowforge/jsontrans-go/internal/budget"
@@ -50,3 +51,31 @@ type NativeFunction struct {
 
 func (f NativeFunction) Arity() int                                       { return f.N }
 func (f NativeFunction) Call(c *CallContext, args []Value) (Value, error) { return f.Fn(c, args) }
+
+// floatToInt converts f identically on every platform: NaN is 0 and values
+// beyond the int range saturate. Go leaves such conversions
+// implementation-defined, and amd64 differs from arm64.
+func floatToInt(f float64) int {
+	switch {
+	case math.IsNaN(f):
+		return 0
+	case f >= float64(math.MaxInt):
+		return math.MaxInt
+	case f <= float64(math.MinInt):
+		return math.MinInt
+	}
+	return int(f)
+}
+
+// floatToInt64 is floatToInt for int64 results.
+func floatToInt64(f float64) int64 {
+	switch {
+	case math.IsNaN(f):
+		return 0
+	case f >= float64(math.MaxInt64):
+		return math.MaxInt64
+	case f <= float64(math.MinInt64):
+		return math.MinInt64
+	}
+	return int64(f)
+}

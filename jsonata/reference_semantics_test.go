@@ -363,3 +363,15 @@ func TestReferenceParentInsideGroupBy(t *testing.T) {
 		{`a.b{"k": %%}`, `{"a":{"b":1}}`, `ERR S0211`},
 	})
 }
+
+// Range endpoints must be finite integers; Infinity is not an integer.
+func TestReferenceRangeRejectsNonFiniteEndpoints(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`[1/0..1/0]`, `{}`, `ERR T2003`},
+		{`[1..1/0]`, `{}`, `ERR T2004`},
+		{`[-1/0..1]`, `{}`, `ERR T2003`},
+		{`[0/0..1]`, `{}`, `ERR T2003`},
+		{`[1.5..3]`, `{}`, `ERR T2003`},
+		{`[1..2.5]`, `{}`, `ERR T2004`},
+	})
+}

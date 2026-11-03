@@ -71,7 +71,7 @@ func dateFromMillis(c *CallContext, n float64, picture, timezone Value) (Value, 
 			offset = sign * (v/100*60 + v%100)
 		}
 	}
-	t := time.UnixMilli(int64(n)).In(time.FixedZone("", offset*60))
+	t := time.UnixMilli(floatToInt64(n)).In(time.FixedZone("", offset*60))
 	p, ok := picture.(string)
 	if !ok {
 		s := t.Format("2006-01-02T15:04:05.000")
@@ -460,7 +460,7 @@ func dateParsePicture(c *CallContext, s, p string) (Value, error) {
 			} else {
 				x, _ := parseInteger(c, v, pic)
 				f, _ := x.(float64)
-				n = int(f)
+				n = floatToInt(f)
 			}
 		case 'P':
 			pm = strings.ToLower(v)
@@ -491,7 +491,7 @@ func dateParsePicture(c *CallContext, s, p string) (Value, error) {
 			if !ok {
 				return Undefined, nil
 			}
-			n = int(f)
+			n = floatToInt(f)
 		}
 		switch comp {
 		case 'Y':

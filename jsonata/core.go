@@ -1674,7 +1674,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			}
 			if numeric {
 				for _, x := range indices {
-					idx := int(math.Floor(x.(float64)))
+					idx := floatToInt(math.Floor(x.(float64)))
 					if idx < 0 {
 						idx += len(items)
 					}
@@ -2049,7 +2049,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				return nil
 			}
 			x, ok := v.(float64)
-			if !ok || x != math.Trunc(x) {
+			if !ok || math.IsInf(x, 0) || x != math.Trunc(x) {
 				return evalError(code, n.pos, "..", fmt.Errorf("range endpoint must be an integer"))
 			}
 			return nil

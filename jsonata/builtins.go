@@ -274,7 +274,7 @@ func builtins() map[string]Callable {
 					if x, ok := builtinArg(a, 1).(float64); ok {
 						p = x
 					}
-					return builtinRound(f, int(p)), nil
+					return builtinRound(f, floatToInt(p)), nil
 				}
 			default:
 				s, ok := v.(string)
@@ -382,7 +382,7 @@ func builtins() map[string]Callable {
 		}
 		offsets := regexCodePointOffsets(units)
 		count := len(offsets) - 1
-		i := int(start)
+		i := floatToInt(start)
 		if i < 0 {
 			i += count
 		}
@@ -398,7 +398,7 @@ func builtins() map[string]Callable {
 				return "", nil
 			}
 			if n < float64(end-i) {
-				end = i + int(n)
+				end = i + floatToInt(n)
 			}
 		}
 		return regexUnitsString(units[offsets[i]:offsets[end]]), nil
@@ -802,7 +802,7 @@ func builtins() map[string]Callable {
 			return strconv.FormatFloat(f, 'e', -1, 64), nil
 		}
 		i, _ := new(big.Float).SetFloat64(f).Int(nil)
-		return i.Text(int(base)), nil
+		return i.Text(floatToInt(base)), nil
 	})
 	builtinInteger(m)
 	builtinNumberPictures(m)

@@ -31,7 +31,7 @@ func builtinStrings(m map[string]Callable) {
 			if x < 0 {
 				return nil, builtinError("D3020", "split")
 			}
-			limit = int(x)
+			limit = floatToInt(x)
 			if limit == 0 {
 				return []any{}, nil
 			}
