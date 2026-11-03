@@ -32,10 +32,11 @@ type Config struct {
 	GuestStackBytes  int
 }
 type Engine struct {
-	backend Backend
-	config  Config
-	dir     string
-	owned   *quickjswasm.Engine
+	backend  Backend
+	config   Config
+	dir      string
+	owned    *quickjswasm.Engine
+	lifetime *engineLifetime
 }
 type Program struct {
 	engine      *Engine
@@ -48,6 +49,12 @@ type Program struct {
 var bridge string
 
 func New(backend Backend, c Config) (*Engine, error) {
+	if backend == OwnedQuickJS {
+		return NewOwned(context.Background(), c)
+	}
+	return newEngine(context.Background(), backend, c)
+}
+func newEngine(ctx context.Context, backend Backend, c Config) (*Engine, error) {
 	if backend != QuickJS && backend != Goja && backend != OwnedQuickJS {
 		return nil, fmt.Errorf("unknown backend %q", backend)
 	}
@@ -75,11 +82,11 @@ func New(backend Backend, c Config) (*Engine, error) {
 		if c.GuestMemoryBytes%65536 != 0 || c.GuestMemoryBytes < 2<<20 || c.GuestMemoryBytes > 64<<20 || c.GuestStackBytes != 0 {
 			return nil, fmt.Errorf("%w: owned guest memory 2..64 MiB in pages; explicit JS stack quotas unsupported", jt.ErrUnsupported)
 		}
-		owned, err := quickjswasm.New(context.Background(), quickjswasm.Config{MemoryPages: uint32(c.GuestMemoryBytes / 65536), Timeout: l.Timeout})
+		owned, err := quickjswasm.New(ctx, quickjswasm.Config{MemoryPages: uint32(c.GuestMemoryBytes / 65536), Timeout: l.Timeout})
 		if err != nil {
 			return nil, err
 		}
-		return &Engine{backend: backend, config: c, owned: owned}, nil
+		return &Engine{backend: backend, config: c, owned: owned, lifetime: newEngineLifetime()}, nil
 	}
 	dir, err := os.MkdirTemp("", "jsontrans-js-empty-")
 	if err != nil {
@@ -92,14 +99,14 @@ func New(backend Backend, c Config) (*Engine, error) {
 // Baseline-wrapper calls must have finished first.
 func (e *Engine) Close() error {
 	if e.owned != nil {
-		return e.owned.Close()
+		return e.lifetime.close(e.owned.Close)
 	}
 	return os.Remove(e.dir)
 }
 func (e *Engine) Limits() jt.Limits                   { return e.config.Limits }
 func (p *Program) Limits() jt.Limits                  { return p.engine.Limits() }
 func (p *Program) UnsupportedEvalLimits() jt.LimitSet { return jt.LimitSteps | jt.LimitRegexTimeout }
-func (e *Engine) Compile(ctx context.Context, expr string) (jt.Program, error) {
+func (e *Engine) compile(ctx context.Context, expr string) (jt.Program, error) {
 	b, err := budget.New(ctx, e.config.Limits)
 	if err != nil {
 		return nil, err
@@ -145,7 +152,7 @@ func diagnostic(backend Backend, phase string, err error) error {
 	}
 	return &jt.Error{Processor: string(backend), Phase: phase, Code: code, Cause: cause}
 }
-func (p *Program) Eval(ctx context.Context, input any, o jt.EvalOptions) (result jt.Result, err error) {
+func (p *Program) eval(ctx context.Context, input any, o jt.EvalOptions) (result jt.Result, err error) {
 	if o.Limits != nil && (o.Limits.MaxSteps != 0 || o.Limits.RegexTimeout != 0) {
 		return result, fmt.Errorf("%w: JS instruction and per-regex limits", jt.ErrUnsupported)
 	}

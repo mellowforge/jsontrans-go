@@ -68,8 +68,6 @@ func New(ctx context.Context, c Config) (*Engine, error) {
 	if c.MemoryPages < 32 || c.MemoryPages > 1024 || c.Timeout < 0 {
 		return nil, fmt.Errorf("%w: owned guest pages 32..1024 and positive timeout", jt.ErrUnsupported)
 	}
-	ctx, cancel := context.WithTimeout(ctx, c.Timeout)
-	defer cancel()
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
