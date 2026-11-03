@@ -12,11 +12,13 @@ import (
 
 // Exercise conversion syntax and escaped strings without executing arbitrary
 // source or allocating unbounded guest collections in fuzz workers.
-func FuzzStringConversion(f *testing.F) {
+func FuzzStringConversion(f *testing.F)      { fuzzStringConversion(f, Goja) }
+func FuzzOwnedStringConversion(f *testing.F) { fuzzStringConversion(f, OwnedQuickJS) }
+func fuzzStringConversion(f *testing.F, backend Backend) {
 	for _, s := range []string{"plain", "😀", "\x00\n\"\\", "é", "\xff"} {
 		f.Add(s)
 	}
-	e, err := New(Goja, Config{})
+	e, err := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
 	if err != nil {
 		f.Fatal(err)
 	}

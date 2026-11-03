@@ -71,5 +71,27 @@ jobs:
       - run: go vet ./...
       - run: go test ./...
       - run: go test -race ./...
-      - run: CGO_ENABLED=0 go build ./cmd/assess
+      - run: CGO_ENABLED=0 go build -o /tmp/jsontrans-owned-assess ./cmd/assess
+      - name: Owned guest resource gates
+        run: >-
+          python3 run_probes.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs
+          --case compile-cancel --case cancel-loop --case cancel-regex --case cancel-conversion
+          --case allocation-cap --case guest-memory --case cleanup --case host-capabilities
+          --case cache-cancellation --case exception-coercion
+          --strict --output /tmp/owned-runtime-gates.json
       - run: go test -run '^$' -fuzz '^FuzzStringConversion$' -fuzztime=1000x -parallel=2
+
+      - run: go test -run '^$' -fuzz '^FuzzOwnedStringConversion$' -fuzztime=200x -parallel=2
+      - run: go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzOwnedCompile$' -fuzztime=200x -parallel=2
+
+  quickjs-guest-reproducibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Rebuild pinned guest with WASI SDK 34
+        run: >-
+          python3 experiments/javascript/internal/quickjswasm/guest/build.py
+          --cache "$RUNNER_TEMP/quickjs-build-cache"
+          --output "$RUNNER_TEMP/owned-quickjs.wasm"
+      - name: Compare artifact bytes
+        run: cmp experiments/javascript/internal/quickjswasm/quickjs.wasm "$RUNNER_TEMP/owned-quickjs.wasm"

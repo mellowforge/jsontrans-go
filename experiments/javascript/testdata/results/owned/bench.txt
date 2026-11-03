@@ -1,0 +1,63 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/experiments/javascript
+cpu: Apple M5 Max
+BenchmarkLifecycle/owned-quickjs/compile 	     100	   2119572 ns/op	 4511608 B/op	    1139 allocs/op
+BenchmarkLifecycle/owned-quickjs/compile 	     100	   2043108 ns/op	 4510136 B/op	    1136 allocs/op
+BenchmarkLifecycle/owned-quickjs/compile 	     100	   2024231 ns/op	 4510141 B/op	    1136 allocs/op
+BenchmarkLifecycle/owned-quickjs/compile 	     100	   2088626 ns/op	 4510114 B/op	    1136 allocs/op
+BenchmarkLifecycle/owned-quickjs/compile 	     121	   1967513 ns/op	 4510200 B/op	    1136 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-go-value         	     218	   1131799 ns/op	 2360930 B/op	    1827 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-go-value         	     213	   1105799 ns/op	 2360926 B/op	    1827 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-go-value         	     212	   1122264 ns/op	 2360805 B/op	    1827 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-go-value         	     213	   1120245 ns/op	 2360805 B/op	    1827 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-go-value         	     214	   1131253 ns/op	 2360800 B/op	    1827 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-json             	     169	   1398964 ns/op	 2648768 B/op	    9816 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-json             	     176	   1352182 ns/op	 2648767 B/op	    9816 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-json             	     171	   1405459 ns/op	 2648766 B/op	    9816 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-json             	     172	   1388497 ns/op	 2648766 B/op	    9816 allocs/op
+BenchmarkLifecycle/owned-quickjs/eval-json             	     170	   1398735 ns/op	 2648767 B/op	    9816 allocs/op
+BenchmarkLifecycle/owned-quickjs/prepared-fallback     	     199	   1216141 ns/op	 2472931 B/op	    4198 allocs/op
+BenchmarkLifecycle/owned-quickjs/prepared-fallback     	     192	   1221428 ns/op	 2472835 B/op	    4198 allocs/op
+BenchmarkLifecycle/owned-quickjs/prepared-fallback     	     198	   1215494 ns/op	 2472831 B/op	    4198 allocs/op
+BenchmarkLifecycle/owned-quickjs/prepared-fallback     	     195	   1224978 ns/op	 2472839 B/op	    4198 allocs/op
+BenchmarkLifecycle/owned-quickjs/prepared-fallback     	     189	   1233494 ns/op	 2472840 B/op	    4198 allocs/op
+BenchmarkLifecycle/owned-quickjs/json-roundtrip        	      21	  10879264 ns/op	 3151707 B/op	   21012 allocs/op
+BenchmarkLifecycle/owned-quickjs/json-roundtrip        	      22	  10350341 ns/op	 3151711 B/op	   21012 allocs/op
+BenchmarkLifecycle/owned-quickjs/json-roundtrip        	      21	  10286464 ns/op	 3151710 B/op	   21012 allocs/op
+BenchmarkLifecycle/owned-quickjs/json-roundtrip        	      21	  10478296 ns/op	 3151726 B/op	   21012 allocs/op
+BenchmarkLifecycle/owned-quickjs/json-roundtrip        	      21	  10353365 ns/op	 3151734 B/op	   21013 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N4         	      46	   4427037 ns/op	 9890801 B/op	   16660 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N4         	      51	   4359181 ns/op	 9890612 B/op	   16660 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N4         	      50	   4413177 ns/op	 9890854 B/op	   16660 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N4         	      57	   4371305 ns/op	 9890590 B/op	   16659 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N4         	      58	   4406428 ns/op	 9890607 B/op	   16660 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N16        	      12	  17802222 ns/op	39561497 B/op	   66630 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N16        	      12	  17572184 ns/op	39562392 B/op	   66631 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N16        	      13	  17700939 ns/op	39560703 B/op	   66627 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N16        	      12	  17664694 ns/op	39560678 B/op	   66627 allocs/op
+BenchmarkLifecycle/owned-quickjs/sequential-N16        	      12	  17515812 ns/op	39560700 B/op	   66627 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/experiments/javascript	8.832s
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm
+cpu: Apple M5 Max
+BenchmarkOwnedRuntimeInitialization 	     402	    611489 ns/op	 2165251 B/op	     522 allocs/op
+BenchmarkOwnedRuntimeInitialization 	     386	    583647 ns/op	 2164944 B/op	     522 allocs/op
+BenchmarkOwnedRuntimeInitialization 	     396	    605078 ns/op	 2164944 B/op	     522 allocs/op
+BenchmarkOwnedRuntimeInitialization 	     392	    594827 ns/op	 2164948 B/op	     522 allocs/op
+BenchmarkOwnedRuntimeInitialization 	     394	    587069 ns/op	 2165017 B/op	     522 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm	2.367s
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm
+cpu: Apple M5 Max
+BenchmarkOwnedRuntimeClose 	     100	       142.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkOwnedRuntimeClose 	     100	       103.4 ns/op	       0 B/op	       0 allocs/op
+BenchmarkOwnedRuntimeClose 	     100	       111.2 ns/op	       0 B/op	       0 allocs/op
+BenchmarkOwnedRuntimeClose 	     100	       130.4 ns/op	       0 B/op	       0 allocs/op
+BenchmarkOwnedRuntimeClose 	     100	       108.3 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm	1.539s

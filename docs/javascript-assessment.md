@@ -2,6 +2,9 @@
 
 **Recommendation: continue with QuickJS through owned Wazero integration; do not
 ship the current QJS wrapper or substitute Goja under the agreed execution profile.**
+A follow-up [owned runtime checkpoint](quickjs-runtime-foundation.md) implements
+the first production-plan stage and records its remaining gaps.
+
 This assessment is implemented in an optional development module. Neither
 candidate is accepted for production, and the core library has no JS dependency.
 

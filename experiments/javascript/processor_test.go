@@ -12,7 +12,7 @@ import (
 )
 
 func TestProcessors(t *testing.T) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		t.Run(string(backend), func(t *testing.T) {
 			e, err := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
 			if err != nil {
@@ -37,7 +37,7 @@ func TestProcessors(t *testing.T) {
 }
 
 func TestShapesAndIsolation(t *testing.T) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		t.Run(string(backend), func(t *testing.T) {
 			e, _ := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
 			t.Cleanup(func() { _ = e.Close() })
@@ -70,7 +70,7 @@ func TestShapesAndIsolation(t *testing.T) {
 }
 
 func TestStrictResultsAndLimits(t *testing.T) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		t.Run(string(backend), func(t *testing.T) {
 			e, _ := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
 			t.Cleanup(func() { _ = e.Close() })
@@ -100,7 +100,7 @@ func TestStrictResultsAndLimits(t *testing.T) {
 }
 
 func TestBridgeCannotBeReconfiguredBySource(t *testing.T) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		t.Run(string(backend), func(t *testing.T) {
 			e, _ := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
 			t.Cleanup(func() { _ = e.Close() })
@@ -131,7 +131,7 @@ func TestBridgeCannotBeReconfiguredBySource(t *testing.T) {
 	}
 }
 func TestOutputBudgetIndependentOfInput(t *testing.T) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		e, _ := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
 		t.Cleanup(func() { _ = e.Close() })
 
@@ -145,7 +145,7 @@ func TestOutputBudgetIndependentOfInput(t *testing.T) {
 	}
 }
 func TestArrayPropertiesAreRejected(t *testing.T) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		e, _ := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
 		t.Cleanup(func() { _ = e.Close() })
 
@@ -162,7 +162,7 @@ func TestArrayPropertiesAreRejected(t *testing.T) {
 }
 
 func TestUnsupportedConstructorControls(t *testing.T) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		for _, limits := range []jt.Limits{{MaxSteps: 1}, {RegexTimeout: time.Millisecond}} {
 			e, err := New(backend, Config{Limits: limits})
 			if e != nil {
@@ -183,7 +183,7 @@ func TestUnsupportedConstructorControls(t *testing.T) {
 }
 
 func TestInputBoundariesAndBindingOwnership(t *testing.T) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		e, err := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
 		if err != nil {
 			t.Fatal(err)
@@ -210,7 +210,7 @@ func TestInputBoundariesAndBindingOwnership(t *testing.T) {
 }
 
 func TestSourceCannotReplaceResultBridge(t *testing.T) {
-	for _, backend := range []Backend{QuickJS, Goja} {
+	for _, backend := range []Backend{QuickJS, Goja, OwnedQuickJS} {
 		e, err := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
 		if err != nil {
 			t.Fatal(err)
@@ -225,5 +225,32 @@ func TestSourceCannotReplaceResultBridge(t *testing.T) {
 		if err == nil && result.Defined && result.Value == json.Number("9007199254740993") {
 			t.Errorf("%s source replaced trusted JSON bridge", backend)
 		}
+	}
+}
+
+func TestOwnedAssessmentClosesRuntime(t *testing.T) {
+	e, err := New(OwnedQuickJS, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := e.Compile(context.Background(), `()=>1`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = e.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = p.Eval(context.Background(), nil, jt.EvalOptions{}); err == nil {
+		t.Fatal("evaluation succeeded after Close")
+	}
+}
+
+func TestOwnedAssessmentRejectsStackQuota(t *testing.T) {
+	e, err := New(OwnedQuickJS, Config{GuestStackBytes: 16 << 10, Limits: jt.Limits{Timeout: 10 * time.Second}})
+	if e != nil {
+		e.Close()
+	}
+	if !errors.Is(err, jt.ErrUnsupported) {
+		t.Fatalf("unenforced stack quota accepted: %v", err)
 	}
 }

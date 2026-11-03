@@ -1,0 +1,56 @@
+{
+  "BenchmarkLifecycle/owned-quickjs/compile": {
+    "samples": 5,
+    "ns_op": 2043108.0,
+    "bytes_op": 4510141,
+    "allocs_op": 1136
+  },
+  "BenchmarkLifecycle/owned-quickjs/eval-go-value": {
+    "samples": 5,
+    "ns_op": 1122264.0,
+    "bytes_op": 2360805,
+    "allocs_op": 1827
+  },
+  "BenchmarkLifecycle/owned-quickjs/eval-json": {
+    "samples": 5,
+    "ns_op": 1398735.0,
+    "bytes_op": 2648767,
+    "allocs_op": 9816
+  },
+  "BenchmarkLifecycle/owned-quickjs/prepared-fallback": {
+    "samples": 5,
+    "ns_op": 1221428.0,
+    "bytes_op": 2472839,
+    "allocs_op": 4198
+  },
+  "BenchmarkLifecycle/owned-quickjs/json-roundtrip": {
+    "samples": 5,
+    "ns_op": 10353365.0,
+    "bytes_op": 3151711,
+    "allocs_op": 21012
+  },
+  "BenchmarkLifecycle/owned-quickjs/sequential-N4": {
+    "samples": 5,
+    "ns_op": 4406428.0,
+    "bytes_op": 9890612,
+    "allocs_op": 16660
+  },
+  "BenchmarkLifecycle/owned-quickjs/sequential-N16": {
+    "samples": 5,
+    "ns_op": 17664694.0,
+    "bytes_op": 39560703,
+    "allocs_op": 66627
+  },
+  "BenchmarkOwnedRuntimeInitialization": {
+    "samples": 5,
+    "ns_op": 594827.0,
+    "bytes_op": 2164948,
+    "allocs_op": 522
+  },
+  "BenchmarkOwnedRuntimeClose": {
+    "samples": 5,
+    "ns_op": 111.2,
+    "bytes_op": 0,
+    "allocs_op": 0
+  }
+}

@@ -14,7 +14,9 @@ an extensible processor API.
 Compile an expression once, prepare a document once, and reuse them wherever
 your application needs to evaluate JSON rules.
 
-> **Status:** In development; no public release yet. See the
+> **Status:** Native processors are available in
+> [v1.1.0](https://github.com/mellowforge/jsontrans-go/releases/tag/v1.1.0).
+> JavaScript remains experimental. See the
 > [compatibility policy](docs/compatibility.md) for coverage and documented differences.
 
 [Quick start](#quick-start) · [Document reuse](#prepare-once-evaluate-many) ·
@@ -228,6 +230,7 @@ batches, host functions, and JSONata's raw-value API.
 - [Contributing and development commands](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 - [JavaScript feasibility assessment](docs/javascript-assessment.md) (experimental)
+- [Owned QuickJS runtime checkpoint](docs/quickjs-runtime-foundation.md)
 
 ## License
 
