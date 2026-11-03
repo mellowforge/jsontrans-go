@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"reflect"
+	"strconv"
 	"sync"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	jt "github.com/mellowforge/jsontrans-go"
@@ -19,79 +21,85 @@ import (
 func TestPublicCloseDrainsAdmittedCalls(t *testing.T) {
 	for _, operation := range []string{"abi_compile", "abi_eval"} {
 		t.Run(operation, func(t *testing.T) {
-			entered, canceled, release := make(chan struct{}), make(chan struct{}), make(chan struct{})
-			var first, unblock sync.Once
-			factory := experimental.FunctionListenerFactoryFunc(func(def api.FunctionDefinition) experimental.FunctionListener {
-				for _, name := range def.ExportNames() {
-					if name == operation {
-						return experimental.FunctionListenerFunc(func(ctx context.Context, _ api.Module, _ api.FunctionDefinition, _ []uint64, _ experimental.StackIterator) {
-							first.Do(func() {
-								close(entered)
-								<-ctx.Done()
-								close(canceled)
-								<-release
+			synctest.Test(t, func(t *testing.T) {
+				entered, canceled, release := make(chan struct{}), make(chan struct{}), make(chan struct{})
+				var first, unblock sync.Once
+				factory := experimental.FunctionListenerFactoryFunc(func(def api.FunctionDefinition) experimental.FunctionListener {
+					for _, name := range def.ExportNames() {
+						if name == operation {
+							return experimental.FunctionListenerFunc(func(ctx context.Context, _ api.Module, _ api.FunctionDefinition, _ []uint64, _ experimental.StackIterator) {
+								first.Do(func() {
+									close(entered)
+									<-ctx.Done()
+									close(canceled)
+									<-release
+								})
 							})
-						})
+						}
 					}
-				}
-				return nil
-			})
-			ctx := experimental.WithFunctionListenerFactory(context.Background(), factory)
-			e, err := New(ctx, Config{Limits: jt.Limits{Timeout: semanticTestTimeout}})
-			if err != nil {
-				t.Fatal(err)
-			}
-			t.Cleanup(func() { unblock.Do(func() { close(release) }); _ = e.Close() })
-			var p jt.Program
-			if operation == "abi_eval" {
-				p, err = e.Compile(context.Background(), `()=>{while(true){}}`)
+					return nil
+				})
+				ctx := experimental.WithFunctionListenerFactory(context.Background(), factory)
+				e, err := New(ctx, Config{Limits: jt.Limits{Timeout: semanticTestTimeout}})
 				if err != nil {
 					t.Fatal(err)
 				}
-			}
-			callDone := make(chan error, 1)
-			go func() {
-				if p == nil {
-					_, err := e.Compile(context.Background(), `x=>x`)
-					callDone <- err
-				} else {
-					_, err := p.Eval(context.Background(), nil, jt.EvalOptions{})
-					callDone <- err
-				}
-			}()
-			awaitSignal(t, entered)
-			closed := make(chan error, 2)
-			for range 2 {
-				go func() { closed <- e.Close() }()
-			}
-			awaitSignal(t, canceled)
-			select {
-			case err := <-closed:
-				t.Fatalf("Close returned before admitted call drained: %v", err)
-			default:
-			}
-			if _, err := e.Compile(context.Background(), `x=>x`); !errors.Is(err, ErrClosed) {
-				t.Fatalf("closing engine admitted compilation: %v", err)
-			}
-			unblock.Do(func() { close(release) })
-			select {
-			case err := <-callDone:
-				if !errors.Is(err, ErrClosed) {
-					t.Fatalf("active call lost closure cause: %v", err)
-				}
-			case <-time.After(semanticTestTimeout):
-				t.Fatal("admitted call did not stop")
-			}
-			for range 2 {
-				select {
-				case err := <-closed:
+				t.Cleanup(func() { unblock.Do(func() { close(release) }); _ = e.Close() })
+				var p jt.Program
+				if operation == "abi_eval" {
+					p, err = e.Compile(context.Background(), `()=>{while(true){}}`)
 					if err != nil {
 						t.Fatal(err)
 					}
-				case <-time.After(semanticTestTimeout):
-					t.Fatal("Close did not finish")
 				}
-			}
+				callDone := make(chan error, 1)
+				go func() {
+					if p == nil {
+						_, err := e.Compile(context.Background(), `x=>x`)
+						callDone <- err
+					} else {
+						_, err := p.Eval(context.Background(), nil, jt.EvalOptions{})
+						callDone <- err
+					}
+				}()
+				awaitSignal(t, entered)
+				closed := make(chan error, 2)
+				go func() { closed <- e.Close() }()
+				awaitSignal(t, canceled)
+				// Establish quiescence: Close must have either returned or durably
+				// blocked. The assertion no longer depends on closer scheduling.
+				synctest.Wait()
+				select {
+				case err := <-closed:
+					t.Fatalf("Close returned before admitted call drained: %v", err)
+				default:
+				}
+				if _, err := e.Compile(context.Background(), `x=>x`); !errors.Is(err, ErrClosed) {
+					t.Fatalf("closing engine admitted compilation: %v", err)
+				}
+				// Start another closer after quiescence. sync.Once's mutex is not
+				// durably blocking, so it must not participate in synctest.Wait.
+				go func() { closed <- e.Close() }()
+				unblock.Do(func() { close(release) })
+				select {
+				case err := <-callDone:
+					if !errors.Is(err, ErrClosed) {
+						t.Fatalf("active call lost closure cause: %v", err)
+					}
+				case <-time.After(semanticTestTimeout):
+					t.Fatal("admitted call did not stop")
+				}
+				for range 2 {
+					select {
+					case err := <-closed:
+						if err != nil {
+							t.Fatal(err)
+						}
+					case <-time.After(semanticTestTimeout):
+						t.Fatal("Close did not finish")
+					}
+				}
+			})
 		})
 	}
 }
@@ -164,23 +172,28 @@ func TestPublicConcurrentDetachedState(t *testing.T) {
 		t.Fatal(err)
 	}
 	input := map[string]any{"nested": map[string]any{"value": 2}}
-	bindings := map[string]any{"nested": map[string]any{"value": 3}}
-	want := map[string]any{"sum": json.Number("5"), "seen": json.Number("1"), "text": "😀", "list": []any{json.Number("1"), nil}}
 	var wg sync.WaitGroup
-	for range 8 {
+	for worker := range 8 {
 		wg.Go(func() {
-			for range 8 {
+			for iteration := range 8 {
+				value := worker*8 + iteration + 3
+				bindings := map[string]any{"nested": map[string]any{"value": value}}
+				want := map[string]any{"sum": json.Number(strconv.Itoa(value + 2)), "seen": json.Number("1"), "text": "😀", "list": []any{json.Number("1"), nil}}
 				got, err := p.Eval(context.Background(), input, jt.EvalOptions{Bindings: bindings})
 				if err != nil || !got.Defined || !reflect.DeepEqual(got.Value, want) {
 					t.Errorf("isolated evaluation: %#v, %v", got, err)
+					return
+				}
+				if bindings["nested"].(map[string]any)["value"] != value {
+					t.Error("caller bindings mutated")
 					return
 				}
 			}
 		})
 	}
 	wg.Wait()
-	if input["nested"].(map[string]any)["value"] != 2 || bindings["nested"].(map[string]any)["value"] != 3 {
-		t.Fatal("caller input or bindings mutated")
+	if input["nested"].(map[string]any)["value"] != 2 {
+		t.Fatal("caller input mutated")
 	}
 }
 

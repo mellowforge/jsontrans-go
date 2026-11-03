@@ -10,6 +10,8 @@ quotas, dependency updates or a release.
 Public-engine tests use test-only Wazero function listeners to observe admitted
 compilation/evaluation before initiating Close. They check that concurrent Close
 calls wait for complete calls, cancel them, stop admission and retain ErrClosed.
+Go synctest establishes scheduler quiescence before asserting that Close remains
+blocked. Removing draining is verified to fail both compilation/evaluation cases.
 Separate tests observe the actual guest deadline for both raised and lowered
 per-call timeout overrides. There are no sleeps used to infer guest admission.
 
@@ -20,6 +22,8 @@ BigInt/symbols, nonfinite numbers, boxed values, typed arrays, dates/maps,
 holes/extra array properties, symbol keys, accessors and cycles. Prototype-shaped
 JSON keys remain ordinary data. Output depth/item/byte rejection retains typed
 phase/error information. Failed conversions are followed by healthy evaluations.
+Concurrent calls receive distinct bindings and assert their individual sums;
+substituting fixed bindings is verified to fail the isolation test.
 
 JSON-tree fuzzing compares bounded, normalized JSON values against Go's binary64
 JSON model, including nested objects/arrays and prototype-shaped keys. Existing
