@@ -126,3 +126,8 @@ in docs/performance.md. No release/publication.
 - Benchmark scripts fail if the before build would use the current source.
 - Docs, godoc and `preparedEntry` invariants corrected; hot paths unchanged
   apart from a guard on an unreachable batch error branch.
+- `Program.Eval` on registry programs now forwards configured limits like the
+  prepared paths (wrapper ∩ program, program regex timeout, then override), so a
+  processor's step/depth ceilings bound native evaluation, not just input
+  conversion. Nothing is forwarded when all configurations are default; the
+  forwarded base is fixed at compile time (no measurable cost, same allocations).

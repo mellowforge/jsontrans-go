@@ -24,7 +24,7 @@ func TestPreparedNativeRegexTimeoutBelongsToEngine(t *testing.T) {
 		p.seen = req.Limits
 		return prepared.Result{}, nil
 	})
-	checked := &checkedProgram{name: "forwarded", program: p, configured: DefaultLimits()}
+	checked := mustChecked(t, "forwarded", p, DefaultLimits())
 	d, err := PrepareJSON(context.Background(), []byte(`null`), PrepareOptions{})
 	if err != nil {
 		t.Fatal(err)

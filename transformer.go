@@ -199,7 +199,7 @@ func (x *Transformer) compile(ctx context.Context, name, expression string) (Pro
 	if nilValue(program) {
 		return nil, errors.New("processor returned nil program")
 	}
-	return &checkedProgram{name: name, program: program, configured: l}, nil
+	return newCheckedProgram(name, program, l)
 }
 
 // Process compiles and evaluates expression in one call. It compiles on every
@@ -296,9 +296,42 @@ type checkedProgram struct {
 	name       string
 	program    Program
 	configured Limits
+	base       Limits
+	customized bool
 }
 
 func (p *checkedProgram) Limits() Limits { return p.configured }
+
+// newCheckedProgram wraps a registry program. Programs are immutable, so the
+// base forwarded to the program is fixed here, as on the prepared paths: the
+// stricter of the wrapper and program ceilings with the program's regex
+// timeout. customized records whether either configuration is non-default.
+func newCheckedProgram(name string, program Program, configured Limits) (*checkedProgram, error) {
+	p := &checkedProgram{name: name, program: program, configured: configured, base: configured, customized: configured != DefaultLimits()}
+	if _, ok := program.(LimitsProvider); ok {
+		native, err := effectiveLimits(program, nil)
+		if err != nil {
+			return nil, err
+		}
+		p.base = intersectNativeLimits(configured, native)
+		p.customized = p.customized || native != DefaultLimits()
+	}
+	return p, nil
+}
+
+// programLimits returns the limits forwarded to the wrapped program: the base
+// resolved with any per-call override. It returns nil when every
+// configuration is the default, so engine fast paths stay available.
+func (p *checkedProgram) programLimits(override *Limits) (*Limits, error) {
+	if override == nil && !p.customized {
+		return nil, nil
+	}
+	l, err := budget.Resolve(p.base, override)
+	if err != nil {
+		return nil, err
+	}
+	return &l, nil
+}
 
 func (p *checkedProgram) Eval(ctx context.Context, input any, options EvalOptions) (Result, error) {
 	l, err := effectiveLimits(p, options.Limits)
@@ -319,6 +352,9 @@ func (p *checkedProgram) Eval(ctx context.Context, input any, options EvalOption
 		if err != nil {
 			return Result{}, diagnostic(p.name, PhaseBindings, err)
 		}
+	}
+	if options.Limits, err = p.programLimits(options.Limits); err != nil {
+		return Result{}, diagnostic(p.name, PhaseEvaluate, err)
 	}
 	r, err := p.program.Eval(b.Context(), v, options)
 	if err != nil {

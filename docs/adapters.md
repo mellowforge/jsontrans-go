@@ -13,6 +13,13 @@ defaults to common wrappers. Configured limits are defaults, not hard maximums:
 lowering it. Zero fields in engine options select library defaults; zero fields
 in an override keep the configured value.
 
+Programs compiled through a `Transformer` receive the effective limits in
+`EvalOptions.Limits` on ordinary, prepared and batch evaluation alike: the
+stricter of the processor's and the program's configured ceilings, with the
+program's regex timeout, then any per-call override. When every configuration
+is the default and there is no override, `EvalOptions.Limits` stays nil so
+engines may keep their default fast paths.
+
 Compiled state must be immutable. Create evaluation state per call; snapshot
 configuration and function registrations when compiling. Do not mutate inputs
 or bindings. Honor context, validate JSON results, and reject unsupported options
