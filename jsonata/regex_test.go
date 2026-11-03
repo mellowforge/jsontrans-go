@@ -286,3 +286,21 @@ func TestStringSplitUsesUTF16Units(t *testing.T) {
 		t.Fatalf("got %#v, %v", got, err)
 	}
 }
+
+// A regex match may not outlive the evaluation deadline, even when the
+// configured regex timeout is longer.
+func TestRegexTimeoutCappedByEvaluationDeadline(t *testing.T) {
+	b, err := budget.New(context.Background(), budget.Limits{Timeout: 50 * time.Millisecond, RegexTimeout: time.Minute})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer b.Close()
+	started := time.Now()
+	_, err = (RegexMatcher{Pattern: `(a+)+$`}).Call(&CallContext{Budget: b}, []Value{strings.Repeat("a", 5000) + "!"})
+	if elapsed := time.Since(started); elapsed > 5*time.Second {
+		t.Fatalf("match ran %v past a 50ms deadline", elapsed)
+	}
+	if !errors.Is(err, budget.ErrLimit) && !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("got %v", err)
+	}
+}
