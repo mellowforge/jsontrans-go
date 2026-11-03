@@ -1574,14 +1574,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				if IsUndefined(b) {
 					return true
 				}
-				valid := func(v Value) bool {
-					switch v.(type) {
-					case float64, string:
-						return true
-					}
-					return false
-				}
-				if !valid(a) || !valid(b) {
+				if !orderable(a) || !orderable(b) {
 					sortErr = &jsontrans.Error{Processor: "jsonata", Phase: jsontrans.PhaseEvaluate, Code: "T2008", Position: n.pos, Cause: fmt.Errorf("invalid sort key")}
 					return false
 				}
@@ -2002,13 +1995,12 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			}
 		}
 		return false, nil
-	case "and":
-		return e.truth(b), nil
-	case "or":
+	case "and", "or":
+		// The left operand was already decided above.
 		return e.truth(b), nil
 	case "??", "?:":
 		return b, nil
-	case "=":
+	case "=", "!=":
 		if IsUndefined(a) || IsUndefined(b) {
 			return false, nil
 		}
@@ -2020,20 +2012,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		if err != nil {
 			return nil, err
 		}
-		return reflect.DeepEqual(left, right), nil
-	case "!=":
-		if IsUndefined(a) || IsUndefined(b) {
-			return false, nil
-		}
-		left, err := materializeChecked(a, e.b)
-		if err != nil {
-			return nil, err
-		}
-		right, err := materializeChecked(b, e.b)
-		if err != nil {
-			return nil, err
-		}
-		return !reflect.DeepEqual(left, right), nil
+		return reflect.DeepEqual(left, right) == (n.op == "="), nil
 	case "&":
 		left, err := stringValue(a, e.b)
 		if err != nil {
@@ -2128,14 +2107,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		}
 		if n.op == "<" || n.op == ">" || n.op == "<=" || n.op == ">=" {
 			code = "T2010"
-			valid := func(v Value) bool {
-				switch v.(type) {
-				case float64, string:
-					return true
-				}
-				return false
-			}
-			if valid(a) && valid(b) {
+			if orderable(a) && orderable(b) {
 				code = "T2009"
 			}
 		}
@@ -2161,15 +2133,15 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		}
 		return out, nil
 	case "+":
-		return finiteNumber(x+y, n)
+		return x + y, nil
 	case "-":
-		return finiteNumber(x-y, n)
+		return x - y, nil
 	case "*":
-		return finiteNumber(x*y, n)
+		return x * y, nil
 	case "/":
-		return finiteNumber(x/y, n)
+		return x / y, nil
 	case "%":
-		return finiteNumber(math.Mod(x, y), n)
+		return math.Mod(x, y), nil
 	case "<":
 		return x < y, nil
 	case ">":
@@ -2601,7 +2573,14 @@ func (p partial) Call(ctx *CallContext, args []Value) (Value, error) {
 	return ctx.Invoke(p.fn, values)
 }
 
-func finiteNumber(v float64, n *node) (Value, error) { return v, nil }
+// orderable reports whether v can be compared or sorted: numbers and strings.
+func orderable(v Value) bool {
+	switch v.(type) {
+	case float64, string:
+		return true
+	}
+	return false
+}
 
 // materializeChecked bounds output conversion and detects cycles returned by host functions.
 func materializeChecked(v Value, b *budget.Budget) (Value, error) {
@@ -2965,18 +2944,6 @@ func cloneRawArgs(args []Value, b *budget.Budget) ([]Value, error) {
 		out[i] = y
 	}
 	return out, nil
-}
-
-func escapeLiteralControls(raw string) string {
-	var b strings.Builder
-	for _, r := range raw {
-		if r < 0x20 {
-			fmt.Fprintf(&b, "\\u%04x", r)
-		} else {
-			b.WriteRune(r)
-		}
-	}
-	return b.String()
 }
 
 // Limits returns the engine's configured resource limits.

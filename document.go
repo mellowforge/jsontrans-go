@@ -131,11 +131,9 @@ func (e preparedEntry) evalExternal(ctx context.Context, d *Document, o EvalOpti
 	defer local.Close()
 	ctx = local.Context()
 	if o.Bindings != nil {
-		value, err := jsonvalue.Clone(o.Bindings, &local, l.MaxInputBytes)
-		if err != nil {
+		if o.Bindings, err = jsonvalue.CloneBindings(o.Bindings, &local, l.MaxInputBytes); err != nil {
 			return Result{}, 0, err
 		}
-		o.Bindings = bindingsMap(value)
 	}
 	if o.Limits != nil || e.configured != DefaultLimits() {
 		o.Limits = &l

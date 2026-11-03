@@ -454,7 +454,7 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 			if x, ok := a.(string); ok {
 				if y, ok := b.(string); ok {
 					var err error
-					equal, err = fastEqualStrings(x, y, budgetCheck(bd))
+					equal, err = fastEqualStrings(x, y, bd.Step)
 					if err != nil {
 						evalErr = err
 						return nil, false
@@ -488,7 +488,7 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 					return nil, false
 				}
 				var err error
-				cmp, err = jsonvalue.CompareUTF16(x, y, budgetCheck(bd))
+				cmp, err = jsonvalue.CompareUTF16(x, y, bd.Step)
 				if err != nil {
 					evalErr = err
 					return nil, false
@@ -536,7 +536,6 @@ func fastEqualStrings(a, b string, check func() error) (bool, error) {
 	}
 	return true, nil
 }
-func budgetCheck(b *budget.Budget) func() error { return b.Step }
 
 // compileProjection admits pure name steps and scalar boolean filters, plus
 // numeric arithmetic projections when arithmetic is set (inside $sum).

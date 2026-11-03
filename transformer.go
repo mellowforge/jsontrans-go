@@ -241,11 +241,10 @@ func EvalJSON(ctx context.Context, p Program, input []byte, options EvalOptions)
 		return JSONResult{}, &Error{Phase: PhaseInput, Cause: err}
 	}
 	if options.Bindings != nil {
-		detached, err := jsonvalue.Clone(options.Bindings, b, b.Limits.MaxInputBytes)
+		options.Bindings, err = jsonvalue.CloneBindings(options.Bindings, b, b.Limits.MaxInputBytes)
 		if err != nil {
 			return JSONResult{}, &Error{Phase: PhaseBindings, Cause: err}
 		}
-		options.Bindings = bindingsMap(detached)
 	}
 	r, err := p.Eval(b.Context(), v, options)
 	if err != nil {
@@ -309,11 +308,10 @@ func (p *checkedProgram) Eval(ctx context.Context, input any, options EvalOption
 		return Result{}, diagnostic(p.name, PhaseInput, err)
 	}
 	if options.Bindings != nil {
-		detached, err := jsonvalue.Clone(options.Bindings, b, b.Limits.MaxInputBytes)
+		options.Bindings, err = jsonvalue.CloneBindings(options.Bindings, b, b.Limits.MaxInputBytes)
 		if err != nil {
 			return Result{}, diagnostic(p.name, PhaseBindings, err)
 		}
-		options.Bindings = bindingsMap(detached)
 	}
 	r, err := p.program.Eval(b.Context(), v, options)
 	if err != nil {
@@ -333,11 +331,4 @@ func (p *checkedProgram) Eval(ctx context.Context, input any, options EvalOption
 		return Result{}, diagnostic(p.name, PhaseEvaluate, err)
 	}
 	return r, nil
-}
-
-func bindingsMap(v any) map[string]any {
-	if object, ok := v.(UTF16Object); ok {
-		return map[string]any(object)
-	}
-	return v.(map[string]any)
 }

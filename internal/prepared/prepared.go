@@ -151,14 +151,8 @@ func evaluate(local *budget.Budget, ctx context.Context, d *document.Document, b
 	}
 	defer local.Close()
 	if bindings != nil {
-		value, err := jsonvalue.Clone(bindings, local, limits.MaxInputBytes)
-		if err != nil {
+		if bindings, err = jsonvalue.CloneBindings(bindings, local, limits.MaxInputBytes); err != nil {
 			return Result{}, err
-		}
-		if object, ok := value.(jsonvalue.UTF16Object); ok {
-			bindings = map[string]any(object)
-		} else {
-			bindings = value.(map[string]any)
 		}
 	}
 	result, err := eval(Request{Document: d, Bindings: bindings, Limits: limits, Budget: local, Customized: customized, managedBoundary: true})

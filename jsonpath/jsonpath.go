@@ -746,9 +746,8 @@ func (x binary) eval(e *evaluation, c any) (any, error) {
 		return nil, err
 	}
 	switch x.op {
-	case "&&":
-		return truth(b), nil
-	case "||":
+	case "&&", "||":
+		// The left operand was already decided above.
 		return truth(b), nil
 	}
 	a = value(a)
