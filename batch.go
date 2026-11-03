@@ -153,11 +153,28 @@ func (b *Batch) EvalPrepared(ctx context.Context, d *Document, dst []Result, o E
 	}
 	bytes := 0
 	var nativeScratch budget.Budget
-	for i, entry := range b.entries {
+	// Overrides commonly apply to many adjacent programs with identical
+	// defaults. Keep just one call-local resolved configuration; heterogeneous
+	// batches remain bounded without a per-call map or allocation.
+	var previousBase, resolved Limits
+	haveResolved := false
+	for i := range b.entries {
+		entry := &b.entries[i]
 		if err = outer.Check(); err != nil {
 			return batchFailure(dst, i, err)
 		}
-		result, size, err := entry.eval(outer.Context(), d, o, b.plan, state, i, &nativeScratch)
+		l := &entry.configured
+		if o.Limits != nil {
+			if !haveResolved || previousBase != *l {
+				resolved, err = budget.Resolve(*l, o.Limits)
+				if err != nil {
+					return batchFailure(dst, i, diagnostic(entry.name, PhaseEvaluate, err))
+				}
+				previousBase, haveResolved = *l, true
+			}
+			l = &resolved
+		}
+		result, size, err := entry.evalResolved(outer.Context(), d, o, l, b.plan, state, i, &nativeScratch)
 		if err != nil {
 			return batchFailure(dst, i, err)
 		}

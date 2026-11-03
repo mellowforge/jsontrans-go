@@ -44,14 +44,22 @@ Files: `batch.go`, `document.go`, new `batch_setup_test.go`, performance evidenc
 Consumes: Task 1 green runtime; existing prepared entry and native limits behavior.
 Produces: constructor-resolved entry metadata and evaluation-local reuse of resolved configuration.
 
-- [ ] Pin mixed native/wrapper limits, overrides, independent steps, external options mutation, cancellation and concurrency with regression tests; demonstrate any new internal configuration reuse with a focused test before implementing.
-- [ ] Consolidate immutable guards/defaults at construction and repeated per-call resolution across equivalent entries; do not skip execution checks.
-- [ ] Run targeted tests, full checks, and a sequential matched before/after benchmark with immutable source snapshots, raw output, hashes, allocation counts and medians.
-- [ ] Retain only justified changes; document the outcome without extrapolating small fixtures to large collections.
-- [ ] Commit the retained experiment and evidence.
+- [x] Pin mixed native/wrapper limits, overrides, independent steps, external options mutation, cancellation and concurrency with regression tests; demonstrate any new internal configuration reuse with a focused test before implementing.
+- [x] Consolidate immutable guards/defaults at construction and repeated per-call resolution across equivalent entries; do not skip execution checks.
+- [x] Run targeted tests, full checks, and a sequential matched before/after benchmark with immutable source snapshots, raw output, hashes, allocation counts and medians.
+- [x] Retain only justified changes; document the outcome without extrapolating small fixtures to large collections.
+- [x] Commit the retained experiment and evidence.
 
 ## Task 3: Final verification and independent review
 
-- [ ] Run gofmt, go test ./..., go test -race ./..., go vet ./..., oracle and nested benchmark parity, and bounded relevant fuzz targets.
-- [ ] Obtain one fresh whole-change review; fix any important findings with regression tests.
-- [ ] Report measured results, limitations, branch and verification; leave integration and pushing to the user.
+- [x] Run gofmt, go test ./..., go test -race ./..., go vet ./..., oracle and nested benchmark parity, and bounded relevant fuzz targets.
+- [x] Obtain one fresh whole-change review; fix any important findings with regression tests.
+- [x] Report measured results, limitations, branch and verification; leave integration and pushing to the user.
+
+## Outcome
+
+Invoke fixes and final-review regressions pass. Retained the pointer-based batch
+setup variant after 420 broad and 150 alternating-order samples. Reuse medians
+improved 8%/3%/14% on simple/mixed/distinct workloads, allocations unchanged;
+preparation-inclusive results remain mixed under machine-load variation. Both
+datasets are preserved without excluding slow blocks. See docs/performance.md.

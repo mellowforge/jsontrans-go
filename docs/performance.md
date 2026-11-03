@@ -1,6 +1,73 @@
 # Performance measurements
 
-## Deadline checks (current development measurement)
+## Batch setup consolidation (2026-11-03)
+
+The retained experiment combines immutable wrapper/native limit configuration
+when constructing prepared entries, caches fast-path eligibility, and passes
+immutable limit values internally by reference. Default calls avoid resolving
+those limits for every expression; adjacent equivalent configurations share
+per-call override resolution. Budgets, cancellation checkpoints, callback
+lifetimes, binding/result ownership and failure attribution retain their behavior.
+No public API, dependency or safety default changed.
+
+The baseline is commit `127e13f`, which already includes the raw `Invoke` fixes:
+result detachment uses output limits, preserves non-finite language values,
+measures normalized numbers, rejects canonical-key collisions and propagates
+sequence-conversion failures. Only `batch.go` and `document.go` differ between
+the production sources in this performance comparison.
+
+The initial seven-case run has 420 samples (five 200ms samples per operation).
+It showed large timing shifts in some blocks, including gnata controls. A
+confirmation run used fixed harness binaries, reversed before/current order
+each round, and collected 150 additional samples (five 300ms samples for each
+operation). Both datasets are retained. Measurements used Go 1.25.13, Apple M5
+Max, darwin/arm64, default GOMAXPROCS=18, production safety defaults, compilation
+outside timers and warmed gnata schema plans.
+
+Confirmation medians below are microseconds per whole batch, using 1 KiB input
+and a reused result destination. “Reuse” excludes preparation; “prepare+batch”
+includes validation, ownership and index construction.
+
+| Workload | Rules | Before reuse | After reuse | Before prepare+batch | After prepare+batch | Warmed gnata |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Simple | 64 | 12.33 | 11.37 | 16.49 | 17.66 | 13.96 |
+| Mixed | 16 | 7.45 | 7.21 | 11.62 | 11.30 | 9.38 |
+| Distinct predicates | 64 | 8.99 | 7.75 | 13.39 | 11.99 | 11.43 |
+
+Document-reuse medians improve approximately 8%, 3% and 14% respectively.
+Distinct predicates improve 10% including preparation, with non-overlapping
+sample ranges in that confirmation. The simple preparation-inclusive median
+is 7% slower, while its gnata control also shifts from 11.60 to 13.96 us; the
+simple samples have broad overlapping ranges. These shared-machine results
+support retaining the smaller setup path for repeated evaluation, but do not
+establish a universal end-to-end improvement or statistical significance. The
+initial broad run also contains apparent regressions and remains visible.
+Allocation counts are unchanged across all matched operations in both runs:
+reused simple64 is 1,281 bytes/68 allocations, mixed16 is 3,588/120 and distinct64
+is 384/4. This is not a zero-allocation implementation.
+
+The fixtures retain fixed collection cardinality; larger inputs grow unused
+padding. gnata's stock fast path assumes valid JSON, whereas preparation here
+validates and owns it. The broad dataset includes a validation-inclusive gnata
+control and both destination modes. No throughput or gnata-relative target is
+imposed.
+
+Runtime hashes were unchanged throughout both accepted runs: baseline
+`58ebdea4d46f598994f4dbeabdd46e00cb468ac2a2f374bd5d7b757aa88bf636`, retained
+`886130a91ca056da2f942845760a0c91a1ef8bcc16fb48ff8099809d78b49481`.
+
+[Alternating-order confirmation](../benchmarks/comparison/testdata/results/setup/confirmation/summary.md),
+[confirmation samples and ranges](../benchmarks/comparison/testdata/results/setup/confirmation/medians.csv),
+[broad seven-case results](../benchmarks/comparison/testdata/results/setup/summary.md),
+and [broad samples and ranges](../benchmarks/comparison/testdata/results/setup/medians.csv)
+are saved with raw outputs and environment information. Reproduce using
+`python3 -B run-setup.py` and `python3 -B confirm-setup.py` in the comparison
+module; its README explains reconstructing the baseline.
+
+All sections below describe historical source versions; their “current” labels
+mean current at the time of those measurements.
+
+## Deadline checks before setup consolidation (historical)
 
 This pass replaces repeated wall-plus-monotonic clock reads with Go's
 monotonic-only `time.Until` path where available, and delegates duplicate native
