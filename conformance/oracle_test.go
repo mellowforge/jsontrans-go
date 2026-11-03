@@ -24,6 +24,7 @@ func TestJSONataReference(t *testing.T) {
 		`$match("abc123",/[0-9]+/)`, `$round(12.5)`, `null`, `missing`, `[]`, `[missing]`,
 		`$sqrt(-1)`, `$sum(["bad"])`, `1 +`, `items^(>price).name`,
 		`items.name`, `items[0].name`, `$count(items)`, `$sum(numbers)`, `$exists(items)`,
+		`true ? "x" : $match("abc", /a{2,1}/)`,
 	}
 	input := map[string]any{"items": []any{map[string]any{"name": "A", "price": 4}, map[string]any{"name": "B", "price": 7}}, "numbers": []any{1, 2, 3}}
 	compareReference(t, expressions, input)
@@ -75,21 +76,16 @@ func compareReference(t *testing.T, expressions []string, input any) {
 	}
 	for i, expression := range expressions {
 		t.Run(expression, func(t *testing.T) {
-			var want struct {
-				Defined bool
-				Value   any
-				Code    string
-			}
+			var want referenceOutcome
 			if err := json.Unmarshal([]byte(lines[i]), &want); err != nil {
 				t.Fatal(err)
 			}
 			p, compileErr := engine.Compile(context.Background(), expression)
 			check := func(t *testing.T, result jt.Result, err error) {
 				t.Helper()
-				if want.Code != "" {
-					var native *jt.Error
-					if !errors.As(err, &native) || native.Code != want.Code {
-						t.Fatalf("reference code=%s; Go=%v", want.Code, err)
+				if want.Error {
+					if !want.matchesError(err) {
+						t.Fatalf("reference error code=%q (%s); Go=%v", want.Code, want.Message, err)
 					}
 					return
 				}
@@ -123,4 +119,26 @@ func compareReference(t *testing.T, expressions []string, input any) {
 
 		})
 	}
+}
+
+// referenceOutcome is one line of oracle/evaluate.cjs output.
+type referenceOutcome struct {
+	Error   bool
+	Code    string
+	Message string
+	Defined bool
+	Value   any
+}
+
+// matchesError requires a Go error with the reference code. A reference error
+// without a code must match a Go diagnostic that also has none.
+func (o referenceOutcome) matchesError(err error) bool {
+	if err == nil {
+		return false
+	}
+	var native *jt.Error
+	if !errors.As(err, &native) {
+		return o.Code == ""
+	}
+	return native.Code == o.Code
 }

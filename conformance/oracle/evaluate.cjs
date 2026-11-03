@@ -8,9 +8,11 @@ const jsonata = require('jsonata');
     try {
       const request = JSON.parse(line);
       const value = await jsonata(request.expression).evaluate(request.input, request.bindings);
-      process.stdout.write(JSON.stringify({ defined: value !== undefined, value }) + '\n');
+      process.stdout.write(JSON.stringify({ error: false, defined: value !== undefined, value }) + '\n');
     } catch (error) {
-      process.stdout.write(JSON.stringify({ code: error.code, token: error.token, message: error.message }) + '\n');
+      // Some reference errors, such as invalid regular expressions, have no code;
+      // the explicit flag keeps them from reading as an undefined result.
+      process.stdout.write(JSON.stringify({ error: true, code: error.code ?? '', token: error.token, message: error.message }) + '\n');
     }
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

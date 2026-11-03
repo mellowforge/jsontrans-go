@@ -52,6 +52,7 @@ func TestNestedFastPlansReference(t *testing.T) {
 		}
 		for j, expr := range expressions {
 			var want struct {
+				Error   bool
 				Value   any
 				Defined bool
 				Code    string
@@ -64,10 +65,10 @@ func TestNestedFastPlansReference(t *testing.T) {
 				t.Fatal(err)
 			}
 			got, err := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
-			if want.Code != "" {
+			if want.Error {
 				var native *jsontrans.Error
-				if !errors.As(err, &native) || native.Code != want.Code {
-					t.Errorf("%s %s: error %v want %s", expr, input, err, want.Code)
+				if err == nil || errors.As(err, &native) && native.Code != want.Code || !errors.As(err, &native) && want.Code != "" {
+					t.Errorf("%s %s: error %v want code %q", expr, input, err, want.Code)
 				}
 				continue
 			}

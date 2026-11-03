@@ -51,4 +51,4 @@ jobs:
           cache: npm
           cache-dependency-path: conformance/oracle/package-lock.json
       - run: npm ci --ignore-scripts --prefix conformance/oracle
-      - run: go test -tags oracle ./conformance -run TestJSONataReference
+      - run: go test -tags oracle ./conformance ./jsonata
