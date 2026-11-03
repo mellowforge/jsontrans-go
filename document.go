@@ -111,7 +111,7 @@ func (e preparedEntry) evalNative(ctx context.Context, d *Document, o EvalOption
 	}
 	var result prepared.Result
 	var err error
-	if scratch != nil && e.native.ReusableBudget() && !customized && o.Bindings == nil && d.Stats().Nodes < 10000 {
+	if scratch != nil && e.native.ReusableBudget() && !customized && o.Bindings == nil && d.Stats().Nodes < prepared.SmallDocumentNodes {
 		result, err = prepared.EvaluateInto(scratch, ctx, d, o.Bindings, l, customized, callback)
 	} else {
 		result, err = prepared.Evaluate(ctx, d, o.Bindings, l, customized, callback)

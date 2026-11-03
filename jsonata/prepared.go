@@ -33,7 +33,7 @@ func (p *Program) evalPrepared(req prepared.Request) (result prepared.Result, er
 	if d.Stats().Binary64Overflow {
 		return result, fmt.Errorf("%w: number out of binary64 range", jsontrans.ErrInvalidInput)
 	}
-	if p.fast != nil && p.engine.evaluationDepth == 0 && len(p.engine.functions) == 0 && !req.Customized && req.Bindings == nil && d.Stats().Nodes < 10000 {
+	if p.fast != nil && p.engine.evaluationDepth == 0 && len(p.engine.functions) == 0 && !req.Customized && req.Bindings == nil && d.Stats().Nodes < prepared.SmallDocumentNodes {
 		r, ok, err := p.fast.eval(d.Root(), b)
 		if err != nil {
 			return result, err

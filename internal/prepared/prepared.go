@@ -38,6 +38,10 @@ func (r Request) CheckEntry() error {
 // preserving it for direct native handler calls.
 func (r Request) CheckExit() error { return r.CheckEntry() }
 
+// SmallDocumentNodes bounds the documents served by native fast plans and
+// reusable budget scratch; larger documents use the general evaluator.
+const SmallDocumentNodes = 10000
+
 // Result owns validated detached JSON. Bytes is its exact encoded JSON size.
 type Result struct {
 	Value   any

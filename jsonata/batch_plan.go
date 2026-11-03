@@ -152,7 +152,7 @@ func (p *preparedBatchPlan) Eval(index int, req prepared.Request, state any) (re
 	}
 	fast := p.fast[index]
 	memo, ok := state.(*batchMemo)
-	if !ok || memo.document != req.Document || fast == nil || program.engine.evaluationDepth != 0 || len(program.engine.functions) != 0 || req.Customized || req.Bindings != nil || req.Document.Stats().Nodes >= 10000 {
+	if !ok || memo.document != req.Document || fast == nil || program.engine.evaluationDepth != 0 || len(program.engine.functions) != 0 || req.Customized || req.Bindings != nil || req.Document.Stats().Nodes >= prepared.SmallDocumentNodes {
 		return p.handlers[index].Eval(req)
 	}
 	if req.Document.Stats().Binary64Overflow {
