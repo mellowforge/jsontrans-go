@@ -43,6 +43,7 @@ type Program struct {
 	quick       []byte
 	quickBridge []byte
 	goja        any
+	source      string
 }
 
 //go:embed bridge.js
@@ -118,9 +119,11 @@ func (e *Engine) compile(ctx context.Context, expr string) (jt.Program, error) {
 	p := &Program{engine: e}
 	source := "(" + expr + "\n)"
 	if e.backend == OwnedQuickJS {
-		p.quick, err = e.owned.Compile(b.Context(), source)
+		p.source = expr
+		source = "(\n" + expr + "\n)"
+		p.quick, err = e.owned.CompileNamed(b.Context(), source, "rule.js")
 		if err == nil {
-			p.quickBridge, err = e.owned.Compile(b.Context(), bridge)
+			p.quickBridge, err = e.owned.CompileNamed(b.Context(), bridge, "bridge.js")
 		}
 	} else if e.backend == Goja {
 		p.goja, err = compileGoja(source)

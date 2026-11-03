@@ -262,6 +262,17 @@ func output(ctx context.Context, m api.Module, maximum int) ([]byte, error) {
 	return owned, nil
 }
 func (e *Engine) Compile(ctx context.Context, source string) ([]byte, error) {
+	return e.CompileNamed(ctx, source, "rule.js")
+}
+func (e *Engine) CompileNamed(ctx context.Context, source, name string) ([]byte, error) {
+	var kind uint64
+	switch name {
+	case "rule.js":
+	case "bridge.js":
+		kind = 1
+	default:
+		return nil, errors.New("unsupported source name")
+	}
 	if len(source) > maxTransfer {
 		return nil, fmt.Errorf("%w: source transfer bytes", jt.ErrLimit)
 	}
@@ -279,7 +290,7 @@ func (e *Engine) Compile(ctx context.Context, source string) ([]byte, error) {
 	if err != nil {
 		return nil, e.failure(ctx, err)
 	}
-	if _, err = call(ctx, m, "abi_compile", ptr, uint64(len(source)), 0); err != nil {
+	if _, err = call(ctx, m, "abi_compile", ptr, uint64(len(source)), kind); err != nil {
 		return nil, e.failure(ctx, err)
 	}
 	code, err := output(ctx, m, maxBytecode)

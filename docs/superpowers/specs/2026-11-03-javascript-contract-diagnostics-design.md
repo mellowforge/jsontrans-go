@@ -275,3 +275,14 @@ consequential ambiguity. Author decision: keep runtime coordinates explicitly
 reported/untrusted and omit runtime byte offsets. Compile-time offsets use
 validated engine-origin information. No engine patch for authenticated runtime
 frames is included. This is a proposed scope choice for user review.
+
+## Implementation calibration
+
+The pinned engine's js_parse_error passes its coarse parse-state column (1)
+rather than the token column. ASCII, Unicode and CRLF fixtures confirm that
+ordinary syntax failures retain usable line numbers but no reliable byte
+offsets. Regexp compilation failures can have no stack. This PR preserves native
+coordinates and sets ByteOffset=-1 and common Position=0 for this pin; it does
+not add an upstream source patch or guess token positions. Runtime coordinates
+remain explicitly Reported. More precise compiler columns require a separately
+verified engine change.

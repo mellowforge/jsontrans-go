@@ -31,6 +31,7 @@ func (e *Engine) Compile(ctx context.Context, expr string) (program jt.Program, 
 	program, err = e.compile(ctx, expr)
 	err = ownedDiagnostic(jt.PhaseCompile, e.lifetime.failure(ctx, err))
 	if err != nil {
+		mapOwnedDiagnostic(expr, err)
 		return nil, err
 	}
 	return program, nil
@@ -47,6 +48,7 @@ func (p *Program) Eval(ctx context.Context, input any, o jt.EvalOptions) (result
 	result, err = p.eval(ctx, input, o)
 	err = ownedDiagnostic(jt.PhaseEvaluate, p.engine.lifetime.failure(ctx, err))
 	if err != nil {
+		mapOwnedDiagnostic(p.source, err)
 		return jt.Result{}, err
 	}
 	return result, nil
