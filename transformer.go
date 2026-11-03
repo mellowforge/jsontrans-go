@@ -47,7 +47,8 @@ type Processor interface {
 }
 
 // Program is a compiled expression. Programs must be immutable and safe for
-// concurrent Eval calls, and must not mutate input or bindings.
+// concurrent Eval calls, and must not mutate input or bindings. Programs may
+// implement EvalLimitSupport to declare unsupported evaluation limit fields.
 type Program interface {
 	Eval(context.Context, any, EvalOptions) (Result, error)
 }
@@ -238,6 +239,17 @@ func EvalJSON(ctx context.Context, p Program, input []byte, options EvalOptions)
 	if err != nil {
 		return JSONResult{}, err
 	}
+	unsupported, err := unsupportedEvalLimits(p)
+	if err == nil {
+		err = rejectUnsupportedLimits(unsupported, options.Limits)
+	}
+	if err != nil {
+		name := ""
+		if checked, ok := p.(*checkedProgram); ok {
+			name = checked.name
+		}
+		return JSONResult{}, diagnostic(name, PhaseEvaluate, err)
+	}
 	b, err := budget.New(ctx, l)
 	if err != nil {
 		return JSONResult{}, err
@@ -293,21 +305,27 @@ func nilValue(v any) bool {
 }
 
 type checkedProgram struct {
-	name       string
-	program    Program
-	configured Limits
-	base       Limits
-	customized bool
+	name        string
+	program     Program
+	configured  Limits
+	base        Limits
+	customized  bool
+	unsupported LimitSet
 }
 
-func (p *checkedProgram) Limits() Limits { return p.configured }
+func (p *checkedProgram) Limits() Limits                  { return p.configured }
+func (p *checkedProgram) UnsupportedEvalLimits() LimitSet { return p.unsupported }
 
 // newCheckedProgram wraps a registry program. Programs are immutable, so the
 // base forwarded to the program is fixed here, as on the prepared paths: the
 // stricter of the wrapper and program ceilings with the program's regex
 // timeout. customized records whether either configuration is non-default.
 func newCheckedProgram(name string, program Program, configured Limits) (*checkedProgram, error) {
-	p := &checkedProgram{name: name, program: program, configured: configured, base: configured, customized: configured != DefaultLimits()}
+	unsupported, err := unsupportedEvalLimits(program)
+	if err != nil {
+		return nil, err
+	}
+	p := &checkedProgram{name: name, program: program, configured: configured, base: configured, customized: configured != DefaultLimits(), unsupported: unsupported}
 	if _, ok := program.(LimitsProvider); ok {
 		native, err := effectiveLimits(program, nil)
 		if err != nil {
@@ -330,12 +348,16 @@ func (p *checkedProgram) programLimits(override *Limits) (*Limits, error) {
 	if err != nil {
 		return nil, err
 	}
+	l = supportedEvalLimits(l, p.unsupported)
 	return &l, nil
 }
 
 func (p *checkedProgram) Eval(ctx context.Context, input any, options EvalOptions) (Result, error) {
 	l, err := effectiveLimits(p, options.Limits)
 	if err != nil {
+		return Result{}, diagnostic(p.name, PhaseEvaluate, err)
+	}
+	if err = rejectUnsupportedLimits(p.unsupported, options.Limits); err != nil {
 		return Result{}, diagnostic(p.name, PhaseEvaluate, err)
 	}
 	b, err := budget.New(ctx, l)

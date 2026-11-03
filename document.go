@@ -68,6 +68,7 @@ type preparedEntry struct {
 	name        string
 	customized  bool
 	reuseBudget bool
+	unsupported LimitSet
 }
 
 func newPreparedEntry(p Program) (preparedEntry, error) {
@@ -75,10 +76,15 @@ func newPreparedEntry(p Program) (preparedEntry, error) {
 	if err != nil {
 		return preparedEntry{}, err
 	}
-	entry := preparedEntry{program: p, configured: l, customized: l != DefaultLimits()}
-	// Only the private registry wrapper may be unwrapped. An external embedding
-	// wrapper must retain its public dispatch and conversion boundary.
-	if checked, ok := p.(*checkedProgram); ok {
+	unsupported, err := unsupportedEvalLimits(p)
+	if err != nil {
+		return preparedEntry{}, err
+	}
+	entry := preparedEntry{program: p, configured: l, customized: l != DefaultLimits(), unsupported: unsupported}
+	// Only the private registry wrapper may be unwrapped. External wrappers
+	// retain their dispatch and must forward optional metadata explicitly.
+	checked, wrapped := p.(*checkedProgram)
+	if wrapped {
 		entry.name = checked.name
 		entry.program = checked.program
 	}
@@ -88,15 +94,19 @@ func newPreparedEntry(p Program) (preparedEntry, error) {
 		if err != nil {
 			return preparedEntry{}, err
 		}
-		// Resolving an override after this intersection is equivalent to
-		// resolving it on both configurations first: nonzero fields replace
-		// both ceilings. Regex timing always belongs to the native engine.
+		// Resolve overrides after intersecting both configured ceilings.
+		// Regex timing belongs to the engine that executes the expression.
 		entry.configured = intersectNativeLimits(l, native)
 		entry.customized = entry.customized || native != DefaultLimits()
 		entry.reuseBudget = entry.native.ReusableBudget() && !entry.customized
+	} else if wrapped {
+		// External adapters must retain the same program/wrapper intersection as Eval.
+		entry.configured = checked.base
+		entry.customized = checked.customized
 	}
 	return entry, nil
 }
+
 func (e *preparedEntry) eval(ctx context.Context, d *Document, o EvalOptions, plan prepared.BatchPlan, state any, index int, scratch *budget.Budget) (Result, int, error) {
 	if o.Limits == nil {
 		return e.evalResolved(ctx, d, o, &e.configured, plan, state, index, scratch)
@@ -120,6 +130,9 @@ func (e *preparedEntry) evalResolved(ctx context.Context, d *Document, o EvalOpt
 			err = diagnostic(e.name, PhaseEvaluate, err)
 		}
 	}()
+	if err = rejectUnsupportedLimits(e.unsupported, o.Limits); err != nil {
+		return Result{}, 0, err
+	}
 	if e.native != nil {
 		return e.evalNative(ctx, d, o, l, plan, state, index, scratch)
 	}
@@ -158,7 +171,8 @@ func (e *preparedEntry) evalExternal(ctx context.Context, d *Document, o EvalOpt
 		}
 	}
 	if o.Limits != nil || e.customized {
-		o.Limits = &l
+		forwarded := supportedEvalLimits(l, e.unsupported)
+		o.Limits = &forwarded
 	}
 	if p, ok := e.program.(PreparedProgram); ok {
 		r, err = p.EvalPrepared(ctx, d, o)

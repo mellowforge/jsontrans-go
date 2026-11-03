@@ -20,6 +20,32 @@ program's regex timeout, then any per-call override. When every configuration
 is the default and there is no override, `EvalOptions.Limits` stays nil so
 engines may keep their default fast paths.
 
+Programs that cannot accept certain evaluation limit fields can implement the
+optional `EvalLimitSupport` interface, without changing `Processor` or `Program`:
+
+```go
+func (*Program) UnsupportedEvalLimits() jsontrans.LimitSet {
+    return jsontrans.LimitSteps | jsontrans.LimitRegexTimeout
+}
+```
+
+The eight `LimitSet` flags correspond to the eight `Limits` fields. Registry and
+batch constructors snapshot this immutable declaration; unknown bits fail with
+`ErrUnsupported`. Programs without the interface retain existing forwarding.
+Wrappers must forward the declaration explicitly if they want this behavior.
+Synthesized options omit declared unsupported fields on an independent copy.
+Common input, binding and result validation still use fully resolved budgets;
+the declaration does not remove common validation or context cancellation.
+
+An explicit nonzero unsupported override fails with `ErrUnsupported`, even when
+it equals the default. Zero means unspecified. Negative values remain `ErrLimit`.
+Rejection precedes input conversion and callbacks. A batch checks every entry
+before running expressions, reporting the first unsupported entry as a
+`BatchError`; a supplied destination is untouched on this preflight failure.
+Adapters must also reject unsupported settings in direct `Eval` calls and
+honor context cancellation. This interface describes accepted option fields,
+not a guarantee that common work counters measure work inside another runtime.
+
 Compiled state must be immutable. Create evaluation state per call; snapshot
 configuration and function registrations when compiling. Do not mutate inputs
 or bindings. Honor context, validate JSON results, and reject unsupported options

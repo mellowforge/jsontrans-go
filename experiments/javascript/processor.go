@@ -96,8 +96,9 @@ func (e *Engine) Close() error {
 	}
 	return os.Remove(e.dir)
 }
-func (e *Engine) Limits() jt.Limits  { return e.config.Limits }
-func (p *Program) Limits() jt.Limits { return p.engine.Limits() }
+func (e *Engine) Limits() jt.Limits                   { return e.config.Limits }
+func (p *Program) Limits() jt.Limits                  { return p.engine.Limits() }
+func (p *Program) UnsupportedEvalLimits() jt.LimitSet { return jt.LimitSteps | jt.LimitRegexTimeout }
 func (e *Engine) Compile(ctx context.Context, expr string) (jt.Program, error) {
 	b, err := budget.New(ctx, e.config.Limits)
 	if err != nil {
