@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"reflect"
 	"testing"
 	"time"
 
@@ -47,6 +48,73 @@ func FuzzOwnedStringConversion(f *testing.F) {
 		}
 		if !out.Defined || got.Value != want {
 			t.Fatalf("got %#v, want %q", out, want)
+		}
+	})
+}
+
+// Normalize through encoding/json's binary64 JSON model before comparison.
+// This tests nested containers/keys as well as scalar strings; large-number
+// decimal spelling and isolated-surrogate spelling are not comparison oracles.
+func FuzzOwnedJSONConversion(f *testing.F) {
+	for _, s := range []string{`null`, `[]`, `{"__proto__":{"x":1},"toJSON":"data"}`, `{"items":[1,true,null,"😀",{"é":"\ud800"}]}`, `9007199254740993`, `-0`, `{"x":[[[]]]}`} {
+		f.Add(s)
+	}
+	e, err := New(context.Background(), Config{Limits: jt.Limits{Timeout: semanticTestTimeout}})
+	if err != nil {
+		f.Fatal(err)
+	}
+	defer e.Close()
+	p, err := e.Compile(context.Background(), `input=>input`)
+	if err != nil {
+		f.Fatal(err)
+	}
+	f.Fuzz(func(t *testing.T, source string) {
+		if len(source) > 2048 {
+			return
+		}
+		var expected any
+		if json.Unmarshal([]byte(source), &expected) != nil {
+			return
+		}
+		var bounded func(any, int) bool
+		count := 0
+		bounded = func(v any, depth int) bool {
+			count++
+			if depth > 16 || count > 256 {
+				return false
+			}
+			switch x := v.(type) {
+			case []any:
+				for _, item := range x {
+					if !bounded(item, depth+1) {
+						return false
+					}
+				}
+			case map[string]any:
+				for _, item := range x {
+					if !bounded(item, depth+1) {
+						return false
+					}
+				}
+			}
+			return true
+		}
+		if !bounded(expected, 0) {
+			return
+		}
+		canonical, err := json.Marshal(expected)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+		got, err := jt.EvalJSON(ctx, p, canonical, jt.EvalOptions{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		var actual any
+		if !got.Defined || json.Unmarshal(got.Value, &actual) != nil || !reflect.DeepEqual(actual, expected) {
+			t.Fatalf("conversion: input %s, got %s", canonical, got.Value)
 		}
 	})
 }

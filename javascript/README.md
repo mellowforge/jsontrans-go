@@ -117,4 +117,23 @@ and [processor atlas](../docs/processor-architecture.md). Module archives retain
 this README and the guest notices; repository navigation links are intended for
 source checkouts.
 
+## Hardening and measurements
+
+The [hardening record](../docs/javascript-hardening.md) describes public lifecycle,
+concurrency and hostile-result tests, reproducible measurements, and remaining
+release gates. A bounded public-API soak can be run separately from unit tests:
+
+```sh
+go run ./cmd/hardening -iterations 1000 -workers 4 -cycles 10
+go test -run '^$' -bench '^BenchmarkJavaScript$' -benchmem -benchtime=300ms -count=3
+go test -run '^$' -fuzz '^FuzzOwnedJSONConversion$' -fuzztime=500x -parallel=2
+```
+
+The soak uses an explicit 8 MiB guest cap to exercise allocation rejection and
+checks every result/failure plus a healthy evaluation afterward. Its JSON report
+contains timing, checked counts and post-GC Go memory samples. These samples
+are not process RSS, a leak proof, or a hard host-memory bound. The default
+processor cap remains 64 MiB. Applications should bound concurrent calls outside
+the engine; each call creates its own guest and consumes host resources too.
+
 [MIT](LICENSE). Third-party guest components retain their accompanying notices.

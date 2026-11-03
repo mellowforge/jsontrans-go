@@ -96,8 +96,10 @@ resource/conversion sentinel. Proxy exceptions during conversion remain JS
 throws attributed to output. Wasm traps/protocol failures retain their causes;
 message text alone never makes them ErrLimit.
 
-Private failure tokens, traversal state and fallback tuples are reserved before
-user execution. Classification and phase cross the C boundary independently of
+Private traversal closures/state and failure/fallback tuples are reserved before
+user execution. Trusted failures return reserved outcomes instead of throwing
+tokens: QuickJS backtrace allocation under heap exhaustion can replace a thrown
+token with OOM. Classification and phase cross the C boundary independently of
 allocating diagnostic text, including when the guest heap is exhausted.
 
 Encoded diagnostics cap at 64 KiB independently of ordinary output size.
