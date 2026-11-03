@@ -15,7 +15,7 @@ go test ./...
 go test -race ./...
 ```
 
-Fuzz targets (run for parser/runtime changes; CI uses 10s each):
+Fuzz targets (run for parser/runtime changes; CI runs fixed execution counts, see `ci.yml`). A timed run that fails with only `context deadline exceeded` and no crasher is a race in Go's fuzz coordinator at expiry, not a finding; rerun it:
 
 ```sh
 go test ./jsonpath -run '^$' -fuzz '^FuzzCompileAndEval$' -fuzztime=10s
