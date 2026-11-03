@@ -94,6 +94,10 @@ resource/conversion sentinel. Proxy exceptions during conversion remain JS
 throws attributed to output. Wasm traps/protocol failures retain their causes;
 message text alone never makes them ErrLimit.
 
+Private failure tokens, traversal state and fallback tuples are reserved before
+user execution. Classification and phase cross the C boundary independently of
+allocating diagnostic text, including when the guest heap is exhausted.
+
 Encoded diagnostics cap at 64 KiB independently of ordinary output size.
 Truncated records set Truncated. Formatting runs inside the same interruptible
 guest under the remaining deadline. Secondary formatting failures use a bounded
@@ -114,7 +118,8 @@ preserves available native columns and mapped lines, with **ByteOffset=-1 and
 common Error.Position=0**. It does not invent precise token offsets. Malformed,
 bridge, wrapper-only, generated or out-of-range locations are omitted. More
 precise compiler offsets require a verified engine fix; bundle source maps and
-authenticated runtime frames remain future work.
+authenticated runtime frames remain future work. Line mapping currently supports
+LF/CRLF; standalone CR and Unicode line separators may omit Location.
 
 ## Evidence and navigation
 
@@ -122,8 +127,8 @@ The full owned assessment contains the original 18 probes plus lifecycle,
 diagnostic classification and diagnostic-location cases. All owned cases must
 report PASS in strict mode. Historical fixture/results directories remain intact.
 
-Guest ABI 2 artifact: 928,867 bytes; SHA-256
-`f2e7e766ab7cf5dfb9b378c6c25c63a3b3c46657c70923c5b29fac0b2c31500a`.
+Guest ABI 2 artifact: 929,138 bytes; SHA-256
+`29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e`.
 Source and WASI SDK pins are unchanged. Rebuild/hash/import gates and Linux
 cross-host reproducibility protect the embedded boundary.
 

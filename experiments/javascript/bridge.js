@@ -8,32 +8,35 @@
   const own = Object.prototype.hasOwnProperty, apply = Reflect.apply;
   const code = String.prototype.charCodeAt, finite = Number.isFinite;
   const ErrorType = Error, create = Object.create, StringType = String, slice = String.prototype.slice;
-  const WeakMapType = WeakMap, weakSet = WeakMap.prototype.set, weakGet = WeakMap.prototype.get;
+  // Reserve identity tokens, conversion traversal storage and fallback tuples
+  // before evaluating user source. None of these allocations depend on free
+  // heap remaining after untrusted execution.
+  const conversionToken=create(null), limitToken=create(null), active=create(null);
+  const conversionFailure=[3,"JSON result conversion failed (diagnostic unavailable)"];
+  const limitFailure=[2,"JSON conversion limit exceeded (diagnostic unavailable)"];
+  const evaluateFallback=[4,""], outputFallback=[5,""];
   return function (rule, inputText, bindingsText, depthLimit, itemLimit, byteLimit, workLimit, ownedMode) {
-    const failures = new WeakMapType();
     let stage = "evaluate";
     function raise(kind, message) {
       if (!ownedMode) throw new ErrorType((kind === "limit" ? "JSONTRANS_LIMIT: " : "JSONTRANS_CONVERSION: ") + message);
-      const value = create(null); apply(weakSet, failures, [value, {kind, message}]); throw value;
+      if (kind === "limit") { limitFailure[1]=message; throw limitToken; }
+      conversionFailure[1]=message; throw conversionToken;
     }
     function success(text) { return ownedMode ? [0, text] : text; }
     function diagnostic(value) {
-      let known;
-      if ((typeof value === "object" && value !== null) || typeof value === "function") known = apply(weakGet, failures, [value]);
-      const r = create(null); r.version=2; r.kind=known ? known.kind : "exception"; r.stage=stage;
+      const r = create(null); r.version=2; r.kind="exception"; r.stage=stage;
       r.name=""; r.message="JavaScript exception (diagnostic unavailable)"; r.stack=""; r.truncated=false;
       function bounded(text, maximum) {
         text=StringType(text); if(text.length>maximum){r.truncated=true;return apply(slice,text,[0,maximum]);} return text;
       }
-      if(known) r.message=bounded(known.message,4096);
-      else { try {
+      try {
         const object = value !== null && (typeof value === "object" || typeof value === "function");
         const n=object ? value.name : undefined, m=object ? value.message : undefined, stack=object ? value.stack : undefined;
         const name=n===undefined ? "" : bounded(n,256);
         const message=bounded(m===undefined ? value : m,4096);
         const trace=stack===undefined ? "" : bounded(stack,4096);
         r.name=name;r.message=message;r.stack=trace;
-      } catch (_) {} }
+      } catch (_) { return stage === "output" ? outputFallback : evaluateFallback; }
       return [1, quote(r)];
     }
     try {
@@ -43,7 +46,7 @@
     stage = "output";
     if (result === undefined) return success('{"defined":false}');
     let output = "", bytes = 0, steps = 0;
-    const active = create(null); let activeCount = 0;
+    let activeCount = 0;
     function fail(message) { raise("conversion", message); }
     function tick() { if (++steps > workLimit) raise("limit", "conversion work"); }
     function write(text) {
@@ -99,6 +102,12 @@
     }
     visit(result,0);
     return success('{"defined":true,"value":' + output + '}');
-    } catch (value) { if(!ownedMode) throw value; return diagnostic(value); }
+    } catch (value) {
+      if(!ownedMode) throw value;
+      if(value===conversionToken) return conversionFailure;
+      if(value===limitToken) return limitFailure;
+      try { return diagnostic(value); }
+      catch (_) { return stage === "output" ? outputFallback : evaluateFallback; }
+    }
   };
 })()

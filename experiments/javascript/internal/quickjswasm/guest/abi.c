@@ -181,11 +181,30 @@ uint32_t abi_eval(uint32_t rule_ptr, uint32_t rule_len, uint32_t bridge_ptr, uin
     JSValue outcome = JS_GetPropertyUint32(context, value, 0);
     JSValue payload = JS_GetPropertyUint32(context, value, 1);
     int32_t failed_status = -1;
-    if (!JS_IsNumber(outcome) || JS_ToInt32(context, &failed_status, outcome) || (failed_status != 0 && failed_status != 1) || !JS_IsString(payload)) {
+    if (!JS_IsNumber(outcome) || JS_ToInt32(context, &failed_status, outcome) || (failed_status < 0 || failed_status > 5) || !JS_IsString(payload)) {
         JS_FreeValue(context, outcome); JS_FreeValue(context, payload);
         literal_failure("internal", "evaluate", "invalid bridge response"); goto done;
     }
     JS_FreeValue(context, outcome);
+    /* The immutable bridge owns these preallocated outcomes. Classification
+     * survives even if no JS heap remains to encode or copy diagnostic text. */
+    if (failed_status >= 2) {
+        if (failed_status >= 4) {
+            literal_failure("exception", failed_status == 5 ? "output" : "evaluate",
+                "JavaScript exception (diagnostic unavailable)");
+        } else {
+            const char *kind = failed_status == 2 ? "limit" : "conversion";
+            const char *message = JS_ToCString(context, payload);
+            if (message) {
+                literal_failure(kind, "output", message);
+                JS_FreeCString(context, message);
+            } else {
+                JSValue secondary = JS_GetException(context); JS_FreeValue(context, secondary);
+                literal_failure(kind, "output", "JSON result conversion failed (diagnostic unavailable)");
+            }
+        }
+        JS_FreeValue(context, payload); goto done;
+    }
     size_t length = 0;
     const char *text = JS_ToCStringLen(context, &length, payload);
     JS_FreeValue(context, payload);

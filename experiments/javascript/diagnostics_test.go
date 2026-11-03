@@ -103,3 +103,42 @@ func TestOwnedDiagnosticBoundsAndCancellation(t *testing.T) {
 		t.Fatalf("diagnostic cancellation: %v", err)
 	}
 }
+
+func TestOwnedDiagnosticHeapExhaustionPreservesOrigin(t *testing.T) {
+	e := newTestEngine(t, OwnedQuickJS)
+	healthy, err := e.Compile(context.Background(), `()=>42`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		name, source, phase string
+		conversion          bool
+	}{
+		{"trusted conversion", `()=>{globalThis.keep=[];try{for(;;)keep.push(new ArrayBuffer(1024))}catch(e){}return 1n}`, jt.PhaseOutput, true},
+		{"proxy throw", `()=>{const original={name:'Original',message:'original'};return new Proxy({}, {ownKeys(){globalThis.keep=[];try{for(;;)keep.push(new ArrayBuffer(1024))}catch(e){}throw original}})}`, jt.PhaseOutput, false},
+		{"stack getter", `()=>{throw {name:'Original',message:'original',get stack(){globalThis.keep=[];try{for(;;)keep.push(new ArrayBuffer(1024))}catch(e){}return 'trace'}}}`, jt.PhaseEvaluate, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			p, err := e.Compile(context.Background(), tc.source)
+			if err != nil {
+				t.Fatal(err)
+			}
+			_, err = p.Eval(context.Background(), nil, jt.EvalOptions{Limits: &jt.Limits{Timeout: 20 * time.Second}})
+			var d *jt.Error
+			var ex *Exception
+			if !errors.As(err, &d) || d.Phase != tc.phase {
+				t.Fatalf("lost origin: %v", err)
+			}
+			if tc.conversion {
+				if !errors.Is(err, jt.ErrConversion) {
+					t.Fatalf("lost trusted conversion: %v", err)
+				}
+			} else if !errors.As(err, &ex) || ex.Message == "null" || ex.Message == "" || errors.Is(err, jt.ErrConversion) {
+				t.Fatalf("secondary replaced original: %#v %v", ex, err)
+			}
+			if _, err = healthy.Eval(context.Background(), nil, jt.EvalOptions{}); err != nil {
+				t.Fatalf("recovery: %v", err)
+			}
+		})
+	}
+}

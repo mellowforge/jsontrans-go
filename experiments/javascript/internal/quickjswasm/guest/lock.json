@@ -8,7 +8,7 @@
     "x86_64-linux": "b761e3a0721dbae9c09a0059e5fdb2bf917d1b4a8a7b430fb3b5aafb0984b2c4"
   },
   "abi_version": 2,
-  "artifact_sha256": "f2e7e766ab7cf5dfb9b378c6c25c63a3b3c46657c70923c5b29fac0b2c31500a",
+  "artifact_sha256": "29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e",
   "sdk_llvm_commit": "895aa2c896ada719451be2e3673c83da8ddf1141",
   "sdk_wasi_libc_commit": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13"
 }
