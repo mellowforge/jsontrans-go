@@ -227,7 +227,8 @@ func TestIRegexpUnassignedCategory(t *testing.T) {
 }
 
 func TestIRegexpLargeRepeat(t *testing.T) {
-	e, _ := New()
+	// Semantics only; see TestReviewIRegexp for why the limits are generous.
+	e, _ := New(WithLimits(jsontrans.Limits{Timeout: 30 * time.Second, RegexTimeout: 10 * time.Second}))
 	p, err := e.Compile(context.Background(), "$[?match(@.s, @.p)]")
 	if err != nil {
 		t.Fatal(err)
@@ -356,7 +357,9 @@ func TestReviewInvalidFilterSyntax(t *testing.T) {
 	}
 }
 func TestReviewIRegexp(t *testing.T) {
-	e, _ := New()
+	// This checks matching semantics; generous limits keep large inputs from
+	// tripping the 50 ms default regex timeout on slow race-detector runners.
+	e, _ := New(WithLimits(jsontrans.Limits{Timeout: 30 * time.Second, RegexTimeout: 10 * time.Second}))
 	p, err := e.Compile(context.Background(), "$[?match(@.s,@.p)]")
 	if err != nil {
 		t.Fatal(err)
