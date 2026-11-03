@@ -108,7 +108,7 @@ func probeOwned(e *Engine, name string) (o Observation, handled bool) {
 		}
 		_, err = limited.Eval(context.Background(), nil, jt.EvalOptions{})
 		o.Detail = fmt.Sprintf("public 64 MiB engine accepted 40 MiB; independent 8 MiB engine rejected it: %v; exact page/growth stats covered by canonical runtime tests", err)
-		if err != nil {
+		if memoryProbeRejection(err) {
 			o.Status = "PASS"
 		}
 
@@ -155,4 +155,13 @@ func probeOwned(e *Engine, name string) (o Observation, handled bool) {
 		return o, false // Generic loop-cancellation and recovery probe follows.
 	}
 	return o, false
+}
+
+// This matcher checks one fixed assessment expression, not arbitrary user errors.
+func memoryProbeRejection(err error) bool {
+	if err == nil || errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) || errors.Is(err, jt.ErrUnsupported) || errors.Is(err, ErrClosed) {
+		return false
+	}
+	var exception *Exception
+	return errors.As(err, &exception) && exception.Name == "InternalError" && exception.Message == "out of memory"
 }

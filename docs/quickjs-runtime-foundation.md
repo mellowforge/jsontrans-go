@@ -19,7 +19,7 @@ remain the historical ABI v1 checkpoint.
 
 ## What changed
 
-`experiments/javascript/internal/quickjswasm` owns its Go/Wazero boundary and a
+`javascript/internal/quickjswasm` (relocated from the experiment) owns its Go/Wazero boundary and a
 small C ABI linked only to QuickJS-ng core. It does not call the QJS wrapper.
 The original QJS and Goja assessment backends and observations remain available.
 The optional `owned-quickjs` backend reuses the independently compiled strict
@@ -66,7 +66,7 @@ identical bytes. A Linux CI job rebuilds with its separately pinned SDK asset
 and compares against the committed artifact; cross-host reproducibility remains
 pending that job until it passes. The source archive, SDK component revisions,
 licenses and artifact fingerprint are retained under
-[`guest`](../experiments/javascript/internal/quickjswasm/guest).
+[`guest`](../javascript/internal/quickjswasm/guest).
 
 Applications use the embedded artifact and build with **CGO_ENABLED=0**, without
 a C compiler or Node. Rebuilding the artifact needs Python 3.12+, the downloaded
