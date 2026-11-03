@@ -271,7 +271,10 @@ func (p *checkedProgram) Eval(ctx context.Context, input any, options EvalOption
 	if err != nil {
 		return Result{}, diagnostic(p.name, "output", fmt.Errorf("%w: %w", ErrConversion, err))
 	}
-	return r, diagnostic(p.name, "evaluate", b.Check())
+	if err = b.Check(); err != nil {
+		return Result{}, diagnostic(p.name, "evaluate", err)
+	}
+	return r, nil
 }
 
 func bindingsMap(v any) map[string]any {

@@ -258,7 +258,10 @@ func (p *Program) evaluateOwned(input Value, bindings map[string]any, b *budget.
 		return nil, 0, err
 	}
 	if raw || IsUndefined(v) {
-		return v, 0, b.Check()
+		if err := b.Check(); err != nil {
+			return nil, 0, err
+		}
+		return v, 0, nil
 	}
 	v, err = materializeChecked(v, b)
 	if err != nil {
@@ -273,7 +276,10 @@ func (p *Program) evaluateOwned(input Value, bindings map[string]any, b *budget.
 	if err != nil {
 		return nil, 0, fmt.Errorf("%w: %w", jsontrans.ErrConversion, err)
 	}
-	return v, size, b.Check()
+	if err := b.Check(); err != nil {
+		return nil, 0, err
+	}
+	return v, size, nil
 }
 
 func validateFinite(v any, b *budget.Budget) error {
@@ -2783,8 +2789,11 @@ func Invoke(ctx context.Context, fn Callable, args []Value, opts jsontrans.EvalO
 	if err != nil {
 		return nil, err
 	}
+	if err := b.Check(); err != nil {
+		return nil, err
+	}
 	if IsUndefined(v) {
-		return v, b.Check()
+		return v, nil
 	}
 	// The result may share containers with captured data; the caller owns a
 	// detached copy. Functions inside it stay usable as they are.
@@ -2792,7 +2801,10 @@ func Invoke(ctx context.Context, fn Callable, args []Value, opts jsontrans.EvalO
 	if err != nil {
 		return nil, err
 	}
-	return out[0], b.Check()
+	if err := b.Check(); err != nil {
+		return nil, err
+	}
+	return out[0], nil
 }
 func cloneRawArgs(args []Value, b *budget.Budget) ([]Value, error) {
 	remaining := b.Limits.MaxInputBytes

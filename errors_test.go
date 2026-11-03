@@ -124,3 +124,48 @@ func TestHostErrorAttributionInTailCalls(t *testing.T) {
 		}
 	}
 }
+
+type cancellingProgram struct{ cancel context.CancelFunc }
+
+func (p cancellingProgram) Eval(context.Context, any, jt.EvalOptions) (jt.Result, error) {
+	p.cancel()
+	return jt.Result{Value: "late", Defined: true}, nil
+}
+
+type cancellingProcessor struct{ cancel context.CancelFunc }
+
+func (p cancellingProcessor) Compile(context.Context, string) (jt.Program, error) {
+	return cancellingProgram(p), nil
+}
+
+// A failed call returns the zero result, never a value alongside the error.
+func TestFailedEvaluationReturnsZeroResult(t *testing.T) {
+	for name, eval := range map[string]func(context.Context, jt.Program) (jt.Result, error){
+		"ordinary": func(ctx context.Context, p jt.Program) (jt.Result, error) {
+			return p.Eval(ctx, map[string]any{}, jt.EvalOptions{})
+		},
+		"prepared": func(ctx context.Context, p jt.Program) (jt.Result, error) {
+			d, err := jt.PrepareJSON(context.Background(), []byte(`{}`), jt.PrepareOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			return jt.EvalPrepared(ctx, p, d, jt.EvalOptions{})
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			x, err := jt.New(map[string]jt.Processor{"p": cancellingProcessor{cancel}})
+			if err != nil {
+				t.Fatal(err)
+			}
+			program, err := x.Compile(context.Background(), "p", "")
+			if err != nil {
+				t.Fatal(err)
+			}
+			got, err := eval(ctx, program)
+			if !errors.Is(err, context.Canceled) || got != (jt.Result{}) {
+				t.Fatalf("got %#v, %v", got, err)
+			}
+		})
+	}
+}

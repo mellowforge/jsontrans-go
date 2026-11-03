@@ -163,7 +163,10 @@ func (e preparedEntry) evalExternal(ctx context.Context, d *Document, o EvalOpti
 	if err != nil {
 		return Result{}, 0, errors.Join(ErrConversion, err)
 	}
-	return r, size, local.Check()
+	if err = local.Check(); err != nil {
+		return Result{}, 0, err
+	}
+	return r, size, nil
 }
 func (p *checkedProgram) EvalPrepared(ctx context.Context, d *Document, o EvalOptions) (Result, error) {
 	return EvalPrepared(ctx, p, d, o)

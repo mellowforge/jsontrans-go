@@ -342,7 +342,10 @@ func Encode(v any, b *budget.Budget) ([]byte, error) {
 	if len(data) > b.Limits.MaxOutputBytes {
 		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
 	}
-	return data, b.Check()
+	if err := b.Check(); err != nil {
+		return nil, err
+	}
+	return data, nil
 }
 
 // stringSize counts encoding/json's escaped representation without allocating it.
