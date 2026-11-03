@@ -7,8 +7,43 @@ test tools only. There are no complete-language runtime dependencies.
 
 The pinned JSONata suite passes all 1,291 fixture files (1,686 cases), and the
 JSONPath suite passes all 715 cases with the two explicit errata below. The
-Node-only differential job additionally compares 585 selected expressions and
+Node-only differential job additionally compares selected expressions and
 operator combinations against JSONata 2.2.2. No public release has been published.
+
+Pinned suites execute both ordinary evaluation and prepared evaluation for
+every representable JSON input. JSONata fixtures with undefined input retain the
+raw API because undefined is not a JSON document. The Node comparison also runs
+prepared evaluation with production default limits, exercising specialized plans
+alongside the interpreter. Preparation preserves complete input validation,
+duplicate-key behavior, exact JSONPath numbers and lossless surrogate handling.
+
+JSONata currently specializes conservative singular paths, scalar predicates,
+selected builtins, direct array count/sum and simple object-array projections
+and filters. JSONPath specializes singular scalar selectors. Unsupported syntax
+or shapes use the full evaluator. JSONata bindings, host functions, nondefault
+limits and explicit expression-depth instrumentation also use that fallback.
+These are optimization boundaries, not language restrictions.
+
+Compiled batches share an overall deadline, retain independent expression work
+counters and enforce both registry and underlying native limits. Exact native
+dispatch validates and detaches results once; external wrappers retain their
+conversion boundary. Native callbacks get independent canceled scopes after
+each expression; reusable budget scratch is limited to certified pure handlers.
+The document index uses shared arenas, preserving the same public Node readers
+and exact/lossless JSON representation. Nil and zero-value documents are rejected.
+
+Additional conservative plans cover nested scalar projections, scalar filters,
+and numeric arithmetic projection sums. Batch-local singular-prefix memoization
+contains document nodes only, with bounded compile work/scratch and no global
+cache. Numeric-literal comparisons can avoid intermediate interface boxing.
+Unsupported projection shapes still use ordinary native evaluation.
+
+Prepared documents retain shape and byte summaries so stricter evaluation
+limits remain effective. Step counters account separately for preparation and
+each evaluation's actual work; eliminating repeated work can change the exact
+step threshold at which an evaluation stops. Simple plans check cancellation at
+entry/exit and at most every 32 work units; output conversion and array/string
+loops remain bounded. Host callbacks retain ordinary context deadlines.
 
 Each fixture must run, including invalid syntax, native errors, missing results,
 and explicitly permitted nondeterministic outputs. Passing upstream suites is

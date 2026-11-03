@@ -18,6 +18,9 @@ type UTF16String string
 
 func (s UTF16String) MarshalJSON() ([]byte, error) { return Quote(string(s)) }
 
+// DecodeString decodes an already bounded JSON string while preserving UTF-16.
+func DecodeString(raw string) (string, error) { return decodeString([]byte(raw)) }
+
 // UTF16Object preserves JSON object keys containing isolated surrogate units.
 // Objects with ordinary Unicode keys remain map[string]any.
 type UTF16Object map[string]any

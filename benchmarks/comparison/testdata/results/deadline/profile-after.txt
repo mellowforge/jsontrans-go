@@ -1,0 +1,21 @@
+File: jsontrans-deadline-after.test
+Type: cpu
+Time: 2026-11-02 20:53:48 +04
+Duration: 1.61s, Total samples = 1360ms (84.29%)
+Active filters:
+   focus=jsontrans-go.\(\*Batch\).EvalPrepared
+Showing nodes accounting for 630ms, 46.32% of 1360ms total
+Showing top 12 nodes out of 73
+      flat  flat%   sum%        cum   cum%
+     270ms 19.85% 19.85%      280ms 20.59%  runtime.nanotime1
+      70ms  5.15% 25.00%       80ms  5.88%  github.com/mellowforge/jsontrans-go/internal/budget.Resolve
+      40ms  2.94% 27.94%      880ms 64.71%  github.com/mellowforge/jsontrans-go.preparedEntry.eval
+      40ms  2.94% 30.88%      170ms 12.50%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+      40ms  2.94% 33.82%       40ms  2.94%  runtime.memequal
+      30ms  2.21% 36.03%       60ms  4.41%  github.com/mellowforge/jsontrans-go/internal/budget.(*Budget).Enter
+      30ms  2.21% 38.24%       30ms  2.21%  github.com/mellowforge/jsontrans-go/internal/budget.(*Budget).Step
+      30ms  2.21% 40.44%       50ms  3.68%  github.com/mellowforge/jsontrans-go/jsonata.(*batchMemo).resolve
+      20ms  1.47% 41.91%      110ms  8.09%  github.com/mellowforge/jsontrans-go/internal/budget.initFastResolved
+      20ms  1.47% 43.38%      220ms 16.18%  github.com/mellowforge/jsontrans-go/jsonata.(*fastPlan).evalWithMemo
+      20ms  1.47% 44.85%       70ms  5.15%  github.com/mellowforge/jsontrans-go/jsonata.(*fastPlan).evalWithMemo.func1
+      20ms  1.47% 46.32%      170ms 12.50%  github.com/mellowforge/jsontrans-go/jsonata.(*fastPlan).evalWithMemo.func2

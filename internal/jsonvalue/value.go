@@ -10,6 +10,7 @@ import (
 	"math"
 	"reflect"
 	"regexp"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/mellowforge/jsontrans-go/internal/budget"
@@ -118,7 +119,31 @@ func Clone(v any, b *budget.Budget, maxBytes int) (any, error) {
 	return c.copy(v)
 }
 
+// CloneDetached also copies immutable string storage, allowing prepared results
+// to outlive their source document without retaining its input buffer.
+func CloneDetached(v any, b *budget.Budget, maxBytes int) (any, error) {
+	// A finite binary64 JSON scalar needs at most 32 bytes. Avoid formatting
+	// it just to check the usual multi-megabyte output budget.
+	if n, ok := v.(float64); ok && maxBytes >= 32 && !math.IsNaN(n) && !math.IsInf(n, 0) {
+		if err := b.Step(); err != nil {
+			return nil, err
+		}
+		return n, nil
+	}
+	c := copier{b: b, remaining: maxBytes, active: make(map[reference]bool), detach: true}
+	return c.copy(v)
+}
+
+// CloneDetachedSize validates and detaches a value while measuring its exact
+// encoded JSON size in the same bounded traversal.
+func CloneDetachedSize(v any, b *budget.Budget, maxBytes int) (any, int, error) {
+	c := copier{b: b, remaining: maxBytes, active: make(map[reference]bool), detach: true}
+	out, err := c.copy(v)
+	return out, maxBytes - c.remaining, err
+}
+
 type copier struct {
+	detach    bool
 	b         *budget.Budget
 	remaining int
 	active    map[reference]bool
@@ -154,6 +179,9 @@ func (c *copier) copy(v any) (any, error) {
 		if err := c.stringSize(x); err != nil {
 			return nil, err
 		}
+		if c.detach {
+			x = strings.Clone(x)
+		}
 		if !utf8.ValidString(x) {
 			return UTF16String(x), nil
 		}
@@ -166,6 +194,9 @@ func (c *copier) copy(v any) (any, error) {
 		if err := c.stringSize(canonical); err != nil {
 			return nil, err
 		}
+		if c.detach {
+			canonical = strings.Clone(canonical)
+		}
 		if utf8.ValidString(canonical) {
 			return canonical, nil
 		}
@@ -176,6 +207,9 @@ func (c *copier) copy(v any) (any, error) {
 		}
 		if !number.MatchString(string(x)) {
 			return nil, fmt.Errorf("%w: number", ErrInvalid)
+		}
+		if c.detach {
+			x = json.Number(strings.Clone(string(x)))
 		}
 		return x, nil
 	case float64:
@@ -238,6 +272,9 @@ func (c *copier) copy(v any) (any, error) {
 			}
 			if err := c.stringSize(k); err != nil {
 				return nil, err
+			}
+			if c.detach {
+				k = strings.Clone(k)
 			}
 			if err := c.charge(1); err != nil {
 				return nil, err
@@ -313,8 +350,10 @@ func (c *copier) stringSize(s string) error {
 	if err := c.charge(2); err != nil {
 		return err
 	}
+	nextCheck := 0
 	for i := 0; i < len(s); {
-		if i%1024 == 0 {
+		if i >= nextCheck {
+			nextCheck = i + 1024
 			if err := c.b.Step(); err != nil {
 				return err
 			}

@@ -1,0 +1,16 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     222	    534628 ns/op	  543417 B/op	   14161 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     223	    538169 ns/op	  543419 B/op	   14160 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     224	    540059 ns/op	  543445 B/op	   14161 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     222	    552811 ns/op	  543425 B/op	   14161 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     207	    555943 ns/op	  543415 B/op	   14161 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     846	    141165 ns/op	   83801 B/op	    1802 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     855	    141090 ns/op	   83800 B/op	    1802 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     855	    141002 ns/op	   83797 B/op	    1802 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     852	    141486 ns/op	   83799 B/op	    1802 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     835	    151101 ns/op	   83810 B/op	    1802 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	2.050s

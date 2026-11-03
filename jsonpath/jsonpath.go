@@ -18,6 +18,7 @@ import (
 	"github.com/mellowforge/jsontrans-go"
 	"github.com/mellowforge/jsontrans-go/internal/budget"
 	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
+	"github.com/mellowforge/jsontrans-go/internal/prepared"
 )
 
 type Type int
@@ -84,9 +85,11 @@ func New(opts ...Option) (*Engine, error) {
 }
 
 type program struct {
-	query  *query
-	limits jsontrans.Limits
-	funcs  map[string]Function
+	query            *query
+	limits           jsontrans.Limits
+	funcs            map[string]Function
+	preparedSingular bool
+	prepared         *prepared.Handler
 }
 
 func (e *Engine) Compile(ctx context.Context, s string) (jsontrans.Program, error) {
@@ -114,7 +117,13 @@ func (e *Engine) Compile(ctx context.Context, s string) (jsontrans.Program, erro
 		f.Parameters = append([]Type(nil), f.Parameters...)
 		funcs[name] = f
 	}
-	return &program{q, e.limits, funcs}, nil
+	program := &program{query: q, limits: e.limits, funcs: funcs, preparedSingular: isPreparedSingular(q)}
+	newHandler := prepared.New
+	if len(funcs) == 0 {
+		newHandler = prepared.NewReusable
+	}
+	program.prepared = newHandler(program, program.evalPrepared)
+	return program, nil
 }
 func (p *program) Eval(ctx context.Context, input any, o jsontrans.EvalOptions) (jsontrans.Result, error) {
 	if len(o.Bindings) > 0 {

@@ -1,0 +1,32 @@
+name                                              time/op
+Batch/1024/simple/N4/gnata_EvalMany-18            2.97µs ± 1%
+Batch/1024/simple/N4/gnata_validate_EvalMany-18   4.36µs ± 2%
+Batch/1024/simple/N16/gnata_EvalMany-18           4.69µs ± 0%
+Batch/1024/simple/N16/gnata_validate_EvalMany-18  6.17µs ± 1%
+Batch/1024/simple/N64/gnata_EvalMany-18           11.1µs ± 1%
+Batch/1024/simple/N64/gnata_validate_EvalMany-18  13.3µs ±14%
+Prepared/1024/simple/N4/prepare_and_eval-18       7.45µs ± 3%
+Prepared/1024/simple/N16/prepare_and_eval-18      15.1µs ± 5%
+Prepared/1024/simple/N64/prepare_and_eval-18      48.2µs ± 4%
+
+name                                              alloc/op
+Batch/1024/simple/N4/gnata_EvalMany-18            6.43kB ± 0%
+Batch/1024/simple/N4/gnata_validate_EvalMany-18   6.44kB ± 0%
+Batch/1024/simple/N16/gnata_EvalMany-18           7.41kB ± 0%
+Batch/1024/simple/N16/gnata_validate_EvalMany-18  7.42kB ± 0%
+Batch/1024/simple/N64/gnata_EvalMany-18           11.6kB ± 0%
+Batch/1024/simple/N64/gnata_validate_EvalMany-18  11.6kB ± 0%
+Prepared/1024/simple/N4/prepare_and_eval-18       19.3kB ± 0%
+Prepared/1024/simple/N16/prepare_and_eval-18      23.4kB ± 0%
+Prepared/1024/simple/N64/prepare_and_eval-18      39.9kB ± 0%
+
+name                                              allocs/op
+Batch/1024/simple/N4/gnata_EvalMany-18               131 ± 0%
+Batch/1024/simple/N4/gnata_validate_EvalMany-18      131 ± 0%
+Batch/1024/simple/N16/gnata_EvalMany-18              148 ± 0%
+Batch/1024/simple/N16/gnata_validate_EvalMany-18     148 ± 0%
+Batch/1024/simple/N64/gnata_EvalMany-18              221 ± 0%
+Batch/1024/simple/N64/gnata_validate_EvalMany-18     221 ± 0%
+Prepared/1024/simple/N4/prepare_and_eval-18         67.0 ± 0%
+Prepared/1024/simple/N16/prepare_and_eval-18         128 ± 0%
+Prepared/1024/simple/N64/prepare_and_eval-18         386 ± 0%

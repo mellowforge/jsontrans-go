@@ -1,0 +1,7 @@
+go version go1.25.13 darwin/arm64
+darwin
+arm64
+
+benchtime=200ms
+samples=5
+snapshot=/private/tmp/jsontrans-before-batch

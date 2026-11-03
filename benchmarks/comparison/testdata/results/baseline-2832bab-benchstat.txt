@@ -1,0 +1,41 @@
+name                                              time/op
+Batch/1024/simple/N4/ours_EvalJSON-18              160µs ± 1%
+Batch/1024/simple/N4/ours_Eval-18                 50.2µs ± 0%
+Batch/1024/simple/N4/gnata_EvalMany-18            3.15µs ± 1%
+Batch/1024/simple/N4/gnata_validate_EvalMany-18   4.73µs ± 2%
+Batch/1024/simple/N16/ours_EvalJSON-18             647µs ± 2%
+Batch/1024/simple/N16/ours_Eval-18                 206µs ± 3%
+Batch/1024/simple/N16/gnata_EvalMany-18           4.90µs ± 4%
+Batch/1024/simple/N16/gnata_validate_EvalMany-18  6.36µs ± 1%
+Batch/1024/simple/N64/ours_EvalJSON-18            3.13ms ±20%
+Batch/1024/simple/N64/ours_Eval-18                 927µs ± 9%
+Batch/1024/simple/N64/gnata_EvalMany-18           13.0µs ± 6%
+Batch/1024/simple/N64/gnata_validate_EvalMany-18  14.3µs ±11%
+
+name                                              alloc/op
+Batch/1024/simple/N4/ours_EvalJSON-18              169kB ± 0%
+Batch/1024/simple/N4/ours_Eval-18                 54.0kB ± 0%
+Batch/1024/simple/N4/gnata_EvalMany-18            6.43kB ± 0%
+Batch/1024/simple/N4/gnata_validate_EvalMany-18   6.44kB ± 0%
+Batch/1024/simple/N16/ours_EvalJSON-18             675kB ± 0%
+Batch/1024/simple/N16/ours_Eval-18                 216kB ± 0%
+Batch/1024/simple/N16/gnata_EvalMany-18           7.41kB ± 0%
+Batch/1024/simple/N16/gnata_validate_EvalMany-18  7.42kB ± 0%
+Batch/1024/simple/N64/ours_EvalJSON-18            2.70MB ± 0%
+Batch/1024/simple/N64/ours_Eval-18                 866kB ± 0%
+Batch/1024/simple/N64/gnata_EvalMany-18           11.6kB ± 0%
+Batch/1024/simple/N64/gnata_validate_EvalMany-18  11.6kB ± 0%
+
+name                                              allocs/op
+Batch/1024/simple/N4/ours_EvalJSON-18              3.49k ± 0%
+Batch/1024/simple/N4/ours_Eval-18                    404 ± 0%
+Batch/1024/simple/N4/gnata_EvalMany-18               131 ± 0%
+Batch/1024/simple/N4/gnata_validate_EvalMany-18      131 ± 0%
+Batch/1024/simple/N16/ours_EvalJSON-18             13.9k ± 0%
+Batch/1024/simple/N16/ours_Eval-18                 1.62k ± 0%
+Batch/1024/simple/N16/gnata_EvalMany-18              148 ± 0%
+Batch/1024/simple/N16/gnata_validate_EvalMany-18     148 ± 0%
+Batch/1024/simple/N64/ours_EvalJSON-18             55.8k ± 0%
+Batch/1024/simple/N64/ours_Eval-18                 6.48k ± 0%
+Batch/1024/simple/N64/gnata_EvalMany-18              221 ± 0%
+Batch/1024/simple/N64/gnata_validate_EvalMany-18     221 ± 0%

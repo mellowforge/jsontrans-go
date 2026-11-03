@@ -1,0 +1,21 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkRetained/1024-18         	       1	      1250 ns/op	     10449 retained-B/doc
+BenchmarkRetained/1024-18         	       1	      1209 ns/op	     10408 retained-B/doc
+BenchmarkRetained/1024-18         	       1	      1209 ns/op	     10409 retained-B/doc
+BenchmarkRetained/1024-18         	       1	       584.0 ns/op	     10450 retained-B/doc
+BenchmarkRetained/1024-18         	       1	       417.0 ns/op	     10408 retained-B/doc
+BenchmarkRetained/8192-18         	       1	       666.0 ns/op	     17467 retained-B/doc
+BenchmarkRetained/8192-18         	       1	       542.0 ns/op	     17467 retained-B/doc
+BenchmarkRetained/8192-18         	       1	      4125 ns/op	     17509 retained-B/doc
+BenchmarkRetained/8192-18         	       1	      3792 ns/op	     17467 retained-B/doc
+BenchmarkRetained/8192-18         	       1	       417.0 ns/op	     17509 retained-B/doc
+BenchmarkRetained/65536-18        	       1	       917.0 ns/op	     73918 retained-B/doc
+BenchmarkRetained/65536-18        	       1	       709.0 ns/op	     73918 retained-B/doc
+BenchmarkRetained/65536-18        	       1	       792.0 ns/op	     73917 retained-B/doc
+BenchmarkRetained/65536-18        	       1	       417.0 ns/op	     73918 retained-B/doc
+BenchmarkRetained/65536-18        	       1	       416.0 ns/op	     73924 retained-B/doc
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	0.357s

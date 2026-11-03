@@ -73,6 +73,8 @@ type Budget struct {
 	cancel context.CancelFunc
 	steps  int64
 	depth  int
+	lazy   *deadlineContext
+	fast   bool
 }
 
 func New(ctx context.Context, limits Limits) (*Budget, error) {
@@ -93,11 +95,22 @@ func New(ctx context.Context, limits Limits) (*Budget, error) {
 }
 
 func (b *Budget) Context() context.Context { return b.ctx }
-func (b *Budget) Close()                   { b.cancel() }
-func (b *Budget) Check() error             { return b.ctx.Err() }
+func (b *Budget) Close() {
+	if b.lazy != nil {
+		b.lazy.close()
+	} else if b.cancel != nil {
+		b.cancel()
+	}
+}
+func (b *Budget) Check() error { return b.ctx.Err() }
 func (b *Budget) Step() error {
-	if err := b.Check(); err != nil {
-		return err
+	// Fast plans check context at entry, exit and at most every 32 work units.
+	// Step/depth limits still apply to every operation. This amortizes clock
+	// reads without allowing an unbounded loop to ignore cancellation.
+	if !b.fast || (b.steps+1)&31 == 0 {
+		if err := b.Check(); err != nil {
+			return err
+		}
 	}
 	b.steps++
 	if b.steps > b.Limits.MaxSteps {

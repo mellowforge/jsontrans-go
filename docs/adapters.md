@@ -30,3 +30,63 @@ closures and transforms remain usable after their original evaluation finishes.
 Register host functions with `jsonata.WithFunction`; JSONPath's `WithFunction`
 uses its RFC Value/Logical/Nodes type declarations. These are language-specific
 extension APIs, separate from the common JSON contract.
+
+Processors can optionally implement `PreparedProgram.EvalPrepared` alongside
+`Program.Eval`. The public `Document` and `Node` types provide read-only indexed
+access; adapters do not need access to internal packages. Use `Root`, `Member`,
+`Index`, `Kind`, `Text`, `Number`, `Boolean`, and `JSON` to inspect values. Kind
+names are `object`, `array`, `string`, `number`, `boolean`, and `null`.
+`Number` preserves the exact spelling; `Binary64` returns false on overflow.
+Wrong-kind operations return false; `Len` is zero for scalars. `Keys` returns an
+owned slice in input order, with duplicate names collapsed at their first
+position and their last value retained. Apply language-specific key ordering in
+the adapter. `Text` uses lossless WTF-8 for isolated surrogate units.
+
+Node strings are immutable views that retain document storage; copy them when
+returning independently owned results. `Materialize(ctx, PrepareOptions)` makes
+a detached JSON-shaped tree. The root `EvalPrepared` helper validates input
+dimensions, snapshots bindings, and validates/detaches results. Registry wrappers
+preserve prepared dispatch and diagnostics. Programs without this capability
+work through materialization and their existing `Eval` method.
+
+Enforce compilation/evaluation work, depth, collection, output-size and context
+limits inside adapters. Preparation and evaluation have separate step budgets:
+charge the work actually performed, rather than recharging eliminated decoding.
+Stricter evaluation byte/depth/collection limits must still constrain the stored
+document. Document lifetime is managed by Go's garbage collector; there is no
+Close method or automatic document/expression cache.
+
+`NewBatch([]Program)` snapshots a program list; `Transformer.CompileBatch`
+compiles a list for one registered processor. Batches execute in order and reuse
+destination capacity through `EvalPrepared(ctx, document, dst, options)`.
+The returned length equals the program count. Use a separate destination for
+each concurrent call, and do not alias destination storage with bindings.
+Passing nil destination requests fresh result storage. Results own their data
+independently of the document and of other batch results.
+
+On the first error, evaluation stops, returns nil results and a `*BatchError`
+with zero-based Index and wrapped Cause. Populated destination slots are
+cleared; other destination contents after an error are unspecified. Native
+diagnostics and `errors.Is`/`errors.As` continue through the wrapper. External
+programs get independent binding snapshots and the usual result validation.
+
+Batch options bound the entire call, including input dimensions, program count,
+deadline and aggregate output bytes. Each expression also keeps its configured
+limits and work counter. Aggregate output counts the encoded bytes of defined
+values; missing values contribute zero bytes. Default batch Timeout is one
+second. Constructors cap program count at the default collection limit before
+allocation; CompileBatch bounds the entire compilation with a shared deadline.
+No expressions run concurrently inside a batch.
+
+```go
+batch, err := transformer.CompileBatch(ctx, "jsonata", []string{
+    "name",
+    "$sum(prices)",
+})
+if err != nil { return err }
+document, err := jsontrans.PrepareJSON(ctx, input, jsontrans.PrepareOptions{})
+if err != nil { return err }
+destination := make([]jsontrans.Result, 2)
+results, err := batch.EvalPrepared(ctx, document, destination, jsontrans.EvalOptions{})
+// Reuse destination on the next call after consuming results.
+```

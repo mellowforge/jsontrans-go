@@ -1,0 +1,17 @@
+name                                             time/op
+Batch/1024/mixed/N16/ours_EvalJSON-18             644µs ± 1%
+Batch/1024/mixed/N16/ours_Eval-18                 234µs ± 1%
+Batch/1024/mixed/N16/gnata_EvalMany-18           8.58µs ± 0%
+Batch/1024/mixed/N16/gnata_validate_EvalMany-18  10.0µs ± 2%
+
+name                                             alloc/op
+Batch/1024/mixed/N16/ours_EvalJSON-18             762kB ± 0%
+Batch/1024/mixed/N16/ours_Eval-18                 302kB ± 0%
+Batch/1024/mixed/N16/gnata_EvalMany-18           12.2kB ± 0%
+Batch/1024/mixed/N16/gnata_validate_EvalMany-18  12.2kB ± 0%
+
+name                                             allocs/op
+Batch/1024/mixed/N16/ours_EvalJSON-18             14.3k ± 0%
+Batch/1024/mixed/N16/ours_Eval-18                 1.98k ± 0%
+Batch/1024/mixed/N16/gnata_EvalMany-18              252 ± 0%
+Batch/1024/mixed/N16/gnata_validate_EvalMany-18     252 ± 0%

@@ -1,0 +1,26 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     160	    679870 ns/op	  762042 B/op	   14337 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     184	    646197 ns/op	  762070 B/op	   14337 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     186	    645192 ns/op	  762026 B/op	   14338 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     184	    640022 ns/op	  762045 B/op	   14338 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_EvalJSON-18         	     186	    644684 ns/op	  762086 B/op	   14338 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     511	    233094 ns/op	  302399 B/op	    1979 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     510	    233951 ns/op	  302392 B/op	    1979 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     516	    235006 ns/op	  302386 B/op	    1979 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     510	    234444 ns/op	  302392 B/op	    1979 allocs/op
+BenchmarkBatch/1024/mixed/N16/ours_Eval-18             	     516	    231771 ns/op	  302386 B/op	    1979 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_EvalMany-18        	   13998	      8586 ns/op	   12208 B/op	     252 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_EvalMany-18        	   13948	      8542 ns/op	   12208 B/op	     252 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_EvalMany-18        	   14113	      8605 ns/op	   12208 B/op	     252 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_EvalMany-18        	   13984	      8587 ns/op	   12208 B/op	     252 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_EvalMany-18        	   13884	      8556 ns/op	   12208 B/op	     252 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_validate_EvalMany-18         	   12112	      9893 ns/op	   12221 B/op	     252 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_validate_EvalMany-18         	   12079	      9966 ns/op	   12222 B/op	     252 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_validate_EvalMany-18         	   10000	     10085 ns/op	   12222 B/op	     252 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_validate_EvalMany-18         	   12151	      9945 ns/op	   12222 B/op	     252 allocs/op
+BenchmarkBatch/1024/mixed/N16/gnata_validate_EvalMany-18         	   12169	     10173 ns/op	   12222 B/op	     252 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	4.166s

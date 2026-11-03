@@ -102,23 +102,48 @@ func TestJSONPathCTS(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			got, err := p.Eval(context.Background(), tc.Document, jsontrans.EvalOptions{})
+			input, err := json.Marshal(tc.Document)
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !got.Defined {
-				t.Fatal("undefined result")
+			doc, err := jsontrans.PrepareJSON(context.Background(), input, jsontrans.PrepareOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			evaluations := []struct {
+				name string
+				run  func() (jsontrans.Result, error)
+			}{
+				{"ordinary", func() (jsontrans.Result, error) {
+					return p.Eval(context.Background(), tc.Document, jsontrans.EvalOptions{})
+				}},
+				{"prepared", func() (jsontrans.Result, error) {
+					return jsontrans.EvalPrepared(context.Background(), p, doc, jsontrans.EvalOptions{})
+				}},
 			}
 			expected := tc.Results
 			if expected == nil {
 				expected = []any{tc.Result}
 			}
-			for _, v := range expected {
-				if equivalent(got.Value, v) {
-					return
+			for _, evaluation := range evaluations {
+				got, err := evaluation.run()
+				if err != nil {
+					t.Fatalf("%s: %v", evaluation.name, err)
+				}
+				if !got.Defined {
+					t.Fatalf("%s: undefined result", evaluation.name)
+				}
+				matched := false
+				for _, v := range expected {
+					if equivalent(got.Value, v) {
+						matched = true
+						break
+					}
+				}
+				if !matched {
+					t.Fatalf("%s: got %#v; expected one of %#v", evaluation.name, got.Value, expected)
 				}
 			}
-			t.Fatalf("got %#v; expected one of %#v", got.Value, expected)
 		})
 	}
 	if corrected != len(errata) {

@@ -1,0 +1,4 @@
+go version go1.25.13 darwin/arm64
+CPU: Apple M5 Max
+GOMAXPROCS: 18 (raw benchmark suffix)
+Samples: five x200ms per row

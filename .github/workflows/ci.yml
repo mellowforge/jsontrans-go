@@ -36,6 +36,7 @@ jobs:
           go-version: '1.25.x'
       - run: go test ./jsonpath -run '^$' -fuzz '^FuzzCompileAndEval$' -fuzztime=10s
       - run: go test ./jsonata -run '^$' -fuzz '^FuzzCompileAndEval$' -fuzztime=10s
+      - run: go test ./internal/document -run '^$' -fuzz '^FuzzPrepareAndMaterialize$' -fuzztime=10s
 
   reference:
     runs-on: ubuntu-latest

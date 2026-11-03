@@ -1,0 +1,36 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/new_dst-18         	   12826	     18461 ns/op	    3076 B/op	      69 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/new_dst-18         	   13027	     18483 ns/op	    3076 B/op	      69 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/new_dst-18         	   13062	     18396 ns/op	    3076 B/op	      69 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/new_dst-18         	   13047	     18336 ns/op	    3076 B/op	      69 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/new_dst-18         	   13131	     18242 ns/op	    3076 B/op	      69 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/reused_dst-18      	   13256	     18260 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/reused_dst-18      	   13118	     18311 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/reused_dst-18      	   13093	     18307 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/reused_dst-18      	   13174	     18175 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/reused_doc/reused_dst-18      	   13233	     18264 ns/op	    1281 B/op	      68 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/new_dst-18  	    3460	     64497 ns/op	   78680 B/op	      91 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/new_dst-18  	    3792	     63745 ns/op	   78676 B/op	      91 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/new_dst-18  	    3750	     64418 ns/op	   78677 B/op	      91 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/new_dst-18  	    3814	     64371 ns/op	   78677 B/op	      91 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/new_dst-18  	    3825	     64035 ns/op	   78676 B/op	      91 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/reused_dst-18         	    3901	     63540 ns/op	   76880 B/op	      90 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/reused_dst-18         	    3912	     63505 ns/op	   76882 B/op	      90 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/reused_dst-18         	    3823	     63725 ns/op	   76882 B/op	      90 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/reused_dst-18         	    3811	     63727 ns/op	   76881 B/op	      90 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/prepare_and_batch/reused_dst-18         	    3669	     64611 ns/op	   76881 B/op	      90 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_warmed-18                         	    1410	    162384 ns/op	   76632 B/op	     220 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_warmed-18                         	    1496	    160977 ns/op	   76632 B/op	     220 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_warmed-18                         	    1462	    162098 ns/op	   76632 B/op	     220 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_warmed-18                         	    1494	    160422 ns/op	   76632 B/op	     220 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_warmed-18                         	    1470	    157827 ns/op	   76632 B/op	     220 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_validate_warmed-18                	    1000	    237081 ns/op	   76725 B/op	     220 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_validate_warmed-18                	    1022	    235291 ns/op	   76721 B/op	     220 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_validate_warmed-18                	    1030	    233773 ns/op	   76724 B/op	     220 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_validate_warmed-18                	    1053	    232414 ns/op	   76721 B/op	     220 allocs/op
+BenchmarkCompiledBatch/65536/simple/N64/gnata_validate_warmed-18                	    1018	    235834 ns/op	   76721 B/op	     220 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	9.823s

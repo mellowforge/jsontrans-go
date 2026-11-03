@@ -146,7 +146,9 @@ func TestJSONataConformance(t *testing.T) {
 					}
 					defer decodeBudget.Close()
 					var input any = jsonata.Undefined
+					var inputJSON []byte
 					if len(c.Data) > 0 {
+						inputJSON = c.Data
 						input, err = jsonvalue.Decode(c.Data, decodeBudget)
 						if err != nil {
 							t.Fatal(err)
@@ -156,6 +158,7 @@ func TestJSONataConformance(t *testing.T) {
 						if err != nil {
 							t.Fatal(err)
 						}
+						inputJSON = data
 						input, err = jsonvalue.Decode(data, decodeBudget)
 						if err != nil {
 							t.Fatal(err)
@@ -184,13 +187,76 @@ func TestJSONataConformance(t *testing.T) {
 							t.Fatal(err)
 						}
 					}
-					p, err := caseEngine.CompileRaw(context.Background(), expr)
-					var got jsontrans.Result
-					if err == nil {
-						options := jsontrans.EvalOptions{Bindings: bindings}
-						if c.TimeLimit > 0 {
-							options.Limits = &jsontrans.Limits{Timeout: time.Duration(c.TimeLimit) * time.Millisecond, MaxSteps: 100000000, MaxCollectionItems: 10000000, MaxDepth: 10000}
+					p, compileErr := caseEngine.CompileRaw(context.Background(), expr)
+					options := jsontrans.EvalOptions{Bindings: bindings}
+					if c.TimeLimit > 0 {
+						options.Limits = &jsontrans.Limits{Timeout: time.Duration(c.TimeLimit) * time.Millisecond, MaxSteps: 100000000, MaxCollectionItems: 10000000, MaxDepth: 10000}
+					}
+					check := func(t *testing.T, got jsontrans.Result, err error) {
+						t.Helper()
+						expected := c.Code
+						if c.Error != nil && c.Error.Code != "" {
+							expected = c.Error.Code
 						}
+						if expected != "" {
+							if err == nil {
+								t.Fatalf("expected error %s, got %#v", expected, got)
+							}
+							var native *jsontrans.Error
+							if !errors.As(err, &native) || native.Code != expected {
+								t.Fatalf("expected error %s, got %v", expected, err)
+							}
+							expectedToken := c.Token
+							if c.Error != nil && c.Error.Token != "" {
+								expectedToken = c.Error.Token
+							}
+							if expectedToken != "" && native.Token != expectedToken {
+								t.Fatalf("expected token %q, got %q", expectedToken, native.Token)
+							}
+							return
+						}
+						if err != nil {
+							t.Fatal(err)
+						}
+						if c.Undefined {
+							if got.Defined {
+								t.Fatalf("expected undefined, got %#v", got.Value)
+							}
+							return
+						}
+						if !got.Defined {
+							t.Fatal("unexpected undefined")
+						}
+						actual, err := json.Marshal(got.Value)
+						if err != nil {
+							t.Fatal(err)
+						}
+						var normalized any
+						if err = json.Unmarshal(actual, &normalized); err != nil {
+							t.Fatal(err)
+						}
+						expectedResult := c.Result
+						if c.Unordered {
+							a, aok := normalized.([]any)
+							b, bok := expectedResult.([]any)
+							if aok && bok {
+								b = append([]any(nil), b...)
+								sort.Slice(a, func(i, j int) bool { return fmt.Sprint(a[i]) < fmt.Sprint(a[j]) })
+								sort.Slice(b, func(i, j int) bool { return fmt.Sprint(b[i]) < fmt.Sprint(b[j]) })
+								expectedResult = b
+							}
+						}
+						if !reflect.DeepEqual(normalized, expectedResult) {
+							t.Fatalf("got %#v, want %#v", normalized, expectedResult)
+						}
+					}
+					if compileErr != nil {
+						check(t, jsontrans.Result{}, compileErr)
+						return
+					}
+					t.Run("ordinary", func(t *testing.T) {
+						var got jsontrans.Result
+						var err error
 						if jsonata.IsUndefined(input) {
 							var v any
 							v, err = p.EvalRaw(ctx, input, options)
@@ -200,59 +266,20 @@ func TestJSONataConformance(t *testing.T) {
 						} else {
 							got, err = p.Eval(ctx, input, options)
 						}
+						check(t, got, err)
+					})
+					// JSONata's undefined input is not a representable JSON document.
+					if inputJSON != nil {
+						t.Run("prepared", func(t *testing.T) {
+							doc, err := jsontrans.PrepareJSON(ctx, inputJSON, jsontrans.PrepareOptions{})
+							if err != nil {
+								t.Fatalf("prepare fixture: %v", err)
+							}
+							got, err := p.EvalPrepared(ctx, doc, options)
+							check(t, got, err)
+						})
 					}
-					expected := c.Code
-					if c.Error != nil && c.Error.Code != "" {
-						expected = c.Error.Code
-					}
-					if expected != "" {
-						if err == nil {
-							t.Fatalf("expected error %s, got %#v", expected, got)
-						}
-						var native *jsontrans.Error
-						if !errors.As(err, &native) || native.Code != expected {
-							t.Fatalf("expected error %s, got %v", expected, err)
-						}
-						expectedToken := c.Token
-						if c.Error != nil && c.Error.Token != "" {
-							expectedToken = c.Error.Token
-						}
-						if expectedToken != "" && native.Token != expectedToken {
-							t.Fatalf("expected token %q, got %q", expectedToken, native.Token)
-						}
-						return
-					}
-					if err != nil {
-						t.Fatal(err)
-					}
-					if c.Undefined {
-						if got.Defined {
-							t.Fatalf("expected undefined, got %#v", got.Value)
-						}
-						return
-					}
-					if !got.Defined {
-						t.Fatal("unexpected undefined")
-					}
-					actual, err := json.Marshal(got.Value)
-					if err != nil {
-						t.Fatal(err)
-					}
-					var normalized any
-					if err = json.Unmarshal(actual, &normalized); err != nil {
-						t.Fatal(err)
-					}
-					if c.Unordered {
-						a, aok := normalized.([]any)
-						b, bok := c.Result.([]any)
-						if aok && bok {
-							sort.Slice(a, func(i, j int) bool { return fmt.Sprint(a[i]) < fmt.Sprint(a[j]) })
-							sort.Slice(b, func(i, j int) bool { return fmt.Sprint(b[i]) < fmt.Sprint(b[j]) })
-						}
-					}
-					if !reflect.DeepEqual(normalized, c.Result) {
-						t.Fatalf("got %#v, want %#v", normalized, c.Result)
-					}
+
 				})
 			}
 		})

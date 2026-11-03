@@ -19,6 +19,7 @@ import (
 	"github.com/mellowforge/jsontrans-go"
 	"github.com/mellowforge/jsontrans-go/internal/budget"
 	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
+	"github.com/mellowforge/jsontrans-go/internal/prepared"
 )
 
 type Engine struct {
@@ -69,6 +70,8 @@ type Program struct {
 	root         *node
 	engine       *Engine
 	trackParents bool
+	fast         *fastPlan
+	prepared     *prepared.Handler
 }
 
 func (e *Engine) Compile(ctx context.Context, expr string) (jsontrans.Program, error) {
@@ -102,7 +105,13 @@ func (e *Engine) CompileRaw(ctx context.Context, expr string) (*Program, error) 
 	for k, v := range e.functions {
 		snapshot.functions[k] = v
 	}
-	return &Program{root: root, engine: snapshot, trackParents: containsParent(root)}, nil
+	program := &Program{root: root, engine: snapshot, trackParents: containsParent(root), fast: compileFastPlan(root)}
+	newHandler := prepared.New
+	if program.fast != nil && snapshot.evaluationDepth == 0 && len(snapshot.functions) == 0 {
+		newHandler = prepared.NewReusable
+	}
+	program.prepared = newHandler(program, program.evalPrepared, compilePreparedBatch)
+	return program, nil
 }
 func (p *Program) Eval(ctx context.Context, input any, opts jsontrans.EvalOptions) (jsontrans.Result, error) {
 	v, err := p.evaluate(ctx, input, opts, false)
@@ -141,44 +150,59 @@ func (p *Program) evaluate(ctx context.Context, input any, opts jsontrans.EvalOp
 			return nil, err
 		}
 	}
-	vars := map[string]Value{"$": input}
-	for k, v := range p.engine.builtins {
-		vars[k] = v
-	}
-	for k, v := range p.engine.functions {
-		vars[k] = v
-	}
+	var bindings map[string]any
 	if opts.Bindings != nil {
 		x, err := jsonvalue.Clone(opts.Bindings, b, b.Limits.MaxInputBytes)
 		if err != nil {
 			return nil, err
 		}
-		x = normalize(x)
-		if err = validateFinite(x, b); err != nil {
-			return nil, err
+		if object, ok := x.(jsontrans.UTF16Object); ok {
+			bindings = map[string]any(object)
+		} else {
+			bindings = x.(map[string]any)
+		}
+	}
+	v, _, err := p.evaluateOwned(input, bindings, b, raw, false)
+	return v, err
+}
+
+// evaluateOwned consumes evaluation-local input and bindings without another
+// scope or input copy. Only checked prepared dispatch uses detached results.
+func (p *Program) evaluateOwned(input Value, bindings map[string]any, b *budget.Budget, raw, detached bool) (Value, int, error) {
+	vars := map[string]Value{"$": input}
+	if bindings != nil {
+		x := normalize(bindings)
+		if err := validateFinite(x, b); err != nil {
+			return nil, 0, err
 		}
 		for k, v := range x.(map[string]any) {
 			vars[strings.TrimPrefix(k, "$")] = v
 		}
 	}
-	ev := evaluator{b: b, root: input, vars: vars, now: time.Now(), trackParents: p.trackParents, objectOrder: map[uintptr]objectOrderEntry{}, depth: newDepthTracker(p.engine.evaluationDepth)}
+	ev := evaluator{b: b, root: input, vars: vars, env: environment{builtins: p.engine.builtins, functions: p.engine.functions}, now: time.Now(), trackParents: p.trackParents, objectOrder: map[uintptr]objectOrderEntry{}, depth: newDepthTracker(p.engine.evaluationDepth)}
 	v, err := ev.eval(p.root, input)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	if raw || IsUndefined(v) {
-		return v, b.Check()
+		return v, 0, b.Check()
 	}
 	v, err = materializeChecked(v, b)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", jsontrans.ErrConversion, err)
+		return nil, 0, fmt.Errorf("%w: %w", jsontrans.ErrConversion, err)
 	}
-	v, err = jsonvalue.Clone(v, b, b.Limits.MaxOutputBytes)
+	size := 0
+	if detached {
+		v, size, err = jsonvalue.CloneDetachedSize(v, b, b.Limits.MaxOutputBytes)
+	} else {
+		v, err = jsonvalue.Clone(v, b, b.Limits.MaxOutputBytes)
+	}
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", jsontrans.ErrConversion, err)
+		return nil, 0, fmt.Errorf("%w: %w", jsontrans.ErrConversion, err)
 	}
-	return v, b.Check()
+	return v, size, b.Check()
 }
+
 func validateFinite(v any, b *budget.Budget) error {
 	if err := b.Enter(); err != nil {
 		return err
@@ -250,6 +274,7 @@ func normalize(v any) any {
 type token struct {
 	kind, val string
 	pos       int
+	quoted    bool
 }
 type node struct {
 	sig      *functionSignature
@@ -347,7 +372,7 @@ func (p *parser) next() {
 					p.fail("S0101")
 					return
 				}
-				p.t = token{"string", v, p.i}
+				p.t = token{"string", v, p.i, false}
 				return
 			}
 			p.i++
@@ -362,7 +387,7 @@ func (p *parser) next() {
 			}
 			p.i++
 		}
-		p.t = token{"number", p.s[start:p.i], p.i}
+		p.t = token{"number", p.s[start:p.i], p.i, false}
 		return
 	}
 	if c == '$' || unicode.IsLetter(first) || c == '_' || c == '`' {
@@ -375,7 +400,7 @@ func (p *parser) next() {
 				return
 			}
 			p.i++
-			p.t = token{"name", p.s[start+1 : p.i-1], p.i}
+			p.t = token{"name", p.s[start+1 : p.i-1], p.i, true}
 			return
 		}
 		for p.i < len(p.s) {
@@ -390,7 +415,7 @@ func (p *parser) next() {
 		if c == '$' {
 			kind = "variable"
 		}
-		p.t = token{kind, s, p.i}
+		p.t = token{kind, s, p.i, false}
 		return
 	}
 	if p.i < len(p.s) {
@@ -398,13 +423,21 @@ func (p *parser) next() {
 		switch two {
 		case ":=", "!=", "<=", ">=", "..", "**", "~>", "??", "?:":
 			p.i++
-			p.t = token{two, two, p.i}
+			p.t = token{two, two, p.i, false}
 			return
 		}
 	}
-	p.t = token{string(c), string(c), p.i}
+	p.t = token{string(c), string(c), p.i, false}
 }
 func precedence(t token) int {
+	// Literal text and quoted names are data, even when they spell an operator.
+	if t.quoted {
+		return 0
+	}
+	switch t.kind {
+	case "string", "number", "variable", "eof":
+		return 0
+	}
 	switch t.val {
 	case ":=":
 		return 1
@@ -779,6 +812,7 @@ type evaluator struct {
 	b            *budget.Budget
 	root         Value
 	vars         map[string]Value
+	env          environment
 	now          time.Time
 }
 
@@ -982,7 +1016,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		if s == "$$" {
 			return e.root, nil
 		}
-		if v, ok := e.vars[strings.TrimPrefix(s, "$")]; ok {
+		if v, ok := e.env.lookup(e.vars, strings.TrimPrefix(s, "$")); ok {
 			return v, nil
 		}
 		return Undefined, nil
@@ -1681,7 +1715,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		if !ok {
 			code := "T1006"
 			if n.children[0].op == "name" {
-				if _, exists := e.vars[n.children[0].val.(string)]; exists {
+				if _, exists := e.env.lookup(e.vars, n.children[0].val.(string)); exists {
 					code = "T1005"
 				}
 			}
@@ -1689,7 +1723,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				if arg.op == "placeholder" {
 					code = "T1008"
 					if n.children[0].op == "name" {
-						if _, exists := e.vars[n.children[0].val.(string)]; exists {
+						if _, exists := e.env.lookup(e.vars, n.children[0].val.(string)); exists {
 							code = "T1007"
 						}
 					}

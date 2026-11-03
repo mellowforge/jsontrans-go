@@ -1,0 +1,36 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkSingle/ours_compile-18         	   51086	      2214 ns/op	    5912 B/op	      21 allocs/op
+BenchmarkSingle/ours_compile-18         	   54968	      2167 ns/op	    5912 B/op	      21 allocs/op
+BenchmarkSingle/ours_compile-18         	   55779	      2176 ns/op	    5912 B/op	      21 allocs/op
+BenchmarkSingle/ours_compile-18         	   55270	      2184 ns/op	    5912 B/op	      21 allocs/op
+BenchmarkSingle/ours_compile-18         	   53835	      2228 ns/op	    5912 B/op	      21 allocs/op
+BenchmarkSingle/gnata_compile-18        	  343814	       344.4 ns/op	     852 B/op	      14 allocs/op
+BenchmarkSingle/gnata_compile-18        	  346411	       339.5 ns/op	     852 B/op	      14 allocs/op
+BenchmarkSingle/gnata_compile-18        	  356673	       344.2 ns/op	     852 B/op	      14 allocs/op
+BenchmarkSingle/gnata_compile-18        	  338576	       352.8 ns/op	     852 B/op	      14 allocs/op
+BenchmarkSingle/gnata_compile-18        	  347079	       344.6 ns/op	     852 B/op	      14 allocs/op
+BenchmarkSingle/ours_Eval-18            	   10000	     11904 ns/op	   13494 B/op	     101 allocs/op
+BenchmarkSingle/ours_Eval-18            	   10000	     12122 ns/op	   13494 B/op	     101 allocs/op
+BenchmarkSingle/ours_Eval-18            	   10000	     12329 ns/op	   13494 B/op	     101 allocs/op
+BenchmarkSingle/ours_Eval-18            	   10000	     12212 ns/op	   13494 B/op	     101 allocs/op
+BenchmarkSingle/ours_Eval-18            	   10000	     12049 ns/op	   13494 B/op	     101 allocs/op
+BenchmarkSingle/ours_EvalJSON-18        	    3156	     37865 ns/op	   42197 B/op	     872 allocs/op
+BenchmarkSingle/ours_EvalJSON-18        	    3279	     38290 ns/op	   42196 B/op	     872 allocs/op
+BenchmarkSingle/ours_EvalJSON-18        	    3271	     39183 ns/op	   42196 B/op	     872 allocs/op
+BenchmarkSingle/ours_EvalJSON-18        	    3176	     39201 ns/op	   42198 B/op	     872 allocs/op
+BenchmarkSingle/ours_EvalJSON-18        	    3139	     38346 ns/op	   42196 B/op	     872 allocs/op
+BenchmarkSingle/gnata_Eval-18           	 1413661	        83.88 ns/op	     176 B/op	       2 allocs/op
+BenchmarkSingle/gnata_Eval-18           	 1455943	        82.62 ns/op	     176 B/op	       2 allocs/op
+BenchmarkSingle/gnata_Eval-18           	 1448625	        84.97 ns/op	     176 B/op	       2 allocs/op
+BenchmarkSingle/gnata_Eval-18           	 1453426	        84.42 ns/op	     176 B/op	       2 allocs/op
+BenchmarkSingle/gnata_Eval-18           	 1351563	        84.34 ns/op	     176 B/op	       2 allocs/op
+BenchmarkSingle/gnata_EvalBytes-18      	 1813402	        65.65 ns/op	      32 B/op	       2 allocs/op
+BenchmarkSingle/gnata_EvalBytes-18      	 1823809	        64.95 ns/op	      32 B/op	       2 allocs/op
+BenchmarkSingle/gnata_EvalBytes-18      	 1855148	        64.26 ns/op	      32 B/op	       2 allocs/op
+BenchmarkSingle/gnata_EvalBytes-18      	 1879645	        65.18 ns/op	      32 B/op	       2 allocs/op
+BenchmarkSingle/gnata_EvalBytes-18      	 1737801	        65.00 ns/op	      32 B/op	       2 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	4.943s

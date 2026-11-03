@@ -1,0 +1,16 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/examples/basic
+cpu: Apple M5 Max
+BenchmarkProcessors/JSONata/Compile-18         	   48594	      2397 ns/op	    6168 B/op	      31 allocs/op
+BenchmarkProcessors/JSONata/Compile-18         	   50173	      2436 ns/op	    6168 B/op	      31 allocs/op
+BenchmarkProcessors/JSONata/Compile-18         	   48530	      2450 ns/op	    6168 B/op	      31 allocs/op
+BenchmarkProcessors/JSONata/Compile-18         	   47793	      2431 ns/op	    6168 B/op	      31 allocs/op
+BenchmarkProcessors/JSONata/Compile-18         	   50574	      2439 ns/op	    6168 B/op	      31 allocs/op
+BenchmarkProcessors/JSONata/Eval-18            	   19417	      6321 ns/op	   11632 B/op	      56 allocs/op
+BenchmarkProcessors/JSONata/Eval-18            	   18680	      6262 ns/op	   11632 B/op	      56 allocs/op
+BenchmarkProcessors/JSONata/Eval-18            	   20012	      6037 ns/op	   11632 B/op	      56 allocs/op
+BenchmarkProcessors/JSONata/Eval-18            	   20005	      6107 ns/op	   11632 B/op	      56 allocs/op
+BenchmarkProcessors/JSONata/Eval-18            	   19251	      6197 ns/op	   11633 B/op	      56 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/examples/basic	1.467s

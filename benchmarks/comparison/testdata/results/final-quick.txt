@@ -1,0 +1,15 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkBatch/1024/simple/N4/gnata_EvalMany-18         	   80287	      3101 ns/op	    6432 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_validate_EvalMany-18         	   52879	      4524 ns/op	    6439 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_EvalMany-18                 	   49106	      4908 ns/op	    7408 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_validate_EvalMany-18        	   37623	      6451 ns/op	    7416 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_EvalMany-18                 	   21085	     11312 ns/op	   11632 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_validate_EvalMany-18        	   18343	     13072 ns/op	   11646 B/op	     221 allocs/op
+BenchmarkPrepared/1024/simple/N4/prepare_and_eval-18             	   33122	      7081 ns/op	   19464 B/op	      67 allocs/op
+BenchmarkPrepared/1024/simple/N16/prepare_and_eval-18            	   17308	     13477 ns/op	   23928 B/op	     128 allocs/op
+BenchmarkPrepared/1024/simple/N64/prepare_and_eval-18            	    6321	     38469 ns/op	   41928 B/op	     386 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	3.591s

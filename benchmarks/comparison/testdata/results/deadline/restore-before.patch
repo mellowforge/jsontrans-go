@@ -1,0 +1,115 @@
+--- a/internal/budget/fast.go
++++ b/internal/budget/fast.go
+@@ -84,9 +84,7 @@
+ 		}
+ 		return c.finish(1)
+ 	}
+-	// Until uses only the monotonic reading when present. Parent deadlines
+-	// without monotonic metadata retain time's wall-clock fallback.
+-	if time.Until(c.deadline) <= 0 {
++	if !time.Now().Before(c.deadline) {
+ 		return c.finish(2)
+ 	}
+ 	return nil
+--- a/internal/prepared/prepared.go
++++ b/internal/prepared/prepared.go
+@@ -15,27 +15,12 @@
+ // Request contains checked immutable input, owned bindings, and expression-local
+ // accounting. Customized preserves the native fast-path override guards.
+ type Request struct {
+-	Document        *document.Document
+-	Bindings        map[string]any
+-	Limits          budget.Limits
+-	Budget          *budget.Budget
+-	Customized      bool
+-	managedBoundary bool
++	Document   *document.Document
++	Bindings   map[string]any
++	Limits     budget.Limits
++	Budget     *budget.Budget
++	Customized bool
+ }
+-
+-// CheckEntry checks bare native calls. Requests created by Evaluate/EvaluateInto
+-// already have a checked entry and a mandatory successful-return check.
+-// This is only for handler boundaries; loop and resource checks remain required.
+-func (r Request) CheckEntry() error {
+-	if r.managedBoundary {
+-		return nil
+-	}
+-	return r.Budget.Check()
+-}
+-
+-// CheckExit leaves the successful-return check to an enclosing evaluator, while
+-// preserving it for direct native handler calls.
+-func (r Request) CheckExit() error { return r.CheckEntry() }
+ 
+ // Result owns validated detached JSON. Bytes is its exact encoded JSON size.
+ type Result struct {
+@@ -160,7 +145,7 @@
+ 			bindings = value.(map[string]any)
+ 		}
+ 	}
+-	result, err := eval(Request{Document: d, Bindings: bindings, Limits: limits, Budget: local, Customized: customized, managedBoundary: true})
++	result, err := eval(Request{Document: d, Bindings: bindings, Limits: limits, Budget: local, Customized: customized})
+ 	if err != nil {
+ 		return Result{}, err
+ 	}
+--- a/jsonata/prepared.go
++++ b/jsonata/prepared.go
+@@ -41,14 +41,14 @@
+ 		}
+ 		if ok {
+ 			if !r.Defined {
+-				return result, req.CheckExit()
++				return result, b.Check()
+ 			}
+ 			result.Value, result.Bytes, err = jsonvalue.CloneDetachedSize(r.Value, b, req.Limits.MaxOutputBytes)
+ 			if err != nil {
+ 				return prepared.Result{}, fmt.Errorf("%w: %w", jsontrans.ErrConversion, err)
+ 			}
+ 			result.Defined = true
+-			return result, req.CheckExit()
++			return result, b.Check()
+ 		}
+ 	}
+ 	b.SetContext(jsonvalue.WithObjectOrder(b.Context()))
+--- a/jsonata/batch_plan.go
++++ b/jsonata/batch_plan.go
+@@ -146,7 +146,7 @@
+ 
+ func (p *preparedBatchPlan) Eval(index int, req prepared.Request, state any) (result prepared.Result, err error) {
+ 	program := p.programs[index]
+-	if err = req.CheckEntry(); err != nil {
++	if err = req.Budget.Check(); err != nil {
+ 		return result, program.wrapTimebox(err)
+ 	}
+ 	fast := p.fast[index]
+@@ -168,14 +168,14 @@
+ 		return p.handlers[index].Eval(req)
+ 	}
+ 	if !r.Defined {
+-		return result, req.CheckExit()
++		return result, req.Budget.Check()
+ 	}
+ 	result.Value, result.Bytes, err = jsonvalue.CloneDetachedSize(r.Value, req.Budget, req.Limits.MaxOutputBytes)
+ 	if err != nil {
+ 		return prepared.Result{}, fmt.Errorf("%w: %w", jsontrans.ErrConversion, err)
+ 	}
+ 	result.Defined = true
+-	return result, req.CheckExit()
++	return result, req.Budget.Check()
+ }
+ 
+ func (m *batchMemo) resolve(id int, b *budget.Budget) (jsontrans.Node, bool, bool, error) {
+--- a/jsonpath/prepared.go
++++ b/jsonpath/prepared.go
+@@ -38,7 +38,7 @@
+ 		if err != nil {
+ 			return prepared.Result{}, err
+ 		}
+-		return prepared.Result{Value: out, Defined: true, Bytes: size}, req.CheckExit()
++		return prepared.Result{Value: out, Defined: true, Bytes: size}, b.Check()
+ 	}
+ 	fallback := func() (prepared.Result, error) {
+ 		b.SetContext(jsonvalue.WithObjectOrder(b.Context()))

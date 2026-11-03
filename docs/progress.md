@@ -54,3 +54,44 @@ Local benchmark measurements are recorded in docs/performance.md.
 Final regression review verified invocation-local order caches for returned
 closures and transforms under the race detector. All review findings are fixed;
 there are no deferred review findings. Work remains local and reviewable.
+
+
+Prepared performance work (2026-11-02): added owned immutable documents,
+read-only public nodes, optional prepared dispatch with safe adapter fallback,
+JSONata builtin-parent environments and conservative indexed plans in both
+engines. Extended fixtures and Node comparisons run both evaluation paths.
+Full correctness checks and independent review pass. Matched prepare-inclusive
+1 KiB simple batches of 4/16/64 rules take 6.71/11.56/32.61 microseconds versus
+warmed gnata's 2.92/4.66/10.96; the 2x goal remains open. Profiled opportunities
+are budget/arena allocation and broader array plans. See docs/performance.md and
+docs/superpowers/plans/2026-11-02-prepared-performance.md for exact evidence and
+remaining work. The project remains unreleased.
+
+Compiled batch follow-up (2026-11-02): NewBatch and Transformer.CompileBatch
+snapshot ordered programs, reuse result destinations and preserve fail-fast
+native diagnostics. Exact-owner native handlers remove duplicate conversion;
+callback scopes remain independent and pure handlers reuse local budget scratch.
+Compact arenas preserve document semantics while reducing preparation allocation.
+Conservative nested projection/filter/arithmetic-sum and typed-comparison plans
+expand direct evaluation; shared prefix state is local and bounded.
+
+Independent task/final reviews and full verification pass. Five-sample matched
+1 KiB simple prepare-inclusive results are 5.71/9.24/23.01 us at 4/16/64 rules
+versus prior 6.87/11.81/32.11 and warmed gnata 3.05/4.74/11.11. Ratios
+1.88/1.95/2.07x leave the strict 2x goal open for 64 rules. The mixed 16-rule
+fixture improves 127.61 to 14.03 us; unique 64-rule document reuse reduces
+128 allocations to four. See docs/performance.md for all 1,350 samples, source
+hashes, allocation/ownership caveats and the complete matrix. Work is local;
+no release or publication was performed.
+
+
+Deadline follow-up (2026-11-02): user replaced the earlier strict 2x threshold
+with safe improvements guided by profiling. Monotonic-only deadline reads and checked
+internal native boundaries reduce redundant clock calls without changing loop
+checkpoint frequency, limits or callback ownership. Five-sample matched 1 KiB
+simple preparation-inclusive medians improve 5.79/9.09/22.97 to
+4.64/6.76/15.87 us at 4/16/64 rules; warmed gnata is 2.99/4.77/11.23.
+Distinct scalar 64 improves 20.48 to 13.29 us including preparation; reused-document
+latency 15.64 to 8.89 us with unchanged four allocations/384 B. Full checks and
+independent review passed; all 420 timing samples and unchanged hashes recorded
+in docs/performance.md. No release/publication.

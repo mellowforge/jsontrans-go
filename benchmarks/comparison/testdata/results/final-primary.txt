@@ -1,0 +1,51 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/benchmarks/comparison
+cpu: Apple M5 Max
+BenchmarkBatch/1024/simple/N4/gnata_EvalMany-18         	  404020	      2998 ns/op	    6432 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_EvalMany-18         	  378294	      2997 ns/op	    6432 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_EvalMany-18         	  405824	      2983 ns/op	    6432 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_EvalMany-18         	  403904	      3086 ns/op	    6432 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_EvalMany-18         	  379574	      3115 ns/op	    6432 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_validate_EvalMany-18         	  264944	      4390 ns/op	    6439 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_validate_EvalMany-18         	  269386	      4374 ns/op	    6439 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_validate_EvalMany-18         	  279998	      4350 ns/op	    6439 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_validate_EvalMany-18         	  271513	      4391 ns/op	    6439 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N4/gnata_validate_EvalMany-18         	  268963	      4404 ns/op	    6439 B/op	     131 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_EvalMany-18                 	  254238	      4712 ns/op	    7408 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_EvalMany-18                 	  255520	      4762 ns/op	    7408 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_EvalMany-18                 	  257085	      4763 ns/op	    7408 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_EvalMany-18                 	  232124	      4972 ns/op	    7408 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_EvalMany-18                 	  252132	      4761 ns/op	    7408 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_validate_EvalMany-18        	  193512	      6197 ns/op	    7416 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_validate_EvalMany-18        	  194180	      6163 ns/op	    7416 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_validate_EvalMany-18        	  192505	      6352 ns/op	    7416 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_validate_EvalMany-18        	  193974	      6251 ns/op	    7416 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N16/gnata_validate_EvalMany-18        	  196125	      6242 ns/op	    7416 B/op	     148 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_EvalMany-18                 	  109184	     11157 ns/op	   11632 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_EvalMany-18                 	  107620	     11125 ns/op	   11632 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_EvalMany-18                 	  107737	     12540 ns/op	   11632 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_EvalMany-18                 	   99697	     12006 ns/op	   11632 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_EvalMany-18                 	   98493	     11772 ns/op	   11632 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_validate_EvalMany-18        	   90896	     13270 ns/op	   11646 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_validate_EvalMany-18        	   90454	     13313 ns/op	   11647 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_validate_EvalMany-18        	   90321	     13357 ns/op	   11647 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_validate_EvalMany-18        	   84798	     13730 ns/op	   11647 B/op	     221 allocs/op
+BenchmarkBatch/1024/simple/N64/gnata_validate_EvalMany-18        	   90780	     13346 ns/op	   11647 B/op	     221 allocs/op
+BenchmarkPrepared/1024/simple/N4/prepare_and_eval-18             	  176389	      6603 ns/op	   19464 B/op	      67 allocs/op
+BenchmarkPrepared/1024/simple/N4/prepare_and_eval-18             	  182112	      6560 ns/op	   19464 B/op	      67 allocs/op
+BenchmarkPrepared/1024/simple/N4/prepare_and_eval-18             	  180163	      6585 ns/op	   19464 B/op	      67 allocs/op
+BenchmarkPrepared/1024/simple/N4/prepare_and_eval-18             	  174240	      6628 ns/op	   19464 B/op	      67 allocs/op
+BenchmarkPrepared/1024/simple/N4/prepare_and_eval-18             	  176865	      6631 ns/op	   19464 B/op	      67 allocs/op
+BenchmarkPrepared/1024/simple/N16/prepare_and_eval-18            	   96208	     12580 ns/op	   23928 B/op	     128 allocs/op
+BenchmarkPrepared/1024/simple/N16/prepare_and_eval-18            	   95634	     12597 ns/op	   23928 B/op	     128 allocs/op
+BenchmarkPrepared/1024/simple/N16/prepare_and_eval-18            	   95544	     12548 ns/op	   23928 B/op	     128 allocs/op
+BenchmarkPrepared/1024/simple/N16/prepare_and_eval-18            	   96142	     12541 ns/op	   23928 B/op	     128 allocs/op
+BenchmarkPrepared/1024/simple/N16/prepare_and_eval-18            	   95074	     12583 ns/op	   23928 B/op	     128 allocs/op
+BenchmarkPrepared/1024/simple/N64/prepare_and_eval-18            	   31446	     38403 ns/op	   41928 B/op	     386 allocs/op
+BenchmarkPrepared/1024/simple/N64/prepare_and_eval-18            	   31490	     37833 ns/op	   41928 B/op	     386 allocs/op
+BenchmarkPrepared/1024/simple/N64/prepare_and_eval-18            	   31681	     37824 ns/op	   41928 B/op	     386 allocs/op
+BenchmarkPrepared/1024/simple/N64/prepare_and_eval-18            	   31669	     37871 ns/op	   41928 B/op	     386 allocs/op
+BenchmarkPrepared/1024/simple/N64/prepare_and_eval-18            	   31669	     37863 ns/op	   41928 B/op	     386 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go/benchmarks/comparison	60.531s

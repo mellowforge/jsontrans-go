@@ -23,8 +23,9 @@ func TestJSONataReference(t *testing.T) {
 		`$formatInteger(123,"Ww")`, `$formatNumber(1234.5,"#,##0.00")`, `$fromMillis(0)`,
 		`$match("abc123",/[0-9]+/)`, `$round(12.5)`, `null`, `missing`, `[]`, `[missing]`,
 		`$sqrt(-1)`, `$sum(["bad"])`, `1 +`, `items^(>price).name`,
+		`items.name`, `items[0].name`, `$count(items)`, `$sum(numbers)`, `$exists(items)`,
 	}
-	input := map[string]any{"items": []any{map[string]any{"name": "A", "price": 4}, map[string]any{"name": "B", "price": 7}}}
+	input := map[string]any{"items": []any{map[string]any{"name": "A", "price": 4}, map[string]any{"name": "B", "price": 7}}, "numbers": []any{1, 2, 3}}
 	compareReference(t, expressions, input)
 }
 
@@ -64,6 +65,14 @@ func compareReference(t *testing.T, expressions []string, input any) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	inputJSON, err := json.Marshal(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	document, err := jt.PrepareJSON(context.Background(), inputJSON, jt.PrepareOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
 	for i, expression := range expressions {
 		t.Run(expression, func(t *testing.T) {
 			var want struct {
@@ -74,32 +83,44 @@ func compareReference(t *testing.T, expressions []string, input any) {
 			if err := json.Unmarshal([]byte(lines[i]), &want); err != nil {
 				t.Fatal(err)
 			}
-			p, err := engine.Compile(context.Background(), expression)
-			var result jt.Result
-			if err == nil {
-				result, err = p.Eval(context.Background(), input, jt.EvalOptions{})
-			}
-			if want.Code != "" {
-				var native *jt.Error
-				if !errors.As(err, &native) || native.Code != want.Code {
-					t.Fatalf("reference code=%s; Go=%v", want.Code, err)
+			p, compileErr := engine.Compile(context.Background(), expression)
+			check := func(t *testing.T, result jt.Result, err error) {
+				t.Helper()
+				if want.Code != "" {
+					var native *jt.Error
+					if !errors.As(err, &native) || native.Code != want.Code {
+						t.Fatalf("reference code=%s; Go=%v", want.Code, err)
+					}
+					return
 				}
+				if err != nil {
+					t.Fatal(err)
+				}
+				actual, err := json.Marshal(result.Value)
+				if err != nil {
+					t.Fatal(err)
+				}
+				var value any
+				if err := json.Unmarshal(actual, &value); err != nil {
+					t.Fatal(err)
+				}
+				if result.Defined != want.Defined || (want.Defined && !reflect.DeepEqual(value, want.Value)) {
+					t.Fatalf("Go=%+v; reference=%+v", result, want)
+				}
+			}
+			if compileErr != nil {
+				check(t, jt.Result{}, compileErr)
 				return
 			}
-			if err != nil {
-				t.Fatal(err)
-			}
-			actual, err := json.Marshal(result.Value)
-			if err != nil {
-				t.Fatal(err)
-			}
-			var value any
-			if err := json.Unmarshal(actual, &value); err != nil {
-				t.Fatal(err)
-			}
-			if result.Defined != want.Defined || (want.Defined && !reflect.DeepEqual(value, want.Value)) {
-				t.Fatalf("Go=%+v; reference=%+v", result, want)
-			}
+			t.Run("ordinary", func(t *testing.T) {
+				result, err := p.Eval(context.Background(), input, jt.EvalOptions{})
+				check(t, result, err)
+			})
+			t.Run("prepared", func(t *testing.T) {
+				result, err := jt.EvalPrepared(context.Background(), p, document, jt.EvalOptions{})
+				check(t, result, err)
+			})
+
 		})
 	}
 }

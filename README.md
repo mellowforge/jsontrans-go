@@ -34,6 +34,21 @@ options)` for repeated expressions. Programs support concurrent evaluations;
 registered Go functions must also be safe for concurrent calls. Registration is
 explicit and local to a transformer. There is no implicit expression cache.
 
+For many expressions over the same JSON, call `PrepareJSON(ctx, bytes,
+PrepareOptions{})` once, then `EvalPrepared(ctx, program, document,
+EvalOptions{})` for each compiled program. Documents own their input and can be
+shared concurrently. Native engines use indexed reads for supported expressions
+and materialize detached input for the interpreter otherwise. Results remain
+detached. See [the prepared example](examples/prepared/main.go) and
+[measured costs and remaining performance gaps](docs/performance.md).
+
+For a fixed set of rules, `transformer.CompileBatch(ctx, "jsonata", expressions)`
+compiles an ordered batch. Call `batch.EvalPrepared(ctx, document, dst, options)`
+to reuse a `[]jsontrans.Result` destination across documents. `NewBatch(programs)`
+also accepts already compiled programs from different processors. Each call has
+an overall deadline and keeps each expression's configured limits. Batch errors
+identify the first failing expression with a zero-based `BatchError.Index`.
+
 The Go-value API accepts `map[string]any`, `[]any`, nil, strings, booleans,
 finite built-in numeric types, and `json.Number`. It rejects cycles, arbitrary
 structs, and other unsupported types. Inputs and returned JSON values are
