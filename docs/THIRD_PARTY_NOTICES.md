@@ -15,3 +15,7 @@ Runtime supporting utilities are
 Their source distributions contain their original licenses. Neither dependency
 is a JSONPath or JSONata engine. The JavaScript JSONata npm dependency is pinned
 solely for the separate development reference job and is not linked into Go code.
+
+The optional JavaScript development module has separate dependency pins, artifact
+provenance and licensing notes in [its README](../experiments/javascript/README.md).
+It does not alter the native library dependency graph.

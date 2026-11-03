@@ -3,7 +3,7 @@
 **One Go API for JSON queries, transformations, and reusable rules.**
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/mellowforge/jsontrans-go.svg)](https://pkg.go.dev/github.com/mellowforge/jsontrans-go)
-[![Go 1.25+](https://img.shields.io/badge/Go-1.25%2B-00ADD8?logo=go&logoColor=white)](go.mod)
+[![Go 1.26+](https://img.shields.io/badge/Go-1.26%2B-00ADD8?logo=go&logoColor=white)](go.mod)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 `jsontrans-go` turns a JSON document and an expression into a result. Use
@@ -40,7 +40,7 @@ your application needs to evaluate JSON rules.
 
 ## Install
 
-Requires **Go 1.25 or newer**. From your application's Go module:
+Requires **Go 1.26 or newer**. From your application's Go module:
 
 ```sh
 go get github.com/mellowforge/jsontrans-go
@@ -227,6 +227,7 @@ batches, host functions, and JSONata's raw-value API.
 - [API reference](https://pkg.go.dev/github.com/mellowforge/jsontrans-go)
 - [Contributing and development commands](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
+- [JavaScript feasibility assessment](docs/javascript-assessment.md) (experimental)
 
 ## License
 

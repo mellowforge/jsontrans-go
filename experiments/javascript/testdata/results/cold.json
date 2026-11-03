@@ -1,0 +1,92 @@
+[
+  {
+    "backend": "quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 224957333,
+    "go_heap_bytes": 57965800,
+    "peak_rss_bytes": 81002496
+  },
+  {
+    "backend": "quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 226109708,
+    "go_heap_bytes": 51651592,
+    "peak_rss_bytes": 81674240
+  },
+  {
+    "backend": "quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 229419750,
+    "go_heap_bytes": 57965576,
+    "peak_rss_bytes": 80953344
+  },
+  {
+    "backend": "quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 226825667,
+    "go_heap_bytes": 57960032,
+    "peak_rss_bytes": 80871424
+  },
+  {
+    "backend": "quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 229969958,
+    "go_heap_bytes": 57111536,
+    "peak_rss_bytes": 80510976
+  },
+  {
+    "backend": "goja",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 536250,
+    "go_heap_bytes": 1035768,
+    "peak_rss_bytes": 11730944
+  },
+  {
+    "backend": "goja",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 419084,
+    "go_heap_bytes": 1035656,
+    "peak_rss_bytes": 11763712
+  },
+  {
+    "backend": "goja",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 498334,
+    "go_heap_bytes": 1035448,
+    "peak_rss_bytes": 11829248
+  },
+  {
+    "backend": "goja",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 389959,
+    "go_heap_bytes": 1035816,
+    "peak_rss_bytes": 11911168
+  },
+  {
+    "backend": "goja",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 395083,
+    "go_heap_bytes": 1035448,
+    "peak_rss_bytes": 11567104
+  }
+]

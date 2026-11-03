@@ -1,0 +1,322 @@
+{
+  "platform": "macOS-27.2-arm64-arm-64bit",
+  "cases": [
+    {
+      "backend": "quickjs",
+      "case": "cold-start",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+      "duration_ns": 248729125,
+      "go_heap_bytes": 57965840,
+      "peak_rss_bytes": 81002496
+    },
+    {
+      "backend": "quickjs",
+      "case": "compile-cancel",
+      "status": "PASS",
+      "detail": "source compilation + cleanup 4.701334ms; context=context canceled; error=QJS ABI panic: failed to free QJS runtime: failed to call QJS_Free: module closed with context canceled\nstack: goroutine 1 [running]:\nruntime/debug.Stack()\n\t/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/debug/stack.go:26 +0x64\ngithub.com/fastschema/qjs.(*Runtime).call(0x7abe800978c0, {0x1051456b0, 0x8}, {0x7abe8186c450, 0x1, 0x1})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:320 +0xa0\ngithub.com/fastschema/qjs.(*Runtime).Call(0x7abe800978c0, {0x1051456b0?, 0x7abe7ded61e0?}, {0x7abe8186c450?, 0x7abe810daeb8?, 0x104c9e328?})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:240 +0x28\ngithub.com/fastschema/qjs.(*Runtime).FreeQJSRuntime(0x7abe800978c0)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:171 +0x74\ngithub.com/fastschema/qjs.(*Runtime).Close(0x7abe800978c0)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:192 +0x2c\npanic({0x105709e40?, 0x7abe7f095a80?})\n\t/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/panic.go:860 +0x12c\ngithub.com/fastschema/qjs.(*Runtime).call(0x7abe800978c0, {0x1051483ae, 0xc}, {0x7abe8186c420, 0x2, 0x2})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:321 +0x130\ngithub.com/fastschema/qjs.(*Runtime).Call(0x7abe800978c0, {0x1051483ae?, 0x7abe818724e0?}, {0x7abe8186c420?, 0x7abe810db108?, 0x104d1a664?})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:240 +0x28\ngithub.com/fastschema/qjs.(*Context).Call(...)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/context.go:21\ngithub.com/fastschema/qjs.(*EvalOption).Free(0x7abe7df981c0)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/options.go:205 +0xb4\npanic({0x105709e40?, 0x7abe7f095a60?})\n\t/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/panic.go:860 +0x12c\ngithub.com/fastschema/qjs.(*Runtime).call(0x7abe800978c0, {0x1051483a2, 0xc}, {0x7abe7e778e40, 0x2, 0x2})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:321 +0x130\ngithub.com/fastschema/qjs.(*Runtime).Call(0x7abe800978c0, {0x1051483a2?, 0x107d25b00?}, {0x7abe7e778e40?, 0x7abe810db368?, 0x104c83248?})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:240 +0x28\ngithub.com/fastschema/qjs.(*Context).Call(...)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/context.go:21\ngithub.com/fastschema/qjs.compile(0x7abe8154acc0, {0x1051451a0, 0x8}, {0x7abe810db4e8, 0x1, 0x1?})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/eval.go:42 +0x144\ngithub.com/fastschema/qjs.(*Context).Compile(...)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/context.go:95\ngithub.com/fastschema/qjs.(*Runtime).Compile(0x7abe810db458?, {0x1051451a0?, 0x7abe7def5860?}, {0x7abe810db4e8?, 0x104ca2390?, 0x10516edb8?})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:230 +0x28\ngithub.com/mellowforge/jsontrans-go/experiments/javascript.Probe.func2(0x1057c5e20?, {0x1057c5e90?, 0x7abe7def5860?}, 0x7abe7e8b5160, {0x7abe7e100000, 0xdace})\n\t/Users/konstantinpenzin/Developer/jsontrans-go/experiments/javascript/probes.go:118 +0x13c\ngithub.com/mellowforge/jsontrans-go/experiments/javascript.Probe({0x16b1e2bfa, 0x7}, {0x16b1e2c09, 0xe})\n\t/Users/konstantinpenzin/Developer/jsontrans-go/experiments/javascript/probes.go:120 +0x77c\nmain.main()\n\t/Users/konstantinpenzin/Developer/jsontrans-go/experiments/javascript/cmd/assess/main.go:46 +0x170\n",
+      "duration_ns": 254811625,
+      "go_heap_bytes": 57515840,
+      "peak_rss_bytes": 81068032
+    },
+    {
+      "backend": "quickjs",
+      "case": "cancel-loop",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 323509708,
+      "go_heap_bytes": 60632120,
+      "peak_rss_bytes": 84803584
+    },
+    {
+      "backend": "quickjs",
+      "case": "cancel-regex",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 327942583,
+      "go_heap_bytes": 62924672,
+      "peak_rss_bytes": 86802432
+    },
+    {
+      "backend": "quickjs",
+      "case": "cancel-conversion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 324370167,
+      "go_heap_bytes": 7454024,
+      "peak_rss_bytes": 85819392
+    },
+    {
+      "backend": "quickjs",
+      "case": "recursion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=quickjs evaluate [] at 0: QJS ABI panic: failed to free QJS runtime: failed to call QJS_Free: wasm error: out of bounds memory access\nwasm stack trace:\n\t.$273(i32)\n\t.$272(i32)\n\t.$92(i32)\nstack: goroutine 1 [running]:\nruntime/debug.Stack()\n\t/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/debug/stack.go:26 +0x64\ngithub.com/fastschema/qjs.(*Runtime).call(0x59d3a28678c0, {0x104a516b0, 0x8}, {0x59d3a4602c20, 0x1, 0x1})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:320 +0xa0\ngithub.com/fastschema/qjs.(*Runtime).Call(0x59d3a28678c0, {0x104a516b0?, 0x59d3a309cd08?}, {0x59d3a4602c20?, 0x59d3a28678c0?, 0x104a54c5e?})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:240 +0x28\ngithub.com/fastschema/qjs.(*Runtime).FreeQJSRuntime(0x59d3a28678c0)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:171 +0x74\ngithub.com/fastschema/qjs.(*Runtime).Close(0x59d3a28678c0)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:192 +0x2c\npanic({0x105015e40?, 0x59d3a45dc940?})\n\t/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/panic.go:860 +0x12c\ngithub.com/fastschema/qjs.(*Runtime).call(0x59d3a28678c0, {0x104a51690, 0x8}, {0x59d3a0b020f0, 0x5, 0x5})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:321 +0x130\ngithub.com/fastschema/qjs.(*Runtime).Call(0x59d3a28678c0, {0x104a51690?, 0x7?}, {0x59d3a0b020f0?, 0x59d3a309cf38?, 0x104a23e60?})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:240 +0x28\ngithub.com/fastschema/qjs.(*Context).Call(...)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/context.go:21\ngithub.com/fastschema/qjs.(*Context).Invoke(0x59d3a3e7cf00, 0x59d3a1d70bf0, 0x59d3a309d188, {0x59d3a309d1b8?, 0x1?, 0x0?})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/context.go:380 +0x124\ngithub.com/mellowforge/jsontrans-go/experiments/javascript.(*Program).runQuick(0x59d3a0788e10, {0x1050d1f00, 0x59d3a08101c0}, {0x59d3a1028e68, 0x4}, {0x59d3a1028e78, 0x2}, {0x3b9aca00, 0x10000, 0x100, ...})\n\t/Users/konstantinpenzin/Developer/jsontrans-go/experiments/javascript/quickjs.go:63 +0x304\ngithub.com/mellowforge/jsontrans-go/experiments/javascript.(*Program).Eval(0x59d3a0788e10, {0x1050d1e20, 0x1053b2580}, {0x0, 0x0}, {0x0?, 0x0?})\n\t/Users/konstantinpenzin/Developer/jsontrans-go/experiments/javascript/processor.go:152 +0x2a0\ngithub.com/mellowforge/jsontrans-go/experiments/javascript.Probe({0x16b8d6bfa, 0x7}, {0x16b8d6c09, 0x9})\n\t/Users/konstantinpenzin/Developer/jsontrans-go/experiments/javascript/probes.go:236 +0x17b4\nmain.main()\n\t/Users/konstantinpenzin/Developer/jsontrans-go/experiments/javascript/cmd/assess/main.go:46 +0x170\n",
+      "duration_ns": 245605625,
+      "go_heap_bytes": 63159616,
+      "peak_rss_bytes": 85934080
+    },
+    {
+      "backend": "quickjs",
+      "case": "allocation-cap",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=quickjs evaluate [] at 0: InternalError: out of memory\n    at <anonymous> (rule.js:1:9)\n    at <anonymous> (bridge.js:14:25)\n",
+      "duration_ns": 247724666,
+      "go_heap_bytes": 58132144,
+      "peak_rss_bytes": 81494016
+    },
+    {
+      "backend": "quickjs",
+      "case": "guest-memory",
+      "status": "FAIL",
+      "detail": "64 MiB QuickJS allocator cap; 40 MiB ArrayBuffer; error=<nil>; source audit: no WithMemoryLimitPages cap; this sample does not prove a guest bound",
+      "duration_ns": 246800833,
+      "guest_before_bytes": 262144,
+      "guest_after_bytes": 42205184,
+      "go_heap_bytes": 65745192,
+      "peak_rss_bytes": 120160256
+    },
+    {
+      "backend": "quickjs",
+      "case": "cleanup",
+      "status": "FAIL",
+      "detail": "panic: failed to free QJS runtime: failed to call QJS_Free: module closed with context canceled\nstack: goroutine 1 [running]:\nruntime/debug.Stack()\n\t/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/debug/stack.go:26 +0x64\ngithub.com/fastschema/qjs.(*Runtime).call(0x13e4aac717a0, {0x1013916b0, 0x8}, {0x13e4aa114ae0, 0x1, 0x1})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:320 +0xa0\ngithub.com/fastschema/qjs.(*Runtime).Call(0x13e4aac717a0, {0x1013916b0?, 0x0?}, {0x13e4aa114ae0?, 0x0?, 0x0?})\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:240 +0x28\ngithub.com/fastschema/qjs.(*Runtime).FreeQJSRuntime(0x13e4aac717a0)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:171 +0x74\ngithub.com/fastschema/qjs.(*Runtime).Close(0x13e4aac717a0)\n\t/Users/konstantinpenzin/go/pkg/mod/github.com/fastschema/qjs@v0.0.6/runtime.go:192 +0x2c\ngithub.com/mellowforge/jsontrans-go/experiments/javascript.Probe({0x16ef96bfa, 0x7}, {0x16ef96c09, 0x7})\n\t/Users/konstantinpenzin/Developer/jsontrans-go/experiments/javascript/probes.go:147 +0xb2c\nmain.main()\n\t/Users/konstantinpenzin/Developer/jsontrans-go/experiments/javascript/cmd/assess/main.go:46 +0x170\n",
+      "duration_ns": 243843917,
+      "go_heap_bytes": 55608792,
+      "peak_rss_bytes": 78381056
+    },
+    {
+      "backend": "quickjs",
+      "case": "host-capabilities",
+      "status": "FAIL",
+      "detail": "source audit: full WASI, writable directory mount, wall/monotonic clocks, nanosleep, stdout/stderr and env.jsFunctionProxy; empty mount and discarded output mitigate only part of the surface",
+      "duration_ns": 331458,
+      "go_heap_bytes": 773760,
+      "peak_rss_bytes": 9371648
+    },
+    {
+      "backend": "quickjs",
+      "case": "cache-cancellation",
+      "status": "FAIL",
+      "detail": "external watchdog killed child at 4 seconds; 75 ms evaluation deadline ineffective"
+    },
+    {
+      "backend": "quickjs",
+      "case": "unicode",
+      "status": "PASS",
+      "detail": "[\"\\ud800\",\"\\ud800\",\"\ud83d\ude00\",\"\\udfff\"]",
+      "duration_ns": 231453125,
+      "go_heap_bytes": 59325704,
+      "peak_rss_bytes": 82329600
+    },
+    {
+      "backend": "quickjs",
+      "case": "numbers",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"9007199254740992\", Defined:true}; error=<nil>",
+      "duration_ns": 242017791,
+      "go_heap_bytes": 57162992,
+      "peak_rss_bytes": 80461824
+    },
+    {
+      "backend": "quickjs",
+      "case": "exceptions",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=quickjs evaluate [] at 0: TypeError: sentinel\n    at <anonymous> (rule.js:1:16)\n    at <anonymous> (bridge.js:14:25)\n",
+      "duration_ns": 249400625,
+      "go_heap_bytes": 60504360,
+      "peak_rss_bytes": 83705856
+    },
+    {
+      "backend": "quickjs",
+      "case": "conversion-limits",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=quickjs evaluate [] at 0: resource limit exceeded\nError: JSONTRANS_LIMIT: output depth\n    at visit (bridge.js:34:42)\n    at visit (bridge.js:54:43)\n    at visit (bridge.js:65:81)\n    at <anonymous> (bridge.js:71:11)\n\nquickjs evaluate [] at 0: resource limit exceeded\nError: JSONTRANS_LIMIT: collection\n    at visit (bridge.js:45:67)\n    at visit (bridge.js:65:81)\n    at <anonymous> (bridge.js:71:11)\n\nquickjs evaluate [] at 0: resource limit exceeded\nError: JSONTRANS_LIMIT: output bytes\n    at write (bridge.js:28:42)\n    at visit (bridge.js:65:55)\n    at <anonymous> (bridge.js:71:11)\n",
+      "duration_ns": 249838958,
+      "go_heap_bytes": 61485240,
+      "peak_rss_bytes": 85082112
+    },
+    {
+      "backend": "quickjs",
+      "case": "limits-forwarding",
+      "status": "FAIL",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=js evaluate [] at 0: unsupported option: JS instruction and per-regex limits",
+      "duration_ns": 241880583,
+      "go_heap_bytes": 57799392,
+      "peak_rss_bytes": 80560128
+    },
+    {
+      "backend": "quickjs",
+      "case": "prepared-fallback",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+      "duration_ns": 231382375,
+      "go_heap_bytes": 4961560,
+      "peak_rss_bytes": 83542016
+    },
+    {
+      "backend": "quickjs",
+      "case": "exception-coercion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 315211250,
+      "go_heap_bytes": 56776592,
+      "peak_rss_bytes": 81510400
+    },
+    {
+      "backend": "goja",
+      "case": "cold-start",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+      "duration_ns": 1116291,
+      "go_heap_bytes": 1035448,
+      "peak_rss_bytes": 11747328
+    },
+    {
+      "backend": "goja",
+      "case": "compile-cancel",
+      "status": "FAIL",
+      "detail": "source compilation + cleanup 2.259667ms; context=context canceled; error=goja compile [] at 0: context canceled",
+      "duration_ns": 2671167,
+      "go_heap_bytes": 3069392,
+      "peak_rss_bytes": 14827520
+    },
+    {
+      "backend": "goja",
+      "case": "cancel-loop",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 76808500,
+      "go_heap_bytes": 1231624,
+      "peak_rss_bytes": 12091392
+    },
+    {
+      "backend": "goja",
+      "case": "cancel-regex",
+      "status": "FAIL",
+      "detail": "external watchdog killed child at 4 seconds; 75 ms evaluation deadline ineffective"
+    },
+    {
+      "backend": "goja",
+      "case": "cancel-conversion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=context deadline exceeded",
+      "duration_ns": 76775166,
+      "go_heap_bytes": 1239600,
+      "peak_rss_bytes": 12320768
+    },
+    {
+      "backend": "goja",
+      "case": "recursion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=goja evaluate [] at 0:  at f (rule.js:1:30(4))",
+      "duration_ns": 561042,
+      "go_heap_bytes": 1134576,
+      "peak_rss_bytes": 12156928
+    },
+    {
+      "backend": "goja",
+      "case": "allocation-cap",
+      "status": "FAIL",
+      "detail": "source audit: no per-runtime heap quota; uncapped allocation probe deliberately not executed",
+      "duration_ns": 833,
+      "go_heap_bytes": 773072,
+      "peak_rss_bytes": 9437184
+    },
+    {
+      "backend": "goja",
+      "case": "guest-memory",
+      "status": "FAIL",
+      "detail": "no separately bounded guest linear memory",
+      "duration_ns": 115541,
+      "go_heap_bytes": 773600,
+      "peak_rss_bytes": 9355264
+    },
+    {
+      "backend": "goja",
+      "case": "cleanup",
+      "status": "N/A",
+      "detail": "runtime state is Go-managed",
+      "duration_ns": 134084,
+      "go_heap_bytes": 773760,
+      "peak_rss_bytes": 9437184
+    },
+    {
+      "backend": "goja",
+      "case": "host-capabilities",
+      "status": "PASS",
+      "detail": "bare Goja runtime: no Node/import/fs/network/host registrations",
+      "duration_ns": 141708,
+      "go_heap_bytes": 773600,
+      "peak_rss_bytes": 9601024
+    },
+    {
+      "backend": "goja",
+      "case": "cache-cancellation",
+      "status": "N/A",
+      "detail": "no wrapper-wide cancellation config cache",
+      "duration_ns": 103333,
+      "go_heap_bytes": 773600,
+      "peak_rss_bytes": 9371648
+    },
+    {
+      "backend": "goja",
+      "case": "unicode",
+      "status": "FAIL",
+      "detail": "[\"\ufffd\",\"\\ud800\",\"\ud83d\ude00\",\"\\udfff\"]",
+      "duration_ns": 516542,
+      "go_heap_bytes": 1067392,
+      "peak_rss_bytes": 11714560
+    },
+    {
+      "backend": "goja",
+      "case": "numbers",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"9007199254740992\", Defined:true}; error=<nil>",
+      "duration_ns": 409500,
+      "go_heap_bytes": 1044688,
+      "peak_rss_bytes": 11616256
+    },
+    {
+      "backend": "goja",
+      "case": "exceptions",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=goja evaluate [] at 0: TypeError: sentinel at rule.js:1:13(3)",
+      "duration_ns": 461500,
+      "go_heap_bytes": 1028784,
+      "peak_rss_bytes": 11862016
+    },
+    {
+      "backend": "goja",
+      "case": "conversion-limits",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=goja evaluate [] at 0: resource limit exceeded\nError: JSONTRANS_LIMIT: output depth at visit (bridge.js:34:38(11))\ngoja evaluate [] at 0: resource limit exceeded\nError: JSONTRANS_LIMIT: collection at visit (bridge.js:45:63(159))\ngoja evaluate [] at 0: resource limit exceeded\nError: JSONTRANS_LIMIT: output bytes at write (bridge.js:28:38(100))",
+      "duration_ns": 3058917,
+      "go_heap_bytes": 1159216,
+      "peak_rss_bytes": 12206080
+    },
+    {
+      "backend": "goja",
+      "case": "limits-forwarding",
+      "status": "FAIL",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=js evaluate [] at 0: unsupported option: JS instruction and per-regex limits",
+      "duration_ns": 436500,
+      "go_heap_bytes": 1098736,
+      "peak_rss_bytes": 10878976
+    },
+    {
+      "backend": "goja",
+      "case": "prepared-fallback",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+      "duration_ns": 452334,
+      "go_heap_bytes": 1039440,
+      "peak_rss_bytes": 11862016
+    },
+    {
+      "backend": "goja",
+      "case": "exception-coercion",
+      "status": "FAIL",
+      "detail": "external watchdog killed child at 4 seconds; 75 ms evaluation deadline ineffective"
+    }
+  ]
+}

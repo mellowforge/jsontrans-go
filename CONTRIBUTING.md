@@ -2,7 +2,7 @@
 
 Read AGENTS.md and the [approved design](docs/superpowers/specs/2026-11-02-json-transformers-design.md)
 before changing public behavior.
-Use Go 1.25 or newer. Runtime dependencies must be pure Go supporting utilities,
+Use Go 1.26 or newer. Core runtime dependencies must be pure Go supporting utilities,
 not complete language engines. Use Context7 when checking dependency APIs.
 
 Before submitting a change:
@@ -41,3 +41,8 @@ Fixture updates must use immutable upstream commit IDs. Record source URLs,
 revisions, checksums, licenses, changed expectations, and full test results.
 Keep upstream files unchanged; document any confirmed upstream discrepancy
 separately. Public release tags require complete compatibility verification.
+
+The optional JavaScript assessment has a separate module and test commands in
+[its README](experiments/javascript/README.md). It does not add JavaScript
+runtime dependencies to the core library. Historical benchmark environments
+remain recorded as measured; use Go 1.26.10 for new development measurements.
