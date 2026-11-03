@@ -104,7 +104,8 @@ in docs/performance.md. No release/publication.
   sequence-conversion failures are rejected. Regressions and a raw-result fuzz
   target cover these boundaries.
 - Prepared entries combine immutable configuration at construction; batch calls
-  reuse adjacent equivalent override resolution and avoid copying limit structs.
+  reuse adjacent equivalent override resolution and pass limits by reference
+  internally instead of copying them at each hop.
   Per-expression budgets, cancellation checks and callback scope ownership remain.
 - Retained after 570 accepted samples across broad and alternating-order runs.
   Document-reuse confirmation medians improve 8% simple, 3% mixed and 14% distinct

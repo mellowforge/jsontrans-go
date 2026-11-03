@@ -3,7 +3,7 @@
 ## Batch setup consolidation (2026-11-03)
 
 The retained experiment combines immutable wrapper/native limit configuration
-when constructing prepared entries, caches fast-path eligibility, and passes
+when constructing prepared entries, caches scratch-budget reuse eligibility, and passes
 immutable limit values internally by reference. Default calls avoid resolving
 those limits for every expression; adjacent equivalent configurations share
 per-call override resolution. Budgets, cancellation checkpoints, callback
@@ -43,8 +43,8 @@ support retaining the smaller setup path for repeated evaluation, but do not
 establish a universal end-to-end improvement or statistical significance. The
 initial broad run also contains apparent regressions and remains visible.
 Allocation counts are unchanged across all matched operations in both runs:
-reused simple64 is 1,281 bytes/68 allocations, mixed16 is 3,588/120 and distinct64
-is 384/4. This is not a zero-allocation implementation.
+reused simple64 is 1,281 bytes/68 allocations, mixed16 is 3,587–3,588/120 and
+distinct64 is 384/4; B/op medians vary by up to one byte between runs. This is not a zero-allocation implementation.
 
 The fixtures retain fixed collection cardinality; larger inputs grow unused
 padding. gnata's stock fast path assumes valid JSON, whereas preparation here
@@ -120,9 +120,6 @@ visible. Profile percentages are diagnostic and separate from the timing table.
 and [baseline restoration patch](../benchmarks/comparison/testdata/results/deadline/restore-before.patch)
 are saved with raw samples and hashes. Run `python3 run-deadline.py` from
 `benchmarks/comparison`; its README explains reconstructing the prior source.
-
-The following sections retain earlier measurements; their “current” labels
-refer to those earlier source versions and are superseded by this table.
 
 ## Compiled batches before deadline optimization (historical)
 

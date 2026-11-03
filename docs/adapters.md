@@ -40,9 +40,10 @@ Its limits default to those of the engine that created the function, and each
 call returns a detached result owned by the caller. Argument conversion uses
 `MaxInputBytes`; result conversion uses `MaxOutputBytes`. Raw results preserve
 non-finite language numbers, functions, and missing values. JSON-shaped results
-are charged their encoded JSON size; nested language-only scalar values consume
-one bounded token each. Registered host results and JSON inputs remain strictly
-validated.
+are charged their encoded JSON size; language-only scalar values consume one
+bounded token each. Unrepresentable results, such as cycles or canonical key
+collisions, fail with `ErrConversion`. Registered host results and JSON inputs
+remain strictly validated.
 Register host functions with `jsonata.WithFunction`. JSONata host results are
 validated and detached: Go numeric types become numbers, while unsupported
 types, cycles and non-finite numbers fail with `ErrConversion`. Plain host

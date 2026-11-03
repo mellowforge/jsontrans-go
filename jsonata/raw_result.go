@@ -10,9 +10,10 @@ import (
 	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
 )
 
-// cloneRawResult detaches a language value without imposing the JSON input
-// contract. JSON values consume their encoded size; language-only scalars
-// (functions, missing and nonfinite numbers) consume one bounded token.
+// cloneRawResult detaches a language value under the output size limit. Unlike
+// JSON conversion it admits language-only scalars (functions, missing and
+// nonfinite numbers), each consuming one bounded token; JSON-shaped parts are
+// still validated and consume their encoded size.
 func cloneRawResult(v Value, b *budget.Budget) (Value, error) {
 	c := rawResultCopier{b: b, remaining: b.Limits.MaxOutputBytes, active: make(map[rawResultReference]bool)}
 	return c.copy(v)

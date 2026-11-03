@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Five-sample matched deadline-pass comparison; run in this directory."""
+"""Five-sample matched batch comparison; run in this directory.
+
+Records the deadline pass by default and is the shared harness for the batch
+setup scripts, which override BEFORE, OUT and LABEL.
+"""
 import csv
 import hashlib
 import os
