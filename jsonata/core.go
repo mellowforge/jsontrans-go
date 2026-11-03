@@ -168,6 +168,9 @@ func (e *Engine) CompileRaw(ctx context.Context, expr string) (*Program, error) 
 	if err := convertNodePositions(root, expr, b); err != nil {
 		return nil, err
 	}
+	if err := checkParentSteps(root); err != nil {
+		return nil, err
+	}
 	snapshot := &Engine{limits: e.limits, functions: make(map[string]Callable, len(e.functions)), builtins: make(map[string]Callable, len(e.builtins)), evaluationDepth: e.evaluationDepth}
 	for k, v := range e.builtins {
 		snapshot.builtins[k] = v
@@ -1752,7 +1755,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 					// Data arrays flatten into the step result; constructed
 					// arrays stay nested, as in the reference.
 					step := n.children[1]
-					if step.op == "keep" && step.children[0].op == "array" {
+					if step.op == "keep" && step.children[0].op == "array" && len(vars) == 0 {
 						add(whole(x))
 						break
 					}
@@ -1768,6 +1771,14 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				continue
 			}
 			r = unwrap(r)
+			// A step over bound (@, #) tuples flattens its result one level,
+			// constructed arrays included, as in the reference tuple stream.
+			if values, ok := r.([]any); ok && len(vars) > 0 {
+				for _, item := range values {
+					add(element(item))
+				}
+				continue
+			}
 			if values, ok := r.([]any); ok && e.trackParents && n.children[1].op == "array" {
 				for _, item := range values {
 					add(element(item))
@@ -2395,6 +2406,9 @@ func (e *evaluator) invoke(fn Callable, args []Value, focus Value) (Value, error
 		if err := convertNodePositions(root, expr, e.b); err != nil {
 			return nil, err
 		}
+		if err := checkParentSteps(root); err != nil {
+			return nil, err
+		}
 		nested := *e
 		nested.trackParents = containsParent(root)
 		nested.vars = copyVars(e.vars)
@@ -2626,6 +2640,68 @@ func materializeChecked(v Value, b *budget.Budget) (Value, error) {
 	return convert(v)
 }
 
+// checkParentSteps rejects a parent step (%) that follows a step from which
+// no parent can be derived, as JSONata 2.2.2 does while compiling (S0217).
+// The parser has already bounded the tree's size and depth.
+func checkParentSteps(root *node) error {
+	if !containsParent(root) {
+		return nil
+	}
+	var walk func(*node) error
+	walk = func(n *node) error {
+		if n == nil {
+			return nil
+		}
+		if n.op == "." && stepBase(n.children[1]).op == "parent" {
+			if _, bad := seekParent(n.children[0], 1); bad != nil {
+				return &jsontrans.Error{Processor: "jsonata", Phase: "compile", Code: "S0217", Position: bad.pos, Cause: fmt.Errorf("parent cannot be derived from this expression")}
+			}
+		}
+		for _, c := range n.children {
+			if err := walk(c); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+	return walk(root)
+}
+
+// stepBase skips stages and bindings attached to a path step.
+func stepBase(n *node) *node {
+	for {
+		switch n.op {
+		case "filter", "keep", "@", "#", "group":
+			n = n.children[0]
+		default:
+			return n
+		}
+	}
+}
+
+// seekParent resolves level parent references against the steps ending with
+// n, returning the levels left for enclosing steps or the step that cannot
+// supply a parent.
+func seekParent(n *node, level int) (int, *node) {
+	switch n = stepBase(n); n.op {
+	case "name", "wild*":
+		return level - 1, nil
+	case "parent":
+		return level + 1, nil
+	case "block":
+		if len(n.children) == 0 {
+			return level, nil
+		}
+		return seekParent(n.children[len(n.children)-1], level)
+	case ".":
+		level, bad := seekParent(n.children[1], level)
+		if bad != nil || level <= 0 {
+			return level, bad
+		}
+		return seekParent(n.children[0], level)
+	}
+	return level, n
+}
 func containsParent(n *node) bool {
 	if n == nil {
 		return false
@@ -2692,7 +2768,16 @@ func Invoke(ctx context.Context, fn Callable, args []Value, opts jsontrans.EvalO
 	if err != nil {
 		return nil, err
 	}
-	return v, b.Check()
+	if IsUndefined(v) {
+		return v, b.Check()
+	}
+	// The result may share containers with captured data; the caller owns a
+	// detached copy. Functions inside it stay usable as they are.
+	out, err := cloneRawArgs([]Value{ev.argument(v)}, b)
+	if err != nil {
+		return nil, err
+	}
+	return out[0], b.Check()
 }
 func cloneRawArgs(args []Value, b *budget.Budget) ([]Value, error) {
 	remaining := b.Limits.MaxInputBytes

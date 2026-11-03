@@ -220,3 +220,47 @@ func TestConcurrentInvokeNestedCallsWithCapturedOrderCache(t *testing.T) {
 		})
 	}
 }
+
+// Each Invoke result is owned by its caller: changing one result does not
+// change captured data or later results.
+func TestInvokeResultsAreDetached(t *testing.T) {
+	for _, expression := range []string{
+		`($o := {"a": 1}; function(){ $o })`,
+		`function(){ $ }`,
+		`($o := {"a": 1}; function(){ [$o] })`,
+	} {
+		t.Run(expression, func(t *testing.T) {
+			e, err := jsonata.New()
+			if err != nil {
+				t.Fatal(err)
+			}
+			p, err := e.CompileRaw(context.Background(), expression)
+			if err != nil {
+				t.Fatal(err)
+			}
+			v, err := p.EvalRaw(context.Background(), map[string]any{"a": float64(1)}, jsontrans.EvalOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			fn := v.(jsonata.Callable)
+			object := func(v jsonata.Value) map[string]any {
+				if a, ok := v.([]any); ok {
+					return a[0].(map[string]any)
+				}
+				return v.(map[string]any)
+			}
+			first, err := jsonata.Invoke(context.Background(), fn, nil, jsontrans.EvalOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			object(first)["a"] = float64(2)
+			second, err := jsonata.Invoke(context.Background(), fn, nil, jsontrans.EvalOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got := object(second)["a"]; got != float64(1) {
+				t.Fatalf("second result sees caller change: %v", got)
+			}
+		})
+	}
+}

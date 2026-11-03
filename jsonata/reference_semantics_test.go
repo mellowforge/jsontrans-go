@@ -280,3 +280,67 @@ func TestReferenceArrayConstructorItems(t *testing.T) {
 		{`a.b.[%.x, 1]`, `{"a":{"b":{"y":1},"x":7}}`, `[7,1]`},
 	})
 }
+
+// A parent step after a step that cannot supply a parent fails to compile.
+func TestReferenceParentRequiresDerivableStep(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`[a.b].%`, `{"a":{"b":1}}`, `ERR S0217`},
+		{`a.[b].%`, `{"a":{"b":1}}`, `ERR S0217`},
+		{`a.b^($).%`, `{"a":{"b":[2,1]}}`, `ERR S0217`},
+		{`a.$.%`, `{"a":{"b":1}}`, `ERR S0217`},
+		{`a.$x.%`, `{"a":{"b":1}}`, `ERR S0217`},
+		{`a.$string(b).%`, `{"a":{"b":1}}`, `ERR S0217`},
+		{`a.{"k":b}.%`, `{"a":{"b":1}}`, `ERR S0217`},
+		{`a.**.%`, `{"a":{"b":1}}`, `ERR S0217`},
+		{`a.b.%`, `{"a":{"b":1}}`, `{"b":1}`},
+		{`a.*.%`, `{"a":{"b":1}}`, `{"b":1}`},
+		{`a.(b).%`, `{"a":{"b":1}}`, `{"b":1}`},
+		{`a.b[0].%`, `{"a":{"b":[1]}}`, `{"b":[1]}`},
+		{`a.b[].%`, `{"a":{"b":[1]}}`, `[{"b":[1]}]`},
+		{`a.b@$x.%`, `{"a":{"b":1}}`, `{"b":1}`},
+		{`a.b#$i.%`, `{"a":{"b":1}}`, `{"b":1}`},
+		{`a."b".%`, `{"a":{"b":1}}`, `{"b":1}`},
+		{`(a.b).%`, `{"a":{"b":1}}`, `{"b":1}`},
+		{`a.(b; c).%`, `{"a":{"b":1,"c":2}}`, `{"b":1,"c":2}`},
+		{`a.b.%.%`, `{"a":{"b":1}}`, `{"a":{"b":1}}`},
+		{`a.(b.%)`, `{"a":{"b":1}}`, `{"b":1}`},
+		{`a.b[%.b=1]`, `{"a":{"b":1}}`, `1`},
+	})
+}
+
+func TestReferenceParentErrorPositions(t *testing.T) {
+	engine, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for expr, position := range map[string]int{
+		`[a.b].%`: 1, `a.[b].%`: 3, `a.b^($).%`: 4, `a.$.%`: 3, `a.$x.%`: 4,
+		`a.$string(b).%`: 10, `a.{"k":b}.%`: 3, `a.**.%`: 4,
+	} {
+		_, err := engine.Compile(context.Background(), expr)
+		var native *jsontrans.Error
+		if !errors.As(err, &native) || native.Code != "S0217" || native.Phase != "compile" || native.Position != position {
+			t.Errorf("%s: got %v, want compile S0217 at %d", expr, err, position)
+		}
+	}
+}
+
+// Steps over @/# tuple streams flatten each step result, including arrays
+// built by a constructor; without bindings constructed arrays stay nested.
+func TestReferenceTupleStreamStepFlattening(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`a.b@$o.[$o, 1]`, `{"a":{"b":[1,2]}}`, `[1,1,2,1]`},
+		{`a.b@$o.[$o]`, `{"a":{"b":[1,2]}}`, `[1,2]`},
+		{`a.b#$i.[$i, 1]`, `{"a":{"b":[1,2]}}`, `[0,1,1,1]`},
+		{`a.b.[$, 1]`, `{"a":{"b":[1,2]}}`, `[[1,1],[2,1]]`},
+		{`a.b@$o.[$o, 1]`, `{"a":{"b":[1]}}`, `[1,1]`},
+		{`a.b@$o.[$o, 1].$`, `{"a":{"b":[1,2]}}`, `[1,1,2,1]`},
+		{`a.b@$o.[$o, 1][]`, `{"a":{"b":[1,2]}}`, `[1,1,2,1]`},
+		{`a.b@$o.{"v": $o}`, `{"a":{"b":[1,2]}}`, `[{"v":1},{"v":2}]`},
+		{`a.b@$o.($o)`, `{"a":{"b":[1,2]}}`, `[1,2]`},
+		{`a.b@$o.c`, `{"a":{"b":[{"c":[1,2]},{"c":[3]}]}}`, `undefined`},
+		{`a.b@$o.[c]`, `{"a":{"b":[{"c":[1,2]},{"c":[3]}]}}`, `undefined`},
+		{`a.b#$i.[c]`, `{"a":{"b":[{"c":[1,2]},{"c":[3]}]}}`, `[1,2,3]`},
+		{`a.b@$o.[$o.c, 1]`, `{"a":{"b":[{"c":5}]}}`, `[5,1]`},
+	})
+}

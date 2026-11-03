@@ -30,7 +30,8 @@ each evaluation behind this contract. Tengo is not a v1 dependency or engine.
 JSONata exposes `CompileRaw`, `EvalRaw`, `Callable`, and `Invoke` for language
 values such as functions. Invoke creates a fresh bounded evaluation so returned
 closures and transforms remain usable after their original evaluation finishes.
-Its limits default to those of the engine that created the function.
+Its limits default to those of the engine that created the function, and each
+call returns a detached result owned by the caller.
 Register host functions with `jsonata.WithFunction`. JSONata host results are
 validated and detached: Go numeric types become numbers, while unsupported
 types, cycles and non-finite numbers fail with `ErrConversion`. Plain host
