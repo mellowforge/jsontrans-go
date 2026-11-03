@@ -14,18 +14,24 @@ import (
 	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
 )
 
+// Limits bound compilation and evaluation work. Engine options set defaults;
+// EvalOptions.Limits replaces each nonzero field for one evaluation.
 type Limits = budget.Limits
 
-// UTF16String is used only for JSON result strings containing isolated UTF-16
-// surrogate units. It preserves their JSON escapes through MarshalJSON.
+// UTF16String holds a string containing isolated UTF-16 surrogate units as
+// WTF-8 and preserves their JSON escapes through MarshalJSON. It appears in
+// results and, after JSON decoding or document materialization, in the input
+// and bindings processors receive.
 type UTF16String = jsonvalue.UTF16String
 
-// UTF16Object preserves the unusual JSON object keys containing isolated
-// surrogate units. Ordinary objects remain map[string]any.
+// UTF16Object holds an object whose keys contain isolated surrogate units, in
+// results and processor input. Ordinary objects remain map[string]any.
 type UTF16Object = jsonvalue.UTF16Object
 
+// DefaultLimits returns the library defaults used for zero limit fields.
 func DefaultLimits() Limits { return budget.DefaultLimits() }
 
+// Sentinel errors, matched with errors.Is through wrapping diagnostics.
 var (
 	ErrUnknownProcessor = errors.New("unknown processor")
 	ErrInvalidInput     = jsonvalue.ErrInvalid
@@ -34,9 +40,14 @@ var (
 	ErrConversion       = errors.New("result cannot be represented as JSON")
 )
 
+// Processor compiles expressions of one language. A Transformer may call
+// Compile concurrently.
 type Processor interface {
 	Compile(context.Context, string) (Program, error)
 }
+
+// Program is a compiled expression. Programs must be immutable and safe for
+// concurrent Eval calls, and must not mutate input or bindings.
 type Program interface {
 	Eval(context.Context, any, EvalOptions) (Result, error)
 }
@@ -44,14 +55,25 @@ type Program interface {
 // LimitsProvider optionally supplies configured defaults to common wrappers.
 // Third-party processors without it receive the library defaults.
 type LimitsProvider interface{ Limits() Limits }
+
+// EvalOptions configures one evaluation.
 type EvalOptions struct {
+	// Bindings are JSON-shaped variables visible to the expression. Processors
+	// without variables reject them with ErrUnsupported.
 	Bindings map[string]any
-	Limits   *Limits
+	// Limits replaces each nonzero field of the program's configured limits.
+	Limits *Limits
 }
+
+// Result is a JSON-shaped evaluation result. Defined is false for a missing
+// result; JSON null is Defined with a nil Value. A failed call returns the
+// zero Result.
 type Result struct {
 	Value   any
 	Defined bool
 }
+
+// JSONResult is an encoded Result: no bytes when missing, null bytes for null.
 type JSONResult struct {
 	Value   json.RawMessage
 	Defined bool
@@ -72,8 +94,12 @@ func (e *Error) Error() string {
 }
 func (e *Error) Unwrap() error { return e.Cause }
 
+// Transformer is an immutable registry of named processors, safe for
+// concurrent use. It keeps no expression cache.
 type Transformer struct{ processors map[string]Processor }
 
+// New registers processors by name. The map is copied, so later changes to it
+// do not affect the Transformer.
 func New(processors map[string]Processor) (*Transformer, error) {
 	x := &Transformer{processors: make(map[string]Processor, len(processors))}
 	for name, p := range processors {
@@ -116,6 +142,8 @@ func diagnostic(name, phase string, err error) error {
 	return &out
 }
 
+// Compile compiles expression with the named processor under its configured
+// limits. Errors are *Error diagnostics attributed to that processor.
 func (x *Transformer) Compile(ctx context.Context, name, expression string) (Program, error) {
 	p, ok := x.processors[name]
 	if !ok {
@@ -146,6 +174,8 @@ func (x *Transformer) Compile(ctx context.Context, name, expression string) (Pro
 	return &checkedProgram{name: name, program: program, configured: l}, nil
 }
 
+// Process compiles and evaluates expression in one call. It compiles on every
+// call; use Compile for repeated expressions.
 func (x *Transformer) Process(ctx context.Context, name string, input any, expression string, options EvalOptions) (Result, error) {
 	p, err := x.Compile(ctx, name, expression)
 	if err != nil {
@@ -153,6 +183,8 @@ func (x *Transformer) Process(ctx context.Context, name string, input any, expre
 	}
 	return p.Eval(ctx, input, options)
 }
+
+// ProcessJSON is Process for JSON bytes; see EvalJSON.
 func (x *Transformer) ProcessJSON(ctx context.Context, name string, input []byte, expression string, options EvalOptions) (JSONResult, error) {
 	p, err := x.Compile(ctx, name, expression)
 	if err != nil {
@@ -161,6 +193,11 @@ func (x *Transformer) ProcessJSON(ctx context.Context, name string, input []byte
 	r, err := EvalJSON(ctx, p, input, options)
 	return r, diagnostic(name, "json", err)
 }
+
+// EvalJSON decodes input, evaluates p and encodes the result. Serialized object
+// member order is kept for processors that enumerate keys. Invalid input is an
+// *Error with Phase "input" and no processor; an unencodable result wraps
+// ErrConversion.
 func EvalJSON(ctx context.Context, p Program, input []byte, options EvalOptions) (JSONResult, error) {
 	if nilValue(p) {
 		return JSONResult{}, errors.New("nil program")

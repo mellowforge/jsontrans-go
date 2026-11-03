@@ -6,6 +6,9 @@ Defaults are a 1-second timeout, 64 KiB expressions, depth 256, one million
 steps, 100,000 items per collection, 16 MiB input/output, and a 50 ms regex
 timeout. Configure larger positive limits for trusted workloads.
 
+The regex timeout bounds each JSONata match inside the matcher. JSONPath uses
+Go's linear-time RE2 engine and checks the regex timeout after each match.
+
 Configured limits are defaults. `EvalOptions.Limits` can raise or lower them for
 one evaluation, so applications must not pass untrusted limit overrides.
 

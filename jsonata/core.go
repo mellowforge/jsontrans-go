@@ -144,9 +144,13 @@ type Program struct {
 	prepared     *prepared.Handler
 }
 
+// Compile compiles a JSONata expression for the common JSON contract.
 func (e *Engine) Compile(ctx context.Context, expr string) (jsontrans.Program, error) {
 	return e.CompileRaw(ctx, expr)
 }
+
+// CompileRaw compiles a JSONata expression whose results may also be
+// language values, such as functions, through EvalRaw.
 func (e *Engine) CompileRaw(ctx context.Context, expr string) (*Program, error) {
 	b, err := budget.New(ctx, e.limits)
 	if err != nil {
@@ -186,6 +190,10 @@ func (e *Engine) CompileRaw(ctx context.Context, expr string) (*Program, error) 
 	program.prepared = newHandler(program, program.evalPrepared, compilePreparedBatch)
 	return program, nil
 }
+
+// Eval evaluates the program over JSON-shaped input. Numbers become binary64.
+// Undefined input is rejected with ErrInvalidInput; results that are not JSON,
+// such as functions, fail with ErrConversion.
 func (p *Program) Eval(ctx context.Context, input any, opts jsontrans.EvalOptions) (jsontrans.Result, error) {
 	v, err := p.evaluate(ctx, input, opts, false)
 	if err != nil {
@@ -196,6 +204,9 @@ func (p *Program) Eval(ctx context.Context, input any, opts jsontrans.EvalOption
 	}
 	return jsontrans.Result{Value: v, Defined: true}, nil
 }
+
+// EvalRaw evaluates the program and returns its language value, which may be
+// Undefined or a Callable. Input may be Undefined.
 func (p *Program) EvalRaw(ctx context.Context, input any, opts jsontrans.EvalOptions) (Value, error) {
 	v, err := p.evaluate(ctx, input, opts, true)
 	return v, p.wrapTimebox(err)

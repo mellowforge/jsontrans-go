@@ -13,7 +13,8 @@ import (
 )
 
 // Request contains checked immutable input, owned bindings, and expression-local
-// accounting. Customized preserves the native fast-path override guards.
+// accounting. Customized disables native fast paths: callers set it for custom
+// options, and a batch plan sets it when its own fast walk already ran.
 type Request struct {
 	Document        *document.Document
 	Bindings        map[string]any

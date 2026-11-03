@@ -19,6 +19,12 @@ or bindings. Honor context, validate JSON results, and reject unsupported option
 instead of silently ignoring them. Preserve `errors.Is` and native diagnostics
 through `jsontrans.Error` where applicable.
 
+Programs receive detached JSON-shaped input: `map[string]any`, `[]any`,
+strings, booleans, nil, and numbers as `json.Number` (from JSON bytes) or the
+caller's finite Go numeric types. Strings and object keys containing isolated
+surrogates arrive as `jsontrans.UTF16String` and `jsontrans.UTF16Object`; treat
+them as ordinary strings and objects.
+
 The common API only accepts JSON-compatible results. Language-specific raw
 evaluation may expose function values separately. Missing is not an error and
 must use `Defined=false`; null is a defined nil. Each adapter documents its own

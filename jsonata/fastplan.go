@@ -538,8 +538,8 @@ func fastEqualStrings(a, b string, check func() error) (bool, error) {
 }
 func budgetCheck(b *budget.Budget) func() error { return b.Step }
 
-// compileProjection admits pure name steps, scalar boolean filters, and
-// numeric arithmetic projections.
+// compileProjection admits pure name steps and scalar boolean filters, plus
+// numeric arithmetic projections when arithmetic is set (inside $sum).
 // Arrays used as final values and non-scalar predicates retain the native walk.
 func compileProjection(n *node, arithmetic bool) []*node {
 	if n.op != "." {

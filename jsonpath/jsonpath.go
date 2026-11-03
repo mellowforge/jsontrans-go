@@ -57,6 +57,9 @@ func WithLimits(l jsontrans.Limits) Option {
 		return err
 	}
 }
+
+// WithFunction registers a function extension. Names match [a-z][a-z0-9_]*
+// and cannot replace the standard length, count, value, match or search.
 func WithFunction(name string, f Function) Option {
 	return func(o *options) error {
 		if name == "" || f.Call == nil || f.Result < ValueType || f.Result > NodesType {
@@ -81,6 +84,8 @@ func WithFunction(name string, f Function) Option {
 		return nil
 	}
 }
+
+// New returns a JSONPath (RFC 9535) engine.
 func New(opts ...Option) (*Engine, error) {
 	o := options{limits: budget.DefaultLimits(), functions: map[string]Function{}}
 	for _, apply := range opts {
@@ -102,6 +107,8 @@ type program struct {
 	prepared         *prepared.Handler
 }
 
+// Compile compiles a JSONPath query. Programs return the selected node list
+// and reject evaluation bindings with ErrUnsupported.
 func (e *Engine) Compile(ctx context.Context, s string) (jsontrans.Program, error) {
 	b, err := budget.New(ctx, e.limits)
 	if err != nil {

@@ -11,8 +11,6 @@ import (
 	"github.com/mellowforge/jsontrans-go/internal/prepared"
 )
 
-// Compiled batches retain syntax and singular-prefix metadata only. Neither
-// document nodes nor expression results survive a batch evaluation.
 const maxBatchPrefixes = 4096
 const maxBatchCompileWork = 100000
 
@@ -20,6 +18,9 @@ type batchPrefix struct {
 	parent int
 	name   string
 }
+
+// preparedBatchPlan retains syntax and singular-prefix metadata only. Neither
+// document nodes nor expression results survive a batch evaluation.
 type preparedBatchPlan struct {
 	handlers []*prepared.Handler
 	programs []*Program

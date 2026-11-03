@@ -34,7 +34,7 @@ The baseline used `-benchtime=100ms -count=5` with default GOMAXPROCS on an
 Apple M5 Max, darwin/arm64, Go 1.25.13 (`GOTOOLCHAIN=local`). A 100ms sample is
 short and the machine was not isolated, so interpret timing as indicative.
 
-Once the prepared API is present, run `GOTOOLCHAIN=local go test -tags prepared
+For the prepared API, run `GOTOOLCHAIN=local go test -tags prepared
 ./...` and `GOTOOLCHAIN=local go test -tags prepared -run '^$' -bench
 '^BenchmarkPrepared' -benchmem -benchtime=100ms -count=5`. The tag keeps the
 harness usable against the pre-API archive. The prepared benchmarks separately

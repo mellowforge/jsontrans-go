@@ -45,7 +45,8 @@ detached. See [the prepared example](examples/prepared/main.go) and
 For a fixed set of rules, `transformer.CompileBatch(ctx, "jsonata", expressions)`
 compiles an ordered batch. Call `batch.EvalPrepared(ctx, document, dst, options)`
 to reuse a `[]jsontrans.Result` destination across documents. `NewBatch(programs)`
-also accepts already compiled programs from different processors. Each call has
+also accepts already compiled programs from different processors; shared-prefix
+optimizations apply only when every program is native JSONata. Each call has
 an overall deadline and keeps each expression's configured limits. Batch errors
 identify the first failing expression with a zero-based `BatchError.Index`;
 failures not tied to an expression, such as invalid options, are returned
@@ -63,12 +64,12 @@ JSON null has `Defined=true` and `Value=nil`. JSON byte helpers return
 
 JSON byte helpers retain serialized object member order for JSONata key
 enumeration. Plain Go maps have no source order, so their fallback is lexical.
-Isolated UTF-16 surrogate units use `UTF16String` result values and, for unusual
-object keys, `UTF16Object`; both implement lossless JSON marshaling. Ordinary
-Unicode strings and objects remain `string` and `map[string]any`.
+Isolated UTF-16 surrogate units use `UTF16String` values and, for unusual object
+keys, `UTF16Object`, in results and in the input processors receive; both
+implement lossless JSON marshaling. Ordinary Unicode strings and objects remain
+`string` and `map[string]any`.
 
 See [the adapter guide](docs/adapters.md), [compatibility policy](docs/compatibility.md),
 [contributing](CONTRIBUTING.md), and [execution safety](SECURITY.md).
-Initial measurements are in [the performance baseline](docs/performance.md).
 
 License: MIT. Upstream conformance data carries its original notices.
