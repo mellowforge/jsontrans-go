@@ -46,3 +46,12 @@ The optional JavaScript assessment has a separate module and test commands in
 [its README](experiments/javascript/README.md). It does not add JavaScript
 runtime dependencies to the core library. Historical benchmark environments
 remain recorded as measured; use Go 1.26.10 for new development measurements.
+
+The optional JavaScript processor is a separate preview module in `javascript`.
+Run its tests, race detection and vet with `go -C javascript ...`; the historical
+assessment remains in `experiments/javascript` and forwards owned calls to it.
+The root go.mod/go.sum must not acquire JavaScript runtime dependencies.
+`python3 javascript/scripts/check_module.py` validates actual module-zip
+consumption with no consumer replace/workspace. Run module tests first to cache
+dependencies and use a checkout with full Git history for minimum-core validation.
+Future JS release tags use `javascript/vX.Y.Z`; extraction does not tag a release.

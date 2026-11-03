@@ -1,4 +1,10 @@
-# JavaScript feasibility assessment
+# JavaScript assessment tools
+
+The owned processor now lives in the separate [optional JavaScript module](../../javascript/README.md).
+This module keeps the original QJS/Goja baselines and forwards OwnedQuickJS and
+NewOwned calls to the canonical public module; applications use its New(ctx, Config).
+Historical observations below remain unchanged.
+
 
 This optional development module evaluates synchronous function-expression
 transformers using QuickJS/Wazero and Goja. It is **not a supported processor or
@@ -100,7 +106,7 @@ Go text, sourcemap and pprof carry BSD licenses. Original licenses remain in the
 module source distributions. The original QJS/Goja assessment copied no engine
 source or artifact. The later
 owned checkpoint checks in its generated guest and linked-runtime notices under
-`internal/quickjswasm`; its source/toolchain pins are recorded separately. Rebuilding the baseline QJS
+`../../javascript/internal/quickjswasm`; its source/toolchain pins are recorded separately. Rebuilding the baseline QJS
 artifact requires an upstream source checkout
 with its submodule, WASI SDK, CMake, Make and Binaryen `wasm-opt`; production
 must establish a reproducible artifact build and provenance before adoption.
@@ -120,19 +126,19 @@ python3 run_probes.py --binary /tmp/jsontrans-owned-assess --backend owned-quick
 python3 run_probes.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs --strict --output /tmp/owned-full.json
 python3 measure_cold.py --binary /tmp/jsontrans-owned-assess --backend owned-quickjs --output testdata/results/owned/cold.json
 GOMAXPROCS=1 go test -run '^$' -bench '^BenchmarkLifecycle/owned-quickjs' -benchmem -benchtime=200ms -count=5 -cpu=1 > testdata/results/owned/bench.txt
-GOMAXPROCS=1 go test ./internal/quickjswasm -run '^$' -bench '^BenchmarkOwnedRuntimeInitialization$' -benchmem -benchtime=200ms -count=5 -cpu=1 >> testdata/results/owned/bench.txt
-GOMAXPROCS=1 go test ./internal/quickjswasm -run '^$' -bench '^BenchmarkOwnedRuntimeClose$' -benchmem -benchtime=100x -count=5 -cpu=1 >> testdata/results/owned/bench.txt
+GOMAXPROCS=1 go -C ../../javascript test ./internal/quickjswasm -run '^$' -bench '^BenchmarkOwnedRuntimeInitialization$' -benchmem -benchtime=200ms -count=5 -cpu=1 >> testdata/results/owned/bench.txt
+GOMAXPROCS=1 go -C ../../javascript test ./internal/quickjswasm -run '^$' -bench '^BenchmarkOwnedRuntimeClose$' -benchmem -benchtime=100x -count=5 -cpu=1 >> testdata/results/owned/bench.txt
 python3 summarize.py --results testdata/results/owned
 go test -run '^$' -fuzz '^FuzzOwnedStringConversion$' -fuzztime=200x -parallel=2
-go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzOwnedCompile$' -fuzztime=200x -parallel=2
+go -C ../../javascript test ./internal/quickjswasm -run '^$' -fuzz '^FuzzOwnedCompile$' -fuzztime=200x -parallel=2
 ```
 
 Rebuild the embedded guest with Python 3.12+ (first run downloads about 180 MiB
 of checksummed SDK tools). Compare with the committed artifact:
 
 ```sh
-python3 internal/quickjswasm/guest/build.py --output /tmp/owned-quickjs.wasm
-cmp internal/quickjswasm/quickjs.wasm /tmp/owned-quickjs.wasm
+python3 ../../javascript/internal/quickjswasm/guest/build.py --output /tmp/owned-quickjs.wasm
+cmp ../../javascript/internal/quickjswasm/quickjs.wasm /tmp/owned-quickjs.wasm
 ```
 
 The guest directory retains QuickJS and linked C-runtime licenses and component
@@ -157,7 +163,7 @@ an evaluation. Compilation does not execute function-expression initializers.
 ## Execution contract follow-up
 
 The [owned execution contract](../../docs/javascript-execution-contract.md)
-defines NewOwned, complete-call Close, effective timeouts and typed Exception
+defines public New(ctx, Config), complete-call Close, effective timeouts and typed Exception
 diagnostics. The full strict owned assessment now has 21 required cases.
 Compiler columns in the pinned engine are coarse; offsets remain unavailable.
 ABI v2 is rebuilt and capability-free; this is still an experiment.
@@ -165,9 +171,13 @@ ABI v2 is rebuilt and capability-free; this is still an experiment.
 ```sh
 CGO_ENABLED=0 go build -o /tmp/jsontrans-contract-assess ./cmd/assess
 python3 run_probes.py --binary /tmp/jsontrans-contract-assess --backend owned-quickjs --strict --output testdata/results/contract/probes.json
-go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzDiagnosticRecord$' -fuzztime=1000x -parallel=2
-go test -run '^$' -fuzz '^FuzzRuleLocation$' -fuzztime=1000x -parallel=2
+go -C ../../javascript test ./internal/quickjswasm -run '^$' -fuzz '^FuzzDiagnosticRecord$' -fuzztime=1000x -parallel=2
+go -C ../../javascript test -run '^$' -fuzz '^FuzzRuleLocation$' -fuzztime=1000x -parallel=2
 ```
 
 The editable [processor atlas](https://www.figma.com/board/lTXgmGOWS3Hmh6IQzzmMmB)
 covers native JSONPath, native JSONata, experimental JS and common prepared/batch APIs.
+
+Extraction results are recorded separately in `testdata/results/extraction`.
+The guest-memory assessment now checks default/small caps through public APIs;
+exact guest page/growth statistics remain tested in the canonical module.

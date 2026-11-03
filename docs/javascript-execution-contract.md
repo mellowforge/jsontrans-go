@@ -1,13 +1,14 @@
 # Owned JavaScript execution contract
 
-This contract describes the optional **experimental** `owned-quickjs` backend in
-`experiments/javascript`. Public-module extraction and production hardening are
-separate work. Native JSONPath/JSONata and root runtime dependencies are unchanged.
+This contract describes the optional **preview** processor module
+`github.com/mellowforge/jsontrans-go/javascript`. The assessment in
+`experiments/javascript` forwards its owned backend to this module. Production
+hardening and release remain separate work; native root dependencies are unchanged.
 
 ## Construction and ownership
 
 ```go
-engine, err := javascript.NewOwned(ctx, javascript.Config{})
+engine, err := javascript.New(ctx, javascript.Config{})
 if err != nil { return err }
 defer engine.Close()
 transformer, err := jsontrans.New(map[string]jsontrans.Processor{"js": engine})
@@ -23,7 +24,8 @@ it after success does not close the engine. Initialization checks the caller
 context before and after trusted Wasm compilation, without claiming hard
 preemption inside that compiler. Rule timeouts apply to rule compilation and
 execution, rather than initialization. A failed constructor releases its resources.
-The legacy assessment constructor `New(OwnedQuickJS, config)` remains available.
+The assessment constructors `New(OwnedQuickJS, config)` / `NewOwned(ctx, config)`
+remain forwarding compatibility helpers; applications use public New(ctx, config).
 
 The application owns the engine; transformers borrow it. Programs share its
 immutable artifacts and cannot outlive its open lifetime. Close stops admission,
@@ -129,7 +131,8 @@ report PASS in strict mode. Historical fixture/results directories remain intact
 
 Guest ABI 2 artifact: 929,138 bytes; SHA-256
 `29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e`.
-Source and WASI SDK pins are unchanged. Rebuild/hash/import gates and Linux
+Canonical assets/notices live in `javascript/internal/quickjswasm`; source and
+WASI SDK pins are unchanged. Rebuild/hash/import gates and Linux
 cross-host reproducibility protect the embedded boundary.
 
 See the editable [processor architecture atlas](https://www.figma.com/board/lTXgmGOWS3Hmh6IQzzmMmB),

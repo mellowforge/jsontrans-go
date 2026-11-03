@@ -78,6 +78,25 @@ jobs:
           --strict --output /tmp/owned-full-gates.json
       - run: go test -run '^$' -fuzz '^FuzzStringConversion$' -fuzztime=1000x -parallel=2
 
+
+  javascript-module:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: javascript
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: javascript/go.sum
+      - run: go vet ./...
+      - run: go test ./...
+      - run: go test -race ./...
+      - name: Consume packaged module outside the checkout
+        run: python3 scripts/check_module.py
       - run: go test -run '^$' -fuzz '^FuzzOwnedStringConversion$' -fuzztime=200x -parallel=2
       - run: go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzOwnedCompile$' -fuzztime=200x -parallel=2
       - run: go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzDiagnosticRecord$' -fuzztime=1000x -parallel=2
@@ -89,8 +108,8 @@ jobs:
       - uses: actions/checkout@v7
       - name: Rebuild pinned guest with WASI SDK 34
         run: >-
-          python3 experiments/javascript/internal/quickjswasm/guest/build.py
+          python3 javascript/internal/quickjswasm/guest/build.py
           --cache "$RUNNER_TEMP/quickjs-build-cache"
           --output "$RUNNER_TEMP/owned-quickjs.wasm"
       - name: Compare artifact bytes
-        run: cmp experiments/javascript/internal/quickjswasm/quickjs.wasm "$RUNNER_TEMP/owned-quickjs.wasm"
+        run: cmp javascript/internal/quickjswasm/quickjs.wasm "$RUNNER_TEMP/owned-quickjs.wasm"

@@ -102,9 +102,11 @@ func probeOwned(e *Engine, name string) (o Observation, handled bool) {
 		}
 		defer small.Close()
 		limited, err := small.Compile(context.Background(), `()=>new ArrayBuffer(40*1024*1024).byteLength`)
-		if err == nil {
-			_, err = limited.Eval(context.Background(), nil, jt.EvalOptions{})
+		if err != nil {
+			o.Detail = err.Error()
+			return o, true
 		}
+		_, err = limited.Eval(context.Background(), nil, jt.EvalOptions{})
 		o.Detail = fmt.Sprintf("public 64 MiB engine accepted 40 MiB; independent 8 MiB engine rejected it: %v; exact page/growth stats covered by canonical runtime tests", err)
 		if err != nil {
 			o.Status = "PASS"

@@ -37,9 +37,9 @@
 
 **Interfaces:** New(ctx, Config), *Engine Compile/Close/Limits, *Program Eval/Limits/UnsupportedEvalLimits; all root interface signatures unchanged. Internal runtime import becomes github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm.
 
-- [ ] Add external-package TestPublicProcessorRegistry, compile/evaluate JSON, bind variables, typed exceptions, unsupported overrides, prepared/batch and Close. Run and observe missing public module implementation (RED).
-- [ ] Move owned implementation and tests, trimming baseline dispatch; reuse the existing bridge/artifact unchanged and copy MIT license. Keep Goja/QJS outside public source/test dependencies. Public constructor names New, internal/new test helpers updated mechanically.
-- [ ] Run module tests, race detection and vet; verify asset fingerprint unchanged and no forbidden dependency in go list -deps. Existing tests prove semantics rather than adding duplicate cases. Commit extraction.
+- [x] Add external-package TestPublicProcessorRegistry, compile/evaluate JSON, bind variables, typed exceptions, unsupported overrides, prepared/batch and Close. Run and observe missing public module implementation (RED).
+- [x] Move owned implementation and tests, trimming baseline dispatch; reuse the existing bridge/artifact unchanged and copy MIT license. Keep Goja/QJS outside public source/test dependencies. Public constructor names New, internal/new test helpers updated mechanically.
+- [x] Run module tests, race detection and vet; verify asset fingerprint unchanged and no forbidden dependency in go list -deps. Existing tests prove semantics rather than adding duplicate cases. Commit extraction.
 
 ### Task 2: Forward assessment calls to the public implementation
 
@@ -47,9 +47,9 @@
 
 **Interfaces:** Existing New(OwnedQuickJS,Config)/NewOwned(ctx,Config) delegate to public New; owned Compile returns public Program directly. Expose diagnostic aliases in assessment only for existing tooling. Baseline Program remains for QJS/Goja.
 
-- [ ] Add TestOwnedAssessmentUsesPublicProgram and verify RED before forwarding.
-- [ ] Replace owned branches with forwarding, remove legacy owned runtime imports and duplicate implementations. Update guest-memory probe to test a successful 40 MiB buffer under default cap and rejected allocation under 8 MiB through public APIs. Keep low-level page growth/statistics/capability tests with runtime; retain cache contamination probe against QJS.
-- [ ] Build owned-min using public API, run assessment tests/race/vet and all 21 strict owned probes; unchanged counts/no skipped cases. Record new extraction evidence separately from history. Commit facade.
+- [x] Add TestOwnedAssessmentUsesPublicProgram and verify RED before forwarding.
+- [x] Replace owned branches with forwarding, remove legacy owned runtime imports and duplicate implementations. Update guest-memory probe to test a successful 40 MiB buffer under default cap and rejected allocation under 8 MiB through public APIs. Keep low-level page growth/statistics/capability tests with runtime; retain cache contamination probe against QJS.
+- [x] Build owned-min using public API, run assessment tests/race/vet and all 21 strict owned probes; unchanged counts/no skipped cases. Record new extraction evidence separately from history. Commit facade.
 
 ### Task 3: Prove packaging and wire development/CI
 

@@ -231,7 +231,8 @@ batches, host functions, and JSONata's raw-value API.
 - [Security policy](SECURITY.md)
 - [JavaScript feasibility assessment](docs/javascript-assessment.md) (experimental)
 - [Owned QuickJS runtime checkpoint](docs/quickjs-runtime-foundation.md)
-- [JavaScript execution contract](docs/javascript-execution-contract.md) (experimental)
+- [Optional JavaScript processor](javascript/README.md) (preview module)
+- [JavaScript execution contract](docs/javascript-execution-contract.md)
 - [Editable processor architecture atlas](docs/processor-architecture.md)
 
 ## License

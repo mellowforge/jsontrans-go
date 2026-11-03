@@ -1,0 +1,118 @@
+# Optional JavaScript processor
+
+A CGO-free synchronous JavaScript processor for jsontrans-go, powered by an owned
+QuickJS-ng/WebAssembly guest and Wazero. This is a **preview module**: extraction
+makes it independently consumable; production hardening and release remain
+separate work. The native JSONPath/JSONata module has no JavaScript dependency.
+
+```go
+import (
+    "context"
+    jt "github.com/mellowforge/jsontrans-go"
+    js "github.com/mellowforge/jsontrans-go/javascript"
+)
+
+engine, err := js.New(ctx, js.Config{})
+if err != nil { return err }
+defer engine.Close()
+transformer, err := jt.New(map[string]jt.Processor{"js": engine})
+if err != nil { return err }
+result, err := transformer.ProcessJSON(ctx, "js", []byte(`{"price":7}`),
+    `(input, bindings) => ({total: input.price * bindings.quantity})`,
+    jt.EvalOptions{Bindings: map[string]any{"quantity": 3}},
+)
+// result.Value is {"total":21}; handle err before using it.
+```
+
+`New(ctx, Config) (*Engine, error)` uses ctx for initialization only. The caller
+owns the engine; the registry borrows it. Compile once and evaluate concurrently
+with independent input/bindings. Each evaluation creates fresh guest state.
+Close stops admission, cancels and drains complete calls, then closes runtime
+and cache resources. Programs cannot be used after closure; errors.Is finds
+ErrClosed and context cancellation through registry/JSON/prepared/batch helpers.
+
+```go
+var exception *js.Exception
+if errors.As(err, &exception) {
+    // Native Name/Message/Stack and optional SourceLocation; bounded text.
+}
+```
+
+JSON input/bindings are detached; numbers become binary64. Top-level undefined
+is missing; null stays defined. Strict result conversion rejects promises,
+functions, BigInt, symbols, cycles, nonfinite numbers and unsupported object
+shapes. Source initializers run during Eval, not Compile. No async jobs, imports,
+Node APIs, filesystem/network APIs, host functions or runtime pooling are enabled.
+
+The existing restricted execution contract is preserved: a UTC time snapshot
+per guest, noncryptographic guest-local RNG, cooperative Go conversion limits,
+wall-clock cancellation and a default 64 MiB guest linear-memory cap. Configured
+memory ranges from 2–64 MiB in 64 KiB pages. Explicit JS instruction counting,
+separate regex deadlines and stack quotas remain unsupported. These controls do
+not bound total process RSS. Native compiler columns are coarse, so byte offsets
+remain unavailable; runtime locations are explicitly reported/untrusted.
+
+## Installation and versions
+
+Module path: `github.com/mellowforge/jsontrans-go/javascript`; package: javascript.
+The repository is private. Configure GOPRIVATE and Git access before fetching:
+
+```sh
+# After this extraction is merged; add this prefix to existing GOPRIVATE patterns.
+GOPRIVATE=github.com/mellowforge/jsontrans-go go get github.com/mellowforge/jsontrans-go/javascript@main
+# Pin a merged commit or a future module tag for reproducible application builds.
+```
+
+No module tag is created by this PR. Future JavaScript tags must use the nested
+module prefix `javascript/vX.Y.Z`; root-library tags use `vX.Y.Z`. The minimum
+root dependency is the real merged version
+`v1.1.1-0.20261103173822-e9b9c0c71fe0`, containing registry limit forwarding;
+released core v1.1.0 is too old for this adapter. Go 1.26 or newer is required.
+
+The local `replace github.com/mellowforge/jsontrans-go => ..` is a development
+convenience only. Consumers ignore it and resolve the real minimum version.
+The module reuses the repository's root internal budget/JSON utilities through
+its shared import-path prefix; packaging checks exercise that from outside the
+checkout. Core/helper changes must continue to be tested with this submodule.
+
+## Development and verification
+
+From this directory:
+
+```sh
+go test ./...
+go test -race ./...
+go vet ./...
+python3 scripts/check_module.py
+go test -run '^$' -fuzz '^FuzzOwnedStringConversion$' -fuzztime=200x -parallel=2
+go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzOwnedCompile$' -fuzztime=200x -parallel=2
+```
+
+Run tests first to cache normal dependencies. The packaging checker builds a
+module-zip fixture, uses Go's normal local-Git fetch to validate the minimum
+core version, then builds/runs an outside consumer with no replace/workspace,
+a fresh module cache and CGO disabled. It runs the executable from an empty
+working directory and checks dependency isolation. It requires full Git history
+and cached dependencies, and needs no network or credentials during the check.
+
+The canonical Wasm/ABI sources, manifest and third-party notices live under
+`internal/quickjswasm/guest`. The artifact hash is unchanged by extraction:
+`29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e`
+(929,138 bytes, ABI 2, zero host imports). Applications use the embedded artifact
+without a C compiler or Node; rebuilding uses the pinned WASI SDK and Python:
+
+```sh
+python3 internal/quickjswasm/guest/build.py --output /tmp/quickjs.wasm
+cmp internal/quickjswasm/quickjs.wasm /tmp/quickjs.wasm
+```
+
+The assessment module under `../experiments/javascript` keeps the historical
+QJS/Goja comparison tools and forwards owned calls here. Its strict runner still
+requires all 21 owned cases to pass. Internal page-growth/statistics tests moved
+with this runtime; the assessment facade checks large/small public memory caps.
+See the repository's [execution contract](../docs/javascript-execution-contract.md)
+and [processor atlas](../docs/processor-architecture.md). Module archives retain
+this README and the guest notices; repository navigation links are intended for
+source checkouts.
+
+[MIT](LICENSE). Third-party guest components retain their accompanying notices.
