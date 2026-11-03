@@ -2826,14 +2826,14 @@ func Invoke(ctx context.Context, fn Callable, args []Value, opts jsontrans.EvalO
 	}
 	// The result may share containers with captured data; the caller owns a
 	// detached copy. Functions inside it stay usable as they are.
-	out, err := cloneRawArgs([]Value{ev.argument(v)}, b)
+	out, err := cloneRawResult(ev.argument(v), b)
 	if err != nil {
 		return nil, err
 	}
 	if err := b.Check(); err != nil {
 		return nil, err
 	}
-	return out[0], nil
+	return out, nil
 }
 func cloneRawArgs(args []Value, b *budget.Budget) ([]Value, error) {
 	remaining := b.Limits.MaxInputBytes
