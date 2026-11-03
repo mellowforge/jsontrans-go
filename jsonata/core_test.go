@@ -391,8 +391,7 @@ func TestUndefinedRawInput(t *testing.T) {
 }
 
 func TestRejectOverflowAndSnapshotEngine(t *testing.T) {
-	var captured *Engine
-	e, err := New(func(x *Engine) error { captured = x; return nil })
+	e, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -404,7 +403,7 @@ func TestRejectOverflowAndSnapshotEngine(t *testing.T) {
 		t.Fatalf("overflow input: %v", err)
 	}
 	before := p.Limits()
-	captured.limits.MaxSteps = 2
+	e.limits.MaxSteps = 2
 	if p.Limits() != before {
 		t.Fatal("program limits changed after compile")
 	}

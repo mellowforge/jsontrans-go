@@ -34,9 +34,12 @@ Its limits default to those of the engine that created the function.
 Register host functions with `jsonata.WithFunction`. JSONata host results are
 validated and detached: Go numeric types become numbers, while unsupported
 types, cycles and non-finite numbers fail with `ErrConversion`. Plain host
-errors report the function name as `Token`. JSONPath's `WithFunction`
-uses its RFC Value/Logical/Nodes type declarations. These are language-specific
-extension APIs, separate from the common JSON contract.
+errors report the function name as `Token`, and a registered function replaces
+a built-in of the same name, as in JSONata. JSONPath's `WithFunction` uses its
+RFC Value/Logical/Nodes type declarations and cannot replace standard functions.
+In both engines, options apply only while `New` builds the engine, and repeated
+`WithLimits` options refine earlier ones. These are language-specific extension
+APIs, separate from the common JSON contract.
 
 Processors can optionally implement `PreparedProgram.EvalPrepared` alongside
 `Program.Eval`. The public `Document` and `Node` types provide read-only indexed

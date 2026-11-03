@@ -29,43 +29,74 @@ type Engine struct {
 	builtins        map[string]Callable
 	evaluationDepth int
 }
-type Option func(*Engine) error
+
+// Option configures New. Options act on construction state only, so they
+// cannot alter an engine that is already in use.
+type Option func(*options) error
+
+type options struct {
+	limits          jsontrans.Limits
+	functions       map[string]Callable
+	evaluationDepth int
+}
 
 // WithEvaluationDepth enables a JSONata expression-frame guard; zero disables it.
 func WithEvaluationDepth(n int) Option {
-	return func(e *Engine) error {
+	return func(o *options) error {
 		if n < 0 {
 			return fmt.Errorf("%w: negative evaluation depth", jsontrans.ErrLimit)
 		}
-		e.evaluationDepth = n
+		o.evaluationDepth = n
 		return nil
 	}
 }
 
+// WithLimits sets default limits; nonzero fields refine earlier options.
 func WithLimits(l jsontrans.Limits) Option {
-	return func(e *Engine) error { var err error; e.limits, err = budget.Resolve(e.limits, &l); return err }
+	return func(o *options) error {
+		var err error
+		o.limits, err = budget.Resolve(o.limits, &l)
+		return err
+	}
 }
+
+// WithFunction registers a Go function as $name. As in the reference, it
+// replaces a built-in of the same name.
 func WithFunction(name string, f Callable) Option {
-	return func(e *Engine) error {
-		if name == "" || f == nil {
+	return func(o *options) error {
+		name = strings.TrimPrefix(name, "$")
+		if name == "" || nilCallable(f) {
 			return fmt.Errorf("invalid function")
 		}
-		name = strings.TrimPrefix(name, "$")
-		e.functions[name] = hostFunction{name: name, fn: f}
+		o.functions[name] = hostFunction{name: name, fn: f}
 		return nil
 	}
 }
+func nilCallable(f Callable) bool {
+	if f == nil {
+		return true
+	}
+	if n, ok := f.(NativeFunction); ok {
+		return n.Fn == nil
+	}
+	v := reflect.ValueOf(f)
+	switch v.Kind() {
+	case reflect.Pointer, reflect.Func, reflect.Map, reflect.Slice, reflect.Interface:
+		return v.IsNil()
+	}
+	return false
+}
 func New(opts ...Option) (*Engine, error) {
-	e := &Engine{limits: budget.DefaultLimits(), functions: map[string]Callable{}, builtins: withBuiltinSignatures(builtins())}
-	for _, o := range opts {
-		if o == nil {
+	o := options{limits: budget.DefaultLimits(), functions: map[string]Callable{}}
+	for _, apply := range opts {
+		if apply == nil {
 			return nil, fmt.Errorf("nil option")
 		}
-		if err := o(e); err != nil {
+		if err := apply(&o); err != nil {
 			return nil, err
 		}
 	}
-	return e, nil
+	return &Engine{limits: o.limits, functions: o.functions, builtins: withBuiltinSignatures(builtins()), evaluationDepth: o.evaluationDepth}, nil
 }
 
 // hostFunction admits results of registered Go functions as JSONata values:

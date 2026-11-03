@@ -34,21 +34,31 @@ type Function struct {
 	Result     Type
 	Call       func(context.Context, []any) (any, error)
 }
-type Option func(*Engine) error
+
+// Option configures New. Options act on construction state only, so they
+// cannot alter an engine that is already in use.
+type Option func(*options) error
+
+type options struct {
+	limits    jsontrans.Limits
+	functions map[string]Function
+}
+
 type Engine struct {
 	limits    jsontrans.Limits
 	functions map[string]Function
 }
 
+// WithLimits sets default limits; nonzero fields refine earlier options.
 func WithLimits(l jsontrans.Limits) Option {
-	return func(e *Engine) error {
+	return func(o *options) error {
 		var err error
-		e.limits, err = budget.Resolve(budget.DefaultLimits(), &l)
+		o.limits, err = budget.Resolve(o.limits, &l)
 		return err
 	}
 }
 func WithFunction(name string, f Function) Option {
-	return func(e *Engine) error {
+	return func(o *options) error {
 		if name == "" || f.Call == nil || f.Result < ValueType || f.Result > NodesType {
 			return errors.New("invalid function")
 		}
@@ -67,21 +77,21 @@ func WithFunction(name string, f Function) Option {
 			}
 		}
 		f.Parameters = append([]Type(nil), f.Parameters...)
-		e.functions[name] = f
+		o.functions[name] = f
 		return nil
 	}
 }
 func New(opts ...Option) (*Engine, error) {
-	e := &Engine{limits: budget.DefaultLimits(), functions: map[string]Function{}}
-	for _, o := range opts {
-		if o == nil {
+	o := options{limits: budget.DefaultLimits(), functions: map[string]Function{}}
+	for _, apply := range opts {
+		if apply == nil {
 			return nil, errors.New("nil option")
 		}
-		if err := o(e); err != nil {
+		if err := apply(&o); err != nil {
 			return nil, err
 		}
 	}
-	return e, nil
+	return &Engine{limits: o.limits, functions: o.functions}, nil
 }
 
 type program struct {

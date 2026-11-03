@@ -94,3 +94,26 @@ func TestHostErrorNamesFunction(t *testing.T) {
 		t.Fatalf("got %v (%#v)", err, native)
 	}
 }
+
+func TestWithFunctionRejectsInvalidRegistration(t *testing.T) {
+	var nilPointer *jsonata.NativeFunction
+	for name, option := range map[string]jsonata.Option{
+		"empty name":      jsonata.WithFunction("$", jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return nil, nil }}),
+		"nil callable":    jsonata.WithFunction("f", nil),
+		"nil native body": jsonata.WithFunction("f", jsonata.NativeFunction{}),
+		"typed nil":       jsonata.WithFunction("f", nilPointer),
+	} {
+		if _, err := jsonata.New(option); err == nil {
+			t.Errorf("%s: registration accepted", name)
+		}
+	}
+}
+
+// As in the reference, a registered function replaces a built-in of the same name.
+func TestWithFunctionReplacesBuiltin(t *testing.T) {
+	engine := hostEngine(t, "sum", func() (jsonata.Value, error) { return float64(42), nil })
+	got, err := evalHost(t, engine, `$sum([1,2])`)
+	if err != nil || got.Value != float64(42) {
+		t.Fatalf("got %#v, %v", got, err)
+	}
+}

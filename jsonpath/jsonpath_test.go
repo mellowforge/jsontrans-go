@@ -320,9 +320,7 @@ func TestCompiledProgramFreezesFunctions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = WithFunction("choice", no)(e); err != nil {
-		t.Fatal(err)
-	}
+	e.functions["choice"] = no
 	r, err := p.Eval(context.Background(), []any{1}, jsontrans.EvalOptions{})
 	if err != nil || len(r.Value.([]any)) != 1 {
 		t.Fatalf("got %#v %v", r, err)
@@ -414,5 +412,16 @@ func TestIRegexpCharacterClassRangeGrammar(t *testing.T) {
 				t.Fatalf("got %v want %v", got, tc.want)
 			}
 		})
+	}
+}
+
+// Later options refine earlier ones instead of resetting omitted fields.
+func TestWithLimitsAccumulates(t *testing.T) {
+	e, err := New(WithLimits(jsontrans.Limits{MaxDepth: 8}), WithLimits(jsontrans.Limits{MaxSteps: 50}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := e.Limits(); got.MaxDepth != 8 || got.MaxSteps != 50 {
+		t.Fatalf("got %+v", got)
 	}
 }
