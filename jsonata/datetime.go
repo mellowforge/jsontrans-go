@@ -73,7 +73,8 @@ func dateFromMillis(c *CallContext, n float64, picture, timezone Value) (Value, 
 	// that every component of the reference's Date is NaN.
 	local := n + float64(offset)*60000
 	invalid := math.IsNaN(local) || math.Abs(local) > 8.64e15
-	t := time.UnixMilli(floatToInt64(n)).In(time.FixedZone("", offset*60))
+	// The reference builds Date(millis + offset), truncating after the shift.
+	t := time.UnixMilli(floatToInt64(math.Trunc(local)) - int64(offset)*60000).In(time.FixedZone("", offset*60))
 	p, ok := picture.(string)
 	if !ok && (invalid || t.Year() < 0 || t.Year() > 9999) {
 		p, ok = isoDatePicture, true
@@ -184,7 +185,6 @@ var errInvalidDate = errors.New("fromMillis: date outside the representable rang
 func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, invalid bool) (string, error) {
 	comp := marker[0]
 	pic := marker[1:]
-	originalPic := pic
 	width := ""
 	if i := strings.LastIndex(pic, ","); i >= 0 {
 		tail := pic[i+1:]
@@ -322,11 +322,41 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, in
 		}
 		return s, nil
 	}
-	if comp == 'Y' && width == "" {
-		// §9.8.4.4 as the reference applies it: a picture with two or more
-		// digits keeps that many trailing year digits.
-		if digits := strings.Count(pic, "#") + countIntegerDigits(pic); digits >= 2 {
-			n %= int(math.Pow10(min(digits, 18)))
+	yearDigits := 0
+	if comp == 'Y' {
+		// §9.8.4.4 as the reference applies it. A single width value is a
+		// minimum, which raises the mandatory digits. A maximum width, or else
+		// a picture of two or more digits, keeps that many trailing year
+		// digits, and the remainder keeps the year's sign.
+		minimum, maximum := -1, -1
+		if width != "" {
+			parts := strings.Split(width, "-")
+			if v, err := strconv.Atoi(parts[0]); err == nil {
+				minimum = v
+			}
+			if len(parts) == 2 {
+				if v, err := strconv.Atoi(parts[1]); err == nil {
+					maximum = v
+				}
+			}
+		}
+		mandatory, optional := countIntegerDigits(pic), strings.Count(pic, "#")
+		if minimum > mandatory {
+			mandatory = minimum
+		}
+		if maximum > 0 {
+			yearDigits, mandatory = maximum, maximum
+		} else if mandatory+optional >= 2 {
+			yearDigits = mandatory + optional
+		}
+		if yearDigits > 0 {
+			n %= int(math.Pow10(min(yearDigits, 18)))
+		}
+		if width != "" && strings.Trim(pic, "0123456789#") == "" && mandatory > 0 {
+			if err := builtinCollection(c, mandatory); err != nil {
+				return "", err
+			}
+			pic, width = strings.Repeat("0", mandatory), ""
 		}
 	}
 	ord := strings.HasSuffix(pic, "o")
@@ -356,20 +386,7 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, in
 	if e != nil {
 		return "", e
 	}
-	s := v.(string)
-	if width != "" {
-		parts := strings.Split(width, "-")
-		if len(parts) == 1 && strings.HasPrefix(originalPic, ",") {
-			parts = append(parts, parts[0])
-		}
-		if len(parts) == 2 {
-			max, e := strconv.Atoi(parts[1])
-			if e == nil && len(s) > max {
-				s = s[len(s)-max:]
-			}
-		}
-	}
-	return s, nil
+	return v.(string), nil
 }
 
 // invalidDateMarker formats a component of an invalid date as the reference
@@ -397,13 +414,19 @@ func invalidDateMarker(c *CallContext, comp byte, pic, width string) (string, er
 	}
 	pad := countIntegerDigits(pic)
 	if width != "" {
-		part := strings.Split(width, "-")[0]
-		minimum, err := strconv.Atoi(part)
-		if err != nil && part != "" && strings.Trim(part, "0123456789") == "" {
+		parts := strings.Split(width, "-")
+		minimum, err := strconv.Atoi(parts[0])
+		if err != nil && parts[0] != "" && strings.Trim(parts[0], "0123456789") == "" {
 			return "", fmt.Errorf("%w: picture width", budget.ErrLimit)
 		}
 		if err == nil && minimum > pad {
 			pad = minimum
+		}
+		// A year's maximum width also sets its digit count.
+		if comp == 'Y' && len(parts) == 2 {
+			if maximum, err := strconv.Atoi(parts[1]); err == nil && maximum > 0 {
+				pad = maximum
+			}
 		}
 	}
 	s := "NaN"

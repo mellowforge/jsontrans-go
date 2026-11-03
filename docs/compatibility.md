@@ -83,7 +83,15 @@ ordinary, prepared and batch paths:
 - `@`/`#` tuple-stream steps flattening their results one level;
 - regex literal scanning, with S0301/S0302 and compile-time pattern validation;
 - S0217 at compile time for `%` after a step without a derivable parent;
-- unbound parent references inside group-by pairs, which are undefined.
+- unbound parent references inside group-by pairs, which are undefined;
+- NaN, infinite, huge and fractional arguments, following the JavaScript
+  conversions the reference applies (`Array.slice`, `ToUint32`, `toFixed`,
+  `Number.prototype.toString`), NaN falsiness and D1001 for infinite numbers in
+  boolean contexts and indexes;
+- negative zero, which survives arithmetic but prints as 0;
+- dates outside ±8.64e15 ms, whose numeric components format as NaN, year
+  widths, and timezones read as `parseInt` with `floor(v/100)` hours and
+  `v % 100` minutes (so `"-0530"` is `-06:30`).
 
 ## Differences at the Go boundary
 
@@ -99,6 +107,12 @@ These are deliberate and documented rather than conformance failures:
   expressions (rejected while compiling, as in the reference) and plain host
   function errors, are `*jsontrans.Error` values with an empty `Code`. Host
   errors carry the reference's call position and function name as `Token`.
+- Where the reference hangs, overflows its stack or fails with an internal
+  JavaScript error, Go returns an error without a code: words, letters and
+  roman numerals for non-finite integers, exponent pictures for non-finite
+  numbers, names and words for invalid dates, and non-numeric timezones (D3134).
+  Grouping separators inserted into the text of non-finite or exponent-form
+  numbers may differ.
 - JSONPath treats strings and object keys containing isolated surrogates as
   ordinary JSON. `length()` counts each isolated surrogate as one character,
   and `match`/`search` let `.` consume it as one character (as U+FFFD).

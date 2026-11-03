@@ -518,3 +518,70 @@ func TestReferenceNegativeZeroAtBoundaries(t *testing.T) {
 		{`a = 0`, `{"a":-0}`, `true`},
 	})
 }
+
+// Integer and number pictures floor before the sign, print -0 as 0, and use
+// JavaScript's text for huge and non-finite values.
+func TestReferenceNumberPicturesForExtremeValues(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`$formatInteger(-2.5, "#0")`, `{}`, `"-3"`},
+		{`$formatInteger(-0, "#0")`, `{}`, `"0"`},
+		{`$formatInteger(1e300, "#0")`, `{}`, `"1e+300"`},
+		{`$formatInteger(-1e300, "#0")`, `{}`, `"-1e+300"`},
+		{`$formatInteger(1e21, "0")`, `{}`, `"1e+21"`},
+		{`$formatInteger(1e300, "0;o")`, `{}`, `"1e+300th"`},
+		{`$formatInteger(1/0, "#0")`, `{}`, `"Infinity"`},
+		{`$formatInteger(-1/0, "#0")`, `{}`, `"-Infinity"`},
+		{`$formatInteger(0/0, "#0")`, `{}`, `"NaN"`},
+		{`$formatInteger(1/0, "w")`, `{}`, `ERR uncoded`},
+		{`$formatNumber(1e300, "#0.0")`, `{}`, `"1e+300.0"`},
+		{`$formatNumber(-1e300, "#0.0")`, `{}`, `"-1e+300.0"`},
+		{`$formatNumber(1e21, "0")`, `{}`, `"1e+21"`},
+		{`$formatNumber(1/0, "#0.0")`, `{}`, `"NaN.0"`},
+		{`$formatNumber(-1/0, "#0.0")`, `{}`, `"-NaN.0"`},
+		{`$formatNumber(0/0, "#0.0")`, `{}`, `"-NaN.0"`},
+		{`$formatNumber(1/0, "0")`, `{}`, `"Infinity"`},
+		{`$formatNumber(-1/0, "0")`, `{}`, `"-Infinity"`},
+		{`$formatNumber(0/0, "0")`, `{}`, `"-NaN"`},
+		{`$formatNumber(1/0, "0%")`, `{}`, `"Infinity%"`},
+		{`$formatNumber(1e300, "0.0e0")`, `{}`, `"1.0e300"`},
+		{`$fromMillis(2.5, undefined, "-0530")`, `{}`, `"1969-12-31T17:30:00.003-06:30"`},
+		{`$fromMillis(-8.64e15, "[Y,2]")`, `{}`, `"-21"`},
+	})
+}
+
+// Year widths: the maximum keeps trailing digits with the year's sign, and
+// the minimum replaces the picture's digit count.
+func TestReferenceYearWidths(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`$fromMillis(1521801216617, "[Y0001,2-2]")`, `{}`, `"18"`},
+		{`$fromMillis(-8.64e15, "[Y0001,2-2]")`, `{}`, `"-21"`},
+		{`$fromMillis(-8.64e15, "[Y01,2]")`, `{}`, `"-21"`},
+		{`$fromMillis(1e15, "[Y,3-5]")`, `{}`, `"33658"`},
+		{`$fromMillis(-8.64e15, "[Y,3-5]")`, `{}`, `"-71821"`},
+		{`$fromMillis(1521801216617, "[Y,4-*]")`, `{}`, `"2018"`},
+		{`$fromMillis(1521801216617, "[Y,1-2]")`, `{}`, `"18"`},
+		{`$fromMillis(-62198755200001, "[Y,2]")`, `{}`, `"-02"`},
+		{`$fromMillis(-62198755200001, "[Y0001,2-2]")`, `{}`, `"-02"`},
+	})
+}
+
+// A maximum width shortens names only; integer components keep every digit.
+func TestReferenceMaximumWidthLeavesIntegers(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`$fromMillis(1521801216617, "[D,1-1]")`, `{}`, `"23"`},
+		{`$fromMillis(1521801216617, "[H,1-1]")`, `{}`, `"10"`},
+		{`$fromMillis(1521801216617, "[m,1-1]")`, `{}`, `"33"`},
+		{`$fromMillis(1521801216617, "[f,1-1]")`, `{}`, `"617"`},
+		{`$fromMillis(1521801216617, "[f,2-2]")`, `{}`, `"617"`},
+		{`$fromMillis(1521801216617, "[W,1-1]")`, `{}`, `"12"`},
+		{`$fromMillis(1521801216617, "[MNn,3-3]")`, `{}`, `"Mar"`},
+		{`$fromMillis(1521801216617, "[D,3]")`, `{}`, `"023"`},
+	})
+}
+
+func TestReferenceInvalidDateYearWidth(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`$fromMillis(0/0, "[Y0001,2-2]")`, `{}`, `"NaN"`},
+		{`$fromMillis(0/0, "[Y,4-*]")`, `{}`, `"0NaN"`},
+	})
+}

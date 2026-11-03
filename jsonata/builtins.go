@@ -36,6 +36,23 @@ func jsSliceIndex(index float64, length int) int {
 	return int(math.Min(index, float64(length)))
 }
 
+// jsNumberString formats an integral or non-finite value as JavaScript's
+// Number.prototype.toString does: exponent form from 1e21, and the names NaN
+// and Infinity.
+func jsNumberString(f float64) string {
+	switch {
+	case math.IsNaN(f):
+		return "NaN"
+	case math.IsInf(f, 1):
+		return "Infinity"
+	case math.IsInf(f, -1):
+		return "-Infinity"
+	case math.Abs(f) >= 1e21:
+		return strconv.FormatFloat(f, 'e', -1, 64)
+	}
+	return strconv.FormatFloat(f, 'f', -1, 64)
+}
+
 // jsUint32 converts as JavaScript's ToUint32, which String.prototype.split
 // applies to its limit.
 func jsUint32(f float64) int {

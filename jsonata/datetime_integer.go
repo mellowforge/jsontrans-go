@@ -2,6 +2,7 @@
 package jsonata
 
 import (
+	"errors"
 	"math"
 	"strconv"
 	"strings"
@@ -50,6 +51,8 @@ func formatInteger(c *CallContext, n float64, p string) (Value, error) {
 		return nil, err
 	}
 	pic, ordinal := integerPicture(p)
+	// As the reference: floor before taking the sign, and -0 prints as 0.
+	n = math.Floor(n) + 0
 	if n < 0 {
 		r, e := formatInteger(c, -n, p)
 		if e != nil {
@@ -60,9 +63,12 @@ func formatInteger(c *CallContext, n float64, p string) (Value, error) {
 		}
 		return "-" + r.(string), nil
 	}
-	n = math.Floor(n)
 	if math.IsInf(n, 0) || math.IsNaN(n) {
-		return nil, builtinError("D3130", "formatInteger")
+		switch pic {
+		case "w", "W", "Ww", "A", "a", "I", "i":
+			// The reference recurses without end on these; fail plainly.
+			return nil, errors.New("formatInteger: number out of range")
+		}
 	}
 	if pic == "w" || pic == "W" || pic == "Ww" {
 		s := integerWords(n, false, ordinal)
@@ -154,7 +160,7 @@ func formatInteger(c *CallContext, n float64, p string) (Value, error) {
 	if zero == 0 {
 		return nil, builtinError("D3130", "formatInteger")
 	}
-	s := strconv.FormatFloat(n, 'f', 0, 64)
+	s := jsNumberString(n)
 	if err := builtinOutput(c, required); err != nil {
 		return nil, err
 	}
@@ -169,7 +175,9 @@ func formatInteger(c *CallContext, n float64, p string) (Value, error) {
 	}
 	rs := []rune(s)
 	for i := range rs {
-		rs[i] = zero + (rs[i] - '0')
+		if rs[i] >= '0' && rs[i] <= '9' {
+			rs[i] = zero + (rs[i] - '0')
+		}
 	}
 	if len(seps) > 0 {
 		step := digits - seps[len(seps)-1].at

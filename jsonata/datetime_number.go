@@ -2,6 +2,7 @@
 package jsonata
 
 import (
+	"errors"
 	"math"
 	"strconv"
 	"strings"
@@ -45,7 +46,8 @@ func formatNumber(c *CallContext, n float64, picture string, opts map[string]any
 		return nil, builtinError("D3080", "formatNumber")
 	}
 	p := parts[0]
-	negative := n < 0
+	// As the reference, NaN fails value >= 0 and takes the negative picture.
+	negative := !(n >= 0)
 	if negative && len(parts) == 2 {
 		p = parts[1]
 	}
@@ -186,6 +188,10 @@ func formatNumber(c *CallContext, n float64, picture string, opts map[string]any
 	if minInt == 0 && minFrac == 0 {
 		minFrac = 1
 	}
+	if exponent && (math.IsNaN(n) || math.IsInf(n, 0)) {
+		// The reference loops without end scaling a non-finite mantissa.
+		return nil, errors.New("formatNumber: number out of range")
+	}
 	ex := 0
 	if exponent && n != 0 {
 		ex = int(math.Floor(math.Log10(n))) - scaling + 1
@@ -198,7 +204,15 @@ func formatNumber(c *CallContext, n float64, picture string, opts map[string]any
 	if !math.IsInf(n*scale, 0) {
 		n = math.RoundToEven(n*scale) / scale
 	}
+	if math.IsInf(n, 0) && maxFrac > 0 {
+		// The reference's $round shifts through Infinity.toString(): NaN.
+		n = math.NaN()
+	}
 	s := strconv.FormatFloat(n, 'f', maxFrac, 64)
+	if math.IsNaN(n) || math.IsInf(n, 0) || n >= 1e21 {
+		// JavaScript's toFixed falls back to toString here.
+		s = jsNumberString(n)
+	}
 	pieces := strings.SplitN(s, ".", 2)
 	integer := pieces[0]
 	fraction := ""
@@ -207,6 +221,9 @@ func formatNumber(c *CallContext, n float64, picture string, opts map[string]any
 	}
 	for len(fraction) > minFrac && strings.HasSuffix(fraction, "0") {
 		fraction = fraction[:len(fraction)-1]
+	}
+	for len(fraction) < minFrac {
+		fraction += "0"
 	}
 	if err := builtinCollection(c, minInt); err != nil {
 		return nil, err
@@ -257,7 +274,10 @@ func formatNumber(c *CallContext, n float64, picture string, opts map[string]any
 				ib.WriteRune(group)
 			}
 		}
-		ib.WriteRune(zero + (x - '0'))
+		if x >= '0' && x <= '9' {
+			x = zero + (x - '0')
+		}
+		ib.WriteRune(x)
 	}
 	fb := boundedStringBuilder{c: c}
 	pos := 0
