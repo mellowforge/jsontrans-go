@@ -13,7 +13,7 @@ import (
 )
 
 func TestOwnedRuntimeFreshStateAndLifecycle(t *testing.T) {
-	e, err := New(context.Background(), Config{Timeout: 10 * time.Second})
+	e, err := New(context.Background(), Config{Timeout: semanticTestTimeout})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,7 +44,7 @@ func TestOwnedRuntimeFreshStateAndLifecycle(t *testing.T) {
 	}
 }
 func TestOwnedRuntimeCancellationAndRecovery(t *testing.T) {
-	e, err := New(context.Background(), Config{Timeout: 10 * time.Second})
+	e, err := New(context.Background(), Config{Timeout: semanticTestTimeout})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -85,7 +85,7 @@ func TestOwnedRuntimeCancellationAndRecovery(t *testing.T) {
 }
 func TestOwnedRuntimeCapAndIndependence(t *testing.T) {
 	for _, pages := range []uint32{128, 1024} {
-		e, err := New(context.Background(), Config{MemoryPages: pages, Timeout: 10 * time.Second})
+		e, err := New(context.Background(), Config{MemoryPages: pages, Timeout: semanticTestTimeout})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -120,7 +120,7 @@ func TestCloseInterruptsActiveOwnedGuest(t *testing.T) {
 		return nil
 	})
 	compileContext := experimental.WithFunctionListenerFactory(context.Background(), factory)
-	e, err := New(compileContext, Config{Timeout: 10 * time.Second})
+	e, err := New(compileContext, Config{Timeout: semanticTestTimeout})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -157,7 +157,7 @@ func TestCloseInterruptsActiveOwnedGuest(t *testing.T) {
 }
 
 func TestSourceCompileCancellationInsideInitializedGuest(t *testing.T) {
-	e, err := New(context.Background(), Config{Timeout: 10 * time.Second})
+	e, err := New(context.Background(), Config{Timeout: semanticTestTimeout})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -184,7 +184,7 @@ func TestConcurrentEnginesHaveIndependentHeapLimits(t *testing.T) {
 	var wg sync.WaitGroup
 	for _, pages := range []uint32{128, 1024} {
 		wg.Go(func() {
-			e, err := New(context.Background(), Config{MemoryPages: pages, Timeout: 10 * time.Second})
+			e, err := New(context.Background(), Config{MemoryPages: pages, Timeout: semanticTestTimeout})
 			if err != nil {
 				t.Error(err)
 				return
@@ -213,7 +213,7 @@ func TestConcurrentEnginesHaveIndependentHeapLimits(t *testing.T) {
 }
 
 func TestOwnedRejectsUnsupportedStackQuota(t *testing.T) {
-	e, err := New(context.Background(), Config{StackBytes: 16 << 10, Timeout: 10 * time.Second})
+	e, err := New(context.Background(), Config{StackBytes: 16 << 10, Timeout: semanticTestTimeout})
 	if e != nil {
 		e.Close()
 	}

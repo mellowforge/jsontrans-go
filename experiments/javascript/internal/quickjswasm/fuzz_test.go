@@ -10,7 +10,7 @@ func FuzzOwnedCompile(f *testing.F) {
 	for _, s := range []string{`()=>1`, `function(input){return input}`, `(`, "\x00", `const x = /[a-z]+/;`} {
 		f.Add(s)
 	}
-	e, err := New(context.Background(), Config{Timeout: 10 * time.Second})
+	e, err := New(context.Background(), Config{Timeout: semanticTestTimeout})
 	if err != nil {
 		f.Fatal(err)
 	}

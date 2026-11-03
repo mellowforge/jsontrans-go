@@ -53,8 +53,9 @@ allocation-growth probe is recorded as a **failed gate by audit**, without
 executing it. Every other case is executed or explicitly marked inapplicable;
 failures are retained in JSON, including watchdog kills. `--strict` makes gate
 failure visible to automation. Ordinary unit tests avoid deliberate hangs.
-Trusted semantic fixtures raise the timeout to 10 seconds so race-instrumented
-Wasm compilation does not consume the production one-second default.
+Trusted semantic fixtures raise the timeout to 10 seconds, or 100 seconds in race builds, so instrumented Wasm compilation
+does not consume the production one-second default. Explicit cancellation
+deadlines are unchanged.
 
 Import audit and artifact fingerprint:
 

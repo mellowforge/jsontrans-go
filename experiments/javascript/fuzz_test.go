@@ -18,7 +18,7 @@ func fuzzStringConversion(f *testing.F, backend Backend) {
 	for _, s := range []string{"plain", "😀", "\x00\n\"\\", "é", "\xff"} {
 		f.Add(s)
 	}
-	e, err := New(backend, Config{Limits: jt.Limits{Timeout: 10 * time.Second}})
+	e, err := New(backend, Config{Limits: jt.Limits{Timeout: semanticTestTimeout}})
 	if err != nil {
 		f.Fatal(err)
 	}

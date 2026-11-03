@@ -86,7 +86,8 @@ production:
   text at 64 KiB. Explicit incompatible limits fail. The bytecode interface is
   internal and accepts only locally compiled artifacts, never user bytecode.
 - Default timeouts remain one second. Trusted semantic/race fixtures raise them
-  to ten seconds to accommodate instrumented Wasm compilation. Cold compilation
+  to ten seconds in ordinary tests and 100 seconds in race builds to accommodate
+  instrumented Wasm compilation. Explicit cancellation deadlines stay unchanged. Cold compilation
   of the fixed trusted Wasm artifact is distinct from user-source compilation
   inside the interruptible guest; initialization is not a hard process deadline.
 - JS instruction counting and independent per-regex deadlines are not promised.
