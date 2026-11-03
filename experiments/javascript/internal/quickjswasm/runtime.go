@@ -166,7 +166,7 @@ func (e *Engine) instantiate(ctx context.Context) (api.Module, error) {
 	if err != nil {
 		return fail(err)
 	}
-	if version != 1 {
+	if version != 2 {
 		return fail(errors.New("guest ABI version mismatch"))
 	}
 	now := uint64(time.Now().UnixMicro())
@@ -231,7 +231,7 @@ func output(ctx context.Context, m api.Module, maximum int) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if status != 0 && maximum > 65536 {
+	if status != 0 {
 		maximum = 65536
 	}
 	if length > uint64(maximum) {
@@ -250,7 +250,14 @@ func output(ctx context.Context, m api.Module, maximum int) ([]byte, error) {
 		return nil, err
 	}
 	if status != 0 {
-		return nil, fmt.Errorf("QuickJS: %s", owned)
+		if status != 1 {
+			return nil, errors.New("invalid owned diagnostic status")
+		}
+		f, err := decodeFailure(ctx, owned)
+		if err != nil {
+			return nil, err
+		}
+		return nil, f
 	}
 	return owned, nil
 }
@@ -272,7 +279,7 @@ func (e *Engine) Compile(ctx context.Context, source string) ([]byte, error) {
 	if err != nil {
 		return nil, e.failure(ctx, err)
 	}
-	if _, err = call(ctx, m, "abi_compile", ptr, uint64(len(source))); err != nil {
+	if _, err = call(ctx, m, "abi_compile", ptr, uint64(len(source)), 0); err != nil {
 		return nil, e.failure(ctx, err)
 	}
 	code, err := output(ctx, m, maxBytecode)

@@ -18,7 +18,7 @@ func TestOwnedRuntimeFreshStateAndLifecycle(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer e.Close()
-	codec, err := e.Compile(context.Background(), `(function(){return function(rule,input){return JSON.stringify(rule(JSON.parse(input)))}})()`)
+	codec, err := e.Compile(context.Background(), `(function(){return function(rule,input){return [0,JSON.stringify(rule(JSON.parse(input)))]}})()`)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -56,7 +56,7 @@ func TestOwnedRuntimeCancellationAndRecovery(t *testing.T) {
 		}
 		// Eval's bridge executes first; a script looping/throwing during rule load
 		// must be canceled without calling guest free on the canceled module.
-		bridge, err := e.Compile(context.Background(), `()=>"ok"`)
+		bridge, err := e.Compile(context.Background(), `()=>[0,"ok"]`)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -129,7 +129,7 @@ func TestCloseInterruptsActiveOwnedGuest(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	codec, err := e.Compile(context.Background(), `()=>"ok"`)
+	codec, err := e.Compile(context.Background(), `()=>[0,"ok"]`)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -174,7 +174,7 @@ func TestSourceCompileCancellationInsideInitializedGuest(t *testing.T) {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond)
 	defer cancel()
-	_, err = call(ctx, m, "abi_compile", ptr, uint64(len(source)))
+	_, err = call(ctx, m, "abi_compile", ptr, uint64(len(source)), 0)
 	if err == nil || !errors.Is(e.failure(ctx, err), context.DeadlineExceeded) {
 		t.Fatalf("in-flight compile: %v", err)
 	}
@@ -195,7 +195,7 @@ func TestConcurrentEnginesHaveIndependentHeapLimits(t *testing.T) {
 				t.Error(err)
 				return
 			}
-			codec, err := e.Compile(context.Background(), `rule=>JSON.stringify(rule())`)
+			codec, err := e.Compile(context.Background(), `rule=>[0,JSON.stringify(rule())]`)
 			if err != nil {
 				t.Error(err)
 				return

@@ -25,11 +25,11 @@ func (e *Engine) Compile(ctx context.Context, expr string) (program jt.Program, 
 	}
 	ctx, done, err := e.lifetime.begin(ctx)
 	if err != nil {
-		return nil, err
+		return nil, ownedDiagnostic(jt.PhaseCompile, err)
 	}
 	defer done()
 	program, err = e.compile(ctx, expr)
-	err = e.lifetime.failure(ctx, err)
+	err = ownedDiagnostic(jt.PhaseCompile, e.lifetime.failure(ctx, err))
 	if err != nil {
 		return nil, err
 	}
@@ -41,11 +41,11 @@ func (p *Program) Eval(ctx context.Context, input any, o jt.EvalOptions) (result
 	}
 	ctx, done, err := p.engine.lifetime.begin(ctx)
 	if err != nil {
-		return result, err
+		return result, ownedDiagnostic(jt.PhaseEvaluate, err)
 	}
 	defer done()
 	result, err = p.eval(ctx, input, o)
-	err = p.engine.lifetime.failure(ctx, err)
+	err = ownedDiagnostic(jt.PhaseEvaluate, p.engine.lifetime.failure(ctx, err))
 	if err != nil {
 		return jt.Result{}, err
 	}

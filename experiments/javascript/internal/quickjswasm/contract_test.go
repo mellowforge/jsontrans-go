@@ -35,7 +35,7 @@ func TestOwnedTimeSnapshotProfile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	codec, err := e.Compile(context.Background(), `rule=>JSON.stringify(rule())`)
+	codec, err := e.Compile(context.Background(), `rule=>[0,JSON.stringify(rule())]`)
 	if err != nil {
 		t.Fatal(err)
 	}

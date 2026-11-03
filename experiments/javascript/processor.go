@@ -136,6 +136,9 @@ func (e *Engine) compile(ctx context.Context, expr string) (jt.Program, error) {
 	return p, nil
 }
 func diagnostic(backend Backend, phase string, err error) error {
+	if backend == OwnedQuickJS {
+		return ownedDiagnostic(phase, err)
+	}
 	if err == nil {
 		return nil
 	}
@@ -167,7 +170,7 @@ func (p *Program) eval(ctx context.Context, input any, o jt.EvalOptions) (result
 	defer b.Close()
 	in, err := encodeInput(input, b)
 	if err != nil {
-		return result, err
+		return result, ownedPhase(p.engine.backend, jt.PhaseInput, err)
 	}
 	bindings := o.Bindings
 	if bindings == nil {
@@ -175,7 +178,7 @@ func (p *Program) eval(ctx context.Context, input any, o jt.EvalOptions) (result
 	}
 	vars, err := encodeInput(bindings, b)
 	if err != nil {
-		return result, err
+		return result, ownedPhase(p.engine.backend, jt.PhaseBindings, err)
 	}
 	var text string
 	if p.engine.backend == OwnedQuickJS {
@@ -207,11 +210,11 @@ func (p *Program) eval(ctx context.Context, input any, o jt.EvalOptions) (result
 	v, err := jsonvalue.Decode(raw.Value, b)
 	b.Limits.MaxInputBytes = inputLimit
 	if err != nil {
-		return result, errors.Join(jt.ErrConversion, err)
+		return result, ownedPhase(p.engine.backend, jt.PhaseOutput, errors.Join(jt.ErrConversion, err))
 	}
 	v, _, err = jsonvalue.CloneDetachedSize(v, b, l.MaxOutputBytes)
 	if err != nil {
-		return result, errors.Join(jt.ErrConversion, err)
+		return result, ownedPhase(p.engine.backend, jt.PhaseOutput, errors.Join(jt.ErrConversion, err))
 	}
 	if err = b.Check(); err != nil {
 		return result, err
