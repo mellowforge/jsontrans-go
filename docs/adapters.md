@@ -41,7 +41,7 @@ call returns a detached result owned by the caller. Argument conversion uses
 `MaxInputBytes`; result conversion uses `MaxOutputBytes`. Raw results preserve
 non-finite language numbers, functions, and missing values. JSON-shaped results
 are charged their encoded JSON size; language-only scalar values consume one
-bounded token each. Unrepresentable results, such as cycles or canonical key
+bounded token each (a top-level missing result is returned without conversion). Unrepresentable results, such as cycles or canonical key
 collisions, fail with `ErrConversion`. Registered host results and JSON inputs
 remain strictly validated.
 Register host functions with `jsonata.WithFunction`. JSONata host results are
