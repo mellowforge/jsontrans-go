@@ -166,31 +166,38 @@ func (x *Transformer) Compile(ctx context.Context, name, expression string) (Pro
 	if x == nil {
 		return nil, errors.New("nil transformer")
 	}
+	program, err := x.compile(ctx, name, expression)
+	if err != nil {
+		return nil, diagnostic(name, PhaseCompile, err)
+	}
+	return program, nil
+}
+func (x *Transformer) compile(ctx context.Context, name, expression string) (Program, error) {
 	p, ok := x.processors[name]
 	if !ok {
-		return nil, diagnostic(name, PhaseCompile, ErrUnknownProcessor)
+		return nil, ErrUnknownProcessor
 	}
 	l, err := effectiveLimits(p, nil)
 	if err != nil {
-		return nil, diagnostic(name, PhaseCompile, err)
+		return nil, err
 	}
 	b, err := budget.New(ctx, l)
 	if err != nil {
-		return nil, diagnostic(name, PhaseCompile, err)
+		return nil, err
 	}
 	defer b.Close()
 	if err = b.Expression(expression); err != nil {
-		return nil, diagnostic(name, PhaseCompile, err)
+		return nil, err
 	}
 	program, err := p.Compile(b.Context(), expression)
 	if err != nil {
-		return nil, diagnostic(name, PhaseCompile, err)
+		return nil, err
 	}
 	if err = b.Check(); err != nil {
-		return nil, diagnostic(name, PhaseCompile, err)
+		return nil, err
 	}
 	if nilValue(program) {
-		return nil, diagnostic(name, PhaseCompile, errors.New("processor returned nil program"))
+		return nil, errors.New("processor returned nil program")
 	}
 	return &checkedProgram{name: name, program: program, configured: l}, nil
 }

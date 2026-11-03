@@ -37,16 +37,6 @@ func compileFastPlan(n *node) *fastPlan {
 		}
 		return false
 	}
-	var predicateSupported func(*node) bool
-	predicateSupported = func(n *node) bool {
-		switch n.op {
-		case "name", "number", "string", "literal":
-			return true
-		case "=", "!=", "<", ">", "<=", ">=", "and", "or":
-			return predicateSupported(n.children[0]) && predicateSupported(n.children[1])
-		}
-		return false
-	}
 	rootNode := n
 	var supported func(*node) bool
 	supported = func(n *node) bool {
@@ -60,7 +50,7 @@ func compileFastPlan(n *node) *fastPlan {
 				predicate := n.children[0].children[1]
 				switch predicate.op {
 				case "=", "!=", "<", ">", "<=", ">=", "and", "or":
-					return predicateSupported(predicate)
+					return fastProjectionPredicate(predicate)
 				}
 			}
 			return pathSupported(n)
@@ -756,6 +746,8 @@ func evalFastArithmetic(n *node, focus jsontrans.Node, b *budget.Budget) (float6
 	return v, !math.IsInf(v, 0) && !math.IsNaN(v), nil
 }
 
+// fastProjectionPredicate admits scalar comparisons and logical operators over
+// names and literals.
 func fastProjectionPredicate(n *node) bool {
 	switch n.op {
 	case "name", "number", "string", "literal":

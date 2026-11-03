@@ -1116,52 +1116,33 @@ func (x call) eval(e *evaluation, c any) (any, error) {
 	return result, nil
 }
 func (p *parser) expression() (expr, error) { return p.or() }
-func (p *parser) or() (expr, error) {
-	a, err := p.and()
+func (p *parser) or() (expr, error)         { return p.logicalChain("||", p.and) }
+func (p *parser) and() (expr, error)        { return p.logicalChain("&&", p.comparison) }
+
+// logicalChain parses operand (op operand)*, left-associative. Value-typed
+// operands are invalid on either side.
+func (p *parser) logicalChain(op string, operand func() (expr, error)) (expr, error) {
+	a, err := operand()
 	if err != nil {
 		return nil, err
 	}
 	for {
 		p.space()
-		if !p.take("||") {
+		if !p.take(op) {
 			return a, nil
 		}
 		if a.typ() == ValueType {
 			return nil, p.fail("invalid logical operand")
 		}
 		p.space()
-		b, err := p.and()
+		b, err := operand()
 		if err != nil {
 			return nil, err
 		}
 		if b.typ() == ValueType {
 			return nil, p.fail("invalid logical operand")
 		}
-		a = binary{"||", a, b}
-	}
-}
-func (p *parser) and() (expr, error) {
-	a, err := p.comparison()
-	if err != nil {
-		return nil, err
-	}
-	for {
-		p.space()
-		if !p.take("&&") {
-			return a, nil
-		}
-		if a.typ() == ValueType {
-			return nil, p.fail("invalid logical operand")
-		}
-		p.space()
-		b, err := p.comparison()
-		if err != nil {
-			return nil, err
-		}
-		if b.typ() == ValueType {
-			return nil, p.fail("invalid logical operand")
-		}
-		a = binary{"&&", a, b}
+		a = binary{op, a, b}
 	}
 }
 func singular(x expr) bool {

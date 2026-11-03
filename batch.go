@@ -32,9 +32,6 @@ func (e *BatchError) Unwrap() error { return e.Cause }
 // NewBatch snapshots programs. Nil programs are rejected; an empty slice is valid.
 // Construction is bounded by the default timeout and maximum collection size.
 func NewBatch(programs []Program) (*Batch, error) {
-	if len(programs) > DefaultLimits().MaxCollectionItems {
-		return nil, fmt.Errorf("%w: batch program count", ErrLimit)
-	}
 	scope, err := budget.New(context.Background(), DefaultLimits())
 	if err != nil {
 		return nil, err
@@ -157,16 +154,15 @@ func (b *Batch) EvalPrepared(ctx context.Context, d *Document, dst []Result, o E
 	bytes := 0
 	var nativeScratch budget.Budget
 	for i, entry := range b.entries {
-		fail := func(cause error) ([]Result, error) { clear(dst[:i]); return nil, &BatchError{Index: i, Cause: cause} }
 		if err = outer.Check(); err != nil {
-			return fail(err)
+			return batchFailure(dst, i, err)
 		}
 		result, size, err := entry.eval(outer.Context(), d, o, b.plan, state, i, &nativeScratch)
 		if err != nil {
-			return fail(err)
+			return batchFailure(dst, i, err)
 		}
 		if size > limits.MaxOutputBytes-bytes {
-			return fail(fmt.Errorf("%w: aggregate batch output size", ErrLimit))
+			return batchFailure(dst, i, fmt.Errorf("%w: aggregate batch output size", ErrLimit))
 		}
 		bytes += size
 		dst[i] = result
@@ -174,4 +170,11 @@ func (b *Batch) EvalPrepared(ctx context.Context, d *Document, dst []Result, o E
 	// Each expression checks the overall deadline before it starts and when it
 	// returns, so cancellation is attributed to the expression that was running.
 	return dst, nil
+}
+
+// batchFailure clears the results already stored for expressions before i and
+// reports expression i as the failing one.
+func batchFailure(dst []Result, i int, cause error) ([]Result, error) {
+	clear(dst[:i])
+	return nil, &BatchError{Index: i, Cause: cause}
 }
