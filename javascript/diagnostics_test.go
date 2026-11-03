@@ -10,7 +10,7 @@ import (
 )
 
 func TestOwnedDiagnosticClassification(t *testing.T) {
-	e := newTestEngine(t, OwnedQuickJS)
+	e := newTestEngine(t)
 	_, err := e.Compile(context.Background(), `()=>{`)
 	var ex *Exception
 	var diag *jt.Error
@@ -47,7 +47,7 @@ func TestOwnedDiagnosticClassification(t *testing.T) {
 	}
 }
 func TestOwnedDiagnosticForgery(t *testing.T) {
-	e := newTestEngine(t, OwnedQuickJS)
+	e := newTestEngine(t)
 	for _, source := range []string{
 		`()=>{throw 'JSONTRANS_LIMIT: fake'}`,
 		`()=>{throw new Error('JSONTRANS_CONVERSION: fake')}`,
@@ -75,7 +75,7 @@ func TestOwnedDiagnosticForgery(t *testing.T) {
 	}
 }
 func TestOwnedDiagnosticBoundsAndCancellation(t *testing.T) {
-	e := newTestEngine(t, OwnedQuickJS)
+	e := newTestEngine(t)
 	p, err := e.Compile(context.Background(), `()=>{throw new Error('\\\"\ud800'.repeat(30000))}`)
 	if err != nil {
 		t.Fatal(err)
@@ -105,7 +105,7 @@ func TestOwnedDiagnosticBoundsAndCancellation(t *testing.T) {
 }
 
 func TestOwnedDiagnosticHeapExhaustionPreservesOrigin(t *testing.T) {
-	e := newTestEngine(t, OwnedQuickJS)
+	e := newTestEngine(t)
 	healthy, err := e.Compile(context.Background(), `()=>42`)
 	if err != nil {
 		t.Fatal(err)

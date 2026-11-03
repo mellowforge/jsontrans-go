@@ -10,16 +10,16 @@ import (
 )
 
 func TestOwnedConstructorContextLifetime(t *testing.T) {
-	if _, err := NewOwned(nil, Config{}); err == nil {
+	if _, err := New(nil, Config{}); err == nil {
 		t.Fatal("nil context accepted")
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	if _, err := NewOwned(ctx, Config{}); !errors.Is(err, context.Canceled) {
+	if _, err := New(ctx, Config{}); !errors.Is(err, context.Canceled) {
 		t.Fatalf("canceled initialization: %v", err)
 	}
 	ctx, cancel = context.WithCancel(context.Background())
-	e, err := NewOwned(ctx, Config{Limits: jt.Limits{Timeout: semanticTestTimeout}})
+	e, err := New(ctx, Config{Limits: jt.Limits{Timeout: semanticTestTimeout}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,7 +66,7 @@ func TestOwnedCloseWaitsForCompleteCalls(t *testing.T) {
 	}
 }
 func TestOwnedClosePreservesContextCauses(t *testing.T) {
-	e := newTestEngine(t, OwnedQuickJS)
+	e := newTestEngine(t)
 	p, err := e.Compile(context.Background(), `x=>x`)
 	if err != nil {
 		t.Fatal(err)

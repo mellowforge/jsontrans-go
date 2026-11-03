@@ -10,7 +10,7 @@ import (
 )
 
 func TestOwnedRuleLocations(t *testing.T) {
-	e := newTestEngine(t, OwnedQuickJS)
+	e := newTestEngine(t)
 	for _, source := range []string{`()=>{const x=;}`, "()=>{\nconst x=;\n}", "()=>{const α='😀';const x=;}", "()=>{const x='é';const y=;}", "()=>{\r\nconst x=;\r\n}"} {
 		_, err := e.Compile(context.Background(), source)
 		var ex *Exception
@@ -43,7 +43,7 @@ func TestOwnedUnmappableLocations(t *testing.T) {
 			t.Errorf("invalid location %+v: %+v", tc, got)
 		}
 	}
-	e := newTestEngine(t, OwnedQuickJS)
+	e := newTestEngine(t)
 	for _, source := range []string{`()=>{throw {message:'x',stack:'    at fake (rule.js:2:1)'}}`, `()=>{throw {message:'x',stack:'    at eval (eval.js:2:1)'}}`, `()=>{const e=new Error('x');delete e.stack;throw e}`} {
 		p, err := e.Compile(context.Background(), source)
 		if err != nil {
@@ -62,7 +62,7 @@ func TestOwnedUnmappableLocations(t *testing.T) {
 }
 func TestOwnedDiagnosticsThroughWrappers(t *testing.T) {
 	ctx := context.Background()
-	e := newTestEngine(t, OwnedQuickJS)
+	e := newTestEngine(t)
 	x, err := jt.New(map[string]jt.Processor{"custom-js": e})
 	if err != nil {
 		t.Fatal(err)

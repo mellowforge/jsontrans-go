@@ -3,7 +3,7 @@ package javascript
 import (
 	"errors"
 	jt "github.com/mellowforge/jsontrans-go"
-	"github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm"
+	"github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm"
 	"regexp"
 	"strconv"
 	"strings"
@@ -61,12 +61,6 @@ func ownedDiagnostic(phase string, err error) error {
 		}
 	}
 	return &jt.Error{Processor: "javascript", Phase: phase, Cause: cause}
-}
-func ownedPhase(backend Backend, phase string, err error) error {
-	if backend == OwnedQuickJS {
-		return ownedDiagnostic(phase, err)
-	}
-	return err
 }
 
 var ruleFrame = regexp.MustCompile(`(?m)^    at (?:[^()\r\n]+ \()?rule\.js:([0-9]+):([0-9]+)\)?$`)

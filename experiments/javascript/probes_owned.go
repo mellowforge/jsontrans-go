@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
+	"encoding/json"
 	"github.com/fastschema/qjs"
 	jt "github.com/mellowforge/jsontrans-go"
-	"github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm"
 )
 
 func probeOwned(e *Engine, name string) (o Observation, handled bool) {
@@ -89,13 +89,29 @@ func probeOwned(e *Engine, name string) (o Observation, handled bool) {
 			o.Detail = err.Error()
 			return o, true
 		}
-		p := program.(*Program)
-		text, stats, err := e.owned.EvalStats(context.Background(), p.quick, p.quickBridge, `null`, `{}`, quickjswasm.Limits{Depth: 256, Items: 100000, Bytes: 16 << 20, Work: 1000000})
-		o.GuestBefore, o.GuestAfter = stats.GuestBefore, stats.GuestAfter
-		o.Detail = fmt.Sprintf("Wasm + runtime max 1024 pages (64 MiB), no shared configuration; result=%s error=%v", text, err)
-		if err == nil && stats.GuestAfter <= 64<<20 {
+
+		result, err := program.Eval(context.Background(), nil, jt.EvalOptions{})
+		if err != nil || result.Value != json.Number("41943040") {
+			o.Detail = fmt.Sprintf("default guest: %+v %v", result, err)
+			return o, true
+		}
+		small, err := NewOwned(context.Background(), Config{GuestMemoryBytes: 8 << 20})
+		if err != nil {
+			o.Detail = err.Error()
+			return o, true
+		}
+		defer small.Close()
+		limited, err := small.Compile(context.Background(), `()=>new ArrayBuffer(40*1024*1024).byteLength`)
+		if err != nil {
+			o.Detail = err.Error()
+			return o, true
+		}
+		_, err = limited.Eval(context.Background(), nil, jt.EvalOptions{})
+		o.Detail = fmt.Sprintf("public 64 MiB engine accepted 40 MiB; independent 8 MiB engine rejected it: %v; exact page/growth stats covered by canonical runtime tests", err)
+		if memoryProbeRejection(err) {
 			o.Status = "PASS"
 		}
+
 		return o, true
 	case "compile-cancel":
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond)
@@ -139,4 +155,13 @@ func probeOwned(e *Engine, name string) (o Observation, handled bool) {
 		return o, false // Generic loop-cancellation and recovery probe follows.
 	}
 	return o, false
+}
+
+// This matcher checks one fixed assessment expression, not arbitrary user errors.
+func memoryProbeRejection(err error) bool {
+	if err == nil || errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) || errors.Is(err, jt.ErrUnsupported) || errors.Is(err, ErrClosed) {
+		return false
+	}
+	var exception *Exception
+	return errors.As(err, &exception) && exception.Name == "InternalError" && exception.Message == "out of memory"
 }

@@ -10,7 +10,7 @@ import (
 )
 
 func TestOwnedCompileDoesNotRunInitialization(t *testing.T) {
-	e := newTestEngine(t, OwnedQuickJS)
+	e := newTestEngine(t)
 	p, err := e.Compile(context.Background(), `(()=>{throw new TypeError('init');})()`)
 	if err != nil {
 		t.Fatal(err)

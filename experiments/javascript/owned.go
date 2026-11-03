@@ -2,54 +2,34 @@ package javascript
 
 import (
 	"context"
-	"errors"
-
 	jt "github.com/mellowforge/jsontrans-go"
-	"github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm"
+	publicjs "github.com/mellowforge/jsontrans-go/javascript"
 )
 
-// ErrClosed identifies operations attempted on or interrupted by a closing engine.
-var ErrClosed = quickjswasm.ErrClosed
+// Assessment compatibility aliases; applications import the optional module.
+type Exception = publicjs.Exception
+type SourceLocation = publicjs.SourceLocation
 
-// NewOwned initializes the owned experimental backend. ctx bounds initialization
-// only; the caller owns the returned engine and must Close it.
+var ErrClosed = publicjs.ErrClosed
+
+// NewOwned forwards to the canonical optional processor module.
 func NewOwned(ctx context.Context, c Config) (*Engine, error) {
-	if ctx == nil {
-		return nil, errors.New("nil context")
-	}
-	return newEngine(ctx, OwnedQuickJS, c)
-}
-func (e *Engine) Compile(ctx context.Context, expr string) (program jt.Program, err error) {
-	if e.backend != OwnedQuickJS {
-		return e.compile(ctx, expr)
-	}
-	ctx, done, err := e.lifetime.begin(ctx)
+	owned, err := publicjs.New(ctx, c)
 	if err != nil {
-		return nil, ownedDiagnostic(jt.PhaseCompile, err)
-	}
-	defer done()
-	program, err = e.compile(ctx, expr)
-	err = ownedDiagnostic(jt.PhaseCompile, e.lifetime.failure(ctx, err))
-	if err != nil {
-		mapOwnedDiagnostic(expr, err)
 		return nil, err
 	}
-	return program, nil
+	c.Limits = owned.Limits()
+	if c.GuestMemoryBytes == 0 {
+		c.GuestMemoryBytes = 64 << 20
+	}
+	return &Engine{backend: OwnedQuickJS, config: c, owned: owned}, nil
 }
-func (p *Program) Eval(ctx context.Context, input any, o jt.EvalOptions) (result jt.Result, err error) {
-	if p.engine.backend != OwnedQuickJS {
-		return p.eval(ctx, input, o)
+func (e *Engine) Compile(ctx context.Context, expr string) (jt.Program, error) {
+	if e.owned != nil {
+		return e.owned.Compile(ctx, expr)
 	}
-	ctx, done, err := p.engine.lifetime.begin(ctx)
-	if err != nil {
-		return result, ownedDiagnostic(jt.PhaseEvaluate, err)
-	}
-	defer done()
-	result, err = p.eval(ctx, input, o)
-	err = ownedDiagnostic(jt.PhaseEvaluate, p.engine.lifetime.failure(ctx, err))
-	if err != nil {
-		mapOwnedDiagnostic(p.source, err)
-		return jt.Result{}, err
-	}
-	return result, nil
+	return e.compile(ctx, expr)
+}
+func (p *Program) Eval(ctx context.Context, input any, o jt.EvalOptions) (jt.Result, error) {
+	return p.eval(ctx, input, o)
 }

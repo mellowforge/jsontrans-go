@@ -13,9 +13,9 @@ import (
 	"strings"
 
 	jt "github.com/mellowforge/jsontrans-go"
-	"github.com/mellowforge/jsontrans-go/experiments/javascript/internal/quickjswasm"
 	"github.com/mellowforge/jsontrans-go/internal/budget"
 	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
+	publicjs "github.com/mellowforge/jsontrans-go/javascript"
 )
 
 type Backend string
@@ -26,24 +26,18 @@ const (
 	OwnedQuickJS Backend = "owned-quickjs"
 )
 
-type Config struct {
-	Limits           jt.Limits
-	GuestMemoryBytes int
-	GuestStackBytes  int
-}
+type Config = publicjs.Config
 type Engine struct {
-	backend  Backend
-	config   Config
-	dir      string
-	owned    *quickjswasm.Engine
-	lifetime *engineLifetime
+	backend Backend
+	config  Config
+	dir     string
+	owned   *publicjs.Engine
 }
 type Program struct {
 	engine      *Engine
 	quick       []byte
 	quickBridge []byte
 	goja        any
-	source      string
 }
 
 //go:embed bridge.js
@@ -79,16 +73,7 @@ func newEngine(ctx context.Context, backend Backend, c Config) (*Engine, error) 
 	if c.GuestMemoryBytes < 0 || c.GuestStackBytes < 0 {
 		return nil, jt.ErrLimit
 	}
-	if backend == OwnedQuickJS {
-		if c.GuestMemoryBytes%65536 != 0 || c.GuestMemoryBytes < 2<<20 || c.GuestMemoryBytes > 64<<20 || c.GuestStackBytes != 0 {
-			return nil, fmt.Errorf("%w: owned guest memory 2..64 MiB in pages; explicit JS stack quotas unsupported", jt.ErrUnsupported)
-		}
-		owned, err := quickjswasm.New(ctx, quickjswasm.Config{MemoryPages: uint32(c.GuestMemoryBytes / 65536), Timeout: l.Timeout})
-		if err != nil {
-			return nil, err
-		}
-		return &Engine{backend: backend, config: c, owned: owned, lifetime: newEngineLifetime()}, nil
-	}
+
 	dir, err := os.MkdirTemp("", "jsontrans-js-empty-")
 	if err != nil {
 		return nil, err
@@ -100,7 +85,7 @@ func newEngine(ctx context.Context, backend Backend, c Config) (*Engine, error) 
 // Baseline-wrapper calls must have finished first.
 func (e *Engine) Close() error {
 	if e.owned != nil {
-		return e.lifetime.close(e.owned.Close)
+		return e.owned.Close()
 	}
 	return os.Remove(e.dir)
 }
@@ -118,14 +103,7 @@ func (e *Engine) compile(ctx context.Context, expr string) (jt.Program, error) {
 	}
 	p := &Program{engine: e}
 	source := "(" + expr + "\n)"
-	if e.backend == OwnedQuickJS {
-		p.source = expr
-		source = "(\n" + expr + "\n)"
-		p.quick, err = e.owned.CompileNamed(b.Context(), source, "rule.js")
-		if err == nil {
-			p.quickBridge, err = e.owned.CompileNamed(b.Context(), bridge, "bridge.js")
-		}
-	} else if e.backend == Goja {
+	if e.backend == Goja {
 		p.goja, err = compileGoja(source)
 	} else {
 		p.quick, p.quickBridge, err = e.compileQuick(b.Context(), source)
@@ -139,9 +117,6 @@ func (e *Engine) compile(ctx context.Context, expr string) (jt.Program, error) {
 	return p, nil
 }
 func diagnostic(backend Backend, phase string, err error) error {
-	if backend == OwnedQuickJS {
-		return ownedDiagnostic(phase, err)
-	}
 	if err == nil {
 		return nil
 	}
@@ -173,7 +148,7 @@ func (p *Program) eval(ctx context.Context, input any, o jt.EvalOptions) (result
 	defer b.Close()
 	in, err := encodeInput(input, b)
 	if err != nil {
-		return result, ownedPhase(p.engine.backend, jt.PhaseInput, err)
+		return result, err
 	}
 	bindings := o.Bindings
 	if bindings == nil {
@@ -181,12 +156,10 @@ func (p *Program) eval(ctx context.Context, input any, o jt.EvalOptions) (result
 	}
 	vars, err := encodeInput(bindings, b)
 	if err != nil {
-		return result, ownedPhase(p.engine.backend, jt.PhaseBindings, err)
+		return result, err
 	}
 	var text string
-	if p.engine.backend == OwnedQuickJS {
-		text, err = p.engine.owned.Eval(b.Context(), p.quick, p.quickBridge, in, vars, quickjswasm.Limits{Depth: l.MaxDepth, Items: l.MaxCollectionItems, Bytes: l.MaxOutputBytes, Work: l.MaxSteps, Timeout: l.Timeout})
-	} else if p.engine.backend == Goja {
+	if p.engine.backend == Goja {
 		text, err = p.runGoja(b.Context(), in, vars, l)
 	} else {
 		text, err = p.runQuick(b.Context(), in, vars, l)
@@ -213,11 +186,11 @@ func (p *Program) eval(ctx context.Context, input any, o jt.EvalOptions) (result
 	v, err := jsonvalue.Decode(raw.Value, b)
 	b.Limits.MaxInputBytes = inputLimit
 	if err != nil {
-		return result, ownedPhase(p.engine.backend, jt.PhaseOutput, errors.Join(jt.ErrConversion, err))
+		return result, errors.Join(jt.ErrConversion, err)
 	}
 	v, _, err = jsonvalue.CloneDetachedSize(v, b, l.MaxOutputBytes)
 	if err != nil {
-		return result, ownedPhase(p.engine.backend, jt.PhaseOutput, errors.Join(jt.ErrConversion, err))
+		return result, errors.Join(jt.ErrConversion, err)
 	}
 	if err = b.Check(); err != nil {
 		return result, err
