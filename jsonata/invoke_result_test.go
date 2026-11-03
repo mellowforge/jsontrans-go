@@ -342,3 +342,46 @@ func TestInvokeLongNumberResultChargesSteps(t *testing.T) {
 		t.Fatalf("long number charged no steps at MaxSteps %d: %#v, %v", steps, got, err)
 	}
 }
+
+// Non-finite host numbers are raw language values whatever their Go width.
+func TestInvokePreservesNonfiniteFloat32Results(t *testing.T) {
+	for _, tc := range []struct {
+		value float32
+		valid func(float64) bool
+	}{
+		{float32(math.NaN()), math.IsNaN},
+		{float32(math.Inf(1)), func(v float64) bool { return math.IsInf(v, 1) }},
+	} {
+		got, err := jsonata.Invoke(context.Background(), constant([]any{tc.value}), nil, jt.EvalOptions{})
+		a, ok := got.([]any)
+		if err != nil || !ok || !tc.valid(a[0].(float64)) {
+			t.Fatalf("float32 %v: %#v, %v", tc.value, got, err)
+		}
+	}
+}
+
+// Overflowing JSON spellings are rejected explicitly, as on the input path.
+func TestInvokeRejectsOverflowingNumberResult(t *testing.T) {
+	got, err := jsonata.Invoke(context.Background(), constant(json.Number("1e400")), nil, jt.EvalOptions{})
+	if got != nil || !errors.Is(err, jt.ErrInvalidInput) || !strings.Contains(err.Error(), "binary64 range") {
+		t.Fatalf("overflowing number: %#v, %v", got, err)
+	}
+}
+
+// Unrepresentable results are conversion failures, as for Eval and host
+// function results; budget failures are not.
+func TestInvokeResultFailuresAreConversionErrors(t *testing.T) {
+	cycle := map[string]any{}
+	cycle["self"] = cycle
+	collision := map[string]any{"😀": float64(1), "\xed\xa0\xbd\xed\xb8\x80": float64(2)}
+	for i, value := range []any{cycle, make(chan int), collision, json.Number("bad")} {
+		_, err := jsonata.Invoke(context.Background(), constant(value), nil, jt.EvalOptions{})
+		if !errors.Is(err, jt.ErrConversion) || !errors.Is(err, jt.ErrInvalidInput) {
+			t.Fatalf("case %d: %v", i, err)
+		}
+	}
+	_, err := jsonata.Invoke(context.Background(), constant("abc"), nil, jt.EvalOptions{Limits: &jt.Limits{MaxOutputBytes: 2}})
+	if !errors.Is(err, jt.ErrLimit) || errors.Is(err, jt.ErrConversion) {
+		t.Fatalf("limit error: %v", err)
+	}
+}

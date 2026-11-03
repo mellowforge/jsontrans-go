@@ -37,6 +37,9 @@ func (c *rawResultCopier) charge(n int) error {
 	return nil
 }
 func (c *rawResultCopier) copy(v Value) (Value, error) {
+	if x, ok := v.(float32); ok {
+		v = float64(x)
+	}
 	languageScalar := IsUndefined(v)
 	if _, ok := v.(Callable); ok {
 		languageScalar = true
@@ -84,8 +87,12 @@ func (c *rawResultCopier) copy(v Value) (Value, error) {
 		if _, err := jsonvalue.Clone(x, c.b, math.MaxInt); err != nil {
 			return nil, err
 		}
-		v = normalize(x)
-	case float32, int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
+		n, err := x.Float64()
+		if err != nil {
+			return nil, fmt.Errorf("%w: number out of binary64 range", jsonvalue.ErrInvalid)
+		}
+		v = n
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
 		v = normalize(x)
 	}
 	out, size, err := jsonvalue.CloneDetachedSize(v, c.b, c.remaining)

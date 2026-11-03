@@ -2832,7 +2832,10 @@ func Invoke(ctx context.Context, fn Callable, args []Value, opts jsontrans.EvalO
 	}
 	out, err := cloneRawResult(value, b)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, budget.ErrLimit) || errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("%w: function result: %w", jsontrans.ErrConversion, err)
 	}
 	if err := b.Check(); err != nil {
 		return nil, err
