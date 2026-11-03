@@ -1,6 +1,7 @@
 package jsonata
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"reflect"
@@ -70,16 +71,28 @@ func (c *rawResultCopier) copy(v Value) (Value, error) {
 		}
 		v = nil
 	}
+	// Normalize Go numeric representations before measuring the JSONata
+	// binary64 result. Validate json.Number first so malformed spellings cannot
+	// turn into zero through normalize's trusted-runtime conversion.
+	switch x := v.(type) {
+	case json.Number:
+		for n := len(x); n > 0; n -= 4096 {
+			if err := c.b.Step(); err != nil {
+				return nil, err
+			}
+		}
+		if _, err := jsonvalue.Clone(x, c.b, math.MaxInt); err != nil {
+			return nil, err
+		}
+		v = normalize(x)
+	case float32, int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
+		v = normalize(x)
+	}
 	out, size, err := jsonvalue.CloneDetachedSize(v, c.b, c.remaining)
 	if err != nil {
 		return nil, err
 	}
 	out = normalize(out)
-	// Go numeric inputs still have to fit binary64. Nonfinite language floats
-	// were handled above, not introduced through normalization of host values.
-	if err := validateFinite(out, c.b); err != nil {
-		return nil, err
-	}
 	if err := c.charge(size); err != nil {
 		return nil, err
 	}
@@ -152,11 +165,15 @@ func (c *rawResultCopier) object(values map[string]any) (Value, error) {
 		if err := c.charge(1); err != nil {
 			return nil, err
 		}
+		canonical := normalize(key).(string)
+		if _, exists := out[canonical]; exists {
+			return nil, fmt.Errorf("%w: duplicate canonical key", jsonvalue.ErrInvalid)
+		}
 		value, err := c.copy(v)
 		if err != nil {
 			return nil, err
 		}
-		out[normalize(key).(string)] = value
+		out[canonical] = value
 	}
 	return out, nil
 }

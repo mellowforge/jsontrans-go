@@ -2,6 +2,7 @@ package jsonata_test
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"math"
 	"reflect"
@@ -147,4 +148,92 @@ func TestInvokeRawResultLimitsAndCancellation(t *testing.T) {
 	if !reflect.DeepEqual(value, []any{[]any{[]any{float64(1)}}}) {
 		t.Fatal("conversion mutated result")
 	}
+}
+
+func TestInvokeSizesNormalizedNumericResults(t *testing.T) {
+	for _, tc := range []struct {
+		value      any
+		limit      int
+		want       float64
+		limitError bool
+	}{
+		{json.Number("1.0000"), 1, 1, false},
+		{json.Number("1e-1"), 3, 0.1, false},
+		{int64(999999999999999999), 18, 1e18, true},
+	} {
+		fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return tc.value, nil }}
+		got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{Limits: &jt.Limits{MaxOutputBytes: tc.limit}})
+		if tc.limitError {
+			if got != nil || !errors.Is(err, jt.ErrLimit) {
+				t.Errorf("oversized normalized number: %#v, %v", got, err)
+			}
+		} else if err != nil || got != tc.want {
+			t.Errorf("normalized output: %#v, %v, want %v", got, err, tc.want)
+		}
+	}
+}
+
+func TestInvokeRejectsCanonicalKeyCollisions(t *testing.T) {
+	value := map[string]any{"😀": float64(1), "\xed\xa0\xbd\xed\xb8\x80": float64(2)}
+	fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
+	got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{})
+	if got != nil || !errors.Is(err, jt.ErrInvalidInput) {
+		t.Fatalf("canonical keys overwritten: %#v, %v", got, err)
+	}
+}
+
+func TestInvokePropagatesSequenceConversionLimit(t *testing.T) {
+	cycle := make(jsonata.Sequence, 1)
+	cycle[0] = cycle
+	fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return cycle, nil }}
+	got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{Limits: &jt.Limits{MaxDepth: 4}})
+	if got != nil || !errors.Is(err, jt.ErrLimit) {
+		t.Fatalf("conversion failure lost: %#v, %v", got, err)
+	}
+}
+
+func TestInvokeNormalizedNumericSizeIsCumulative(t *testing.T) {
+	for _, value := range []any{[]any{json.Number("1e3")}, []any{float32(1.2)}} {
+		fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
+		if got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{Limits: &jt.Limits{MaxOutputBytes: 5}}); got != nil || !errors.Is(err, jt.ErrLimit) {
+			t.Fatalf("nested normalized size ignored: %#v, %v", got, err)
+		}
+	}
+	for _, value := range []json.Number{"bad", "NaN", "1e9999"} {
+		fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
+		if got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{}); got != nil || !errors.Is(err, jt.ErrInvalidInput) {
+			t.Fatalf("invalid Go number admitted: %#v, %v", got, err)
+		}
+	}
+}
+
+func FuzzInvokeResultJSON(f *testing.F) {
+	for _, s := range []string{`null`, `1`, `"\n"`, `{"x":[1,2]}`, `["abc",false,{}]`} {
+		f.Add(s)
+	}
+	f.Fuzz(func(t *testing.T, s string) {
+		if len(s) > 2048 {
+			return
+		}
+		var value any
+		if err := json.Unmarshal([]byte(s), &value); err != nil {
+			return
+		}
+		encoded, err := json.Marshal(value)
+		if err != nil {
+			return
+		}
+		fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
+		opts := jt.EvalOptions{Limits: &jt.Limits{MaxInputBytes: 1, MaxOutputBytes: len(encoded), MaxDepth: 4096}}
+		got, err := jsonata.Invoke(context.Background(), fn, nil, opts)
+		if err != nil || !reflect.DeepEqual(got, value) {
+			t.Fatalf("raw result mismatch: %#v, %v; want %#v", got, err, value)
+		}
+		if len(encoded) > 1 {
+			opts.Limits.MaxOutputBytes--
+			if got, err := jsonata.Invoke(context.Background(), fn, nil, opts); got != nil || !errors.Is(err, jt.ErrLimit) {
+				t.Fatalf("size limit ignored: %#v, %v", got, err)
+			}
+		}
+	})
 }
