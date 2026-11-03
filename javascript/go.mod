@@ -1,0 +1,17 @@
+module github.com/mellowforge/jsontrans-go/javascript
+
+go 1.26.0
+
+toolchain go1.26.10
+
+require (
+	github.com/mellowforge/jsontrans-go v1.1.1-0.20261103173822-e9b9c0c71fe0
+	github.com/tetratelabs/wazero v1.9.0
+)
+
+require (
+	github.com/dlclark/regexp2/v2 v2.12.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
+)
+
+replace github.com/mellowforge/jsontrans-go => ..
