@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-04",
+  "base": "f5c53c4652151eda8c5c939c29fd74754b15edcc",
+  "toolchain": "go1.26.10",
+  "local_platform": "darwin/arm64",
+  "environment": {
+    "GOTOOLCHAIN": "go1.26.10",
+    "GOCACHE": "/tmp/jsontrans-go-build"
+  },
+  "checks": {
+    "baseline_core_scan": {
+      "command": "govulncheck -test ./...",
+      "exit_code": 3,
+      "file": "core-before.txt"
+    },
+    "updated_core_scan": {
+      "command": "govulncheck -test ./...",
+      "exit_code": 0,
+      "file": "core-after.txt"
+    },
+    "core": {
+      "command": "go test ./... && go test -race ./... && go vet ./... && go mod verify && go test -tags oracle ./conformance ./jsonata",
+      "exit_code": 0
+    },
+    "public": {
+      "command": "go -C javascript test ./... && go -C javascript test -race ./... && go -C javascript vet ./... && go -C javascript mod verify && python3 javascript/scripts/test_check_module.py && python3 javascript/scripts/check_module.py",
+      "exit_code": 0
+    },
+    "assessment": {
+      "command": "go -C experiments/javascript test ./... && go -C experiments/javascript test -race ./... && go -C experiments/javascript vet ./... && go -C experiments/javascript mod verify && go -C experiments/javascript test -run ^$ -fuzz ^FuzzStringConversion$ -fuzztime=1000x -parallel=2",
+      "exit_code": 0
+    },
+    "owned_probes": {
+      "command": "CGO_ENABLED=0 go -C experiments/javascript build -o /tmp/jsontrans-pr-a-assess ./cmd/assess && python3 experiments/javascript/run_probes.py --binary /tmp/jsontrans-pr-a-assess --backend owned-quickjs --strict --output /tmp/jsontrans-pr-a-owned-probes.json",
+      "exit_code": 0,
+      "passed": 21
+    },
+    "public_fuzz": {
+      "exit_code": 0,
+      "targets": {
+        "FuzzOwnedStringConversion": "200x",
+        "FuzzOwnedJSONConversion": "500x",
+        "FuzzOwnedCompile": "200x",
+        "FuzzDiagnosticRecord": "1000x",
+        "FuzzRuleLocation": "1000x"
+      },
+      "parallel": 2
+    },
+    "soak": {
+      "command": "go -C javascript run ./cmd/hardening -iterations 50 -workers 4 -cycles 2",
+      "exit_code": 0,
+      "verified_recoveries": 400
+    },
+    "guest_rebuild": {
+      "command": "python3 javascript/internal/quickjswasm/guest/build.py --output /tmp/jsontrans-pr-a-quickjs.wasm && cmp javascript/internal/quickjswasm/quickjs.wasm /tmp/jsontrans-pr-a-quickjs.wasm",
+      "exit_code": 0,
+      "sha256": "29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e"
+    },
+    "security_gate_tests": {
+      "command": "python3 -m unittest discover -s scripts -p 'test_check_go_security.py'",
+      "exit_code": 0,
+      "passed": 13
+    },
+    "formatting": {
+      "command": "gofmt -l .",
+      "exit_code": 0,
+      "output": ""
+    }
+  },
+  "platform_execution": "CI required; cross-target scans do not execute target binaries"
+}

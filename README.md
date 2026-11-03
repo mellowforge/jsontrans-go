@@ -229,6 +229,7 @@ batches, host functions, and JSONata's raw-value API.
 - [API reference](https://pkg.go.dev/github.com/mellowforge/jsontrans-go)
 - [Contributing and development commands](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
+- [Go dependency security updates and scan coverage](docs/javascript-go-security-updates.md)
 - [JavaScript feasibility assessment](docs/javascript-assessment.md) (experimental)
 - [Owned QuickJS runtime checkpoint](docs/quickjs-runtime-foundation.md)
 - [Optional JavaScript processor](javascript/README.md) (preview module)

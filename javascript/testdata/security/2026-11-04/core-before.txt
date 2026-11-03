@@ -1,0 +1,16 @@
+=== Symbol Results ===
+
+Vulnerability #1: GO-2026-5970
+    Infinite loop on invalid input in golang.org/x/text
+  More info: https://pkg.go.dev/vuln/GO-2026-5970
+  Module: golang.org/x/text
+    Found in: golang.org/x/text@v0.36.0
+    Fixed in: golang.org/x/text@v0.39.0
+    Example traces found:
+      #1: jsonata/builtins_string.go:248:34: jsonata.builtinUnicodeCase calls cases.Caser.Transform, which eventually calls norm.Form.Properties
+
+Your code is affected by 1 vulnerability from 1 module.
+This scan also found 0 vulnerabilities in packages you import and 1
+vulnerability in modules you require, but your code doesn't appear to call these
+vulnerabilities.
+Use '-show verbose' for more details.

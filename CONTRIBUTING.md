@@ -55,3 +55,21 @@ The root go.mod/go.sum must not acquire JavaScript runtime dependencies.
 consumption with no consumer replace/workspace. Run module tests first to cache
 dependencies and use a checkout with full Git history for minimum-core validation.
 Future JS release tags use `javascript/vX.Y.Z`; extraction does not tag a release.
+
+The Go security gate scans all three modules with tests and a CGO-free public
+example. From the repository root:
+
+```sh
+GOBIN=/tmp/jsontrans-security-tools go install golang.org/x/vuln/cmd/govulncheck@v1.9.0
+python3 -m unittest discover -s scripts -p 'test_check_go_security.py'
+python3 scripts/check_go_security.py --govulncheck /tmp/jsontrans-security-tools/govulncheck --output /tmp/jsontrans-go-security
+```
+
+Installation and real scans require network access; the Python tests do not.
+The output directory retains scanner streams, stderr, module inventories and a
+report. JSON-mode exit zero alone is not a pass. Cross-target runs set GOOS,
+GOARCH and CGO_ENABLED=0 for the gate, while the scanner executable stays on the
+host platform. See the [coverage policy and C-engine limitations](docs/javascript-go-security-updates.md).
+The assessment's [QJS compatibility copy](experiments/javascript/internal/qjscompat/README.md)
+has pinned provenance and a recorded patch; review upstream advisories and
+preserve notices when changing it. It must stay outside the public adapter.
