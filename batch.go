@@ -153,9 +153,9 @@ func (b *Batch) EvalPrepared(ctx context.Context, d *Document, dst []Result, o E
 	}
 	bytes := 0
 	var nativeScratch budget.Budget
-	// Overrides commonly apply to many adjacent programs with identical
-	// defaults. Keep just one call-local resolved configuration; heterogeneous
-	// batches remain bounded without a per-call map or allocation.
+	// With an override, adjacent entries that share configured limits reuse one
+	// resolved value. This single-slot cache keeps heterogeneous batches at no
+	// more than one Resolve per entry, with no map or allocation.
 	var previousBase, resolved Limits
 	haveResolved := false
 	for i := range b.entries {
@@ -168,7 +168,13 @@ func (b *Batch) EvalPrepared(ctx context.Context, d *Document, dst []Result, o E
 			if !haveResolved || previousBase != *l {
 				resolved, err = budget.Resolve(*l, o.Limits)
 				if err != nil {
-					return batchFailure(dst, i, diagnostic(entry.name, PhaseEvaluate, err))
+					// Resolve fails only for negative override fields, which the
+					// outer Resolve above already rejects. Wrap as preparedEntry.eval
+					// does in case that ever changes.
+					if entry.name != "" {
+						err = diagnostic(entry.name, PhaseEvaluate, err)
+					}
+					return batchFailure(dst, i, err)
 				}
 				previousBase, haveResolved = *l, true
 			}

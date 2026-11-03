@@ -18,7 +18,8 @@ go test ./internal/document -run '^$' -fuzz '^FuzzPrepareAndMaterialize$' -fuzzt
 ```
 
 Fuzz the target closest to a change as well: `FuzzIRegexp` (`./jsonpath`),
-`FuzzPreparedNestedPlans` (`./jsonata`) and `FuzzJSONHelpers` (root package).
+`FuzzPreparedNestedPlans` (`./jsonata`), `FuzzInvokeResultJSON` (`./jsonata`,
+for `Invoke` and raw results) and `FuzzJSONHelpers` (root package).
 
 Go tests and committed fixture snapshots work offline after downloading Go
 module dependencies. Every conformance failure is a release blocker; do not

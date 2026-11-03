@@ -35,7 +35,7 @@ func TestBatchAlternatingResolvedConfigurations(t *testing.T) {
 			l := req.Limits
 			return prepared.Result{Value: []any{int64(l.MaxSteps), l.MaxDepth, int64(l.RegexTimeout)}, Defined: true, Bytes: 32}, nil
 		})
-		return &checkedProgram{name: "test", program: p, configured: wrapper}
+		return mustChecked(t, "test", p, wrapper)
 	}
 	a, b := DefaultLimits(), DefaultLimits()
 	a.MaxSteps, a.MaxDepth, a.RegexTimeout = 500, 40, 300*time.Millisecond
@@ -47,13 +47,16 @@ func TestBatchAlternatingResolvedConfigurations(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	want := func(steps int64, depth int, regex time.Duration) []any { return []any{steps, depth, int64(regex)} }
+	// Entries run in the order p, p, q, q, p.
+	pattern := func(p, q []any) [][]any { return [][]any{p, p, q, q, p} }
 	for _, tc := range []struct {
 		opts  EvalOptions
 		wants [][]any
 	}{
-		{EvalOptions{}, [][]any{{int64(500), 40, int64(300 * time.Millisecond)}, {int64(500), 40, int64(300 * time.Millisecond)}, {int64(700), 20, int64(100 * time.Millisecond)}, {int64(700), 20, int64(100 * time.Millisecond)}, {int64(500), 40, int64(300 * time.Millisecond)}}},
-		{EvalOptions{Limits: &Limits{MaxSteps: 1000, RegexTimeout: time.Second}}, [][]any{{int64(1000), 40, int64(time.Second)}, {int64(1000), 40, int64(time.Second)}, {int64(1000), 20, int64(time.Second)}, {int64(1000), 20, int64(time.Second)}, {int64(1000), 40, int64(time.Second)}}},
-		{EvalOptions{Limits: &Limits{MaxSteps: 200}}, [][]any{{int64(200), 40, int64(300 * time.Millisecond)}, {int64(200), 40, int64(300 * time.Millisecond)}, {int64(200), 20, int64(100 * time.Millisecond)}, {int64(200), 20, int64(100 * time.Millisecond)}, {int64(200), 40, int64(300 * time.Millisecond)}}},
+		{EvalOptions{}, pattern(want(500, 40, 300*time.Millisecond), want(700, 20, 100*time.Millisecond))},
+		{EvalOptions{Limits: &Limits{MaxSteps: 1000, RegexTimeout: time.Second}}, pattern(want(1000, 40, time.Second), want(1000, 20, time.Second))},
+		{EvalOptions{Limits: &Limits{MaxSteps: 200}}, pattern(want(200, 40, 300*time.Millisecond), want(200, 20, 100*time.Millisecond))},
 	} {
 		var wg sync.WaitGroup
 		for range 4 {
@@ -63,8 +66,12 @@ func TestBatchAlternatingResolvedConfigurations(t *testing.T) {
 					t.Error(err)
 					return
 				}
+				if len(got) != len(tc.wants) {
+					t.Errorf("results: %d, want %d", len(got), len(tc.wants))
+					return
+				}
 				for i, r := range got {
-					if !reflect.DeepEqual(r.Value, tc.wants[i]) {
+					if !r.Defined || !reflect.DeepEqual(r.Value, tc.wants[i]) {
 						t.Errorf("entry %d: %#v, want %#v", i, r.Value, tc.wants[i])
 					}
 				}
@@ -105,4 +112,191 @@ func TestBatchResolvedOptionsStayPrivate(t *testing.T) {
 	if l.MaxSteps != 400 || !reflect.DeepEqual(p.seen, []int64{400, 400, 400, 400}) {
 		t.Fatalf("limits escaped: %#v, seen %v", l, p.seen)
 	}
+}
+
+type limitsProcessor struct{ seen *[]Limits }
+
+func (p limitsProcessor) Limits() Limits { l := DefaultLimits(); l.MaxSteps = 77; return l }
+func (p limitsProcessor) Compile(context.Context, string) (Program, error) {
+	return limitsRecorder(p), nil
+}
+
+// limitsRecorder deliberately does not implement LimitsProvider: only its
+// processor reports configured limits.
+type limitsRecorder limitsProcessor
+
+func (p limitsRecorder) Eval(_ context.Context, _ any, o EvalOptions) (Result, error) {
+	if o.Limits == nil {
+		*p.seen = append(*p.seen, Limits{})
+	} else {
+		*p.seen = append(*p.seen, *o.Limits)
+	}
+	return Result{Value: true, Defined: true}, nil
+}
+
+// Registry-configured limits reach external adapters on ordinary, prepared and
+// batch paths, with or without a per-call override.
+func TestExternalReceivesConfiguredLimits(t *testing.T) {
+	ctx := context.Background()
+	var seen []Limits
+	x, err := New(map[string]Processor{"x": limitsProcessor{seen: &seen}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := x.Compile(ctx, "x", "e")
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, err := x.CompileBatch(ctx, "x", []string{"e"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	d, err := PrepareJSON(ctx, []byte(`null`), PrepareOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, o := range []EvalOptions{{}, {Limits: &Limits{MaxDepth: 5}}} {
+		seen = seen[:0]
+		if _, err := p.Eval(ctx, nil, o); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := EvalPrepared(ctx, p, d, o); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := b.EvalPrepared(ctx, d, nil, o); err != nil {
+			t.Fatal(err)
+		}
+		if len(seen) != 3 {
+			t.Fatalf("calls: %d", len(seen))
+		}
+		for i, l := range seen {
+			if l.MaxSteps != 77 || (o.Limits != nil) != (l.MaxDepth == 5) {
+				t.Fatalf("path %d received %+v with override %v", i, l, o.Limits)
+			}
+		}
+	}
+}
+
+type nativeLimitsRecorder struct {
+	configured Limits
+	seen       []*Limits
+}
+
+func (p *nativeLimitsRecorder) Limits() Limits { return p.configured }
+func (p *nativeLimitsRecorder) Eval(_ context.Context, _ any, o EvalOptions) (Result, error) {
+	if o.Limits != nil {
+		l := *o.Limits
+		o.Limits = &l
+	}
+	p.seen = append(p.seen, o.Limits)
+	return Result{Value: true, Defined: true}, nil
+}
+
+// Program.Eval forwards the stricter of wrapper and program ceilings, keeps
+// the program's regex timeout unless overridden, and forwards nothing when
+// every configuration is the default so engine fast paths stay available.
+func TestEvalForwardsCombinedLimits(t *testing.T) {
+	ctx := context.Background()
+	native := DefaultLimits()
+	native.MaxSteps, native.RegexTimeout = 300, 250*time.Millisecond
+	wrapper := DefaultLimits()
+	wrapper.MaxSteps, wrapper.MaxDepth = 200, 30
+	p := &nativeLimitsRecorder{configured: native}
+	checked := mustChecked(t, "test", p, wrapper)
+	for _, o := range []EvalOptions{{}, {Limits: &Limits{RegexTimeout: time.Second, MaxDepth: 40}}} {
+		if _, err := checked.Eval(ctx, nil, o); err != nil {
+			t.Fatal(err)
+		}
+	}
+	want := []Limits{native, native}
+	want[0].MaxSteps, want[0].MaxDepth = 200, 30
+	want[1].MaxSteps, want[1].MaxDepth, want[1].RegexTimeout = 200, 40, time.Second
+	if len(p.seen) != 2 || p.seen[0] == nil || p.seen[1] == nil || *p.seen[0] != want[0] || *p.seen[1] != want[1] {
+		t.Fatalf("forwarded %+v", p.seen)
+	}
+	plain := &nativeLimitsRecorder{configured: DefaultLimits()}
+	if _, err := (mustChecked(t, "test", plain, DefaultLimits())).Eval(ctx, nil, EvalOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	if len(plain.seen) != 1 || plain.seen[0] != nil {
+		t.Fatalf("default configuration forwarded %+v", plain.seen)
+	}
+}
+
+// A per-call override marks native requests as customized, which disables
+// engine fast paths; default calls stay uncustomized on both paths.
+func TestPreparedOverrideMarksNativeRequestCustomized(t *testing.T) {
+	ctx := context.Background()
+	var customized []bool
+	p := &setupProgram{configured: DefaultLimits()}
+	p.handler = prepared.NewReusable(p, func(req prepared.Request) (prepared.Result, error) {
+		customized = append(customized, req.Customized)
+		return prepared.Result{Value: true, Defined: true, Bytes: 4}, nil
+	})
+	b, err := NewBatch([]Program{p})
+	if err != nil {
+		t.Fatal(err)
+	}
+	d, err := PrepareJSON(ctx, []byte(`null`), PrepareOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, o := range []EvalOptions{{}, {Limits: &Limits{MaxSteps: 500}}} {
+		if _, err := EvalPrepared(ctx, p, d, o); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := b.EvalPrepared(ctx, d, nil, o); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if !reflect.DeepEqual(customized, []bool{false, false, true, true}) {
+		t.Fatalf("customized flags: %v", customized)
+	}
+}
+
+// A wrapper that raises a ceiling or sets only a regex timeout customizes the
+// entry even though the intersected native limits stay at the defaults.
+func TestPreparedWrapperCustomizationWithDefaultEffectiveLimits(t *testing.T) {
+	ctx := context.Background()
+	d, err := PrepareJSON(ctx, []byte(`null`), PrepareOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	raised, regex := DefaultLimits(), DefaultLimits()
+	raised.MaxSteps *= 2
+	regex.RegexTimeout *= 2
+	for _, wrapper := range []Limits{raised, regex} {
+		var customized []bool
+		native := &setupProgram{configured: DefaultLimits()}
+		native.handler = prepared.NewReusable(native, func(req prepared.Request) (prepared.Result, error) {
+			if req.Limits != DefaultLimits() {
+				t.Errorf("effective limits %+v", req.Limits)
+			}
+			customized = append(customized, req.Customized)
+			return prepared.Result{Value: true, Defined: true, Bytes: 4}, nil
+		})
+		p := mustChecked(t, "test", native, wrapper)
+		b, err := NewBatch([]Program{p})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := EvalPrepared(ctx, p, d, EvalOptions{}); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := b.EvalPrepared(ctx, d, nil, EvalOptions{}); err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(customized, []bool{true, true}) {
+			t.Fatalf("wrapper %+v: customized %v", wrapper, customized)
+		}
+	}
+}
+
+func mustChecked(t testing.TB, name string, program Program, configured Limits) *checkedProgram {
+	t.Helper()
+	p, err := newCheckedProgram(name, program, configured)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return p
 }

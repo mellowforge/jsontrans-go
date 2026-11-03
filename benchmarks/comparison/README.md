@@ -104,7 +104,8 @@ results and the remaining 1 KiB simple/N64 gap are discussed in
 
 ## Deadline-check comparison
 
-The current deadline pass is measured by `python3 run-deadline.py`. It runs
+The deadline pass (historical) is measured by `python3 run-deadline.py`, which
+the batch setup scripts below also reuse as their shared harness. It runs
 seven representative cases with five 200ms samples for all six batch/gnata
 modes, alternating the prior/current source per case, and validates all 420
 samples plus unchanged runtime hashes. Raw results, medians/ranges, environment,

@@ -23,7 +23,7 @@ go test ./jsonata  -run '^$' -fuzz '^FuzzCompileAndEval$' -fuzztime=10s
 go test ./internal/document -run '^$' -fuzz '^FuzzPrepareAndMaterialize$' -fuzztime=10s
 ```
 
-Also fuzz the target closest to a change: `FuzzIRegexp` (`./jsonpath`), `FuzzPreparedNestedPlans` (`./jsonata`), `FuzzJSONHelpers` (root).
+Also fuzz the target closest to a change: `FuzzIRegexp` (`./jsonpath`), `FuzzPreparedNestedPlans` (`./jsonata`), `FuzzInvokeResultJSON` (`./jsonata`, Invoke/raw results), `FuzzJSONHelpers` (root).
 
 Single tests and conformance cases:
 
@@ -86,7 +86,7 @@ go test -tags oracle ./conformance ./jsonata
 
 **Errors.** `jsontrans.Error` carries native code and position (JSONata: UTF-16 units; JSONPath: bytes). `internal/errchain.Find` locates a processor's own diagnostic in a wrapped chain without crossing another processor's; keep wrapped causes reachable with `errors.Is`.
 
-**Options and limits.** Engine `Option`s act on unexported construction state, so they cannot alter a live engine. Configured limits are defaults: `EvalOptions.Limits` replaces each nonzero field and may raise them.
+**Options and limits.** Engine `Option`s act on unexported construction state, so they cannot alter a live engine. Configured limits are defaults: `EvalOptions.Limits` replaces each nonzero field and may raise them. Registry wrappers forward wrapper ∩ program limits (program regex timeout, then the override) to the program on every evaluation path, and forward nil when everything is default.
 
 ## Conformance
 

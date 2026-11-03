@@ -134,8 +134,6 @@ func CloneDetached(v any, b *budget.Budget, maxBytes int) (any, error) {
 	return c.copy(v)
 }
 
-// CloneDetachedSize validates and detaches a value while measuring its exact
-// encoded JSON size in the same bounded traversal.
 // CloneBindings detaches evaluation bindings. Keys with isolated surrogates
 // are kept; the result is always a plain map.
 func CloneBindings(bindings map[string]any, b *budget.Budget, maxBytes int) (map[string]any, error) {
@@ -149,6 +147,8 @@ func CloneBindings(bindings map[string]any, b *budget.Budget, maxBytes int) (map
 	return value.(map[string]any), nil
 }
 
+// CloneDetachedSize validates and detaches a value while measuring its exact
+// encoded JSON size in the same bounded traversal.
 func CloneDetachedSize(v any, b *budget.Budget, maxBytes int) (any, int, error) {
 	c := copier{b: b, remaining: maxBytes, active: make(map[reference]bool), detach: true}
 	out, err := c.copy(v)

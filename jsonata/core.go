@@ -2794,8 +2794,12 @@ func definingLimits(fn Callable) budget.Limits {
 
 // Invoke calls a raw JSONata function with a fresh, evaluation-local budget.
 // Limits default to those of the engine whose evaluation created fn, and
-// opts.Limits may raise or lower them. JSON-shaped arguments are detached
-// before calling the function.
+// opts.Limits may raise or lower them. JSON-shaped arguments are validated and
+// detached under MaxInputBytes before calling the function. The result is a
+// detached copy charged against MaxOutputBytes: JSON values cost their encoded
+// size, while functions, missing values and non-finite numbers are preserved
+// and cost one unit each. Results that cannot be represented, such as cycles or
+// canonical key collisions, fail with jsontrans.ErrConversion.
 func Invoke(ctx context.Context, fn Callable, args []Value, opts jsontrans.EvalOptions) (Value, error) {
 	if fn == nil {
 		return nil, fmt.Errorf("nil function")
@@ -2832,7 +2836,10 @@ func Invoke(ctx context.Context, fn Callable, args []Value, opts jsontrans.EvalO
 	}
 	out, err := cloneRawResult(value, b)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, budget.ErrLimit) || errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("%w: function result: %w", jsontrans.ErrConversion, err)
 	}
 	if err := b.Check(); err != nil {
 		return nil, err

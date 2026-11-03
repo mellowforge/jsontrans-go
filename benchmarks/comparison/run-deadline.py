@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Five-sample matched deadline-pass comparison; run in this directory."""
+"""Five-sample matched batch comparison; run in this directory.
+
+Records the deadline pass by default and is the shared harness for the batch
+setup scripts, which override BEFORE, OUT and LABEL.
+"""
 import csv
 import hashlib
 import os
@@ -33,18 +37,39 @@ def source_hash(root):
     return h.hexdigest()
 
 
+REPLACE = "replace github.com/mellowforge/jsontrans-go => ../.."
+
+
+def require(condition, message):
+    """Fail even under python -O, where assert statements are removed."""
+    if not condition:
+        raise RuntimeError(message)
+
+
+def write_before_modfile(directory, before):
+    """Point a go.mod copy at the before snapshot; fail if the replace moved."""
+    text = (HERE / "go.mod").read_text()
+    require(text.count(REPLACE) == 1, f"go.mod no longer contains exactly one {REPLACE!r}")
+    mod = Path(directory) / "before.mod"
+    mod.write_text(text.replace(REPLACE, f"replace github.com/mellowforge/jsontrans-go => {before}"))
+    mod.with_suffix(".sum").write_bytes((HERE / "go.sum").read_bytes())
+    return mod
+
+
+def source_hashes(before):
+    hashes = {"before": source_hash(before), "current": source_hash(ROOT)}
+    require(hashes["before"] != hashes["current"], f"{before} has the same runtime source as the current tree")
+    return hashes
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    hashes = {"before": source_hash(BEFORE), "current": source_hash(ROOT)}
+    hashes = source_hashes(BEFORE)
     (OUT / "source-before.txt").write_text(str(hashes) + "\n")
     row_re = re.compile(r"^BenchmarkCompiledBatch/(\d+)/(\w+)/N(\d+)/(.+)-\d+\s+\d+\s+([\d.]+) ns/op\s+([\d.]+) B/op\s+([\d.]+) allocs/op$")
     samples = {}
     with tempfile.TemporaryDirectory(prefix="jsontrans-deadline-mod-") as temp:
-        mod = Path(temp) / "before.mod"
-        mod.write_text((HERE / "go.mod").read_text().replace(
-            "replace github.com/mellowforge/jsontrans-go => ../..",
-            f"replace github.com/mellowforge/jsontrans-go => {BEFORE}"))
-        mod.with_suffix(".sum").write_bytes((HERE / "go.sum").read_bytes())
+        mod = write_before_modfile(temp, BEFORE)
         for size, kind, n in CASES:
             for version in ("before", "current"):
                 cmd = ["go", "test"]
@@ -65,11 +90,11 @@ def main():
                         a, k, count, op, ns, byte_count, allocs = match.groups()
                         key = (version, int(a), k, int(count), op)
                         samples.setdefault(key, []).append(tuple(map(float, (ns, byte_count, allocs))))
-    assert len(samples) == len(CASES) * 2 * 6, len(samples)
-    assert all(len(rows) == 5 for rows in samples.values())
-    after = {"before": source_hash(BEFORE), "current": source_hash(ROOT)}
+    require(len(samples) == len(CASES) * 2 * 6, f"unexpected operation count {len(samples)}")
+    require(all(len(rows) == 5 for rows in samples.values()), "missing samples")
+    after = source_hashes(BEFORE)
     (OUT / "source-after.txt").write_text(str(after) + "\n")
-    assert hashes == after, "runtime source changed during measurement"
+    require(hashes == after, "runtime source changed during measurement")
     with (OUT / "medians.csv").open("w", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
         writer.writerow(["source", "bytes", "workload", "rules", "operation", "samples",

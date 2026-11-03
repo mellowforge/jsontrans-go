@@ -525,3 +525,24 @@ func TestBatchErrorAttribution(t *testing.T) {
 		}
 	})
 }
+
+// A wrapper's step ceiling bounds native evaluation on the ordinary path too,
+// not only conversion of the input.
+func TestEvalAppliesWrapperLimitsToNativeEngine(t *testing.T) {
+	ctx := context.Background()
+	engine, err := jsonata.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	transformer, _ := jt.New(map[string]jt.Processor{"forward": constrainedForwarder{forwardingProcessor{engine}, jt.Limits{MaxSteps: 50}}})
+	p, err := transformer.Compile(ctx, "forward", `$sum([1..500])`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := p.Eval(ctx, nil, jt.EvalOptions{}); !errors.Is(err, jt.ErrLimit) {
+		t.Fatalf("wrapper step limit ignored: %v", err)
+	}
+	if r, err := p.Eval(ctx, nil, jt.EvalOptions{Limits: &jt.Limits{MaxSteps: 100000}}); err != nil || r.Value != float64(125250) {
+		t.Fatalf("override: %#v, %v", r, err)
+	}
+}

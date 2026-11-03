@@ -14,7 +14,7 @@
 
 - Preserve JSONPath RFC 9535 and JSONata 2.2.2, native diagnostics, missing/null, caller ownership, and concurrent reuse.
 - Keep per-expression counters, configured limits, option overrides, error attribution, host lifetimes and cancellation checkpoints.
-- Raw non-JSON scalar values remain raw; JSON-shaped values use exact encoded JSON size for output accounting. Missing/functions/non-finite scalars count one bounded token when nested.
+- Raw non-JSON scalar values remain raw; JSON-shaped values use exact encoded JSON size for output accounting. Missing/functions/non-finite scalars count one bounded token each.
 - No new public API, global cache, execution-check frequency change, dependencies, pushes or releases.
 - Run formatting, tests, race, vet, oracle/parity and focused fuzz checks. Retain optimization only with useful measured evidence and no correctness regression.
 
@@ -59,7 +59,7 @@ Produces: constructor-resolved entry metadata and evaluation-local reuse of reso
 ## Outcome
 
 Invoke fixes and final-review regressions pass. Retained the pointer-based batch
-setup variant after 420 broad and 150 alternating-order samples. Reuse medians
-improved 8%/3%/14% on simple/mixed/distinct workloads, allocations unchanged;
+setup variant after 420 broad and 150 alternating-order samples. Confirmation-run
+reuse medians improved 8%/3%/14% on simple/mixed/distinct workloads, allocations unchanged;
 preparation-inclusive results remain mixed under machine-load variation. Both
 datasets are preserved without excluding slow blocks. See docs/performance.md.

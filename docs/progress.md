@@ -104,7 +104,8 @@ in docs/performance.md. No release/publication.
   sequence-conversion failures are rejected. Regressions and a raw-result fuzz
   target cover these boundaries.
 - Prepared entries combine immutable configuration at construction; batch calls
-  reuse adjacent equivalent override resolution and avoid copying limit structs.
+  reuse adjacent equivalent override resolution and pass limits by reference
+  internally instead of copying them at each hop.
   Per-expression budgets, cancellation checks and callback scope ownership remain.
 - Retained after 570 accepted samples across broad and alternating-order runs.
   Document-reuse confirmation medians improve 8% simple, 3% mixed and 14% distinct
@@ -112,3 +113,21 @@ in docs/performance.md. No release/publication.
   Allocation counts are unchanged. No general throughput improvement is claimed.
 - Full tests, race, vet, formatting, oracle/parity and bounded fuzz checks pass.
   Independent review findings were addressed with RED→GREEN regressions; none deferred.
+
+## 2026-11-03: Review follow-up for Invoke results and batch setup
+
+- Raw Invoke results: non-finite float32 host values are preserved like float64,
+  overflowing `json.Number` results are rejected explicitly, and unrepresentable
+  results report `ErrConversion` (still matching `ErrInvalidInput`).
+- Tests now pin shared sibling containers, array cycles, collection limits,
+  UTF-16 types, nil containers, language-scalar depth/token charges, limits
+  forwarded to external adapters, override customization, and wrapper-only
+  customization. `FuzzInvokeResultJSON` also covers Sequence and NaN shapes.
+- Benchmark scripts fail if the before build would use the current source.
+- Docs, godoc and `preparedEntry` invariants corrected; hot paths unchanged
+  apart from a guard on an unreachable batch error branch.
+- `Program.Eval` on registry programs now forwards configured limits like the
+  prepared paths (wrapper ∩ program, program regex timeout, then override), so a
+  processor's step/depth ceilings bound native evaluation, not just input
+  conversion. Nothing is forwarded when all configurations are default; the
+  forwarded base is fixed at compile time (no measurable cost, same allocations).
