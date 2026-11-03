@@ -47,13 +47,16 @@ func TestBatchAlternatingResolvedConfigurations(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	want := func(steps int64, depth int, regex time.Duration) []any { return []any{steps, depth, int64(regex)} }
+	// Entries run in the order p, p, q, q, p.
+	pattern := func(p, q []any) [][]any { return [][]any{p, p, q, q, p} }
 	for _, tc := range []struct {
 		opts  EvalOptions
 		wants [][]any
 	}{
-		{EvalOptions{}, [][]any{{int64(500), 40, int64(300 * time.Millisecond)}, {int64(500), 40, int64(300 * time.Millisecond)}, {int64(700), 20, int64(100 * time.Millisecond)}, {int64(700), 20, int64(100 * time.Millisecond)}, {int64(500), 40, int64(300 * time.Millisecond)}}},
-		{EvalOptions{Limits: &Limits{MaxSteps: 1000, RegexTimeout: time.Second}}, [][]any{{int64(1000), 40, int64(time.Second)}, {int64(1000), 40, int64(time.Second)}, {int64(1000), 20, int64(time.Second)}, {int64(1000), 20, int64(time.Second)}, {int64(1000), 40, int64(time.Second)}}},
-		{EvalOptions{Limits: &Limits{MaxSteps: 200}}, [][]any{{int64(200), 40, int64(300 * time.Millisecond)}, {int64(200), 40, int64(300 * time.Millisecond)}, {int64(200), 20, int64(100 * time.Millisecond)}, {int64(200), 20, int64(100 * time.Millisecond)}, {int64(200), 40, int64(300 * time.Millisecond)}}},
+		{EvalOptions{}, pattern(want(500, 40, 300*time.Millisecond), want(700, 20, 100*time.Millisecond))},
+		{EvalOptions{Limits: &Limits{MaxSteps: 1000, RegexTimeout: time.Second}}, pattern(want(1000, 40, time.Second), want(1000, 20, time.Second))},
+		{EvalOptions{Limits: &Limits{MaxSteps: 200}}, pattern(want(200, 40, 300*time.Millisecond), want(200, 20, 100*time.Millisecond))},
 	} {
 		var wg sync.WaitGroup
 		for range 4 {

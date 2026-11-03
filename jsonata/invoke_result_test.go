@@ -102,7 +102,7 @@ func TestInvokeRawResultOwnershipAndTypes(t *testing.T) {
 	shared := map[string]any{"s": "text", "values": jsonata.Sequence{jsonata.Undefined, math.Inf(1)}}
 	inner := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return float64(42), nil }}
 	shared["fn"] = inner
-	fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return shared, nil }}
+	fn := constant(shared)
 	got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{})
 	if err != nil {
 		t.Fatal(err)
@@ -133,7 +133,7 @@ func TestInvokeRejectsCyclicAndUnsupportedResults(t *testing.T) {
 	cycle := map[string]any{}
 	cycle["self"] = cycle
 	for _, value := range []any{cycle, make(chan int)} {
-		fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
+		fn := constant(value)
 		got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{})
 		if got != nil || !errors.Is(err, jt.ErrInvalidInput) {
 			t.Fatalf("invalid result accepted: %#v, %v", got, err)
@@ -143,7 +143,7 @@ func TestInvokeRejectsCyclicAndUnsupportedResults(t *testing.T) {
 
 func TestInvokeRawResultLimitsAndCancellation(t *testing.T) {
 	value := []any{[]any{[]any{float64(1)}}}
-	fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
+	fn := constant(value)
 	for _, l := range []jt.Limits{{MaxDepth: 2}, {MaxSteps: 2}, {MaxCollectionItems: 1, MaxOutputBytes: 3}} {
 		if got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{Limits: &l}); got != nil || !errors.Is(err, jt.ErrLimit) {
 			t.Fatalf("limit ignored: %#v, %v", got, err)
@@ -184,7 +184,7 @@ func TestInvokeSizesNormalizedNumericResults(t *testing.T) {
 
 func TestInvokeRejectsCanonicalKeyCollisions(t *testing.T) {
 	value := map[string]any{"😀": float64(1), "\xed\xa0\xbd\xed\xb8\x80": float64(2)}
-	fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
+	fn := constant(value)
 	got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{})
 	if got != nil || !errors.Is(err, jt.ErrInvalidInput) {
 		t.Fatalf("canonical keys overwritten: %#v, %v", got, err)
@@ -194,7 +194,7 @@ func TestInvokeRejectsCanonicalKeyCollisions(t *testing.T) {
 func TestInvokePropagatesSequenceConversionLimit(t *testing.T) {
 	cycle := make(jsonata.Sequence, 1)
 	cycle[0] = cycle
-	fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return cycle, nil }}
+	fn := constant(cycle)
 	got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{Limits: &jt.Limits{MaxDepth: 4}})
 	if got != nil || !errors.Is(err, jt.ErrLimit) {
 		t.Fatalf("conversion failure lost: %#v, %v", got, err)
@@ -203,13 +203,13 @@ func TestInvokePropagatesSequenceConversionLimit(t *testing.T) {
 
 func TestInvokeNormalizedNumericSizeIsCumulative(t *testing.T) {
 	for _, value := range []any{[]any{json.Number("1e3")}, []any{float32(1.2)}} {
-		fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
+		fn := constant(value)
 		if got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{Limits: &jt.Limits{MaxOutputBytes: 5}}); got != nil || !errors.Is(err, jt.ErrLimit) {
 			t.Fatalf("nested normalized size ignored: %#v, %v", got, err)
 		}
 	}
 	for _, value := range []json.Number{"bad", "NaN", "1e9999"} {
-		fn := jsonata.NativeFunction{Fn: func(*jsonata.CallContext, []jsonata.Value) (jsonata.Value, error) { return value, nil }}
+		fn := constant(value)
 		if got, err := jsonata.Invoke(context.Background(), fn, nil, jt.EvalOptions{}); got != nil || !errors.Is(err, jt.ErrInvalidInput) {
 			t.Fatalf("invalid Go number admitted: %#v, %v", got, err)
 		}
