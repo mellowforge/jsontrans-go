@@ -111,3 +111,21 @@ PR B must update the engine with an explicitly approved terminal OOM/InternalErr
 contract, fresh recovery and truthful phase attribution. Re-review upstream
 advisories and the rebuilt artifact, remeasure/soak, and verify a monitored
 private reporting route before considering a production release.
+
+## Independent review disposition
+
+The whole-branch review found no critical or important issues. One nonblocking
+assessment-only cleanup is deferred: the additional runtime-local QJS
+`CompiledModule` acquisition is not explicitly closed, so its shared-cache
+reference count grows with runtime construction. The existing process-lifetime
+global cache masks practical memory impact for the fixed guest; this is an
+ownership imbalance, not a claim of bounded cleanup. A follow-up should balance
+the acquisition, update the recorded patch/hash and verify repeated runtimes.
+The public adapter's separately owned runtime/cache lifecycle is unchanged.
+
+The review retained these scope decisions: inherited QJS capability/cleanup
+limitations remain assessment-only; QuickJS security/terminal-error work remains
+PR B with production blocked; native platform execution requires CI; unused
+dependencies/alternate build tags are outside scan claims; retained evidence is
+dated rather than a guarantee against future advisories. Unified-diff whitespace
+inside `runtime.patch` is upstream context, not a Go formatting change.
