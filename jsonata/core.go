@@ -50,7 +50,8 @@ func WithFunction(name string, f Callable) Option {
 		if name == "" || f == nil {
 			return fmt.Errorf("invalid function")
 		}
-		e.functions[strings.TrimPrefix(name, "$")] = f
+		name = strings.TrimPrefix(name, "$")
+		e.functions[name] = hostFunction{name: name, fn: f}
 		return nil
 	}
 }
@@ -65,6 +66,43 @@ func New(opts ...Option) (*Engine, error) {
 		}
 	}
 	return e, nil
+}
+
+// hostFunction admits results of registered Go functions as JSONata values:
+// Go numbers become numbers, containers are detached, and unsupported values,
+// cycles and non-finite numbers are errors. Plain errors name the function.
+type hostFunction struct {
+	name string
+	fn   Callable
+}
+
+func (h hostFunction) Arity() int { return h.fn.Arity() }
+func (h hostFunction) Call(c *CallContext, args []Value) (Value, error) {
+	v, err := h.fn.Call(c, args)
+	if err != nil {
+		if _, own := errchain.Find(err, func(e *jsontrans.Error) bool { return e.Processor == "" || e.Processor == "jsonata" }); own {
+			return nil, err
+		}
+		return nil, &jsontrans.Error{Processor: "jsonata", Phase: "evaluate", Token: h.name, Cause: err}
+	}
+	if IsUndefined(v) {
+		return v, nil
+	}
+	b := c.Budget
+	if b == nil {
+		if b, err = budget.New(context.Background(), budget.DefaultLimits()); err != nil {
+			return nil, err
+		}
+		defer b.Close()
+	}
+	out, err := cloneRawArgs([]Value{v}, b)
+	if err != nil {
+		if errors.Is(err, budget.ErrLimit) || errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("%w: function %s result: %w", jsontrans.ErrConversion, h.name, err)
+	}
+	return out[0], nil
 }
 
 type Program struct {
@@ -1148,24 +1186,38 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			if err != nil {
 				return nil, err
 			}
-			if !IsUndefined(v) {
-				if s, ok := v.(Sequence); ok {
-					if err := e.b.Collection(len(out) + len(s)); err != nil {
-						return nil, err
-					}
-					out = append(out, s...)
-				} else if array, ok := v.([]any); ok && c.op != "array" {
-					if err := e.b.Collection(len(out) + len(array)); err != nil {
-						return nil, err
-					}
-					out = append(out, array...)
-				} else {
-					if err := e.b.Collection(len(out) + 1); err != nil {
-						return nil, err
-					}
-					out = append(out, v)
+			if IsUndefined(v) {
+				continue
+			}
+			// Items are plain values: tuple bindings and parents stay inside the
+			// item. Data arrays, sequences and keep-array results flatten;
+			// nested constructors stay nested.
+			if c.op != "array" {
+				v = e.stripTuples(v)
+				if e.walkErr != nil {
+					return nil, e.walkErr
+				}
+				if k, ok := v.(kept); ok {
+					v = k.value
 				}
 			}
+			var items []any
+			switch x := v.(type) {
+			case Sequence:
+				items = x
+			case []any:
+				if c.op != "array" {
+					items = x
+				} else {
+					items = []any{x}
+				}
+			default:
+				items = []any{x}
+			}
+			if err := e.b.Collection(len(out) + len(items)); err != nil {
+				return nil, err
+			}
+			out = append(out, items...)
 		}
 		return out, e.b.Collection(len(out))
 	case "object":
@@ -1512,12 +1564,16 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		if err != nil || IsUndefined(v) {
 			return v, err
 		}
-		switch v.(type) {
+		switch x := v.(type) {
 		case Sequence, []any:
 			return kept{v}, nil
-		default:
-			return kept{Sequence{v}}, nil
+		case tuple:
+			// A parent-tracked array is unwrapped by the enclosing path step.
+			if _, isArray := x.value.([]any); isArray {
+				return kept{v}, nil
+			}
 		}
+		return kept{Sequence{v}}, nil
 	case "filter":
 		v, err := e.eval(n.children[0], focus)
 		if err != nil {
@@ -1583,11 +1639,12 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		items := e.pathItems(v)
 		// JSONata keeps a lone empty array produced by the final step. An
 		// enclosing step receives it as an empty item list, which still ends the
-		// path. Tuple streams keep their existing flattening.
-		emptyArrays, tupleStream := 0, e.trackParents
+		// path. Steps over bound (@, #) tuples keep their existing flattening;
+		// parent tracking alone does not change the result.
+		emptyArrays, tupleStream := 0, false
 		for _, item := range items {
 			value, vars := unwrapTuple(item)
-			if vars != nil {
+			if len(vars) > 0 {
 				tupleStream = true
 			}
 			previous := e.ancestor
@@ -1628,9 +1685,34 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				}
 				out = append(out, x)
 			}
+			// With parent tracking, an array result arrives wrapped with its
+			// parent. Apply the array rules to the wrapped array and give each
+			// element the same parent and bindings.
+			var wrapper *tuple
+			unwrap := func(v Value) Value {
+				if t, ok := v.(tuple); ok {
+					if _, isArray := t.value.([]any); isArray {
+						wrapper = &t
+						return t.value
+					}
+				}
+				return v
+			}
+			element := func(x Value) Value {
+				if wrapper != nil {
+					return tuple{value: x, vars: wrapper.vars, ancestor: wrapper.ancestor}
+				}
+				return x
+			}
+			whole := func(x Value) Value {
+				if wrapper != nil {
+					return *wrapper
+				}
+				return x
+			}
 			if k, ok := r.(kept); ok {
 				keepResult = true
-				switch x := k.value.(type) {
+				switch x := unwrap(k.value).(type) {
 				case Sequence:
 					for _, v := range x {
 						add(v)
@@ -1640,23 +1722,24 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 					// arrays stay nested, as in the reference.
 					step := n.children[1]
 					if step.op == "keep" && step.children[0].op == "array" {
-						add(x)
+						add(whole(x))
 						break
 					}
 					if len(x) == 0 {
 						emptyArrays++
 					}
 					for _, v := range x {
-						add(v)
+						add(element(v))
 					}
 				default:
 					add(x)
 				}
 				continue
 			}
+			r = unwrap(r)
 			if values, ok := r.([]any); ok && e.trackParents && n.children[1].op == "array" {
 				for _, item := range values {
-					add(item)
+					add(element(item))
 				}
 				continue
 			}
@@ -1666,7 +1749,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 			}
 			if values, ok := r.([]any); ok && n.children[1].op == "name" && len(items) > 1 {
 				for _, x := range values {
-					add(x)
+					add(element(x))
 				}
 				continue
 			}
@@ -1675,7 +1758,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 					add(x)
 				}
 			} else {
-				add(r)
+				add(whole(r))
 			}
 		}
 		if err := e.b.Collection(len(out)); err != nil {

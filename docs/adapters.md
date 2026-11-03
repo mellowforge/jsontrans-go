@@ -31,7 +31,10 @@ JSONata exposes `CompileRaw`, `EvalRaw`, `Callable`, and `Invoke` for language
 values such as functions. Invoke creates a fresh bounded evaluation so returned
 closures and transforms remain usable after their original evaluation finishes.
 Its limits default to those of the engine that created the function.
-Register host functions with `jsonata.WithFunction`; JSONPath's `WithFunction`
+Register host functions with `jsonata.WithFunction`. JSONata host results are
+validated and detached: Go numeric types become numbers, while unsupported
+types, cycles and non-finite numbers fail with `ErrConversion`. Plain host
+errors report the function name as `Token`. JSONPath's `WithFunction`
 uses its RFC Value/Logical/Nodes type declarations. These are language-specific
 extension APIs, separate from the common JSON contract.
 

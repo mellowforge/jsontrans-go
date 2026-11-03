@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/mellowforge/jsontrans-go"
@@ -63,6 +64,23 @@ func checkReferenceCases(t *testing.T, cases []referenceCase) {
 	}
 }
 
+// withParentTracking places each expression beside a parent (%) path. Parent
+// tracking elsewhere in a program must not change an expression's result.
+func withParentTracking(cases []referenceCase) []referenceCase {
+	var out []referenceCase
+	for _, tc := range cases {
+		if strings.HasPrefix(tc.want, "ERR") || strings.Contains(tc.expr, "%") {
+			continue
+		}
+		want := `{"t":0}`
+		if tc.want != "undefined" {
+			want = `{"r":` + tc.want + `,"t":0}`
+		}
+		out = append(out, referenceCase{`{"r": ` + tc.expr + `, "t": $count(zz.%)}`, tc.input, want})
+	}
+	return out
+}
+
 func describeError(err error) string {
 	var native *jsontrans.Error
 	if !errors.As(err, &native) {
@@ -101,56 +119,59 @@ func describeResult(r jsontrans.Result, err error) string {
 // JSONata keeps a lone array produced by the final path step, including an
 // empty one; earlier empty steps still end the path.
 func TestReferenceEmptyArrayFinalPathStep(t *testing.T) {
-	checkReferenceCases(t, []referenceCase{
-		{`a.b`, `{"a":{"b":[]}}`, `[]`},
-		{`a.b`, `{"a":[{"b":[]}]}`, `[]`},
-		{`a.b`, `{"a":[{"b":[]},{"c":1}]}`, `[]`},
-		{`a.b`, `{"a":[{"b":[]},{"b":[]}]}`, `undefined`},
-		{`a.b`, `{"a":[{"b":[]},{"b":1}]}`, `1`},
-		{`a.b.c`, `{"a":{"b":{"c":[]}}}`, `[]`},
-		{`a.b.c`, `{"a":{"b":[]}}`, `undefined`},
-		{`$.a`, `{"a":[]}`, `[]`},
-		{`$$.a`, `{"a":[]}`, `[]`},
-		{`a`, `{"a":[]}`, `[]`},
-		{`a[0].b`, `{"a":[{"b":[]}]}`, `[]`},
-		{`$sum(a.b)`, `{"a":{"b":[]}}`, `0`},
-		{`$count(a.b)`, `{"a":{"b":[]}}`, `0`},
-		{`$exists(a.b)`, `{"a":{"b":[]}}`, `true`},
-		{`$type(a.b)`, `{"a":{"b":[]}}`, `"array"`},
-		{`$length(a.b)`, `{"a":{"b":[]}}`, `ERR T0410`},
-		{`Account.Order.Product.SKU`, `{"Account":{"Order":{"Product":{"SKU":[]}}}}`, `[]`},
-		{`a.b[0]`, `{"a":{"b":[]}}`, `undefined`},
-		{`a.(b)`, `{"a":{"b":[]}}`, `[]`},
-		{`a.b@$x.$x`, `{"a":{"b":[]}}`, `undefined`},
-		{`a#$i.b`, `{"a":{"b":[]}}`, `undefined`},
-		{`a.b.$`, `{"a":{"b":[]}}`, `undefined`},
-		{`a.b ~> $count()`, `{"a":{"b":[]}}`, `0`},
-		{`a@$x`, `{"a":[]}`, `undefined`},
-		{`$.a@$x`, `{"a":[]}`, `undefined`},
-		{`a.b@$x`, `{"a":{"b":[]}}`, `undefined`},
-		{`a.b#$i`, `{"a":{"b":[]}}`, `undefined`},
-		{`a#$i`, `{"a":[]}`, `undefined`},
-		{`a@$x.b`, `{"a":{"b":[]}}`, `undefined`},
-		{`a#$i.b`, `{"a":[{"b":[]}]}`, `undefined`},
-		{`a.b^($)`, `{"a":{"b":[]}}`, `undefined`},
-		{`a.b[]`, `{"a":{"b":[]}}`, `[]`},
-		{`a.b[]`, `{"a":[{"b":[]},{"b":[]}]}`, `undefined`},
-		{`a.b[]`, `{"a":[{"b":[]},{"c":1}]}`, `[]`},
-		{`a.b[]`, `{"a":{"b":[1]}}`, `[1]`},
-		{`a.b[]`, `{"a":{"b":1}}`, `[1]`},
-		{`a.b[]`, `{"a":{"b":[[]]}}`, `[[]]`},
-		{`a.c[]`, `{"a":{}}`, `undefined`},
-		{`a.b[].c`, `{"a":{"b":[]}}`, `undefined`},
-		{`a[].b`, `{"a":{"b":[]}}`, `[]`},
-		{`$count(a.b[])`, `{"a":{"b":[]}}`, `0`},
-		{`a.%`, `{"a":[]}`, `undefined`},
-		// Predicate shapes reach the prepared fast plan.
-		{`$sum(a.b) = 0`, `{"a":{"b":[]}}`, `true`},
-		{`$sum(a.b) > -1`, `{"a":{"b":[]}}`, `true`},
-		{`$count(a.b) = 0`, `{"a":{"b":[]}}`, `true`},
-		{`$exists(a.b) and true`, `{"a":{"b":[]}}`, `true`},
-		{`$sum(a[0].b) = 0`, `{"a":[{"b":[]}]}`, `true`},
-	})
+	checkReferenceCases(t, emptyArrayFinalStepCases)
+	checkReferenceCases(t, withParentTracking(emptyArrayFinalStepCases))
+}
+
+var emptyArrayFinalStepCases = []referenceCase{
+	{`a.b`, `{"a":{"b":[]}}`, `[]`},
+	{`a.b`, `{"a":[{"b":[]}]}`, `[]`},
+	{`a.b`, `{"a":[{"b":[]},{"c":1}]}`, `[]`},
+	{`a.b`, `{"a":[{"b":[]},{"b":[]}]}`, `undefined`},
+	{`a.b`, `{"a":[{"b":[]},{"b":1}]}`, `1`},
+	{`a.b.c`, `{"a":{"b":{"c":[]}}}`, `[]`},
+	{`a.b.c`, `{"a":{"b":[]}}`, `undefined`},
+	{`$.a`, `{"a":[]}`, `[]`},
+	{`$$.a`, `{"a":[]}`, `[]`},
+	{`a`, `{"a":[]}`, `[]`},
+	{`a[0].b`, `{"a":[{"b":[]}]}`, `[]`},
+	{`$sum(a.b)`, `{"a":{"b":[]}}`, `0`},
+	{`$count(a.b)`, `{"a":{"b":[]}}`, `0`},
+	{`$exists(a.b)`, `{"a":{"b":[]}}`, `true`},
+	{`$type(a.b)`, `{"a":{"b":[]}}`, `"array"`},
+	{`$length(a.b)`, `{"a":{"b":[]}}`, `ERR T0410`},
+	{`Account.Order.Product.SKU`, `{"Account":{"Order":{"Product":{"SKU":[]}}}}`, `[]`},
+	{`a.b[0]`, `{"a":{"b":[]}}`, `undefined`},
+	{`a.(b)`, `{"a":{"b":[]}}`, `[]`},
+	{`a.b@$x.$x`, `{"a":{"b":[]}}`, `undefined`},
+	{`a#$i.b`, `{"a":{"b":[]}}`, `undefined`},
+	{`a.b.$`, `{"a":{"b":[]}}`, `undefined`},
+	{`a.b ~> $count()`, `{"a":{"b":[]}}`, `0`},
+	{`a@$x`, `{"a":[]}`, `undefined`},
+	{`$.a@$x`, `{"a":[]}`, `undefined`},
+	{`a.b@$x`, `{"a":{"b":[]}}`, `undefined`},
+	{`a.b#$i`, `{"a":{"b":[]}}`, `undefined`},
+	{`a#$i`, `{"a":[]}`, `undefined`},
+	{`a@$x.b`, `{"a":{"b":[]}}`, `undefined`},
+	{`a#$i.b`, `{"a":[{"b":[]}]}`, `undefined`},
+	{`a.b^($)`, `{"a":{"b":[]}}`, `undefined`},
+	{`a.b[]`, `{"a":{"b":[]}}`, `[]`},
+	{`a.b[]`, `{"a":[{"b":[]},{"b":[]}]}`, `undefined`},
+	{`a.b[]`, `{"a":[{"b":[]},{"c":1}]}`, `[]`},
+	{`a.b[]`, `{"a":{"b":[1]}}`, `[1]`},
+	{`a.b[]`, `{"a":{"b":1}}`, `[1]`},
+	{`a.b[]`, `{"a":{"b":[[]]}}`, `[[]]`},
+	{`a.c[]`, `{"a":{}}`, `undefined`},
+	{`a.b[].c`, `{"a":{"b":[]}}`, `undefined`},
+	{`a[].b`, `{"a":{"b":[]}}`, `[]`},
+	{`$count(a.b[])`, `{"a":{"b":[]}}`, `0`},
+	{`a.%`, `{"a":[]}`, `undefined`},
+	// Predicate shapes reach the prepared fast plan.
+	{`$sum(a.b) = 0`, `{"a":{"b":[]}}`, `true`},
+	{`$sum(a.b) > -1`, `{"a":{"b":[]}}`, `true`},
+	{`$count(a.b) = 0`, `{"a":{"b":[]}}`, `true`},
+	{`$exists(a.b) and true`, `{"a":{"b":[]}}`, `true`},
+	{`$sum(a[0].b) = 0`, `{"a":[{"b":[]}]}`, `true`},
 }
 
 // JSONata orders strings by UTF-16 code units, as JavaScript does, which
@@ -221,14 +242,41 @@ func TestReferenceRegexLiteralErrorPositions(t *testing.T) {
 
 // A keep-array result ([] suffix) reaches functions as an ordinary array.
 func TestReferenceKeepArrayFunctionArguments(t *testing.T) {
+	checkReferenceCases(t, keepArrayArgumentCases)
+	checkReferenceCases(t, withParentTracking(keepArrayArgumentCases))
+}
+
+var keepArrayArgumentCases = []referenceCase{
+	{`$count(a[])`, `{"a":[1,2]}`, `2`},
+	{`$count(a.b[])`, `{"a":{"b":[1,2]}}`, `2`},
+	{`$count(a.b[])`, `{"a":{"b":[]}}`, `0`},
+	{`$count(a.b[])`, `{"a":{"b":1}}`, `1`},
+	{`$sum(a.b[])`, `{"a":{"b":[1,2]}}`, `3`},
+	{`$exists(a.b[])`, `{"a":{"b":[]}}`, `true`},
+	{`$type(a.b[])`, `{"a":{"b":[]}}`, `"array"`},
+	{`a.b[] ~> $count()`, `{"a":{"b":[1,2]}}`, `2`},
+}
+
+// Array constructors flatten data arrays and keep-array results from their
+// items, with or without parent tracking elsewhere in the program, and
+// bindings made inside an item do not escape the constructor.
+func TestReferenceArrayConstructorItems(t *testing.T) {
 	checkReferenceCases(t, []referenceCase{
-		{`$count(a[])`, `{"a":[1,2]}`, `2`},
-		{`$count(a.b[])`, `{"a":{"b":[1,2]}}`, `2`},
-		{`$count(a.b[])`, `{"a":{"b":[]}}`, `0`},
-		{`$count(a.b[])`, `{"a":{"b":1}}`, `1`},
-		{`$sum(a.b[])`, `{"a":{"b":[1,2]}}`, `3`},
-		{`$exists(a.b[])`, `{"a":{"b":[]}}`, `true`},
-		{`$type(a.b[])`, `{"a":{"b":[]}}`, `"array"`},
-		{`a.b[] ~> $count()`, `{"a":{"b":[1,2]}}`, `2`},
+		{`[a.b, c.d.%.e]`, `{"a":{"b":[]},"c":{"d":{"x":1},"e":2}}`, `[2]`},
+		{`[a.b, 1, c.%.e]`, `{"a":{"b":[]},"c":{"e":2}}`, `[1]`},
+		{`[a.b, 1, c.%.e]`, `{"a":{"b":[1,2]},"c":{"e":2}}`, `[1,2,1]`},
+		{`[a.b, 1, c.%.e]`, `{"a":{"b":[[]]},"c":{"e":2}}`, `[[],1]`},
+		{`[a, 1, c.%.e]`, `{"a":[],"c":{"e":2}}`, `[1]`},
+		{`[a.b, 1, c.%.e]`, `{"a":[{"b":[1]},{"b":[2,3]}],"c":{"e":2}}`, `[1,2,3,1]`},
+		{`[a.b.%.x, 1]`, `{"a":{"b":[1,2],"x":[5,6]}}`, `[5,6,5,6,1]`},
+		{`[a.b[], 1]`, `{"a":{"b":[]}}`, `[1]`},
+		{`[a.b[], 1]`, `{"a":{"b":[1,2]}}`, `[1,2,1]`},
+		{`[a.b[], 1]`, `{"a":{"b":3}}`, `[3,1]`},
+		{`[a.b[], 1, c.%.e]`, `{"a":{"b":[1,2]},"c":{"e":2}}`, `[1,2,1]`},
+		{`[a.b[], 1, c.%.e]`, `{"a":{"b":3},"c":{"e":2}}`, `[3,1]`},
+		{`[a.b@$o, 1].$o`, `{"a":{"b":[1,2]}}`, `undefined`},
+		{`a.[b@$o].$o`, `{"a":{"b":[1,2]}}`, `undefined`},
+		{`a.[b, %.x]`, `{"a":{"b":1},"x":9}`, `[1,9]`},
+		{`a.b.[%.x, 1]`, `{"a":{"b":{"y":1},"x":7}}`, `[7,1]`},
 	})
 }
