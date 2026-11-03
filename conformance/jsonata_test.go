@@ -106,7 +106,7 @@ func TestJSONataConformance(t *testing.T) {
 	}
 	// Conformance fixtures are trusted, and some intentionally perform large
 	// computations. Production defaults remain unchanged.
-	engine, err := jsonata.New(jsonata.WithLimits(jsontrans.Limits{MaxSteps: 100_000_000, Timeout: 10 * time.Second}))
+	engine, err := jsonata.New(jsonata.WithLimits(jsontrans.Limits{MaxSteps: 100_000_000, Timeout: 10 * time.Second * raceTimeScale}))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -182,7 +182,7 @@ func TestJSONataConformance(t *testing.T) {
 					}
 					caseEngine := engine
 					if c.TimeLimit > 0 && c.Depth > 0 {
-						caseEngine, err = jsonata.New(jsonata.WithLimits(jsontrans.Limits{MaxSteps: 100_000_000, Timeout: 10 * time.Second, MaxDepth: 10000}), jsonata.WithEvaluationDepth(c.Depth))
+						caseEngine, err = jsonata.New(jsonata.WithLimits(jsontrans.Limits{MaxSteps: 100_000_000, Timeout: 10 * time.Second * raceTimeScale, MaxDepth: 10000}), jsonata.WithEvaluationDepth(c.Depth))
 						if err != nil {
 							t.Fatal(err)
 						}
@@ -190,7 +190,7 @@ func TestJSONataConformance(t *testing.T) {
 					p, compileErr := caseEngine.CompileRaw(context.Background(), expr)
 					options := jsontrans.EvalOptions{Bindings: bindings}
 					if c.TimeLimit > 0 {
-						options.Limits = &jsontrans.Limits{Timeout: time.Duration(c.TimeLimit) * time.Millisecond, MaxSteps: 100000000, MaxCollectionItems: 10000000, MaxDepth: 10000}
+						options.Limits = &jsontrans.Limits{Timeout: time.Duration(c.TimeLimit) * time.Millisecond * raceTimeScale, MaxSteps: 100000000, MaxCollectionItems: 10000000, MaxDepth: 10000}
 					}
 					check := func(t *testing.T, got jsontrans.Result, err error) {
 						t.Helper()
