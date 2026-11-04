@@ -43,7 +43,7 @@ static uint8_t *output;
 static uint32_t output_length, status;
 static uint32_t output_kind;
 
-uint32_t abi_version(void) { return 2; }
+uint32_t abi_version(void) { return 3; }
 uint32_t abi_output_ptr(void) { return (uint32_t)(uintptr_t)output; }
 uint32_t abi_output_len(void) { return output_length; }
 uint32_t abi_status(void) { return status; }
@@ -156,26 +156,46 @@ static JSValue evaluate(uint32_t pointer, uint32_t length) {
     if (JS_IsException(code)) return code;
     return JS_EvalFunction(context, code);
 }
+/* The record is created before user initialization and retained only by C and
+ * the trusted bridge. Its own integer data slot never needs a getter, atom
+ * allocation or numeric coercion, even while a terminal exception is pending. */
+static const char *evaluation_stage(JSValueConst record) {
+    JSPropertyDescriptor desc;
+    JSAtom slot = JS_NewAtomUInt32(context, 0); /* immediate tagged atom */
+    if (JS_GetOwnProperty(context, &desc, record, slot) != 1) return NULL;
+    int32_t phase = -1;
+    if (!(desc.flags & JS_PROP_GETSET) && JS_VALUE_GET_TAG(desc.value) == JS_TAG_INT)
+        phase = JS_VALUE_GET_INT(desc.value);
+    JS_FreeValue(context, desc.value);
+    JS_FreeValue(context, desc.getter);
+    JS_FreeValue(context, desc.setter);
+    return phase == 0 ? "evaluate" : phase == 1 ? "output" : NULL;
+}
 uint32_t abi_eval(uint32_t rule_ptr, uint32_t rule_len, uint32_t bridge_ptr, uint32_t bridge_len,
     uint32_t input_ptr, uint32_t input_len, uint32_t bindings_ptr, uint32_t bindings_len,
     uint32_t depth, uint32_t items, uint32_t bytes, uint32_t work) {
     clear_output();
     JSValue bridge = evaluate(bridge_ptr, bridge_len);
     if (JS_IsException(bridge)) { exception("evaluate"); return status; }
+    JSValue record = JS_NewObjectProto(context, JS_NULL);
+    if (JS_IsException(record)) { JS_FreeValue(context, bridge); exception("evaluate"); return status; }
+    if (JS_DefinePropertyValueUint32(context, record, 0, JS_NewInt32(context, 0), JS_PROP_WRITABLE) < 0) {
+        JS_FreeValue(context, record); JS_FreeValue(context, bridge); exception("evaluate"); return status;
+    }
     JSValue rule = evaluate(rule_ptr, rule_len);
-    if (JS_IsException(rule)) { JS_FreeValue(context, bridge); exception("evaluate"); return status; }
+    if (JS_IsException(rule)) { JS_FreeValue(context, record); JS_FreeValue(context, bridge); exception("evaluate"); return status; }
     if (!JS_IsFunction(context, bridge) || !JS_IsFunction(context, rule)) {
-        JS_FreeValue(context, bridge); JS_FreeValue(context, rule);
+        JS_FreeValue(context, record); JS_FreeValue(context, bridge); JS_FreeValue(context, rule);
         literal_failure("conversion", "evaluate", "source is not a function"); return status;
     }
-    JSValue args[8] = { rule,
+    JSValue args[9] = { rule,
         JS_NewStringLen(context, (const char *)(uintptr_t)input_ptr, input_len),
         JS_NewStringLen(context, (const char *)(uintptr_t)bindings_ptr, bindings_len),
         JS_NewUint32(context, depth), JS_NewUint32(context, items),
-        JS_NewUint32(context, bytes), JS_NewUint32(context, work), JS_TRUE };
+        JS_NewUint32(context, bytes), JS_NewUint32(context, work), JS_TRUE, record };
     JSValue value = JS_UNDEFINED;
-    for (int i = 0; i < 8; i++) if (JS_IsException(args[i])) goto failed;
-    value = JS_Call(context, bridge, JS_UNDEFINED, 8, args);
+    for (int i = 0; i < 9; i++) if (JS_IsException(args[i])) goto failed;
+    value = JS_Call(context, bridge, JS_UNDEFINED, 9, args);
     if (JS_IsException(value)) goto failed;
     if (!JS_IsArray(value)) { literal_failure("internal", "evaluate", "invalid bridge response"); goto done; }
     JSValue outcome = JS_GetPropertyUint32(context, value, 0);
@@ -217,9 +237,13 @@ uint32_t abi_eval(uint32_t rule_ptr, uint32_t rule_len, uint32_t bridge_ptr, uin
     }
     goto done;
 failed:
-    exception("evaluate");
+    {
+        const char *stage = evaluation_stage(record);
+        if (stage) exception(stage);
+        else literal_failure("internal", "evaluate", "invalid trusted evaluation phase");
+    }
 done:
-    for (int i = 0; i < 8; i++) JS_FreeValue(context, args[i]);
+    for (int i = 0; i < 9; i++) JS_FreeValue(context, args[i]);
     JS_FreeValue(context, bridge); JS_FreeValue(context, value);
     return status;
 }

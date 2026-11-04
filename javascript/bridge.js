@@ -15,7 +15,7 @@
   const conversionFailure=[3,"JSON result conversion failed (diagnostic unavailable)"];
   const limitFailure=[2,"JSON conversion limit exceeded (diagnostic unavailable)"];
   const evaluateFallback=[4,""], outputFallback=[5,""];
-  return function (rule, inputText, bindingsText, depthLimit, itemLimit, byteLimit, workLimit, ownedMode) {
+  return function (rule, inputText, bindingsText, depthLimit, itemLimit, byteLimit, workLimit, ownedMode, phaseRecord) {
     let stage = "evaluate", failure;
     function raise(kind, message) {
       if (!ownedMode) throw new ErrorType((kind === "limit" ? "JSONTRANS_LIMIT: " : "JSONTRANS_CONVERSION: ") + message);
@@ -109,6 +109,7 @@
       return true;
     }
     const result = rule(input, bindings);
+    if (ownedMode) phaseRecord[0] = 1;
     stage = "output";
     if (result === undefined) return success('{"defined":false}');
     // Trusted failures return reserved tuples. Throwing even a private token

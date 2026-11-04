@@ -110,3 +110,15 @@ benchmark results recorded separately from historical measurements.
   provenance, limitations and remaining release gates. Obtain the single final
   independent review, fix important findings with regression evidence, then
   prepare PR B with CI skipped if publishing. No merge or release.
+
+## Approved tight-heap amendment
+
+The v0.18.0 source falls back to catchable JS_NULL when error allocation fails.
+The tight linked-node regression demonstrated continuation beyond OOM. The user
+approved a focused owned source patch: reserve an uncatchable OOM error in each
+full JSContext, mark/free its GC root, reuse it in JS_ThrowOutOfMemory and failed
+error construction, and retain upstream behavior before reserve initialization.
+Raw contexts are not exposed by the owned ABI, which uses JS_NewContext only.
+Keep the immutable archive pin plus a separately hashed patch; apply with zero
+fuzz during builds. Test context-init failure and GC/cleanup in a native
+sanitizer harness in addition to Wasm tight-heap/no-continuation regressions.

@@ -7,9 +7,15 @@
     "arm64-macos": "9c59398106b417f8f14913380fdf0097a8cc0ff4af9eb3ce0065a859e88d49e9",
     "x86_64-linux": "b761e3a0721dbae9c09a0059e5fdb2bf917d1b4a8a7b430fb3b5aafb0984b2c4"
   },
-  "abi_version": 2,
-  "artifact_sha256": "639c966d56a1ca4b426f048f058bdc610fbd51f17c7ffb79e6e85a0fd9585718",
+  "abi_version": 3,
+  "artifact_sha256": "e3cd5c71ead2a4967f7163bf9c74e086b641e43081bac1909fa8c86e4368bb6c",
   "sdk_llvm_commit": "895aa2c896ada719451be2e3673c83da8ddf1141",
   "sdk_wasi_libc_commit": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13",
-  "quickjs_version": "0.18.0"
+  "quickjs_version": "0.18.0",
+  "source_patches": [
+    {
+      "file": "quickjs-terminal-oom.patch",
+      "sha256": "4e71e6323bf78c4c228a27336decd6eb1ea31719189c9944fcbbd10121a2ccdd"
+    }
+  ]
 }

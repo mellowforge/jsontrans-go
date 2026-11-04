@@ -1,0 +1,83 @@
+--- a/quickjs.c
++++ b/quickjs.c
+@@ -586,6 +586,7 @@
+     JSValue regexp_ctor;
+     JSValue promise_ctor;
+     JSValue native_error_proto[JS_NATIVE_ERROR_COUNT];
++    JSValue terminal_oom; /* owned embedding: preallocated uncatchable fallback */
+     JSValue error_ctor;
+     JSValue error_back_trace;
+     JSValue error_prepare_stack;
+@@ -2873,6 +2874,7 @@
+     ctx->regexp_ctor = JS_NULL;
+     ctx->promise_ctor = JS_NULL;
+     ctx->error_ctor = JS_NULL;
++    ctx->terminal_oom = JS_NULL;
+     ctx->error_back_trace = JS_UNDEFINED;
+     ctx->error_prepare_stack = JS_UNDEFINED;
+     ctx->error_stack_trace_limit = js_int32(10);
+@@ -2891,6 +2893,18 @@
+     return ctx;
+ }
+ 
++/* Keep allocation-failure reporting independent of remaining heap space.
++ * Raw contexts retain upstream behavior until their intrinsics are installed;
++ * the owned embedding always uses JS_NewContext. */
++static int init_terminal_oom(JSContext *ctx)
++{
++    JSValue error = JS_NewInternalError(ctx, "out of memory");
++    if (JS_IsException(error))
++        return -1;
++    ctx->terminal_oom = error;
++    return 0;
++}
++
+ JSContext *JS_NewContext(JSRuntime *rt)
+ {
+     JSContext *ctx;
+@@ -2899,6 +2913,7 @@
+         return NULL;
+ 
+     if (JS_AddIntrinsicBaseObjects(ctx) ||
++        init_terminal_oom(ctx) ||
+         JS_AddIntrinsicDate(ctx) ||
+         JS_AddIntrinsicEval(ctx) ||
+         JS_AddIntrinsicRegExp(ctx) ||
+@@ -3002,6 +3017,7 @@
+     for(i = 0; i < JS_NATIVE_ERROR_COUNT; i++) {
+         JS_MarkValue(rt, ctx->native_error_proto[i], mark_func);
+     }
++    JS_MarkValue(rt, ctx->terminal_oom, mark_func);
+     JS_MarkValue(rt, ctx->error_ctor, mark_func);
+     JS_MarkValue(rt, ctx->error_back_trace, mark_func);
+     JS_MarkValue(rt, ctx->error_prepare_stack, mark_func);
+@@ -3084,6 +3100,7 @@
+     for(i = 0; i < JS_NATIVE_ERROR_COUNT; i++) {
+         JS_FreeValue(ctx, ctx->native_error_proto[i]);
+     }
++    JS_FreeValue(ctx, ctx->terminal_oom);
+     JS_FreeValue(ctx, ctx->error_ctor);
+     JS_FreeValue(ctx, ctx->error_back_trace);
+     JS_FreeValue(ctx, ctx->error_prepare_stack);
+@@ -8450,8 +8467,10 @@
+ 
+     obj = JS_MakeError(ctx, error_num, add_backtrace, fmt, ap);
+     if (unlikely(JS_IsException(obj))) {
+-        /* out of memory: throw JS_NULL to avoid recursing */
+-        obj = JS_NULL;
++        /* A failed error allocation must not replace terminal OOM with
++         * catchable null. Duplication of the reserved value cannot allocate. */
++        obj = JS_IsNull(ctx->terminal_oom) ? JS_NULL :
++            JS_DupValue(ctx, ctx->terminal_oom);
+     }
+     return JS_Throw(ctx, obj);
+ }
+@@ -8564,6 +8583,8 @@
+ 
+ JSValue JS_ThrowOutOfMemory(JSContext *ctx)
+ {
++    if (!JS_IsNull(ctx->terminal_oom))
++        return JS_Throw(ctx, JS_DupValue(ctx, ctx->terminal_oom));
+     JSRuntime *rt = ctx->rt;
+     if (!rt->in_out_of_memory) {
+         rt->in_out_of_memory = true;

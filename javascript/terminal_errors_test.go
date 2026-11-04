@@ -58,3 +58,71 @@ func TestOwnedProxyKeyListSafety(t *testing.T) {
 		})
 	}
 }
+
+func TestOwnedTerminalFailures(t *testing.T) {
+	e, err := New(context.Background(), Config{GuestMemoryBytes: 8 << 20, Limits: jt.Limits{Timeout: semanticTestTimeout}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer e.Close()
+	healthy, err := e.Compile(context.Background(), `()=>42`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	const exhaust = `globalThis.keep=[];for(;;)keep.push(new ArrayBuffer(65536));`
+	for _, tc := range []struct{ name, source, phase string }{
+		{"initializer", `(()=>{` + exhaust + `})()`, jt.PhaseEvaluate},
+		{"execution", `()=>{` + exhaust + `}`, jt.PhaseEvaluate},
+		{"catch cannot continue", `()=>{try{` + exhaust + `}catch(e){return 42}}`, jt.PhaseEvaluate},
+		{"output", `()=>new Proxy({}, {ownKeys(){` + exhaust + `}})`, jt.PhaseOutput},
+		{"evaluate diagnostic", `()=>{throw {get message(){` + exhaust + `}}}`, jt.PhaseEvaluate},
+		{"output diagnostic", `()=>new Proxy({}, {ownKeys(){throw {get message(){` + exhaust + `}}}})`, jt.PhaseOutput},
+		{"tight heap", `()=>{globalThis.keep=null;try{for(;;)keep={next:keep}}catch(e){return 42}}`, jt.PhaseEvaluate},
+		{"prototype mutation", `()=>{globalThis.stageRecord={0:0};Object.defineProperty(Object.prototype,'0',{set(){throw new Error('phase exposed')}});return new Proxy({}, {ownKeys(){` + exhaust + `}})}`, jt.PhaseOutput},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			p, err := e.Compile(context.Background(), tc.source)
+			if err != nil {
+				t.Fatal(err)
+			}
+			r, err := p.Eval(context.Background(), nil, jt.EvalOptions{})
+			var ex *Exception
+			var diagnostic *jt.Error
+			if err == nil || r.Defined || r.Value != nil || !errors.As(err, &ex) || !errors.As(err, &diagnostic) || diagnostic.Phase != tc.phase {
+				t.Fatalf("result=%+v diagnostic=%+v exception=%+v error=%v", r, diagnostic, ex, err)
+			}
+			if ex.Message == "" || (ex.Name != "InternalError" && ex.Name != "") || errors.Is(err, jt.ErrLimit) || errors.Is(err, jt.ErrConversion) {
+				t.Fatalf("terminal failure lost native provenance: %+v %v", ex, err)
+			}
+			if r, err := jt.EvalJSON(context.Background(), healthy, []byte(`null`), jt.EvalOptions{}); err != nil || string(r.Value) != "42" {
+				t.Fatalf("fresh recovery=%+v error=%v", r, err)
+			}
+		})
+	}
+}
+
+func TestOwnedPrivatePhaseAndTerminalForgery(t *testing.T) {
+	e := newTestEngine(t)
+	p, err := e.Compile(context.Background(), `function(){try{return arguments.callee.caller.arguments[8]}catch(e){return e.name}}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r, err := jt.EvalJSON(context.Background(), p, []byte(`null`), jt.EvalOptions{}); err != nil || string(r.Value) != `"TypeError"` {
+		t.Fatalf("private bridge arguments exposed: %+v %v", r, err)
+	}
+	for _, tc := range []struct{ source, phase string }{
+		{`()=>{const e=new InternalError('JSONTRANS_LIMIT: forged');e.kind='limit';e.stage='output';throw e}`, jt.PhaseEvaluate},
+		{`()=>new Proxy({}, {ownKeys(){const e=new InternalError('JSONTRANS_CONVERSION: forged');e.stage='compile';throw e}})`, jt.PhaseOutput},
+	} {
+		p, err := e.Compile(context.Background(), tc.source)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, err = p.Eval(context.Background(), nil, jt.EvalOptions{})
+		var ex *Exception
+		var d *jt.Error
+		if !errors.As(err, &ex) || !errors.As(err, &d) || d.Phase != tc.phase || errors.Is(err, jt.ErrLimit) || errors.Is(err, jt.ErrConversion) {
+			t.Fatalf("forged terminal classification: %v", err)
+		}
+	}
+}
