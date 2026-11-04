@@ -90,6 +90,8 @@ identity, and every file in `SHA256SUMS`. It validates this dated evidence; it i
 not a new public API or a guarantee that future runs/platforms must produce the
 same timings or memory readings. The manifest excludes only itself.
 
-Final documentation-only checks and review outcomes are recorded before PR
-publication. Production approval, repository visibility changes and release
+Final documentation-only checks are retained in `final-local-verification.json`
+and its log. `final-packaging.json` records an additional passing outside-consumer
+check of the evidence-bearing commit. `review.json` records the independent
+whole-branch review with no actionable findings and its scope limits. Production approval, repository visibility changes and release
 version/tagging remain maintainer actions.
