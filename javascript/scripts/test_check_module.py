@@ -1,7 +1,10 @@
 """Regression for a PR's detached checkout with no advertised local branches."""
+import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -9,6 +12,39 @@ import check_module as check
 
 
 class DetachedCheckout(unittest.TestCase):
+    def test_packaging_uses_only_current_dependencies_from_cold_cache(self):
+        original = os.environ.copy()
+        goroot = Path(check.run(['go', 'env', 'GOROOT'], cwd=check.ROOT, env=original, capture=True).strip())
+        old_cache = Path(check.run(['go', 'env', 'GOMODCACHE'], cwd=check.ROOT, env=original, capture=True).strip())
+        # Populate exactly the currently selected module versions, as a fresh CI
+        # runner does. Do not copy historical versions from a developer cache.
+        stream = check.run(['go', 'list', '-m', '-json', 'all'], cwd=check.ROOT / 'javascript', env=original, capture=True)
+        modules = []
+        decoder = json.JSONDecoder()
+        while stream.strip():
+            value, end = decoder.raw_decode(stream.lstrip())
+            modules.append(value)
+            stream = stream.lstrip()[end:]
+        with tempfile.TemporaryDirectory(prefix='jsontrans-current-deps-') as directory:
+            cache = Path(directory) / 'cache'
+            for module in modules:
+                if not module.get('Version') or module.get('Replace'):
+                    continue
+                # Go's module download cache escapes uppercase letters.
+                path = ''.join('!' + c.lower() if c.isupper() else c for c in module['Path'])
+                source = old_cache / 'cache/download' / path / '@v'
+                target = cache / 'cache/download' / path / '@v'
+                target.mkdir(parents=True, exist_ok=True)
+                for item in source.glob(module['Version'] + '.*'):
+                    if item.is_file() and not item.name.endswith(('.lock', '.tmp')):
+                        shutil.copyfile(item, target / item.name)
+            env = original | dict(GOTOOLCHAIN='local', GOMODCACHE=str(cache),
+                                  GOPROXY='off', GOSUMDB='off',
+                                  PATH=str(goroot / 'bin') + os.pathsep + original['PATH'])
+            result = subprocess.run([sys.executable, str(check.ROOT / 'javascript/scripts/check_module.py')],
+                                    cwd=check.ROOT, env=env, text=True, capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_minimum_core_resolves_without_local_branches(self):
         go = str(Path(subprocess.check_output(['go', 'env', 'GOROOT'], text=True).strip()) / 'bin' / 'go')
         version = 'v1.1.1-0.20261103173822-e9b9c0c71fe0'

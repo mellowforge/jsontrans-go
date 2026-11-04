@@ -111,10 +111,15 @@ if err=e.Close();err!=nil{panic(err)};_,err=p.Eval(ctx,nil,jt.EvalOptions{});if 
         native.mkdir()
         (native / 'go.mod').write_text('module example.com/native\n\ngo 1.26.0\n\nrequire ' + CORE + ' ' + core_version + '\n')
         (native / 'main.go').write_text('package main\nimport jt "github.com/mellowforge/jsontrans-go"\nfunc main(){_,_=jt.New(nil)}\n')
-        run([go, 'mod', 'tidy'], cwd=native, env=env)
-        deps = run([go, 'list', '-deps', '.'], cwd=native, env=env, capture=True)
+        # Inspect this consumer's production imports. tidy also loads tests of
+        # dependency packages, pulling historical JSONata-only requirements
+        # unrelated to the root-contract isolation check into this fixture.
+        deps = run([go, 'list', '-mod=mod', '-deps', '.'], cwd=native, env=env, capture=True)
         if MODULE in deps or 'github.com/tetratelabs/wazero' in deps:
             raise SystemExit('native root acquired optional runtime dependency')
+        native_binary = work / ('native.exe' if os.name == 'nt' else 'native-bin')
+        run([go, 'build', '-mod=readonly', '-o', str(native_binary), '.'], cwd=native, env=env)
+        run([str(native_binary)], cwd=empty, env=env)
         print('module zip, minimum core, embedded assets, dependency boundaries: PASS')
 
 

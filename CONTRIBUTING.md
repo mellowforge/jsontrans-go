@@ -4,6 +4,8 @@ Read AGENTS.md and the [approved design](docs/superpowers/specs/2026-11-02-json-
 before changing public behavior.
 Use Go 1.26 or newer. Core runtime dependencies must be pure Go supporting utilities,
 not complete language engines. Use Context7 when checking dependency APIs.
+For verification on your own Linux, macOS and Windows machines, see the
+[local verification guide](docs/local-verification.md).
 
 Before submitting a change:
 
