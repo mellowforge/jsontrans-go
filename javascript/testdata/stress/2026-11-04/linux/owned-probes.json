@@ -1,0 +1,194 @@
+{
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "cases": [
+    {
+      "backend": "owned-quickjs",
+      "case": "cold-start",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+      "duration_ns": 331655389,
+      "go_heap_bytes": 44212688,
+      "peak_rss_bytes": 55574528
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "compile-cancel",
+      "status": "PASS",
+      "detail": "source compilation context=context deadline exceeded error=context deadline exceeded\njavascript compile [] at 0: context deadline exceeded",
+      "duration_ns": 356626947,
+      "go_heap_bytes": 39742552,
+      "peak_rss_bytes": 54525952
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cancel-loop",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=javascript evaluate [] at 0: context deadline exceeded\ncontext deadline exceeded",
+      "duration_ns": 448380121,
+      "go_heap_bytes": 6728688,
+      "peak_rss_bytes": 56885248
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cancel-regex",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=javascript evaluate [] at 0: context deadline exceeded\ncontext deadline exceeded",
+      "duration_ns": 404157311,
+      "go_heap_bytes": 4414440,
+      "peak_rss_bytes": 57933824
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cancel-conversion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=javascript evaluate [] at 0: context deadline exceeded\ncontext deadline exceeded",
+      "duration_ns": 377667931,
+      "go_heap_bytes": 50968000,
+      "peak_rss_bytes": 57671680
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "recursion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=javascript evaluate [] at 0: wasm error: out of bounds memory access\nwasm stack trace:\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t.$141(i32,i64,i64,i64,i32,i32,i32) i64\n\t... maybe followed by omitted frames",
+      "duration_ns": 310939836,
+      "go_heap_bytes": 54861576,
+      "peak_rss_bytes": 75231232
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "allocation-cap",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=javascript evaluate [] at 0: InternalError: out of memory",
+      "duration_ns": 283174257,
+      "go_heap_bytes": 44944416,
+      "peak_rss_bytes": 56360960
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "guest-memory",
+      "status": "PASS",
+      "detail": "public 64 MiB engine accepted 40 MiB; independent 8 MiB engine rejected it: javascript evaluate [] at 0: InternalError: out of memory; exact page/growth stats covered by canonical runtime tests",
+      "duration_ns": 589034617,
+      "go_heap_bytes": 45350904,
+      "peak_rss_bytes": 113770496
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cleanup",
+      "status": "PASS",
+      "detail": "canceled guest discarded, runtime/cache Close=<nil>; evaluation=javascript evaluate [] at 0: context deadline exceeded\ncontext deadline exceeded",
+      "duration_ns": 311076758,
+      "go_heap_bytes": 4310048,
+      "peak_rss_bytes": 57147392
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "host-capabilities",
+      "status": "PASS",
+      "detail": "pinned artifact has zero host imports; runtime instantiates no WASI, filesystem, output streams or Go callback module",
+      "duration_ns": 321225174,
+      "go_heap_bytes": 39705800,
+      "peak_rss_bytes": 56623104
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "cache-cancellation",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=javascript evaluate [] at 0: context deadline exceeded\ncontext deadline exceeded",
+      "duration_ns": 727123713,
+      "go_heap_bytes": 68417368,
+      "peak_rss_bytes": 86245376
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "unicode",
+      "status": "PASS",
+      "detail": "[\"\\ud800\",\"\\ud800\",\"\ud83d\ude00\",\"\\udfff\"]",
+      "duration_ns": 294066072,
+      "go_heap_bytes": 43644528,
+      "peak_rss_bytes": 55312384
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "numbers",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"9007199254740992\", Defined:true}; error=<nil>",
+      "duration_ns": 290047039,
+      "go_heap_bytes": 44719328,
+      "peak_rss_bytes": 56623104
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "exceptions",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=javascript evaluate [] at 0: TypeError: sentinel",
+      "duration_ns": 324650981,
+      "go_heap_bytes": 44096264,
+      "peak_rss_bytes": 55312384
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "conversion-limits",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=javascript output [] at 0: result cannot be represented as JSON\nresource limit exceeded\nlimit: output depth\njavascript output [] at 0: result cannot be represented as JSON\nresource limit exceeded\nlimit: collection\njavascript output [] at 0: result cannot be represented as JSON\nresource limit exceeded\nlimit: output bytes",
+      "duration_ns": 339559383,
+      "go_heap_bytes": 4419536,
+      "peak_rss_bytes": 58720256
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "limits-forwarding",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:interface {}(nil), Defined:false}; error=<nil>",
+      "duration_ns": 363596352,
+      "go_heap_bytes": 6740152,
+      "peak_rss_bytes": 58982400
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "prepared-fallback",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+      "duration_ns": 302283220,
+      "go_heap_bytes": 46130080,
+      "peak_rss_bytes": 57933824
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "exception-coercion",
+      "status": "PASS",
+      "detail": "result=jsontrans.Result{Value:\"42\", Defined:true}; error=javascript evaluate [] at 0: context deadline exceeded\ncontext deadline exceeded",
+      "duration_ns": 364394937,
+      "go_heap_bytes": 50859216,
+      "peak_rss_bytes": 57933824
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "lifecycle-contract",
+      "status": "PASS",
+      "detail": "constructor context detached; Close=<nil>; subsequent Eval=javascript evaluate [] at 0: owned QuickJS engine closed",
+      "duration_ns": 561668948,
+      "go_heap_bytes": 5959872,
+      "peak_rss_bytes": 68943872
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "diagnostic-classification",
+      "status": "PASS",
+      "detail": "typed native exceptions; forged marker cannot acquire trusted resource or conversion status",
+      "duration_ns": 291207765,
+      "go_heap_bytes": 6711640,
+      "peak_rss_bytes": 58720256
+    },
+    {
+      "backend": "owned-quickjs",
+      "case": "diagnostic-locations",
+      "status": "PASS",
+      "detail": "mapped rule lines and native compiler columns; byte offsets unavailable; runtime locations explicitly reported",
+      "duration_ns": 297156190,
+      "go_heap_bytes": 47879768,
+      "peak_rss_bytes": 57671680
+    }
+  ]
+}

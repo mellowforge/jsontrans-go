@@ -1,0 +1,21 @@
+﻿{
+    "source_commit":  "dc29b608edb42111221fa3e173e889b9a7f61583",
+    "go":  "go version go1.26.10 windows/amd64",
+    "platform":  "Microsoft Windows NT 10.0.22621.0",
+    "started_utc":  "20261104T115042Z",
+    "guest_sha256":  "31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee",
+    "steps":  [
+                  {
+                      "passed":  true,
+                      "seconds":  900.9595451,
+                      "name":  "campaign",
+                      "exit_code":  0
+                  }
+              ],
+    "complete":  true,
+    "passed":  true,
+    "verification_reused_from":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\report.json",
+    "binary_sha256":  "4ee5e59aed6d54e353ffe7ac5054dc8fa5d8b1072d35ad20659d3f1a009c41b5",
+    "wrapper_correction":  "Cache the asynchronous child process Handle before polling; retain the original failed report.",
+    "finished_utc":  "2026-11-04T12:06:01.1193185Z"
+}

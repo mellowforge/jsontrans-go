@@ -1,0 +1,30 @@
+[
+  {
+    "profile": "linux-persistent",
+    "rss_samples": 3599,
+    "largest_rss_interval_seconds": 1.002363945,
+    "first_elapsed_seconds": 0.000325773,
+    "last_elapsed_seconds": 3599.150948944
+  },
+  {
+    "profile": "linux-recycled",
+    "rss_samples": 3599,
+    "largest_rss_interval_seconds": 1.001246437,
+    "first_elapsed_seconds": 0.00031616,
+    "last_elapsed_seconds": 3599.149608348
+  },
+  {
+    "profile": "mac",
+    "rss_samples": 892,
+    "largest_rss_interval_seconds": 1.016293792,
+    "first_elapsed_seconds": 0.003880833,
+    "last_elapsed_seconds": 899.873894624
+  },
+  {
+    "profile": "windows",
+    "rss_samples": 893,
+    "largest_rss_interval_seconds": 1.0269504,
+    "first_elapsed_seconds": 0.0180563,
+    "last_elapsed_seconds": 899.9424842
+  }
+]
