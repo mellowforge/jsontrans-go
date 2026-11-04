@@ -31,6 +31,11 @@ func TestSoakRejectsWrongFailureCauses(t *testing.T) {
 		}
 	}
 	oom := &js.Exception{Name: "InternalError", Message: "out of memory"}
+	for _, cause := range []error{jt.ErrLimit, jt.ErrConversion} {
+		if check(4, jt.Result{}, errors.Join(oom, cause)) == nil {
+			t.Fatal("native OOM acquired trusted quota/conversion provenance")
+		}
+	}
 	for _, err := range []error{context.DeadlineExceeded, context.Canceled, errors.Join(oom, context.DeadlineExceeded), errors.Join(oom, context.Canceled), errors.Join(oom, js.ErrClosed)} {
 		if check(4, jt.Result{}, err) == nil {
 			t.Fatalf("timeout/cancellation passed allocation gate: %v", err)
