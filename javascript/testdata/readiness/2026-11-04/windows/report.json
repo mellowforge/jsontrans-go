@@ -1,0 +1,94 @@
+﻿{
+    "source_commit":  "acbf01cb0271089c08de2f63ece849067a2137fb",
+    "go":  "go version go1.26.10 windows/amd64",
+    "platform":  "Microsoft Windows NT 10.0.22621.0",
+    "started_utc":  "2026-11-04T13:59:15.9158326Z",
+    "guest_sha256":  "31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee",
+    "steps":  [
+                  {
+                      "exit_code":  0,
+                      "name":  "vet",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "vet",
+                                      "./..."
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\vet.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\vet.log.out",
+                      "seconds":  2.0232093
+                  },
+                  {
+                      "exit_code":  0,
+                      "name":  "test",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "test",
+                                      "-count=1",
+                                      "./..."
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\test.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\test.log.out",
+                      "seconds":  12.087044299999999
+                  },
+                  {
+                      "exit_code":  0,
+                      "name":  "race",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "test",
+                                      "-race",
+                                      "-count=1",
+                                      "./..."
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\race.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\race.log.out",
+                      "seconds":  97.7040359
+                  },
+                  {
+                      "exit_code":  0,
+                      "name":  "module-verify",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "mod",
+                                      "verify"
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\module-verify.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\module-verify.log.out",
+                      "seconds":  1.00884
+                  },
+                  {
+                      "exit_code":  0,
+                      "name":  "example-build",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "build",
+                                      "-o",
+                                      "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\javascript-example.exe",
+                                      "./examples/basic"
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\example-build.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\example-build.log.out",
+                      "seconds":  1.0196376999999999
+                  },
+                  {
+                      "command":  [
+                                      "C:\\Users\\Konstantin\\jsontrans-ci\\readiness-20261104\\verification\\javascript-example.exe"
+                                  ],
+                      "name":  "example-run",
+                      "exit_code":  0
+                  }
+              ],
+    "complete":  true,
+    "passed":  true,
+    "finished_utc":  "2026-11-04T14:01:11.3088297Z"
+}

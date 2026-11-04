@@ -74,11 +74,29 @@ safety certification is implied by a clean scan or bounded fuzz campaign.
 
 ## Acceptance evidence
 
-Fresh native verification and notice-review results will be recorded here before
-this PR is presented as ready. Pending/running steps are not passes. The evidence
-must include exact source commits, toolchains, guest identity, commands, exit
-codes, raw logs and checksums. The final documentation/evidence commit must have
-identical runtime/module/guest files to the source tested on all three machines.
+All **80 recorded steps passed** on candidate source
+`acbf01cb0271089c08de2f63ece849067a2137fb`, using local machines without hosted
+Actions. The [dated evidence](../javascript/testdata/readiness/2026-11-04/README.md)
+retains exact commands, source/toolchain identities, exit codes, raw logs and
+checksums. Results remain technical acceptance evidence, not maintainer sign-off.
+
+| Machine / toolchains | Fresh acceptance checks | Result |
+|---|---|---|
+| Mac arm64, Go 1.26.10 and 1.27.3 | All three modules: uncached tests/race, vet and module verification; formatting | 25/25 steps passed |
+| Ubuntu 24.04 amd64, Go 1.26.10 and 1.27.3 | Same native matrix, Node oracle, packaging regressions/outside consumer, 21 probes, 1,200 recovery pairs, 11 CI fuzz targets, guest rebuild/byte comparison and three-target Go security gates | 49/49 steps passed |
+| Windows amd64, Go 1.26.10 | Public JavaScript module native vet, uncached tests/race, module verification, CGO-free example build and execution | 6/6 steps passed |
+
+The [refreshed notice review](../javascript/testdata/readiness/2026-11-04/notices/source-review.md)
+finds the same ten QuickJS advisory metadata records as the prior source review;
+no new published Wazero/SDK repository advisories or later stable releases were
+listed. The Go scanner database reports modification time
+`2026-11-02T22:01:43Z`. Raw notices and scan streams are retained; these sources
+are not a guarantee of complete vulnerability coverage.
+
+Sixty production/module/guest-source files match extended-campaign source
+`dc29b60` exactly. The final readiness changes are documentation/evidence only;
+the evidence verifier checks their current runtime hashes. Final local checks
+and independent review are recorded with the publication evidence.
 
 Existing evidence retained as part of the review:
 

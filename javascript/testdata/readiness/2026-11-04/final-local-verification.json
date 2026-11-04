@@ -1,0 +1,9 @@
+{
+  "source_commit": "acbf01cb0271089c08de2f63ece849067a2137fb",
+  "changes_since_source": "documentation and dated evidence only; current runtime hashes verified separately",
+  "toolchain": "go1.26.10",
+  "command": "gofmt -l . (empty); go test ./..., go test -race ./..., go vet ./... in root, javascript and experiments/javascript",
+  "exit_code": 0,
+  "recorded_utc": "2026-11-04T14:10:15.017152+00:00",
+  "log": "final-local-verification.log.gz"
+}
