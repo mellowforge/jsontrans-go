@@ -1,0 +1,161 @@
+{
+  "source_commit": "9eadb55dbd4e297fb99915167bbfbd5542cf1868",
+  "steps": [
+    {
+      "name": "oracle",
+      "command": [
+        "go",
+        "-C",
+        "javascript",
+        "test",
+        "-run",
+        "^TestResourceFailureOracleRejectsUnrelatedCauses$",
+        "-count=1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.315,
+      "log": "oracle.log"
+    },
+    {
+      "name": "strict-resource-fuzz",
+      "command": [
+        "go",
+        "-C",
+        "javascript",
+        "test",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzOwnedResourceLimits$",
+        "-fuzztime=100000x",
+        "-parallel=2",
+        "-timeout=30m"
+      ],
+      "exit_code": 0,
+      "seconds": 190.589,
+      "log": "strict-resource-fuzz.log"
+    },
+    {
+      "name": "core-test",
+      "command": [
+        "go",
+        "-C",
+        ".",
+        "test",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 3.07,
+      "log": "core-test.log"
+    },
+    {
+      "name": "core-race",
+      "command": [
+        "go",
+        "-C",
+        ".",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 27.26,
+      "log": "core-race.log"
+    },
+    {
+      "name": "core-vet",
+      "command": [
+        "go",
+        "-C",
+        ".",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 0.114,
+      "log": "core-vet.log"
+    },
+    {
+      "name": "javascript-test",
+      "command": [
+        "go",
+        "-C",
+        "javascript",
+        "test",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 10.385,
+      "log": "javascript-test.log"
+    },
+    {
+      "name": "javascript-race",
+      "command": [
+        "go",
+        "-C",
+        "javascript",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 84.027,
+      "log": "javascript-race.log"
+    },
+    {
+      "name": "javascript-vet",
+      "command": [
+        "go",
+        "-C",
+        "javascript",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 0.165,
+      "log": "javascript-vet.log"
+    },
+    {
+      "name": "experiments-javascript-test",
+      "command": [
+        "go",
+        "-C",
+        "experiments/javascript",
+        "test",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 5.026,
+      "log": "experiments-javascript-test.log"
+    },
+    {
+      "name": "experiments-javascript-race",
+      "command": [
+        "go",
+        "-C",
+        "experiments/javascript",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 42.929,
+      "log": "experiments-javascript-race.log"
+    },
+    {
+      "name": "experiments-javascript-vet",
+      "command": [
+        "go",
+        "-C",
+        "experiments/javascript",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 0.115,
+      "log": "experiments-javascript-vet.log"
+    }
+  ],
+  "complete": true,
+  "passed": true
+}

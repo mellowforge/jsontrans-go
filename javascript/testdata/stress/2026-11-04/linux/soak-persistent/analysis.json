@@ -1,0 +1,60 @@
+{
+  "profile": "soak-persistent",
+  "source_commit": "dc29b608edb42111221fa3e173e889b9a7f61583",
+  "go": "go1.26.10",
+  "platform": "linux/amd64",
+  "actual_seconds": 3600.060725153,
+  "recoveries": 1394900,
+  "closed_lifecycles": 1,
+  "guest_cap_bytes": 8388608,
+  "warmup_seconds": 360.0,
+  "baseline": {
+    "stage": "baseline",
+    "elapsed_ns": 360300,
+    "completed_cycles": 0,
+    "heap_alloc_bytes": 202432,
+    "heap_inuse_bytes": 688128,
+    "go_sys_bytes": 8411400,
+    "goroutines": 3
+  },
+  "timing_values_payload_bytes": 223200,
+  "stages": {
+    "live": {
+      "samples": 108,
+      "trend_available": true,
+      "start_seconds": 361.919211738,
+      "end_seconds": 3584.360085462,
+      "window_samples": 5,
+      "first_heap_median": 1957464,
+      "last_heap_median": 2212544,
+      "heap_max": 2221120,
+      "go_sys_max": 115865896,
+      "first_goroutine_median": 3,
+      "last_goroutine_median": 3,
+      "goroutine_max": 3,
+      "heap_median_delta": 255080
+    },
+    "closed": {
+      "samples": 1,
+      "trend_available": false,
+      "start_seconds": 3600.060697612,
+      "end_seconds": 3600.060697612,
+      "window_samples": 1,
+      "first_heap_median": 664528,
+      "last_heap_median": 664528,
+      "heap_max": 664528,
+      "go_sys_max": 115865896,
+      "first_goroutine_median": 3,
+      "last_goroutine_median": 3,
+      "goroutine_max": 3,
+      "heap_median_delta": 0
+    }
+  },
+  "rss": {
+    "samples": 3599,
+    "sampled_peak_bytes": 100749312,
+    "first_postwarmup_30_median": 54067200.0,
+    "last_30_median": 56516608.0
+  },
+  "note": "Diagnostic trends, not a memory-safety proof or hard process-memory cap. Timing/sample arrays are retained by the measurement harness. Live and closed samples must be interpreted separately."
+}

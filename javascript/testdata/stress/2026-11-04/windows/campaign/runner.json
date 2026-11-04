@@ -1,0 +1,30 @@
+﻿{
+    "source_commit":  "dc29b608edb42111221fa3e173e889b9a7f61583",
+    "profile":  "windows-recycled",
+    "command":  [
+                    "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\hardening.exe",
+                    "-duration",
+                    "900s",
+                    "-recycle",
+                    "60s",
+                    "-sample-interval",
+                    "30s",
+                    "-workers",
+                    "2",
+                    "-guest-mib",
+                    "64",
+                    "-progress",
+                    "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T115042Z\\campaign\\progress.jsonl"
+                ],
+    "gomaxprocs":  2,
+    "pid":  5320,
+    "exit_code":  0,
+    "seconds":  900.9595451,
+    "rss_samples":  893,
+    "sampled_peak_rss_bytes":  105766912,
+    "timed_out":  false,
+    "complete":  true,
+    "passed":  true,
+    "verified_recoveries":  195300,
+    "closed_lifecycles":  15
+}

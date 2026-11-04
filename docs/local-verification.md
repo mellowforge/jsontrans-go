@@ -84,6 +84,7 @@ go -C javascript test ./internal/quickjswasm -run '^$' -fuzz '^FuzzDiagnosticRec
 go -C javascript test -run '^$' -fuzz '^FuzzRuleLocation$' -fuzztime=1000x -parallel=2
 go -C javascript test -run '^$' -fuzz '^FuzzOwnedJSONConversion$' -fuzztime=500x -parallel=2
 go -C javascript test -run '^$' -fuzz '^FuzzOwnedTerminalPhases$' -fuzztime=200x -parallel=2
+go -C javascript test -run '^$' -fuzz '^FuzzOwnedResourceLimits$' -fuzztime=1000x -parallel=2
 go -C experiments/javascript test -run '^$' -fuzz '^FuzzStringConversion$' -fuzztime=1000x -parallel=2
 ```
 
@@ -103,6 +104,9 @@ done
 These cross-target scans analyze source and binaries; they do not execute
 Windows or macOS code on Linux. A clean Go scan does not clear the embedded
 QuickJS release blocker. See the [security update record](javascript-go-security-updates.md).
+
+For longer JavaScript soaks and parameterized resource fuzzing, see the
+[extended validation protocol](javascript-extended-validation.md).
 
 ## Windows
 
@@ -132,6 +136,12 @@ its ExitCode. Redirecting `2>&1` directly can turn harmless Go download progress
 into a PowerShell error before the native command finishes. Keep toolchains and
 caches task-local; PR B's checked Windows run used Go 1.26.10 and MinGW-w64 UCRT
 14.0.0 with `libsynchronization.a` available for race detection.
+
+For asynchronous `Start-Process -PassThru` monitoring, access and retain
+`$process.Handle` immediately after starting the child, before polling it.
+PowerShell 5.1 can otherwise lose ExitCode after `WaitForExit`. A missing exit
+code is an incomplete verification, even if the child printed success. Keep
+the original attempt and rerun with reliable status capture.
 
 ## GitHub status and later automation
 

@@ -24,6 +24,8 @@ type outcome struct {
 	MaxNS   int64 `json:"max_ns"`
 }
 type memorySample struct {
+	Stage      string `json:"stage,omitempty"`
+	ElapsedNS  int64  `json:"elapsed_ns,omitempty"`
 	Cycle      int    `json:"completed_cycles"`
 	HeapAlloc  uint64 `json:"heap_alloc_bytes"`
 	HeapInuse  uint64 `json:"heap_inuse_bytes"`
@@ -31,6 +33,11 @@ type memorySample struct {
 	Goroutines int    `json:"goroutines"`
 }
 type report struct {
+	Batches        int                `json:"completed_batches,omitempty"`
+	Campaign       *campaignSettings  `json:"campaign,omitempty"`
+	Status         string             `json:"status,omitempty"`
+	Complete       *bool              `json:"complete,omitempty"`
+	Failure        string             `json:"failure,omitempty"`
 	GoVersion      string             `json:"go_version"`
 	Platform       string             `json:"platform"`
 	Settings       settings           `json:"settings"`
@@ -47,19 +54,52 @@ type report struct {
 
 func main() {
 	s := settings{}
+	c := campaignSettings{}
+	var progressPath string
+	flag.DurationVar(&c.Duration, "duration", 0, "duration mode, 1s..2h; unset keeps count mode")
+	flag.DurationVar(&c.Recycle, "recycle", 0, "engine lifetime in duration mode; zero keeps one engine")
+	flag.DurationVar(&c.SampleInterval, "sample-interval", 30*time.Second, "GC sampling interval in duration mode")
+	flag.IntVar(&c.GuestMiB, "guest-mib", 8, "duration-mode guest cap: 2, 8 or 64 MiB")
+	flag.StringVar(&progressPath, "progress", "", "exclusive-create JSONL campaign progress file")
 	flag.IntVar(&s.Iterations, "iterations", 100, "iterations per worker per cycle (1..100000)")
 	flag.IntVar(&s.Workers, "workers", 4, "concurrent evaluators (1..32)")
 	flag.IntVar(&s.Cycles, "cycles", 3, "independent engine lifecycles (1..100)")
 	flag.Parse()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-	defer cancel()
-	r, err := run(ctx, s)
+	campaignMode := false
+	countModeFlags := false
+	flag.Visit(func(f *flag.Flag) {
+		switch f.Name {
+		case "duration", "recycle", "sample-interval", "guest-mib", "progress":
+			campaignMode = true
+		case "iterations", "cycles":
+			countModeFlags = true
+		}
+	})
+	if campaignMode && countModeFlags {
+		fmt.Fprintln(os.Stderr, "-iterations and -cycles cannot be combined with duration-mode options")
+		os.Exit(2)
+	}
+	var r report
+	var err error
+	if campaignMode {
+		c.Workers = s.Workers
+		r, err = campaignCLI(c, progressPath)
+	} else {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+		defer cancel()
+		r, err = run(ctx, s)
+	}
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		if !campaignMode {
+			os.Exit(1)
+		}
+	}
+	if encodeErr := json.NewEncoder(os.Stdout).Encode(r); encodeErr != nil {
+		fmt.Fprintln(os.Stderr, encodeErr)
 		os.Exit(1)
 	}
-	if err = json.NewEncoder(os.Stdout).Encode(r); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+	if err != nil {
 		os.Exit(1)
 	}
 }
@@ -68,7 +108,7 @@ func sample(cycle int) memorySample {
 	runtime.GC()
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
-	return memorySample{cycle, m.HeapAlloc, m.HeapInuse, m.Sys, runtime.NumGoroutine()}
+	return memorySample{Cycle: cycle, HeapAlloc: m.HeapAlloc, HeapInuse: m.HeapInuse, Sys: m.Sys, Goroutines: runtime.NumGoroutine()}
 }
 
 func run(ctx context.Context, s settings) (report, error) {
@@ -111,7 +151,7 @@ func exercise(ctx context.Context, e *js.Engine, s settings, r *report) error {
 		`()=>{throw new TypeError('soak')}`,
 		`()=>{const x={};x.self=x;return x}`,
 		`()=>{while(true){}}`,
-		`()=>new ArrayBuffer(40*1024*1024).byteLength`,
+		fmt.Sprintf(`()=>new ArrayBuffer(%d).byteLength`, r.GuestCapBytes*5),
 	}
 	names := []string{"success", "exception", "conversion", "cancellation", "allocation"}
 	programs := make([]jt.Program, len(sources))
@@ -229,7 +269,7 @@ func check(kind int, got jt.Result, err error) error {
 		// This exact literal allocation fixture must fail for guest OOM, not a
 		// scheduling deadline. Text is asserted only here, never used by the adapter
 		// to classify arbitrary user exceptions as trusted resource failures.
-		if errors.As(err, &ex) && ex.Name == "InternalError" && ex.Message == "out of memory" && !errors.Is(err, context.DeadlineExceeded) && !errors.Is(err, context.Canceled) {
+		if errors.As(err, &ex) && ex.Name == "InternalError" && ex.Message == "out of memory" && !errors.Is(err, jt.ErrLimit) && !errors.Is(err, jt.ErrConversion) && !errors.Is(err, context.DeadlineExceeded) && !errors.Is(err, context.Canceled) {
 			return nil
 		}
 	}

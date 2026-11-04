@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/tmp/jsontrans-extended-hardening",
+    "-duration",
+    "60s",
+    "-sample-interval",
+    "1s",
+    "-workers",
+    "2",
+    "-progress",
+    "/tmp/jsontrans-extended-signal-check/progress.jsonl"
+  ],
+  "exit_code": 1,
+  "assertions_passed": true,
+  "intentional_interruption": true,
+  "verified_recoveries": 300
+}

@@ -1,0 +1,93 @@
+﻿{
+    "source_commit":  "dc29b608edb42111221fa3e173e889b9a7f61583",
+    "go":  "go version go1.26.10 windows/amd64",
+    "platform":  "Microsoft Windows NT 10.0.22621.0",
+    "started_utc":  "20261104T112722Z",
+    "guest_sha256":  "31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee",
+    "steps":  [
+                  {
+                      "exit_code":  0,
+                      "name":  "vet",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "vet",
+                                      "./..."
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\vet.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\vet.log.out",
+                      "seconds":  2.0354528
+                  },
+                  {
+                      "exit_code":  0,
+                      "name":  "test",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "test",
+                                      "-count=1",
+                                      "./..."
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\test.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\test.log.out",
+                      "seconds":  16.162914699999998
+                  },
+                  {
+                      "exit_code":  0,
+                      "name":  "race",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "test",
+                                      "-race",
+                                      "-count=1",
+                                      "./..."
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\race.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\race.log.out",
+                      "seconds":  117.09352059999999
+                  },
+                  {
+                      "exit_code":  0,
+                      "name":  "module-verify",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "mod",
+                                      "verify"
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\module-verify.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\module-verify.log.out",
+                      "seconds":  2.0242914
+                  },
+                  {
+                      "exit_code":  0,
+                      "name":  "build",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "build",
+                                      "-o",
+                                      "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\hardening.exe",
+                                      "./cmd/hardening"
+                                  ],
+                      "stderr":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\build.log.err",
+                      "stdout":  "C:\\Users\\Konstantin\\jsontrans-ci\\extended-20261104\\runs\\20261104T112722Z\\build.log.out",
+                      "seconds":  1.014973
+                  },
+                  {
+                      "passed":  false,
+                      "seconds":  900.459538,
+                      "name":  "campaign",
+                      "exit_code":  null
+                  }
+              ],
+    "complete":  true,
+    "passed":  false,
+    "finished_utc":  "2026-11-04T11:45:03.2019657Z"
+}
