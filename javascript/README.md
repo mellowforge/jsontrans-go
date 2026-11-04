@@ -2,8 +2,9 @@
 
 A CGO-free synchronous JavaScript processor for jsontrans-go, powered by an owned
 QuickJS-ng/WebAssembly guest and Wazero. This is a **preview module**: extraction
-makes it independently consumable; production hardening and release remain
-separate work. The native JSONPath/JSONata module has no JavaScript dependency.
+makes it independently consumable. The [production-readiness record](../docs/javascript-production-readiness.md)
+collects the proposed support policy, private reporting route, acceptance
+evidence and candidate release notes for maintainer approval. The native JSONPath/JSONata module has no JavaScript dependency.
 
 ```go
 import (
@@ -69,7 +70,9 @@ GOPRIVATE=github.com/mellowforge/jsontrans-go go get github.com/mellowforge/json
 # Pin a merged commit or a future module tag for reproducible application builds.
 ```
 
-No module tag is created by this PR. Future JavaScript tags must use the nested
+No JavaScript module tag is published by the readiness preparation. The proposed
+first supported tag is `javascript/v1.0.0`, pending explicit approval. JavaScript
+tags must use the nested
 module prefix `javascript/vX.Y.Z`; root-library tags use `vX.Y.Z`. The minimum
 root dependency is the real merged version
 `v1.1.1-0.20261103173822-e9b9c0c71fe0`, containing registry limit forwarding;
