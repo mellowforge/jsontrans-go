@@ -1,0 +1,17 @@
+--- a/internal/wasm/module_instance.go
++++ b/internal/wasm/module_instance.go
+@@ -36,8 +36,12 @@
+ 	// context. Closing the channel will unblock the select in the goroutine
+ 	// causing it to return an stop listening to ctx.Done().
+ 	cancelChan := make(chan struct{})
+-	go m.closeModuleOnCanceledOrTimeout(ctx, cancelChan)
+-	return func() { close(cancelChan) }
++	finished := make(chan struct{})
++	go func() {
++		defer close(finished)
++		m.closeModuleOnCanceledOrTimeout(ctx, cancelChan)
++	}()
++	return func() { close(cancelChan); <-finished }
+ }
+ 
+ // closeModuleOnCanceledOrTimeout is extracted from CloseModuleOnCanceledOrTimeout for testing.

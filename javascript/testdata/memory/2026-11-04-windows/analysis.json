@@ -1,0 +1,138 @@
+{
+  "probe2": {
+    "cycles": 40,
+    "verified_recoveries": 2000,
+    "gc_passes": {
+      "1": {
+        "min_bytes": 278528,
+        "median_bytes": 2113400.0,
+        "max_bytes": 6078552,
+        "over_1_mib": 20
+      },
+      "2": {
+        "min_bytes": 257600,
+        "median_bytes": 289640.0,
+        "max_bytes": 316904,
+        "over_1_mib": 0
+      },
+      "3": {
+        "min_bytes": 262520,
+        "median_bytes": 289200.0,
+        "max_bytes": 316840,
+        "over_1_mib": 0
+      }
+    }
+  },
+  "baseline80": {
+    "cycles": 80,
+    "verified_recoveries": 4000,
+    "gc_passes": {
+      "1": {
+        "min_bytes": 243568,
+        "median_bytes": 299192.0,
+        "max_bytes": 6085312,
+        "over_1_mib": 30
+      },
+      "2": {
+        "min_bytes": 233720,
+        "median_bytes": 295608.0,
+        "max_bytes": 300848,
+        "over_1_mib": 0
+      },
+      "3": {
+        "min_bytes": 238816,
+        "median_bytes": 295328.0,
+        "max_bytes": 300848,
+        "over_1_mib": 0
+      }
+    },
+    "pre_gc_correlation": [
+      {
+        "goroutines": 2,
+        "over_1_mib": false,
+        "cycles": 45
+      },
+      {
+        "goroutines": 6,
+        "over_1_mib": false,
+        "cycles": 1
+      },
+      {
+        "goroutines": 6,
+        "over_1_mib": true,
+        "cycles": 27
+      },
+      {
+        "goroutines": 10,
+        "over_1_mib": false,
+        "cycles": 1
+      },
+      {
+        "goroutines": 12,
+        "over_1_mib": false,
+        "cycles": 1
+      },
+      {
+        "goroutines": 24,
+        "over_1_mib": true,
+        "cycles": 3
+      },
+      {
+        "goroutines": 27,
+        "over_1_mib": false,
+        "cycles": 1
+      },
+      {
+        "goroutines": 39,
+        "over_1_mib": false,
+        "cycles": 1
+      }
+    ]
+  },
+  "wait80": {
+    "cycles": 80,
+    "verified_recoveries": 4000,
+    "gc_passes": {
+      "1": {
+        "min_bytes": 190040,
+        "median_bytes": 226500.0,
+        "max_bytes": 230088,
+        "over_1_mib": 0
+      },
+      "2": {
+        "min_bytes": 189456,
+        "median_bytes": 226552.0,
+        "max_bytes": 229760,
+        "over_1_mib": 0
+      },
+      "3": {
+        "min_bytes": 189456,
+        "median_bytes": 225488.0,
+        "max_bytes": 228608,
+        "over_1_mib": 0
+      }
+    },
+    "pre_gc_correlation": [
+      {
+        "goroutines": 2,
+        "over_1_mib": false,
+        "cycles": 80
+      }
+    ]
+  },
+  "stacks10": {
+    "snapshots": 10,
+    "monitor_frames_per_snapshot": [
+      27,
+      27,
+      27,
+      27,
+      27,
+      14,
+      27,
+      27,
+      11,
+      27
+    ]
+  }
+}

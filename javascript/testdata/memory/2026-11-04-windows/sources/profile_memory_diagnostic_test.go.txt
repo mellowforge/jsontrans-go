@@ -1,0 +1,41 @@
+package main
+
+import (
+ "context"
+ "encoding/json"
+ "os"
+ "path/filepath"
+ "runtime"
+ "runtime/pprof"
+ "testing"
+ "time"
+ jt "github.com/mellowforge/jsontrans-go"
+ js "github.com/mellowforge/jsontrans-go/javascript"
+)
+
+func TestMemoryDiagnostic(t *testing.T) {
+ dir := os.Getenv("JSONTRANS_MEMORY_DIAGNOSTICS")
+ if dir == "" { t.Fatal("JSONTRANS_MEMORY_DIAGNOSTICS is required") }
+ f,err := os.Create(filepath.Join(dir,"samples.jsonl")); if err!=nil {t.Fatal(err)}; defer f.Close()
+ enc:=json.NewEncoder(f)
+ ctx,cancel:=context.WithTimeout(context.Background(),5*time.Minute);defer cancel()
+ r:=report{GuestCapBytes:64<<20,Outcomes:make(map[string]outcome)}
+ for cycle:=1;cycle<=40;cycle++ {
+  e,err:=js.New(ctx,js.Config{GuestMemoryBytes:64<<20,Limits:jt.Limits{Timeout:10*time.Second}}); if err!=nil {t.Fatal(err)}
+  if err:=exercise(ctx,e,settings{Iterations:25,Workers:2},&r);err!=nil {t.Fatal(err)}
+  if err:=e.Close();err!=nil {t.Fatal(err)}
+  e=nil
+  var first uint64
+  for gc:=1;gc<=3;gc++ {
+   runtime.GC()
+   var m runtime.MemStats;runtime.ReadMemStats(&m)
+   if gc==1 {first=m.HeapAlloc}
+   if err:=enc.Encode(map[string]any{"cycle":cycle,"gc":gc,"heap_alloc":m.HeapAlloc,"heap_objects":m.HeapObjects,"num_gc":m.NumGC,"goroutines":runtime.NumGoroutine()});err!=nil {t.Fatal(err)}
+   if gc==1 && first>1<<20 {
+    p,err:=os.Create(filepath.Join(dir,"spike-"+time.Now().UTC().Format("150405.000000000")+".pprof"));if err!=nil {t.Fatal(err)}
+    if err:=pprof.WriteHeapProfile(p);err!=nil {t.Fatal(err)};if err:=p.Close();err!=nil {t.Fatal(err)}
+   }
+  }
+ }
+ if err:=enc.Encode(map[string]any{"recoveries":r.Recoveries,"cycles":40,"source":"8e7e84c","profile_rate":runtime.MemProfileRate});err!=nil {t.Fatal(err)}
+}
