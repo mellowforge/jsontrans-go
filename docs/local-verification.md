@@ -145,17 +145,26 @@ PowerShell 5.1 can otherwise lose ExitCode after `WaitForExit`. A missing exit
 code is an incomplete verification, even if the child printed success. Keep
 the original attempt and rerun with reliable status capture.
 
-## GitHub status and later automation
+## Public hosted CI and local fallback
 
-Local execution does not turn an existing red GitHub check green. Retain the
-commit, source patch, toolchain versions, commands, logs and exit codes as local
-evidence. A push normally triggers the existing hosted workflows; coordinate
-how to publish a verified fix before pushing while hosted minutes are exhausted.
-Do not disable required checks or change billing settings as part of local runs.
+The repository is public. Its standard `ubuntu-latest`, `macos-latest` and
+`windows-latest` hosted runners are eligible for free public-repository compute,
+independently of exhausted private-repository minutes. Artifact/cache storage and
+larger runners have separate billing rules; see
+[GitHub's billing documentation](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
 
-Later, the same commands can run on self-hosted Linux/Windows/macOS runners.
-GitHub's current [billing documentation](https://docs.github.com/en/billing/concepts/product-billing/github-actions)
-lists self-hosted compute as free; cloud artifact/cache storage has separate
-allowances. The current workflows also trigger on both push and pull_request,
-so a PR branch update can execute two complete matrices. Adjusting those
-triggers and runner labels is a separate automation change.
+Both workflows run on pull requests, pushes to `main`, and manual dispatch.
+Feature-branch pushes use the PR event instead of starting a duplicate push
+matrix. Job names are stable because default-branch rules require the emitted
+check names. Do not use `[skip ci]` for a PR intended to merge: missing required
+checks block it. Native macOS jobs can queue while hosted capacity is busy;
+queueing does not itself indicate a billing or test failure.
+
+The [branch-policy record](branch-rules.md) describes required checks and
+maintainer workflow. A local pass remains useful but does not turn a missing or
+failed hosted check green. Use the commands above for local investigation and
+fallback; retain exact source identities and actual exit codes. Do not disable
+required checks or change billing settings to make a failed test appear passed.
+
+Self-hosted Linux/Windows/macOS runners remain a future option. No runner service
+is installed by this setup.
