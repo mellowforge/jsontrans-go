@@ -80,15 +80,13 @@ func FuzzOwnedResourceLimits(f *testing.F) {
 			wantOOM = true
 		}
 		got, err := programs[engineIndex][mode].Eval(context.Background(), count, options)
-		var d *jt.Error
-		var ex *Exception
 		switch {
 		case wantLimit:
-			if got.Defined || got.Value != nil || !errors.Is(err, jt.ErrLimit) || !errors.Is(err, jt.ErrConversion) || !errors.As(err, &d) || d.Phase != jt.PhaseOutput || errors.As(err, &ex) {
+			if got.Defined || got.Value != nil || !resourceFailureMatches(err, false) {
 				t.Fatalf("output boundary mode=%d size=%d limit=%d: %+v %v", mode, size, limit, got, err)
 			}
 		case wantOOM:
-			if got.Defined || got.Value != nil || !errors.As(err, &ex) || !errors.As(err, &d) || d.Phase != jt.PhaseEvaluate || errors.Is(err, jt.ErrLimit) || errors.Is(err, jt.ErrConversion) || (ex.Name != "InternalError" && ex.Name != "") {
+			if got.Defined || got.Value != nil || !resourceFailureMatches(err, true) {
 				t.Fatalf("guest cap %d MiB: %+v %v", caps[engineIndex], got, err)
 			}
 		default:
@@ -102,4 +100,19 @@ func FuzzOwnedResourceLimits(f *testing.F) {
 			t.Fatalf("recovery after resource boundary: %+v %v", got, err)
 		}
 	})
+}
+
+// This oracle recognizes these fixed fixture failures, not arbitrary user
+// exception text. Over-cap allocation fails before consuming the available heap,
+// so its known native OOM diagnostic must remain available; no broad fallback.
+func resourceFailureMatches(err error, native bool) bool {
+	if err == nil || errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) || errors.Is(err, ErrClosed) {
+		return false
+	}
+	var d *jt.Error
+	var ex *Exception
+	if native {
+		return errors.As(err, &ex) && errors.As(err, &d) && d.Phase == jt.PhaseEvaluate && !errors.Is(err, jt.ErrLimit) && !errors.Is(err, jt.ErrConversion) && ex.Name == "InternalError" && ex.Message == "out of memory"
+	}
+	return errors.Is(err, jt.ErrLimit) && errors.Is(err, jt.ErrConversion) && errors.As(err, &d) && d.Phase == jt.PhaseOutput && !errors.As(err, &ex)
 }
