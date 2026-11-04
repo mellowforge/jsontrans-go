@@ -84,6 +84,7 @@ go -C javascript test ./internal/quickjswasm -run '^$' -fuzz '^FuzzDiagnosticRec
 go -C javascript test -run '^$' -fuzz '^FuzzRuleLocation$' -fuzztime=1000x -parallel=2
 go -C javascript test -run '^$' -fuzz '^FuzzOwnedJSONConversion$' -fuzztime=500x -parallel=2
 go -C javascript test -run '^$' -fuzz '^FuzzOwnedTerminalPhases$' -fuzztime=200x -parallel=2
+go -C javascript test -run '^$' -fuzz '^FuzzOwnedResourceLimits$' -fuzztime=1000x -parallel=2
 go -C experiments/javascript test -run '^$' -fuzz '^FuzzStringConversion$' -fuzztime=1000x -parallel=2
 ```
 
