@@ -1,0 +1,902 @@
+{
+  "source_commit": "acbf01cb0271089c08de2f63ece849067a2137fb",
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "go": "go version go1.26.10 linux/amd64",
+  "node": "v22.22.3",
+  "guest_sha256": "31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee",
+  "started_utc": "2026-11-04T13:58:53.488915+00:00",
+  "groups": {
+    "native-126": {
+      "state": "passed",
+      "steps": [
+        {
+          "name": "format",
+          "command": [
+            "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 0.032,
+          "log": "native-126-format.log"
+        },
+        {
+          "name": "core-vet",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.915,
+          "log": "native-126-core-vet.log"
+        },
+        {
+          "name": "core-test",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 3.171,
+          "log": "native-126-core-test.log"
+        },
+        {
+          "name": "core-race",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 29.621,
+          "log": "native-126-core-race.log"
+        },
+        {
+          "name": "core-modules",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.164,
+          "log": "native-126-core-modules.log"
+        },
+        {
+          "name": "javascript-vet",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.164,
+          "log": "native-126-javascript-vet.log"
+        },
+        {
+          "name": "javascript-test",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 10.982,
+          "log": "native-126-javascript-test.log"
+        },
+        {
+          "name": "javascript-race",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 88.852,
+          "log": "native-126-javascript-race.log"
+        },
+        {
+          "name": "javascript-modules",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.264,
+          "log": "native-126-javascript-modules.log"
+        },
+        {
+          "name": "experiments-javascript-vet",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.414,
+          "log": "native-126-experiments-javascript-vet.log"
+        },
+        {
+          "name": "experiments-javascript-test",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 5.324,
+          "log": "native-126-experiments-javascript-test.log"
+        },
+        {
+          "name": "experiments-javascript-race",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 44.137,
+          "log": "native-126-experiments-javascript-race.log"
+        },
+        {
+          "name": "experiments-javascript-modules",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.264,
+          "log": "native-126-experiments-javascript-modules.log"
+        }
+      ]
+    },
+    "native-127": {
+      "state": "passed",
+      "steps": [
+        {
+          "name": "core-vet",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 0.865,
+          "log": "native-127-core-vet.log"
+        },
+        {
+          "name": "core-test",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 3.271,
+          "log": "native-127-core-test.log"
+        },
+        {
+          "name": "core-race",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 30.919,
+          "log": "native-127-core-race.log"
+        },
+        {
+          "name": "core-modules",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 0.165,
+          "log": "native-127-core-modules.log"
+        },
+        {
+          "name": "javascript-vet",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 2.317,
+          "log": "native-127-javascript-vet.log"
+        },
+        {
+          "name": "javascript-test",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 11.237,
+          "log": "native-127-javascript-test.log"
+        },
+        {
+          "name": "javascript-race",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 87.799,
+          "log": "native-127-javascript-race.log"
+        },
+        {
+          "name": "javascript-modules",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 0.264,
+          "log": "native-127-javascript-modules.log"
+        },
+        {
+          "name": "experiments-javascript-vet",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 2.82,
+          "log": "native-127-experiments-javascript-vet.log"
+        },
+        {
+          "name": "experiments-javascript-test",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 5.526,
+          "log": "native-127-experiments-javascript-test.log"
+        },
+        {
+          "name": "experiments-javascript-race",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 45.692,
+          "log": "native-127-experiments-javascript-race.log"
+        },
+        {
+          "name": "experiments-javascript-modules",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 0.315,
+          "log": "native-127-experiments-javascript-modules.log"
+        }
+      ]
+    },
+    "reference-packaging": {
+      "state": "passed",
+      "steps": [
+        {
+          "name": "oracle-install",
+          "command": [
+            "npm",
+            "ci",
+            "--ignore-scripts",
+            "--prefix",
+            "conformance/oracle"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 0.915,
+          "log": "reference-packaging-oracle-install.log"
+        },
+        {
+          "name": "oracle",
+          "command": [
+            "go",
+            "test",
+            "-tags",
+            "oracle",
+            "-count=1",
+            "./conformance",
+            "./jsonata"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 3.219,
+          "log": "reference-packaging-oracle.log"
+        },
+        {
+          "name": "packaging-regressions",
+          "command": [
+            "python3",
+            "javascript/scripts/test_check_module.py"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 4.071,
+          "log": "reference-packaging-packaging-regressions.log"
+        },
+        {
+          "name": "outside-consumer",
+          "command": [
+            "python3",
+            "javascript/scripts/check_module.py"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 3.52,
+          "log": "reference-packaging-outside-consumer.log"
+        }
+      ]
+    },
+    "probes-soak": {
+      "state": "passed",
+      "steps": [
+        {
+          "name": "assessment-build",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "build",
+            "-o",
+            "/data/ci/jsontrans-readiness-20261104/verification/assess",
+            "./cmd/assess"
+          ],
+          "environment": {
+            "CGO_ENABLED": "0"
+          },
+          "exit_code": 0,
+          "seconds": 0.665,
+          "log": "probes-soak-assessment-build.log"
+        },
+        {
+          "name": "owned-probes",
+          "command": [
+            "python3",
+            "experiments/javascript/run_probes.py",
+            "--binary",
+            "/data/ci/jsontrans-readiness-20261104/verification/assess",
+            "--backend",
+            "owned-quickjs",
+            "--strict",
+            "--output",
+            "/data/ci/jsontrans-readiness-20261104/verification/owned-probes.json"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 7.327,
+          "log": "probes-soak-owned-probes.log"
+        },
+        {
+          "name": "recovery-soak",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "run",
+            "./cmd/hardening",
+            "-iterations",
+            "100",
+            "-workers",
+            "4",
+            "-cycles",
+            "3"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 3.77,
+          "log": "probes-soak-recovery-soak.log"
+        }
+      ]
+    },
+    "guest": {
+      "state": "passed",
+      "steps": [
+        {
+          "name": "rebuild",
+          "command": [
+            "python3",
+            "javascript/internal/quickjswasm/guest/build.py",
+            "--cache",
+            "/data/ci/jsontrans-go-20261104-07de350/tools/guest-build-cache",
+            "--output",
+            "/data/ci/jsontrans-readiness-20261104/verification/quickjs.wasm"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 12.437,
+          "log": "guest-rebuild.log"
+        },
+        {
+          "name": "compare",
+          "command": [
+            "cmp",
+            "javascript/internal/quickjswasm/quickjs.wasm",
+            "/data/ci/jsontrans-readiness-20261104/verification/quickjs.wasm"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 0.004,
+          "log": "guest-compare.log"
+        }
+      ]
+    },
+    "fuzz": {
+      "state": "passed",
+      "steps": [
+        {
+          "name": ".-.-jsonpath-FuzzCompileAndEval",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "./jsonpath",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzCompileAndEval$",
+            "-fuzztime=40000x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 1.667,
+          "log": "fuzz-.-.-jsonpath-FuzzCompileAndEval.log"
+        },
+        {
+          "name": ".-.-jsonata-FuzzCompileAndEval",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "./jsonata",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzCompileAndEval$",
+            "-fuzztime=14000x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 4.922,
+          "log": "fuzz-.-.-jsonata-FuzzCompileAndEval.log"
+        },
+        {
+          "name": ".-.-internal-document-FuzzPrepareAndMaterialize",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "./internal/document",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzPrepareAndMaterialize$",
+            "-fuzztime=27000x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 0.865,
+          "log": "fuzz-.-.-internal-document-FuzzPrepareAndMaterialize.log"
+        },
+        {
+          "name": "javascript-.-FuzzOwnedTerminalPhases",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            ".",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzOwnedTerminalPhases$",
+            "-fuzztime=200x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 12.287,
+          "log": "fuzz-javascript-.-FuzzOwnedTerminalPhases.log"
+        },
+        {
+          "name": "javascript-.-FuzzOwnedStringConversion",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            ".",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzOwnedStringConversion$",
+            "-fuzztime=200x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 2.218,
+          "log": "fuzz-javascript-.-FuzzOwnedStringConversion.log"
+        },
+        {
+          "name": "javascript-.-internal-quickjswasm-FuzzOwnedCompile",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "./internal/quickjswasm",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzOwnedCompile$",
+            "-fuzztime=200x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 2.267,
+          "log": "fuzz-javascript-.-internal-quickjswasm-FuzzOwnedCompile.log"
+        },
+        {
+          "name": "javascript-.-internal-quickjswasm-FuzzDiagnosticRecord",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "./internal/quickjswasm",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzDiagnosticRecord$",
+            "-fuzztime=1000x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 0.414,
+          "log": "fuzz-javascript-.-internal-quickjswasm-FuzzDiagnosticRecord.log"
+        },
+        {
+          "name": "javascript-.-FuzzRuleLocation",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            ".",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzRuleLocation$",
+            "-fuzztime=1000x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 0.364,
+          "log": "fuzz-javascript-.-FuzzRuleLocation.log"
+        },
+        {
+          "name": "javascript-.-FuzzOwnedJSONConversion",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            ".",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzOwnedJSONConversion$",
+            "-fuzztime=500x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 1.767,
+          "log": "fuzz-javascript-.-FuzzOwnedJSONConversion.log"
+        },
+        {
+          "name": "javascript-.-FuzzOwnedResourceLimits",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            ".",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzOwnedResourceLimits$",
+            "-fuzztime=1000x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 6.677,
+          "log": "fuzz-javascript-.-FuzzOwnedResourceLimits.log"
+        },
+        {
+          "name": "experiments-javascript-.-FuzzStringConversion",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "test",
+            ".",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzStringConversion$",
+            "-fuzztime=1000x",
+            "-parallel=2",
+            "-timeout=20m"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 1.567,
+          "log": "fuzz-experiments-javascript-.-FuzzStringConversion.log"
+        }
+      ]
+    },
+    "security": {
+      "state": "passed",
+      "steps": [
+        {
+          "name": "gate-regressions",
+          "command": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts",
+            "-p",
+            "test_check_go_security.py"
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 0.064,
+          "log": "security-gate-regressions.log"
+        },
+        {
+          "name": "linux-amd64",
+          "command": [
+            "python3",
+            "scripts/check_go_security.py",
+            "--govulncheck",
+            "/data/ci/jsontrans-go-20261104-07de350/tools/govulncheck",
+            "--output",
+            "/data/ci/jsontrans-readiness-20261104/verification/security-linux-amd64"
+          ],
+          "environment": {
+            "GOOS": "linux",
+            "GOARCH": "amd64",
+            "CGO_ENABLED": "0"
+          },
+          "exit_code": 0,
+          "seconds": 15.199,
+          "log": "security-linux-amd64.log"
+        },
+        {
+          "name": "windows-amd64",
+          "command": [
+            "python3",
+            "scripts/check_go_security.py",
+            "--govulncheck",
+            "/data/ci/jsontrans-go-20261104-07de350/tools/govulncheck",
+            "--output",
+            "/data/ci/jsontrans-readiness-20261104/verification/security-windows-amd64"
+          ],
+          "environment": {
+            "GOOS": "windows",
+            "GOARCH": "amd64",
+            "CGO_ENABLED": "0"
+          },
+          "exit_code": 0,
+          "seconds": 12.69,
+          "log": "security-windows-amd64.log"
+        },
+        {
+          "name": "darwin-arm64",
+          "command": [
+            "python3",
+            "scripts/check_go_security.py",
+            "--govulncheck",
+            "/data/ci/jsontrans-go-20261104-07de350/tools/govulncheck",
+            "--output",
+            "/data/ci/jsontrans-readiness-20261104/verification/security-darwin-arm64"
+          ],
+          "environment": {
+            "GOOS": "darwin",
+            "GOARCH": "arm64",
+            "CGO_ENABLED": "0"
+          },
+          "exit_code": 0,
+          "seconds": 12.59,
+          "log": "security-darwin-arm64.log"
+        }
+      ]
+    }
+  },
+  "complete": true,
+  "passed": true,
+  "finished_utc": "2026-11-04T14:02:04.692112+00:00"
+}

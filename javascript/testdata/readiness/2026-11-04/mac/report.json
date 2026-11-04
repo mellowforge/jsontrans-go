@@ -1,0 +1,437 @@
+{
+  "source_commit": "acbf01cb0271089c08de2f63ece849067a2137fb",
+  "platform": "macOS-27.2-arm64-arm-64bit",
+  "go": "go version go1.26.10 darwin/arm64",
+  "node": "v22.22.3",
+  "guest_sha256": "31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee",
+  "started_utc": "2026-11-04T13:58:11.711469+00:00",
+  "groups": {
+    "native-126": {
+      "state": "passed",
+      "steps": [
+        {
+          "name": "format",
+          "command": [
+            "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "environment": {},
+          "exit_code": 0,
+          "seconds": 0.077,
+          "log": "native-126-format.log"
+        },
+        {
+          "name": "core-vet",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.118,
+          "log": "native-126-core-vet.log"
+        },
+        {
+          "name": "core-test",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 3.062,
+          "log": "native-126-core-test.log"
+        },
+        {
+          "name": "core-race",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 26.458,
+          "log": "native-126-core-race.log"
+        },
+        {
+          "name": "core-modules",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.291,
+          "log": "native-126-core-modules.log"
+        },
+        {
+          "name": "javascript-vet",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.235,
+          "log": "native-126-javascript-vet.log"
+        },
+        {
+          "name": "javascript-test",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 10.099,
+          "log": "native-126-javascript-test.log"
+        },
+        {
+          "name": "javascript-race",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 84.053,
+          "log": "native-126-javascript-race.log"
+        },
+        {
+          "name": "javascript-modules",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 1.202,
+          "log": "native-126-javascript-modules.log"
+        },
+        {
+          "name": "experiments-javascript-vet",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.234,
+          "log": "native-126-experiments-javascript-vet.log"
+        },
+        {
+          "name": "experiments-javascript-test",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 5.704,
+          "log": "native-126-experiments-javascript-test.log"
+        },
+        {
+          "name": "experiments-javascript-race",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 51.047,
+          "log": "native-126-experiments-javascript-race.log"
+        },
+        {
+          "name": "experiments-javascript-modules",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.10"
+          },
+          "exit_code": 0,
+          "seconds": 0.913,
+          "log": "native-126-experiments-javascript-modules.log"
+        }
+      ]
+    },
+    "native-127": {
+      "state": "passed",
+      "steps": [
+        {
+          "name": "core-vet",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 0.283,
+          "log": "native-127-core-vet.log"
+        },
+        {
+          "name": "core-test",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 3.085,
+          "log": "native-127-core-test.log"
+        },
+        {
+          "name": "core-race",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 27.427,
+          "log": "native-127-core-race.log"
+        },
+        {
+          "name": "core-modules",
+          "command": [
+            "go",
+            "-C",
+            ".",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 0.185,
+          "log": "native-127-core-modules.log"
+        },
+        {
+          "name": "javascript-vet",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 2.805,
+          "log": "native-127-javascript-vet.log"
+        },
+        {
+          "name": "javascript-test",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 9.732,
+          "log": "native-127-javascript-test.log"
+        },
+        {
+          "name": "javascript-race",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 87.465,
+          "log": "native-127-javascript-race.log"
+        },
+        {
+          "name": "javascript-modules",
+          "command": [
+            "go",
+            "-C",
+            "javascript",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 0.549,
+          "log": "native-127-javascript-modules.log"
+        },
+        {
+          "name": "experiments-javascript-vet",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "vet",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 3.878,
+          "log": "native-127-experiments-javascript-vet.log"
+        },
+        {
+          "name": "experiments-javascript-test",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "test",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 6.083,
+          "log": "native-127-experiments-javascript-test.log"
+        },
+        {
+          "name": "experiments-javascript-race",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "test",
+            "-race",
+            "-count=1",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 52.888,
+          "log": "native-127-experiments-javascript-race.log"
+        },
+        {
+          "name": "experiments-javascript-modules",
+          "command": [
+            "go",
+            "-C",
+            "experiments/javascript",
+            "mod",
+            "verify"
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "go1.27.3"
+          },
+          "exit_code": 0,
+          "seconds": 0.432,
+          "log": "native-127-experiments-javascript-modules.log"
+        }
+      ]
+    }
+  },
+  "complete": true,
+  "passed": true,
+  "finished_utc": "2026-11-04T14:01:26.544451+00:00"
+}

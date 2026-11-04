@@ -1,0 +1,38 @@
+{
+  "quickjs-advisories.json": {
+    "requested_url": "https://api.github.com/repos/quickjs-ng/quickjs/security-advisories",
+    "command": "gh api  --paginate --slurp repos/quickjs-ng/quickjs/security-advisories",
+    "captured_file_mtime_utc": "2026-11-04T13:53:16.296084+00:00",
+    "sha256_uncompressed": "de6fccdc11f6e626669d8635b6835eb8aef5a5f38a7bbc91960ba04812f580ea"
+  },
+  "quickjs-releases.json": {
+    "requested_url": "https://api.github.com/repos/quickjs-ng/quickjs/releases?per_page=10",
+    "command": "gh api  repos/quickjs-ng/quickjs/releases?per_page=10",
+    "captured_file_mtime_utc": "2026-11-04T14:00:07.822166+00:00",
+    "sha256_uncompressed": "82b38263abc150e97890b04d4e57ad7a4d6b3ab7ea7a8f1798d127329fe72d8f"
+  },
+  "wazero-advisories.json": {
+    "requested_url": "https://api.github.com/repos/tetratelabs/wazero/security-advisories",
+    "command": "gh api  --paginate --slurp repos/tetratelabs/wazero/security-advisories",
+    "captured_file_mtime_utc": "2026-11-04T13:53:17.371522+00:00",
+    "sha256_uncompressed": "cf1cbb66a638b4860a516671fb74850e6ccf787fe6c4c8d29e9c04efe880bd05"
+  },
+  "wazero-releases.json": {
+    "requested_url": "https://api.github.com/repos/tetratelabs/wazero/releases?per_page=10",
+    "command": "gh api  repos/tetratelabs/wazero/releases?per_page=10",
+    "captured_file_mtime_utc": "2026-11-04T14:00:09.569697+00:00",
+    "sha256_uncompressed": "8e41197e62ca259b968eb8641a6453534091da9de2969f2f7068e4a05567551e"
+  },
+  "wasi-sdk-advisories.json": {
+    "requested_url": "https://api.github.com/repos/WebAssembly/wasi-sdk/security-advisories",
+    "command": "gh api  --paginate --slurp repos/WebAssembly/wasi-sdk/security-advisories",
+    "captured_file_mtime_utc": "2026-11-04T13:53:18.023586+00:00",
+    "sha256_uncompressed": "cf1cbb66a638b4860a516671fb74850e6ccf787fe6c4c8d29e9c04efe880bd05"
+  },
+  "wasi-sdk-releases.json": {
+    "requested_url": "https://api.github.com/repos/WebAssembly/wasi-sdk/releases?per_page=10",
+    "command": "gh api  repos/WebAssembly/wasi-sdk/releases?per_page=10",
+    "captured_file_mtime_utc": "2026-11-04T14:00:10.818536+00:00",
+    "sha256_uncompressed": "d34d35806410aa6974e006a59f2c73db7015b9c1eb997cb9b6ab1a0e61a30091"
+  }
+}

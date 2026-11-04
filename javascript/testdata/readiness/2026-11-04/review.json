@@ -1,0 +1,25 @@
+{
+  "reviewed_base": "6c8c72ea2ca689b318b127e9b20de724f3c58675",
+  "reviewed_head": "eeb20afa5489cbf24f2456a433c7b0df82044837",
+  "method": "independent fresh-context whole-branch source/evidence review; no remote matrix reruns",
+  "actionable_findings": [],
+  "verified": [
+    "80 successful native/verification steps",
+    "21 owned probes",
+    "1200 recovery pairs",
+    "3 Go security targets and 12 raw scanner streams",
+    "11 fuzz logs reach requested counts",
+    "60 runtime/module/guest identities",
+    "135 evidence hashes at review time",
+    "QuickJS advisory metadata continuity",
+    "documentation links and pending approval boundaries"
+  ],
+  "scope_limits": [
+    "mailbox monitoring and delivery not independently exercised",
+    "maintainer platform/version commitments remain approval decisions",
+    "no exhaustive C/Wasm safety or unpublished-vulnerability certification",
+    "executor ran native checks; reviewer inspected archived evidence rather than repeating full matrices"
+  ],
+  "post_review_additions": "final packaging PASS report/log and this review summary only; no runtime/API/policy changes",
+  "production_approval": "pending maintainer decision"
+}

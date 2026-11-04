@@ -102,8 +102,10 @@ done
 ```
 
 These cross-target scans analyze source and binaries; they do not execute
-Windows or macOS code on Linux. A clean Go scan does not clear the embedded
-QuickJS release blocker. See the [security update record](javascript-go-security-updates.md).
+Windows or macOS code on Linux. A clean Go scan does not inspect the embedded C engine or replace its source
+review. The [QuickJS upgrade](javascript-quickjs-upgrade.md) supersedes the old
+guest blocker; current sign-off and release gates are in the
+[readiness record](javascript-production-readiness.md).
 
 For longer JavaScript soaks and parameterized resource fuzzing, see the
 [extended validation protocol](javascript-extended-validation.md).

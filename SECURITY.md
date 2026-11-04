@@ -57,8 +57,18 @@ calls use fresh guests. A clean Go scan does not cover the embedded C engine,
 and production release still requires explicit security/platform approval. See
 the linked records before updating source or patch pins.
 
-Do not disclose exploitable vulnerabilities in public issues. Before public
-release, maintainers must enable private vulnerability reporting on the GitHub
-repository and identify a monitored contact route there. Releases currently
-reside in a private repository. The optional JavaScript module remains a preview;
-it has not been released as a supported processor.
+Report suspected vulnerabilities privately to
+[koverboard@icloud.com](mailto:koverboard@icloud.com). The repository maintainer
+handles triage. Include the affected module/version, Go/OS architecture, a
+minimal reproduction, expected versus observed behavior, and relevant resource
+settings. Share only the data needed to reproduce the issue; do not put exploit
+details or secrets in public issues.
+
+This email route applies while the repository is private. GitHub's built-in
+private vulnerability reporting is available for public repositories; if this
+repository becomes public, enable it as an additional monitored route. See
+[GitHub's reporting documentation](https://docs.github.com/en/code-security/concepts/vulnerability-reporting-and-management/coordinated-disclosure).
+
+The optional JavaScript module remains a preview pending explicit approval of
+the [production-readiness record](docs/javascript-production-readiness.md).
+No supported JavaScript module release has been tagged by this preparation.
