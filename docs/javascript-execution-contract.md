@@ -146,8 +146,8 @@ The full owned assessment contains the original 18 probes plus lifecycle,
 diagnostic classification and diagnostic-location cases. All owned cases must
 report PASS in strict mode. Historical fixture/results directories remain intact.
 
-Guest ABI 3 artifact: 1,033,182 bytes; SHA-256
-`e3cd5c71ead2a4967f7163bf9c74e086b641e43081bac1909fa8c86e4368bb6c`.
+Guest ABI 3 artifact: 1,034,164 bytes; SHA-256
+`31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee`.
 Canonical assets/notices live in `javascript/internal/quickjswasm`; QuickJS-ng
 v0.18.0 and the separately hashed owned OOM patch are recorded in the manifest.
 WASI SDK remains 34.0. Rebuild/hash/import gates and Linux

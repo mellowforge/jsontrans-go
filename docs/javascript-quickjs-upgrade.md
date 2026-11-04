@@ -12,11 +12,11 @@ it does not rewrite that audit or approve a production release.
 |---|---|
 | QuickJS-ng | v0.18.0, `d7215b0ad3fc2c562e8317fd9bca058fd4863804` |
 | Source archive SHA-256 | `a49defe70cbcae9226d9fac025af116e87ebae2440dcff1ca3c80b79e1cdef0b` |
-| Owned OOM patch SHA-256 | `7e469f264fc380c92bd0ff336f5c7a556907e5457e9bd86402a9d37ae8cbc4c6` |
+| Owned OOM patch SHA-256 | `41e04680ad186ec1d230874e949593bf0723c443c31966941509e25461eb146b` |
 | WASI SDK | 34.0; per-host asset checksums and LLVM/libc revisions unchanged |
 | Guest ABI / diagnostic JSON | 3 / 2 |
-| Owned Wasm | 1,033,182 bytes |
-| Wasm SHA-256 | `e3cd5c71ead2a4967f7163bf9c74e086b641e43081bac1909fa8c86e4368bb6c` |
+| Owned Wasm | 1,034,164 bytes |
+| Wasm SHA-256 | `31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee` |
 
 The [manifest](../javascript/internal/quickjswasm/guest/lock.json) pins the
 immutable upstream archive and the separately hashed owned patch. The build
@@ -59,6 +59,16 @@ construction; failed construction never enters user evaluation. Raw contexts
 are not exposed by the owned ABI, which always uses JS_NewContext.
 
 This is an owned variant of v0.18, not a claim that upstream includes the fix.
+The final review also found partial error construction and stack formatting
+could overwrite the reserved error with an ordinary catchable exception. The
+patch propagates failed message/property creation, preserves terminal errors
+when restoring a saved exception, and propagates stack-formatting failure
+through constructors and captureStackTrace. It avoids invoking a formatter
+after an earlier terminal stack-limit conversion/allocation failure. Ordinary
+formatter exceptions keep upstream behavior. Partially constructed objects are
+freed. Public regression cases failed before this correction and pass with it;
+a native 513-limit sweep checks partial error construction without source
+instrumentation. The supported 2 MiB minimum has a retained recovery regression.
 The patch must be reviewed/rebased on every source update. A native development
 harness exercises repeated context collection and partial initialization under
 ASan, UBSan, leak checking and QuickJS leak assertions. Omitting the added GC
@@ -101,7 +111,7 @@ limit classification plus ordinary Proxy exceptions.
 The native OOM/GC harness passed on Bertram, including twelve context cycles
 and 61 initialization limits. Its missing-GC-mark mutation failed as expected.
 The terminal-phase fuzz seeds also reject an omitted bridge phase update.
-The [dated evidence](../javascript/testdata/security/2026-11-04-quickjs/README.md)
+The [dated evidence](../javascript/testdata/security/2026-11-04-quickjs/post-review/README.md)
 records native Mac/Linux tests, race detection and vet in all three modules,
 both native Go versions, the Node oracle, all ten bounded fuzz targets,
 outside-consumer packaging and all 21 owned probes. Native Windows x64 public
@@ -135,24 +145,24 @@ Eval includes a fresh guest; the prepared API uses the JSON fallback.
 
 | Operation | Before | After | After bytes/op | After allocations/op |
 |---|---:|---:|---:|---:|
-| New + Close | 197.93 ms | 226.13 ms | 49,068,648 | 101,614 |
-| Compile | 2.466 ms | 2.560 ms | 4,545,553 | 3,301 |
-| Eval | 759.3 µs | 768.2 µs | 2,302,089 | 1,749 |
-| EvalJSON | 763.6 µs | 863.3 µs | 2,309,200 | 1,880 |
-| Prepared fallback | 750.2 µs | 735.0 µs | 2,306,070 | 1,811 |
-| Prepared batch, four expressions | 3.000 ms | 2.914 ms | 9,222,032 | 7,207 |
+| New + Close | 197.93 ms | 230.77 ms | 49,076,032 | 101,631 |
+| Compile | 2.466 ms | 2.492 ms | 4,545,843 | 3,301 |
+| Eval | 759.3 µs | 739.6 µs | 2,302,087 | 1,749 |
+| EvalJSON | 763.6 µs | 743.8 µs | 2,309,198 | 1,880 |
+| Prepared fallback | 750.2 µs | 759.3 µs | 2,306,071 | 1,811 |
+| Prepared batch, four expressions | 3.000 ms | 2.958 ms | 9,222,025 | 7,206 |
 
 Five independent cold processes have median construction/compile/first-evaluation
-latency 191.85 → 241.80 ms and maximum sampled process RSS 58,900,480 →
-63,143,936 bytes. The CGO-free basic application grows from 9,153,090 to
-9,252,162 bytes; Wasm grows from 929,138 to 1,033,182 bytes. Binary size includes
+latency 191.85 → 231.00 ms and maximum sampled process RSS 58,900,480 →
+62,210,048 bytes. The CGO-free basic application grows from 9,153,090 to
+9,252,162 bytes; Wasm grows from 929,138 to 1,034,164 bytes. Binary size includes
 Go metadata. Guest initial/max linear memory remains 2/64 MiB; cap tests still
 accept a 40 MiB buffer with the 64 MiB configuration and reject it at 8 MiB.
 Process RSS and Go allocations include runtime/compiler state and are not guest
 heap measurements or hard total-process memory limits.
 
-The clearest cost is cold engine construction (about 14% in New + Close and
-26% in the cold probe). Reused-engine calls keep roughly the same latency scale,
+The clearest cost is cold engine construction (about 17% in New + Close and
+20% in the cold probe). Reused-engine calls keep roughly the same latency scale,
 with 147 additional allocations per Eval in this workload. These measurements
 cover the combined source upgrade and owned phase/OOM changes; they do not
 isolate the cost of the OOM reserve. This PR prioritizes terminal behavior and

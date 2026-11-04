@@ -1,5 +1,9 @@
 # QuickJS PR B evidence — 2026-11-04
 
+The [post-review correction and final verification](post-review/README.md)
+supersede this first guest run. Original reports and measurements below remain
+as pre-review evidence.
+
 Runtime source tested: `4f449c247c064fa071f6c531d52b77f3c1495e9e` on
 `codex/quickjs-terminal-errors`; base is merged PR #12
 `3fc979a0d97d93cde0b92f6bb6dc7a6bdf244c2a`. Later changes add this evidence,

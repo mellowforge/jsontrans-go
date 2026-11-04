@@ -1,0 +1,17 @@
+{
+  "commit": "44b6086891ca947bd6446c00d080145d93ebbcb7",
+  "platform": "darwin/arm64",
+  "go": "go1.26.10",
+  "passed": true,
+  "checks": [
+    "gofmt -l .: empty",
+    "all three modules: test, race, vet",
+    "packaging regressions and outside consumer",
+    "terminal fuzz: 200x including new formatting seeds",
+    "native partial-construction/context/GC harness",
+    "independent SDK 34.0 rebuild: final artifact hash matches Linux"
+  ],
+  "stable_native_note": "Mac Go1.27.3 native checks already passed; native root source unchanged. Linux refreshed both native toolchains.",
+  "guest_sha256": "31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee",
+  "log": "mac-verification.txt.gz"
+}

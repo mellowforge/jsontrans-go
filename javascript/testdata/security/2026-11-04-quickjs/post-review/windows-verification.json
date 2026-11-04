@@ -1,0 +1,82 @@
+﻿{
+    "commit":  "44b6086891ca947bd6446c00d080145d93ebbcb7",
+    "go":  "go version go1.26.10 windows/amd64",
+    "platform":  "Microsoft Windows NT 10.0.22621.0",
+    "processor":  "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "started_utc":  "20261104T102540Z",
+    "steps":  [
+                  {
+                      "log":  "C:\\Users\\Konstantin\\jsontrans-ci\\pr-b-20261104\\runs\\20261104T102540Z\\vet.log",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "vet",
+                                      "./..."
+                                  ],
+                      "name":  "vet",
+                      "seconds":  1.0371740999999999,
+                      "exit_code":  0
+                  },
+                  {
+                      "log":  "C:\\Users\\Konstantin\\jsontrans-ci\\pr-b-20261104\\runs\\20261104T102540Z\\test.log",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "test",
+                                      "-count=1",
+                                      "./..."
+                                  ],
+                      "name":  "test",
+                      "seconds":  11.100800999999999,
+                      "exit_code":  0
+                  },
+                  {
+                      "log":  "C:\\Users\\Konstantin\\jsontrans-ci\\pr-b-20261104\\runs\\20261104T102540Z\\race.log",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "test",
+                                      "-race",
+                                      "-count=1",
+                                      "./..."
+                                  ],
+                      "name":  "race",
+                      "seconds":  89.7603606,
+                      "exit_code":  0
+                  },
+                  {
+                      "log":  "C:\\Users\\Konstantin\\jsontrans-ci\\pr-b-20261104\\runs\\20261104T102540Z\\module-verify.log",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "mod",
+                                      "verify"
+                                  ],
+                      "name":  "module-verify",
+                      "seconds":  1.0218561,
+                      "exit_code":  0
+                  },
+                  {
+                      "log":  "C:\\Users\\Konstantin\\jsontrans-ci\\pr-b-20261104\\runs\\20261104T102540Z\\cgo-free-build.log",
+                      "command":  [
+                                      "go",
+                                      "-C",
+                                      "javascript",
+                                      "build",
+                                      "-o",
+                                      "C:\\Users\\Konstantin\\jsontrans-ci\\pr-b-20261104\\runs\\20261104T102540Z\\example.exe",
+                                      "./examples/basic"
+                                  ],
+                      "name":  "cgo-free-build",
+                      "seconds":  1.0145442999999998,
+                      "exit_code":  0
+                  }
+              ],
+    "complete":  true,
+    "passed":  true,
+    "finished_utc":  "2026-11-04T10:27:25.7330547Z"
+}

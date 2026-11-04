@@ -112,8 +112,8 @@ and cached dependencies, and needs no network or credentials during the check.
 
 The canonical Wasm/ABI sources, manifest and third-party notices live under
 `internal/quickjswasm/guest`. The current artifact hash is:
-`e3cd5c71ead2a4967f7163bf9c74e086b641e43081bac1909fa8c86e4368bb6c`
-(1,033,182 bytes, ABI 3, zero host imports). Applications use the embedded artifact
+`31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee`
+(1,034,164 bytes, ABI 3, zero host imports). Applications use the embedded artifact
 without a C compiler or Node; rebuilding uses the pinned WASI SDK, Python and
 the standard `patch` utility. Source archive and owned patch checksums are
 validated separately; patch application permits no fuzz:
