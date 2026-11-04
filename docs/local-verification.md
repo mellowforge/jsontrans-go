@@ -126,6 +126,12 @@ Invoke-Go -C javascript test -race -count=1 ./...
 
 This matches the existing Windows workflow. Preserve stdout/stderr and exit
 codes; missing tools or unexecuted platforms remain pending, never a pass.
+When automating Windows PowerShell 5.1 with `$ErrorActionPreference = 'Stop'`,
+capture native stdout/stderr through `Start-Process -Wait -PassThru` and inspect
+its ExitCode. Redirecting `2>&1` directly can turn harmless Go download progress
+into a PowerShell error before the native command finishes. Keep toolchains and
+caches task-local; PR B's checked Windows run used Go 1.26.10 and MinGW-w64 UCRT
+14.0.0 with `libsynchronization.a` available for race detection.
 
 ## GitHub status and later automation
 

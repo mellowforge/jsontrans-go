@@ -101,16 +101,62 @@ limit classification plus ordinary Proxy exceptions.
 The native OOM/GC harness passed on Bertram, including twelve context cycles
 and 61 initialization limits. Its missing-GC-mark mutation failed as expected.
 The terminal-phase fuzz seeds also reject an omitted bridge phase update.
-Current full-platform, packaging, fuzz/soak, reproducibility and measurement
-results are recorded below when the complete local verification finishes.
-Windows verification uses the user-provided x64 VM and private checked Go/C
-toolchains; no hosted Actions runs are required.
+The [dated evidence](../javascript/testdata/security/2026-11-04-quickjs/README.md)
+records native Mac/Linux tests, race detection and vet in all three modules,
+both native Go versions, the Node oracle, all ten bounded fuzz targets,
+outside-consumer packaging and all 21 owned probes. Native Windows x64 public
+module tests, race detection, vet and the CGO-free example also pass. Windows
+uses private checksum-checked Go 1.26.10 and MinGW-w64 14 toolchains. Linux and
+Mac SDK 34.0 rebuilds produce the identical recorded guest. No hosted Actions
+runs are required; these local results do not change GitHub check statuses.
+
+The Linux deployment-host soak verifies 100,000 independent failure/success and
+healthy-recovery pairs over five engine lifecycles. Post-GC goroutine counts
+return to one. This bounded run supplements, rather than replaces, prolonged
+deployment testing.
+
+The Go source/binary security matrix passes for Linux amd64, Windows amd64 and
+Mac arm64. A review of all ten currently published upstream advisories checks
+the pinned C source, not just advisory ranges; see the evidence's source review.
 
 Go scans cannot inspect embedded C code. Review current upstream notices and
 the actual reachable source fixes rather than trusting advisory version ranges
-alone. Production approval still requires complete platform gates, prolonged
-soak evidence and a monitored private reporting route. No module tag or release
-is created by this PR.
+alone. Production approval remains separate: review the terminal contract,
+platform and soak evidence, and confirm a monitored private reporting route.
+No module tag or release is created by this PR.
+
+### Measured upgrade cost
+
+Matched runs on Apple M5 Max / darwin arm64 / Go 1.26.10, GOMAXPROCS=1,
+five samples at 200 ms per benchmark. Values are medians; small differences
+are descriptive and have no statistical significance claim. The old version is
+merged PR #12 with the old owned guest, retained only as a measurement baseline.
+Eval includes a fresh guest; the prepared API uses the JSON fallback.
+
+| Operation | Before | After | After bytes/op | After allocations/op |
+|---|---:|---:|---:|---:|
+| New + Close | 197.93 ms | 226.13 ms | 49,068,648 | 101,614 |
+| Compile | 2.466 ms | 2.560 ms | 4,545,553 | 3,301 |
+| Eval | 759.3 µs | 768.2 µs | 2,302,089 | 1,749 |
+| EvalJSON | 763.6 µs | 863.3 µs | 2,309,200 | 1,880 |
+| Prepared fallback | 750.2 µs | 735.0 µs | 2,306,070 | 1,811 |
+| Prepared batch, four expressions | 3.000 ms | 2.914 ms | 9,222,032 | 7,207 |
+
+Five independent cold processes have median construction/compile/first-evaluation
+latency 191.85 → 241.80 ms and maximum sampled process RSS 58,900,480 →
+63,143,936 bytes. The CGO-free basic application grows from 9,153,090 to
+9,252,162 bytes; Wasm grows from 929,138 to 1,033,182 bytes. Binary size includes
+Go metadata. Guest initial/max linear memory remains 2/64 MiB; cap tests still
+accept a 40 MiB buffer with the 64 MiB configuration and reject it at 8 MiB.
+Process RSS and Go allocations include runtime/compiler state and are not guest
+heap measurements or hard total-process memory limits.
+
+The clearest cost is cold engine construction (about 14% in New + Close and
+26% in the cold probe). Reused-engine calls keep roughly the same latency scale,
+with 147 additional allocations per Eval in this workload. These measurements
+cover the combined source upgrade and owned phase/OOM changes; they do not
+isolate the cost of the OOM reserve. This PR prioritizes terminal behavior and
+the unsafe-source replacement, with no pooling or performance promise.
 
 ## Reproduce
 

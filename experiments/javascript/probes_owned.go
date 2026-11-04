@@ -77,7 +77,7 @@ func probeOwned(e *Engine, name string) (o Observation, handled bool) {
 			return o, true
 		}
 		o.Status = "PASS"
-		o.Detail = "mapped rule lines, coarse compiler columns retain unavailable byte offsets; runtime locations explicitly reported"
+		o.Detail = "mapped rule lines and native compiler columns; byte offsets unavailable; runtime locations explicitly reported"
 		return o, true
 	case "host-capabilities":
 		o.Status = "PASS"
