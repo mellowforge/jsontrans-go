@@ -49,9 +49,13 @@ The [2026-11-03 dependency review](docs/javascript-security-review.md) records
 QuickJS memory-safety findings and the then-affected native-core `x/text`
 requirement. The [2026-11-04 Go update](docs/javascript-go-security-updates.md)
 upgrades Go dependencies and adds finding/coverage checks across all modules
-and the public example binary. The current QuickJS pin remains a production
-release blocker. A clean Go scan does not cover the embedded C engine. See the
-linked remediation plan before updating pins.
+and the public example binary. The [QuickJS upgrade](docs/javascript-quickjs-upgrade.md)
+replaces the old guest with v0.18.0 plus a separately pinned terminal-OOM patch.
+It reserves an uncatchable error so complete heap exhaustion cannot resume via
+a catchable-null fallback. Native terminal failures return no result; subsequent
+calls use fresh guests. A clean Go scan does not cover the embedded C engine,
+and production release still requires explicit security/platform approval. See
+the linked records before updating source or patch pins.
 
 Do not disclose exploitable vulnerabilities in public issues. Before public
 release, maintainers must enable private vulnerability reporting on the GitHub

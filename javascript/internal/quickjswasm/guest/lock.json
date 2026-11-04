@@ -15,7 +15,7 @@
   "source_patches": [
     {
       "file": "quickjs-terminal-oom.patch",
-      "sha256": "4e71e6323bf78c4c228a27336decd6eb1ea31719189c9944fcbbd10121a2ccdd"
+      "sha256": "7e469f264fc380c92bd0ff336f5c7a556907e5457e9bd86402a9d37ae8cbc4c6"
     }
   ]
 }

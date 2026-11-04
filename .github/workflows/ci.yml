@@ -104,6 +104,7 @@ jobs:
       - run: go test ./internal/quickjswasm -run '^$' -fuzz '^FuzzDiagnosticRecord$' -fuzztime=1000x -parallel=2
       - run: go test -run '^$' -fuzz '^FuzzRuleLocation$' -fuzztime=1000x -parallel=2
       - run: go test -run '^$' -fuzz '^FuzzOwnedJSONConversion$' -fuzztime=500x -parallel=2
+      - run: go test -run '^$' -fuzz '^FuzzOwnedTerminalPhases$' -fuzztime=200x -parallel=2
       - name: Bounded public failure and recovery soak
         run: go run ./cmd/hardening -iterations 50 -workers 4 -cycles 2
 

@@ -21,7 +21,7 @@
  }
  
 +/* Keep allocation-failure reporting independent of remaining heap space.
-+ * Raw contexts retain upstream behavior until their intrinsics are installed;
++ * Raw contexts retain upstream behavior and are not exposed by the owned ABI;
 + * the owned embedding always uses JS_NewContext. */
 +static int init_terminal_oom(JSContext *ctx)
 +{

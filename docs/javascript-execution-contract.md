@@ -89,7 +89,7 @@ native code catalog, so jsontrans.Error.Code is empty; compile errors are not
 all mislabeled SyntaxError. Constructor/Close failures are ordinary wrapped
 errors because neither is an expression-processing phase.
 
-ABI v2 and the trusted bridge distinguish JS throws from genuine conversion and
+Guest ABI v3 and the trusted bridge distinguish JS throws from genuine conversion and
 budget failures. Throwing a marker such as `JSONTRANS_LIMIT: ...`, changing Error
 names/prototypes or returning a protocol-shaped object cannot acquire a trusted
 resource/conversion sentinel. Proxy exceptions during conversion remain JS
@@ -101,6 +101,21 @@ user execution. Trusted failures return reserved outcomes instead of throwing
 tokens: QuickJS backtrace allocation under heap exhaustion can replace a thrown
 token with OOM. Classification and phase cross the C boundary independently of
 allocating diagnostic text, including when the guest heap is exhausted.
+
+OOM and InternalError are terminal: a catch block cannot resume the evaluation,
+no result is returned, and the next call creates an independent healthy guest.
+This applies to source initializers, rule execution, output traversal and
+diagnostic processing. A private, preallocated null-prototype phase record is
+retained by C and passed only to the trusted bridge; C reads its existing own
+integer data slot without getters or allocation when a terminal error bypasses
+JavaScript catch blocks. Diagnostic JSON remains version 2.
+
+The owned QuickJS patch reserves an uncatchable OOM error in full contexts,
+with GC marking and cleanup. It prevents upstream's catchable-null fallback
+when the heap cannot allocate an error object. Native errors keep available
+typed fields or a bounded fallback; their names, messages and uncatchability
+do not establish trusted quota provenance. Existing trusted initialization and
+conversion/budget failures retain their classifications.
 
 Encoded diagnostics cap at 64 KiB independently of ordinary output size.
 Truncated records set Truncated. Formatting runs inside the same interruptible
@@ -116,12 +131,12 @@ native line numbers by one; mapped rule locations refer to the original expressi
 Runtime locations set Reported=true: stacks and Error.prepareStackTrace are
 user-modifiable and plausible forged frames cannot be authenticated.
 
-The pinned compiler currently reports column 1 for ordinary token errors anywhere
-on a line. Regex syntax errors can omit locations. Therefore this implementation
-preserves available native columns and mapped lines, with **ByteOffset=-1 and
+The pinned v0.18 compiler reports native columns beyond column 1; ASCII, Unicode
+and CRLF cases are calibrated separately. Regex syntax errors can omit locations.
+This implementation preserves available native columns and mapped lines, with **ByteOffset=-1 and
 common Error.Position=0**. It does not invent precise token offsets. Malformed,
 bridge, wrapper-only, generated or out-of-range locations are omitted. More
-precise compiler offsets require a verified engine fix; bundle source maps and
+precise byte offsets require independent coordinate-unit verification; bundle source maps and
 authenticated runtime frames remain future work. Line mapping currently supports
 LF/CRLF; standalone CR and Unicode line separators may omit Location.
 
@@ -131,11 +146,14 @@ The full owned assessment contains the original 18 probes plus lifecycle,
 diagnostic classification and diagnostic-location cases. All owned cases must
 report PASS in strict mode. Historical fixture/results directories remain intact.
 
-Guest ABI 2 artifact: 929,138 bytes; SHA-256
-`29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e`.
-Canonical assets/notices live in `javascript/internal/quickjswasm`; source and
-WASI SDK pins are unchanged. Rebuild/hash/import gates and Linux
+Guest ABI 3 artifact: 1,033,182 bytes; SHA-256
+`e3cd5c71ead2a4967f7163bf9c74e086b641e43081bac1909fa8c86e4368bb6c`.
+Canonical assets/notices live in `javascript/internal/quickjswasm`; QuickJS-ng
+v0.18.0 and the separately hashed owned OOM patch are recorded in the manifest.
+WASI SDK remains 34.0. Rebuild/hash/import gates and Linux
 cross-host reproducibility protect the embedded boundary.
+See the [upgrade and terminal-error record](javascript-quickjs-upgrade.md) for
+the source patch, security evidence, measurements and remaining release gates.
 
 See the editable [processor architecture atlas](https://www.figma.com/board/lTXgmGOWS3Hmh6IQzzmMmB),
 [approved design](superpowers/specs/2026-11-03-javascript-contract-diagnostics-design.md),
