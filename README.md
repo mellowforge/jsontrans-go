@@ -9,14 +9,16 @@
 `jsontrans-go` turns a JSON document and an expression into a result. Use
 JSONPath to select data, or JSONata to reshape objects, calculate values, and
 aggregate collections. Both engines are implemented natively in Go and share
-an extensible processor API.
+an extensible processor API. An optional JavaScript module adds synchronous
+function expressions without adding JavaScript dependencies to the native engines.
 
 Compile an expression once, prepare a document once, and reuse them wherever
 your application needs to evaluate JSON rules.
 
 > **Status:** Native processors are available in
 > [v1.1.0](https://github.com/mellowforge/jsontrans-go/releases/tag/v1.1.0).
-> JavaScript remains experimental. See the
+> The optional JavaScript processor is approved for production in
+> [javascript/v1.0.0](javascript/README.md). See the
 > [compatibility policy](docs/compatibility.md) for coverage and documented differences.
 
 [Quick start](#quick-start) · [Document reuse](#prepare-once-evaluate-many) ·
@@ -24,7 +26,7 @@ your application needs to evaluate JSON rules.
 
 ## Why jsontrans-go?
 
-- **Two languages, one contract.** Select, filter, calculate, and transform
+- **Multiple processors, one contract.** Select, filter, calculate, and transform
   through the same compile/evaluate interface.
 - **Built for reuse.** Immutable programs and prepared documents support
   concurrent evaluation. Ordered batches evaluate several expressions together.
@@ -39,6 +41,7 @@ your application needs to evaluate JSON rules.
 | --- | --- | --- |
 | JSONPath | Selecting values from nested documents with paths and filters | RFC 9535 |
 | JSONata | Transformations, calculations, aggregation, and expression-based rules | JSONata 2.2.2 |
+| [JavaScript (optional module)](javascript/README.md) | Synchronous functions over JSON input and bindings | [Restricted execution profile](docs/javascript-execution-contract.md) |
 
 ## Install
 
@@ -232,7 +235,7 @@ batches, host functions, and JSONata's raw-value API.
 - [Go dependency security updates and scan coverage](docs/javascript-go-security-updates.md)
 - [JavaScript feasibility assessment](docs/javascript-assessment.md) (experimental)
 - [Owned QuickJS runtime checkpoint](docs/quickjs-runtime-foundation.md)
-- [Optional JavaScript processor](javascript/README.md) (preview module)
+- [Optional JavaScript processor](javascript/README.md) (supported optional module)
 - [JavaScript execution contract](docs/javascript-execution-contract.md)
 - [Editable processor architecture atlas](docs/processor-architecture.md)
 

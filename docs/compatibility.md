@@ -4,7 +4,8 @@ Targets: JSONPath RFC 9535 (including RFC 9485 I-Regexp), JSONata 2.2.2.
 See conformance/README.md for immutable fixture revisions. Upstream source
 informs native implementations; Node and the JavaScript implementation are
 test tools only for the native engines. The root module has no complete-language
-runtime dependencies; JavaScript experiments remain in a separate module.
+runtime dependencies. The supported optional JavaScript processor and the
+development-only assessment live in separate modules.
 
 The pinned JSONata suite passes all 1,291 fixture files (1,686 cases), and the
 JSONPath suite passes all 715 cases with the two explicit errata below. The
@@ -12,7 +13,10 @@ Node-only reference job additionally compares selected expressions, operator
 combinations and the JSONata fast plans against JSONata 2.2.2. A reference
 error without a code must match a Go error that also has none. The native-library
 release [v1.1.0](https://github.com/mellowforge/jsontrans-go/releases/tag/v1.1.0)
-requires Go 1.26. Experimental JavaScript is not part of its supported processor API.
+requires Go 1.26 and does not bundle JavaScript. The independently versioned
+[JavaScript v1.0.0 module](../javascript/README.md) is production-supported under
+its [restricted execution profile](javascript-execution-contract.md) and
+[platform policy](javascript-production-readiness.md).
 
 Pinned suites execute both ordinary evaluation and prepared evaluation for
 every representable JSON input. JSONata fixtures with undefined input retain the
@@ -42,9 +46,10 @@ External programs may declare unsupported evaluation limit fields through
 `EvalLimitSupport`. Registry, JSON, prepared and batch helpers reject explicit
 unsupported overrides and omit unsupported synthesized fields, while retaining
 common conversion budgets. Programs without this optional interface retain
-legacy behavior. See [adapter guidance](adapters.md). The experimental owned
-QuickJS backend now passes all 18 recorded probes; this is a feasibility gate,
-not a supported production JavaScript API.
+legacy behavior. See [adapter guidance](adapters.md). The original QuickJS
+assessment's 18-probe feasibility result is historical. The supported optional
+processor passes all 21 owned probes plus the native/security/resource gates
+recorded in its [production acceptance evidence](javascript-production-readiness.md).
 
 Additional conservative plans cover nested scalar projections, scalar filters,
 and numeric arithmetic projection sums. Batch-local singular-prefix memoization

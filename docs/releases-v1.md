@@ -30,5 +30,18 @@ new matched measurements.
 Published at merged commit `c0519ea48d8022721b0d847e3def176d5a99e361` after
 post-merge CI passed: [v1.1.0](https://github.com/mellowforge/jsontrans-go/releases/tag/v1.1.0).
 The tag and release target both name that exact commit.
-Do not tag the JavaScript prototype as a production backend. The nested
+That root release did not ship a supported JavaScript processor. The nested
 assessment module is not a separately released module.
+
+## javascript/v1.0.0 — first supported JavaScript processor
+
+Approved on 2026-11-04 following merged PR #16 and the maintainer's explicit
+release instruction. This nested-module release uses the verified merge commit
+of its release PR; the annotated tag and GitHub release target that same commit.
+The native root release remains `v1.1.0`.
+
+See the [release notes](releases/javascript-v1.0.0.md) and
+[production approval](javascript-production-readiness.md) for the supported
+profile, installation, platform policy and acceptance evidence.
+
+Release: [javascript/v1.0.0](https://github.com/mellowforge/jsontrans-go/releases/tag/javascript%2Fv1.0.0).

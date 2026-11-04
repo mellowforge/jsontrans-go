@@ -54,8 +54,8 @@ replaces the old guest with v0.18.0 plus a separately pinned terminal-OOM patch.
 It reserves an uncatchable error so complete heap exhaustion cannot resume via
 a catchable-null fallback. Native terminal failures return no result; subsequent
 calls use fresh guests. A clean Go scan does not cover the embedded C engine,
-and production release still requires explicit security/platform approval. See
-the linked records before updating source or patch pins.
+and future source/patch updates require renewed security/platform verification.
+See the linked records before changing those pins.
 
 Report suspected vulnerabilities privately to
 [koverboard@icloud.com](mailto:koverboard@icloud.com). The repository maintainer
@@ -69,6 +69,6 @@ private vulnerability reporting is available for public repositories; if this
 repository becomes public, enable it as an additional monitored route. See
 [GitHub's reporting documentation](https://docs.github.com/en/code-security/concepts/vulnerability-reporting-and-management/coordinated-disclosure).
 
-The optional JavaScript module remains a preview pending explicit approval of
-the [production-readiness record](docs/javascript-production-readiness.md).
-No supported JavaScript module release has been tagged by this preparation.
+The optional JavaScript module v1.0.0 is approved for production under the
+[recorded execution profile and platform policy](docs/javascript-production-readiness.md).
+Its module tag is `javascript/v1.0.0`; the native core is versioned separately.
