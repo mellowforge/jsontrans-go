@@ -22,6 +22,9 @@ func FuzzOwnedTerminalPhases(f *testing.F) {
 		{`(()=>{` + exhaust + `})()`, jt.PhaseEvaluate},
 		{`()=>{throw {get message(){` + exhaust + `}}}`, jt.PhaseEvaluate},
 		{`()=>new Proxy({}, {ownKeys(){throw {get message(){` + exhaust + `}}}})`, jt.PhaseOutput},
+		{`()=>{Error.prepareStackTrace=()=>{` + exhaust + `};try{null.x}catch(e){globalThis.keep=null;return 42}}`, jt.PhaseEvaluate},
+		{`()=>{Error.prepareStackTrace=()=>{` + exhaust + `};return new Proxy({}, {ownKeys(){return null.x}})}`, jt.PhaseOutput},
+		{`()=>{Error.prepareStackTrace=()=>{` + exhaust + `};try{new Error('x');return 42}catch(e){globalThis.keep=null;return 43}}`, jt.PhaseEvaluate},
 	}
 	e, err := New(context.Background(), Config{GuestMemoryBytes: 8 << 20, Limits: jt.Limits{Timeout: semanticTestTimeout}})
 	if err != nil {

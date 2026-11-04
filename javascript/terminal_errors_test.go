@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	jt "github.com/mellowforge/jsontrans-go"
 )
@@ -78,6 +79,10 @@ func TestOwnedTerminalFailures(t *testing.T) {
 		{"evaluate diagnostic", `()=>{throw {get message(){` + exhaust + `}}}`, jt.PhaseEvaluate},
 		{"output diagnostic", `()=>new Proxy({}, {ownKeys(){throw {get message(){` + exhaust + `}}}})`, jt.PhaseOutput},
 		{"tight heap", `()=>{globalThis.keep=null;try{for(;;)keep={next:keep}}catch(e){return 42}}`, jt.PhaseEvaluate},
+		{"stack formatter", `()=>{Error.prepareStackTrace=()=>{` + exhaust + `};try{null.x}catch(e){globalThis.keep=null;return 42}}`, jt.PhaseEvaluate},
+		{"error constructor stack", `()=>{Error.prepareStackTrace=()=>{` + exhaust + `};try{new Error('sentinel');globalThis.keep=null;return 42}catch(e){globalThis.keep=null;return 43}}`, jt.PhaseEvaluate},
+		{"capture stack", `()=>{Error.prepareStackTrace=()=>{` + exhaust + `};try{Error.captureStackTrace({});globalThis.keep=null;return 42}catch(e){globalThis.keep=null;return 43}}`, jt.PhaseEvaluate},
+		{"output stack formatter", `()=>{Error.prepareStackTrace=()=>{` + exhaust + `};return new Proxy({}, {ownKeys(){return null.x}})}`, jt.PhaseOutput},
 		{"prototype mutation", `()=>{globalThis.stageRecord={0:0};Object.defineProperty(Object.prototype,'0',{set(){throw new Error('phase exposed')}});return new Proxy({}, {ownKeys(){` + exhaust + `}})}`, jt.PhaseOutput},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -98,6 +103,59 @@ func TestOwnedTerminalFailures(t *testing.T) {
 				t.Fatalf("fresh recovery=%+v error=%v", r, err)
 			}
 		})
+	}
+}
+
+func TestOwnedMinimumGuestMemory(t *testing.T) {
+	e, err := New(context.Background(), Config{GuestMemoryBytes: 2 << 20, Limits: jt.Limits{Timeout: semanticTestTimeout}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer e.Close()
+	for _, tc := range []struct {
+		source string
+		json   string
+	}{
+		{`x=>({ok:x.ok})`, `{"ok":true}`},
+		{`()=>{Error.prepareStackTrace=()=>{throw new TypeError('formatter')};try{null.x}catch(e){return e.name}}`, `"TypeError"`},
+		{`()=>{Error.prepareStackTrace=()=> 'custom';return new Error('x').stack}`, `"custom"`},
+		{`()=>{try{globalThis.keep=null;for(;;)keep={next:keep}}catch(e){return 42}}`, ""},
+		{`()=>42`, `42`},
+	} {
+		p, err := e.Compile(context.Background(), tc.source)
+		if err != nil {
+			t.Fatal(err)
+		}
+		r, err := jt.EvalJSON(context.Background(), p, []byte(`{"ok":true}`), jt.EvalOptions{})
+		if tc.json != "" {
+			if err != nil || !r.Defined || string(r.Value) != tc.json {
+				t.Fatalf("minimum memory: result=%+v error=%v", r, err)
+			}
+		} else {
+			var ex *Exception
+			if r.Defined || r.Value != nil || !errors.As(err, &ex) || errors.Is(err, jt.ErrLimit) || errors.Is(err, jt.ErrConversion) {
+				t.Fatalf("minimum memory terminal failure: result=%+v error=%v", r, err)
+			}
+		}
+	}
+}
+
+func TestOwnedTerminalStackLimitStopsFormatter(t *testing.T) {
+	e, err := New(context.Background(), Config{GuestMemoryBytes: 8 << 20, Limits: jt.Limits{Timeout: semanticTestTimeout}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer e.Close()
+	p, err := e.Compile(context.Background(), `()=>{Error.stackTraceLimit={valueOf(){globalThis.keep=null;for(;;)keep={next:keep}}};Error.prepareStackTrace=()=>{while(true){}};try{null.x}catch(e){globalThis.keep=null;return 42}}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+	r, err := p.Eval(ctx, nil, jt.EvalOptions{})
+	var ex *Exception
+	if r.Defined || r.Value != nil || !errors.As(err, &ex) || errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("formatter ran after terminal stack-limit conversion: result=%+v error=%v", r, err)
 	}
 }
 

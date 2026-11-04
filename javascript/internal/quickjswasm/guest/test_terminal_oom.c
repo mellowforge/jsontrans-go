@@ -14,7 +14,42 @@ static void check_context_collection(JSRuntime *rt) {
     }
 }
 
+static void check_partial_error_construction(void) {
+    const char *message = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+    int terminal = 0, complete = 0;
+    for (size_t slack = 0; slack <= 4096; slack += 8) {
+        JSRuntime *rt = JS_NewRuntime();
+        assert(rt);
+        JSContext *ctx = JS_NewContext(rt);
+        assert(ctx);
+        JSMemoryUsage usage;
+        JS_ComputeMemoryUsage(rt, &usage);
+        JS_SetMemoryLimit(rt, usage.malloc_size + slack);
+        assert(JS_IsException(JS_ThrowTypeError(ctx, "%s", message)));
+        JSValue error = JS_GetException(ctx);
+        JS_SetMemoryLimit(rt, (size_t)-1);
+        if (JS_IsUncatchableError(error)) {
+            terminal++;
+        } else {
+            /* A successful ordinary error must have its complete message.
+             * Allocation failure must propagate the terminal error instead. */
+            JSValue value = JS_GetPropertyStr(ctx, error, "message");
+            const char *actual = JS_ToCString(ctx, value);
+            assert(actual && strcmp(actual, message) == 0);
+            JS_FreeCString(ctx, actual);
+            JS_FreeValue(ctx, value);
+            complete++;
+        }
+        JS_FreeValue(ctx, error);
+        JS_FreeContext(ctx);
+        check_context_collection(rt);
+        JS_FreeRuntime(rt);
+    }
+    assert(terminal > 0 && complete > 0);
+}
+
 int main(void) {
+    check_partial_error_construction();
     JSRuntime *rt = JS_NewRuntime();
     assert(rt);
     JS_SetDumpFlags(rt, JS_ABORT_ON_LEAKS | JS_DUMP_LEAKS);

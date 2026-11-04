@@ -8,14 +8,14 @@
     "x86_64-linux": "b761e3a0721dbae9c09a0059e5fdb2bf917d1b4a8a7b430fb3b5aafb0984b2c4"
   },
   "abi_version": 3,
-  "artifact_sha256": "e3cd5c71ead2a4967f7163bf9c74e086b641e43081bac1909fa8c86e4368bb6c",
+  "artifact_sha256": "31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee",
   "sdk_llvm_commit": "895aa2c896ada719451be2e3673c83da8ddf1141",
   "sdk_wasi_libc_commit": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13",
   "quickjs_version": "0.18.0",
   "source_patches": [
     {
       "file": "quickjs-terminal-oom.patch",
-      "sha256": "7e469f264fc380c92bd0ff336f5c7a556907e5457e9bd86402a9d37ae8cbc4c6"
+      "sha256": "41e04680ad186ec1d230874e949593bf0723c443c31966941509e25461eb146b"
     }
   ]
 }
