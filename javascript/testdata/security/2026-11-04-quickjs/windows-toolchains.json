@@ -1,0 +1,16 @@
+﻿{
+    "go":  {
+               "filename":  "go1.26.10.windows-amd64.zip",
+               "os":  "windows",
+               "arch":  "amd64",
+               "version":  "go1.26.10",
+               "sha256":  "7ecd2d7260e82c59bcbd7f1077a07cee2dea607295b858df67195a1e4e09629b",
+               "size":  75004774,
+               "kind":  "archive"
+           },
+    "scope":  "private task tools; no global PATH changes",
+    "compiler":  {
+                     "sha256":  "3c69305081e4a647144339a936244fcf7d3d9e558319e1ad7be2cd2886d4b6a1",
+                     "url":  "https://github.com/brechtsanders/winlibs_mingw/releases/download/16.2.0posix-23.1.3-14.0.0-ucrt-r3/winlibs-x86_64-posix-seh-gcc-16.2.0-mingw-w64ucrt-14.0.0-r3.zip"
+                 }
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "backend": "owned-quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 251969042,
+    "go_heap_bytes": 46545888,
+    "peak_rss_bytes": 60456960
+  },
+  {
+    "backend": "owned-quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 237444875,
+    "go_heap_bytes": 46888512,
+    "peak_rss_bytes": 60407808
+  },
+  {
+    "backend": "owned-quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 229344708,
+    "go_heap_bytes": 49453992,
+    "peak_rss_bytes": 63143936
+  },
+  {
+    "backend": "owned-quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 241798417,
+    "go_heap_bytes": 47672232,
+    "peak_rss_bytes": 61423616
+  },
+  {
+    "backend": "owned-quickjs",
+    "case": "cold-start",
+    "status": "PASS",
+    "detail": "result=jsontrans.Result{Value:\"2\", Defined:true}; error=<nil>",
+    "duration_ns": 246282375,
+    "go_heap_bytes": 47672352,
+    "peak_rss_bytes": 61227008
+  }
+]

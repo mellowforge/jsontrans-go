@@ -1,0 +1,305 @@
+--- a/quickjs.c
++++ b/quickjs.c
+@@ -586,6 +586,7 @@
+     JSValue regexp_ctor;
+     JSValue promise_ctor;
+     JSValue native_error_proto[JS_NATIVE_ERROR_COUNT];
++    JSValue terminal_oom; /* owned embedding: preallocated uncatchable fallback */
+     JSValue error_ctor;
+     JSValue error_back_trace;
+     JSValue error_prepare_stack;
+@@ -2873,6 +2874,7 @@
+     ctx->regexp_ctor = JS_NULL;
+     ctx->promise_ctor = JS_NULL;
+     ctx->error_ctor = JS_NULL;
++    ctx->terminal_oom = JS_NULL;
+     ctx->error_back_trace = JS_UNDEFINED;
+     ctx->error_prepare_stack = JS_UNDEFINED;
+     ctx->error_stack_trace_limit = js_int32(10);
+@@ -2891,6 +2893,18 @@
+     return ctx;
+ }
+ 
++/* Keep allocation-failure reporting independent of remaining heap space.
++ * Raw contexts retain upstream behavior and are not exposed by the owned ABI;
++ * the owned embedding always uses JS_NewContext. */
++static int init_terminal_oom(JSContext *ctx)
++{
++    JSValue error = JS_NewInternalError(ctx, "out of memory");
++    if (JS_IsException(error))
++        return -1;
++    ctx->terminal_oom = error;
++    return 0;
++}
++
+ JSContext *JS_NewContext(JSRuntime *rt)
+ {
+     JSContext *ctx;
+@@ -2899,6 +2913,7 @@
+         return NULL;
+ 
+     if (JS_AddIntrinsicBaseObjects(ctx) ||
++        init_terminal_oom(ctx) ||
+         JS_AddIntrinsicDate(ctx) ||
+         JS_AddIntrinsicEval(ctx) ||
+         JS_AddIntrinsicRegExp(ctx) ||
+@@ -3002,6 +3017,7 @@
+     for(i = 0; i < JS_NATIVE_ERROR_COUNT; i++) {
+         JS_MarkValue(rt, ctx->native_error_proto[i], mark_func);
+     }
++    JS_MarkValue(rt, ctx->terminal_oom, mark_func);
+     JS_MarkValue(rt, ctx->error_ctor, mark_func);
+     JS_MarkValue(rt, ctx->error_back_trace, mark_func);
+     JS_MarkValue(rt, ctx->error_prepare_stack, mark_func);
+@@ -3084,6 +3100,7 @@
+     for(i = 0; i < JS_NATIVE_ERROR_COUNT; i++) {
+         JS_FreeValue(ctx, ctx->native_error_proto[i]);
+     }
++    JS_FreeValue(ctx, ctx->terminal_oom);
+     JS_FreeValue(ctx, ctx->error_ctor);
+     JS_FreeValue(ctx, ctx->error_back_trace);
+     JS_FreeValue(ctx, ctx->error_prepare_stack);
+@@ -8188,7 +8205,17 @@
+ 
+ /* if filename != NULL, an additional level is added with the filename
+    and line number information (used for parse error). */
+-static void build_backtrace(JSContext *ctx, JSValueConst error_val,
++/* Ordinary formatter errors are ignored upstream, but terminal failures must
++ * survive restoration of the original exception. Ownership is consumed. */
++static void restore_backtrace_exception(JSContext *ctx, JSValue saved)
++{
++    if (JS_IsUncatchableError(ctx->rt->current_exception))
++        JS_FreeValue(ctx, saved);
++    else
++        JS_Throw(ctx, saved);
++}
++
++static int build_backtrace(JSContext *ctx, JSValueConst error_val,
+                             JSValueConst filter_func, const char *filename,
+                             int line_num, int col_num, int backtrace_flags)
+ {
+@@ -8207,8 +8234,10 @@
+     int stack_trace_limit;
+ 
+     rt = ctx->rt;
++    if (JS_IsUncatchableError(rt->current_exception))
++        return -1;
+     if (rt->in_build_stack_trace)
+-        return;
++        return 0;
+     rt->in_build_stack_trace = true;
+     error_obj = js_dup(error_val);
+ 
+@@ -8227,8 +8256,13 @@
+         stack_trace_limit = fabs(d);
+ 
+     // Restore current exception.
+-    JS_Throw(ctx, saved_exception);
++    restore_backtrace_exception(ctx, saved_exception);
+     saved_exception = JS_UNINITIALIZED;
++    if (JS_IsUncatchableError(rt->current_exception)) {
++        JS_FreeValue(ctx, error_obj);
++        rt->in_build_stack_trace = false;
++        return -1;
++    }
+ 
+     stack_trace_limit = min_int(stack_trace_limit, countof(csd));
+     stack_trace_limit = max_int(stack_trace_limit, 0);
+@@ -8357,14 +8391,16 @@
+             error_obj,
+             stack,
+         };
+-        JSValue stack2 = JS_Call(ctx, prepare, ctx->error_ctor, countof(args), args);
++        JSValue stack2 = JS_EXCEPTION;
++        if (!JS_IsUncatchableError(rt->current_exception))
++            stack2 = JS_Call(ctx, prepare, ctx->error_ctor, countof(args), args);
+         JS_FreeValue(ctx, stack);
+         if (JS_IsException(stack2))
+             stack = JS_NULL;
+         else
+             stack = stack2;
+         JS_FreeValue(ctx, prepare);
+-        JS_Throw(ctx, saved_exception);
++        restore_backtrace_exception(ctx, saved_exception);
+     } else {
+         if (dbuf_error(&dbuf))
+             stack = JS_NULL;
+@@ -8395,6 +8431,7 @@
+ 
+     JS_FreeValue(ctx, error_obj);
+     rt->in_build_stack_trace = false;
++    return JS_IsUncatchableError(rt->current_exception) ? -1 : 0;
+ }
+ 
+ JSValue JS_NewError(JSContext *ctx)
+@@ -8402,7 +8439,10 @@
+     JSValue obj = JS_NewObjectClass(ctx, JS_CLASS_ERROR);
+     if (JS_IsException(obj))
+         return JS_EXCEPTION;
+-    build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0, 0);
++    if (build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0, 0) < 0) {
++        JS_FreeValue(ctx, obj);
++        return JS_EXCEPTION;
++    }
+     return obj;
+ }
+ 
+@@ -8421,14 +8461,17 @@
+         return JS_EXCEPTION;
+     msg = JS_NewString(ctx, message);
+     if (JS_IsException(msg))
+-        msg = JS_NewString(ctx, "Invalid error message");
+-    if (!JS_IsException(msg)) {
+-        JS_DefinePropertyValue(ctx, obj, JS_ATOM_message, msg,
+-                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE);
+-    }
+-    if (add_backtrace)
+-        build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0, 0);
++        goto fail;
++    if (JS_DefinePropertyValue(ctx, obj, JS_ATOM_message, msg,
++                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE) < 0)
++        goto fail;
++    if (add_backtrace &&
++        build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0, 0) < 0)
++        goto fail;
+     return obj;
++fail:
++    JS_FreeValue(ctx, obj);
++    return JS_EXCEPTION;
+ }
+ 
+ static JSValue JS_PRINTF_FORMAT_ATTR(4, 0)
+@@ -8448,10 +8491,19 @@
+ {
+     JSValue obj;
+ 
++    /* A partially constructed error must not replace a pending terminal one. */
++    if (JS_IsUncatchableError(ctx->rt->current_exception))
++        return JS_EXCEPTION;
+     obj = JS_MakeError(ctx, error_num, add_backtrace, fmt, ap);
++    if (JS_IsUncatchableError(ctx->rt->current_exception)) {
++        JS_FreeValue(ctx, obj);
++        return JS_EXCEPTION;
++    }
+     if (unlikely(JS_IsException(obj))) {
+-        /* out of memory: throw JS_NULL to avoid recursing */
+-        obj = JS_NULL;
++        /* A failed error allocation must not replace terminal OOM with
++         * catchable null. Duplication of the reserved value cannot allocate. */
++        obj = JS_IsNull(ctx->terminal_oom) ? JS_NULL :
++            JS_DupValue(ctx, ctx->terminal_oom);
+     }
+     return JS_Throw(ctx, obj);
+ }
+@@ -8564,6 +8616,8 @@
+ 
+ JSValue JS_ThrowOutOfMemory(JSContext *ctx)
+ {
++    if (!JS_IsNull(ctx->terminal_oom))
++        return JS_Throw(ctx, JS_DupValue(ctx, ctx->terminal_oom));
+     JSRuntime *rt = ctx->rt;
+     if (!rt->in_out_of_memory) {
+         rt->in_out_of_memory = true;
+@@ -42866,8 +42920,9 @@
+         msg = JS_ToString(ctx, message);
+         if (unlikely(JS_IsException(msg)))
+             goto exception;
+-        JS_DefinePropertyValue(ctx, obj, JS_ATOM_message, msg,
+-                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE);
++        if (JS_DefinePropertyValue(ctx, obj, JS_ATOM_message, msg,
++                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE) < 0)
++            goto exception;
+     }
+ 
+     if (argc > opts && JS_VALUE_GET_TAG(argv[opts]) == JS_TAG_OBJECT) {
+@@ -42878,8 +42933,9 @@
+             cause = JS_GetProperty(ctx, argv[opts], JS_ATOM_cause);
+             if (unlikely(JS_IsException(cause)))
+                 goto exception;
+-            JS_DefinePropertyValue(ctx, obj, JS_ATOM_cause, cause,
+-                                   JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE);
++            if (JS_DefinePropertyValue(ctx, obj, JS_ATOM_cause, cause,
++                                   JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE) < 0)
++                goto exception;
+         }
+     }
+ 
+@@ -42887,21 +42943,25 @@
+         JSValue error_list = iterator_to_array(ctx, argv[0]);
+         if (JS_IsException(error_list))
+             goto exception;
+-        JS_DefinePropertyValue(ctx, obj, JS_ATOM_errors, error_list,
+-                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE);
++        if (JS_DefinePropertyValue(ctx, obj, JS_ATOM_errors, error_list,
++                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE) < 0)
++            goto exception;
+     }
+ 
+     if (magic == JS_SUPPRESSED_ERROR) {
+-        JS_DefinePropertyValue(ctx, obj, JS_ATOM_error,
++        if (JS_DefinePropertyValue(ctx, obj, JS_ATOM_error,
+                                js_dup(argv[0]),
+-                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE);
+-        JS_DefinePropertyValue(ctx, obj, JS_ATOM_suppressed,
++                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE) < 0)
++            goto exception;
++        if (JS_DefinePropertyValue(ctx, obj, JS_ATOM_suppressed,
+                                js_dup(argv[1]),
+-                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE);
++                               JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE) < 0)
++            goto exception;
+     }
+ 
+     /* skip the Error() function in the backtrace */
+-    build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0, JS_BACKTRACE_FLAG_SKIP_FIRST_LEVEL);
++    if (build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0, JS_BACKTRACE_FLAG_SKIP_FIRST_LEVEL) < 0)
++        goto exception;
+     return obj;
+  exception:
+     JS_FreeValue(ctx, obj);
+@@ -43034,7 +43094,8 @@
+     JSValueConst v = argv[0];
+     if (JS_VALUE_GET_TAG(v) != JS_TAG_OBJECT)
+         return JS_ThrowTypeErrorNotAnObject(ctx);
+-    build_backtrace(ctx, v, argv[1], NULL, 0, 0, JS_BACKTRACE_FLAG_SKIP_FIRST_LEVEL|JS_BACKTRACE_FLAG_FILTER_FUNC);
++    if (build_backtrace(ctx, v, argv[1], NULL, 0, 0, JS_BACKTRACE_FLAG_SKIP_FIRST_LEVEL|JS_BACKTRACE_FLAG_FILTER_FUNC) < 0)
++        return JS_EXCEPTION;
+     return JS_UNDEFINED;
+ }
+ 
+@@ -54946,13 +55007,19 @@
+                                  JS_CLASS_ERROR);
+     if (JS_IsException(obj))
+         return JS_EXCEPTION;
+-    JS_DefinePropertyValue(ctx, obj, JS_ATOM_error, js_dup(error),
+-                           JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE);
+-    JS_DefinePropertyValue(ctx, obj, JS_ATOM_suppressed, js_dup(suppressed),
+-                           JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE);
+-    build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0,
+-                    JS_BACKTRACE_FLAG_SKIP_FIRST_LEVEL);
++    if (JS_DefinePropertyValue(ctx, obj, JS_ATOM_error, js_dup(error),
++                           JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE) < 0)
++        goto fail;
++    if (JS_DefinePropertyValue(ctx, obj, JS_ATOM_suppressed, js_dup(suppressed),
++                           JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE) < 0)
++        goto fail;
++    if (build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0,
++                    JS_BACKTRACE_FLAG_SKIP_FIRST_LEVEL) < 0)
++        goto fail;
+     return obj;
++fail:
++    JS_FreeValue(ctx, obj);
++    return JS_EXCEPTION;
+ }
+ 
+ /* Perform DisposeResources. Returns 0 on success, -1 on exception.
+@@ -63807,7 +63874,8 @@
+     s->message = message;
+     s->code = -1;
+     JS_SetOpaqueInternal(obj, s);
+-    build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0, backtrace_flags);
++    if (build_backtrace(ctx, obj, JS_UNDEFINED, NULL, 0, 0, backtrace_flags) < 0)
++        goto fail1;
+     return obj;
+ fail3:
+     JS_FreeValue(ctx, name);

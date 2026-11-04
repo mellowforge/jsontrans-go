@@ -5,22 +5,29 @@ import (
 	"errors"
 	jt "github.com/mellowforge/jsontrans-go"
 	"github.com/mellowforge/jsontrans-go/jsonata"
-	"strings"
 	"testing"
 )
 
 func TestOwnedRuleLocations(t *testing.T) {
 	e := newTestEngine(t)
-	for _, source := range []string{`()=>{const x=;}`, "()=>{\nconst x=;\n}", "()=>{const α='😀';const x=;}", "()=>{const x='é';const y=;}", "()=>{\r\nconst x=;\r\n}"} {
-		_, err := e.Compile(context.Background(), source)
+	for _, tc := range []struct {
+		source       string
+		line, column int
+	}{
+		{`()=>{const x=;}`, 1, 14},
+		{"()=>{\nconst x=;\n}", 2, 9},
+		{"()=>{const α='😀';const x=;}", 1, 30},
+		{"()=>{const x='é';const y=;}", 1, 28},
+		{"()=>{\r\nconst x=;\r\n}", 2, 9},
+	} {
+		_, err := e.Compile(context.Background(), tc.source)
 		var ex *Exception
 		var diag *jt.Error
 		if !errors.As(err, &ex) || !errors.As(err, &diag) {
 			t.Fatal(err)
 		}
-		want := strings.Count(source[:strings.LastIndex(source, ";")], "\n") + 1
-		if ex.Location == nil || ex.Location.ByteOffset != -1 || ex.Location.Line != want || ex.Location.Column != 1 || ex.Location.Reported || diag.Position != 0 {
-			t.Errorf("source %q: location %#v want %d stack %q", source, ex.Location, want, ex.Stack)
+		if ex.Location == nil || ex.Location.ByteOffset != -1 || ex.Location.Line != tc.line || ex.Location.Column != tc.column || ex.Location.Reported || diag.Position != 0 {
+			t.Errorf("source %q: location %#v want %d:%d stack %q", tc.source, ex.Location, tc.line, tc.column, ex.Stack)
 		}
 	}
 	p, err := e.Compile(context.Background(), "()=>{\nthrow new TypeError('x');\n}")

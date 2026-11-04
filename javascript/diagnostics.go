@@ -95,8 +95,8 @@ func mapRuleLocation(expression, source string, line, column int, reported bool)
 		return nil
 	}
 	location := &SourceLocation{Source: source, Line: line, Column: column, ByteOffset: -1, Reported: reported}
-	// The pinned compiler reports column 1 for token errors anywhere on a line.
-	// Preserve its coordinates, but do not invent byte offsets from coarse data.
+	// Preserve native columns, but do not infer byte offsets from compiler- or
+	// stack-specific coordinate units, especially across Unicode and line endings.
 	return location
 }
 func mapOwnedDiagnostic(expression string, err error) {

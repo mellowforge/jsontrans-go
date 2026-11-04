@@ -166,7 +166,7 @@ func (e *Engine) instantiate(ctx context.Context) (api.Module, error) {
 	if err != nil {
 		return fail(err)
 	}
-	if version != 2 {
+	if version != 3 {
 		return fail(errors.New("guest ABI version mismatch"))
 	}
 	now := uint64(time.Now().UnixMicro())

@@ -1,0 +1,27 @@
+{
+  "commit": "4f449c247c064fa071f6c531d52b77f3c1495e9e",
+  "platform": "darwin/arm64",
+  "cpu": "Apple M5 Max",
+  "go": "go1.26.10",
+  "passed": true,
+  "commands": [
+    "gofmt -l . (empty output)",
+    "go test -count=1 ./...; go test -race -count=1 ./...; go vet ./... in each of ., javascript, experiments/javascript (executed with &&)",
+    "python3 javascript/scripts/test_check_module.py",
+    "python3 javascript/scripts/check_module.py"
+  ],
+  "native_stable": {
+    "go": "go1.27.3",
+    "passed": true,
+    "commands": [
+      "go test -count=1 ./...",
+      "go test -race -count=1 ./...",
+      "go vet ./..."
+    ]
+  },
+  "logs": [
+    "mac-verification.txt.gz",
+    "mac-stable.txt.gz"
+  ],
+  "note": "Runtime/protocol source is the recorded commit; final documentation, evidence and descriptive probe text follow separately."
+}

@@ -22,7 +22,7 @@ def archive(name, url, checksum):
         raise SystemExit(f'checksum mismatch: {path}')
     return path
 
-source = archive('quickjs.tar.gz', LOCK['source_url'], LOCK['source_sha256'])
+source = archive('quickjs-' + LOCK['quickjs_commit'] + '.tar.gz', LOCK['source_url'], LOCK['source_sha256'])
 sdk_version = LOCK['sdk_version']
 sdk_release = 'wasi-sdk-' + sdk_version.split('.')[0]
 sdk_name = f'wasi-sdk-{sdk_version}-{asset}'
@@ -33,6 +33,11 @@ with tempfile.TemporaryDirectory(prefix='jsontrans-guest-build-') as directory:
         with tarfile.open(path) as tar:
             tar.extractall(build, filter='data')
     src = build / ('quickjs-' + LOCK['quickjs_commit'])
+    for entry in LOCK.get('source_patches', []):
+        patch = HERE / entry['file']
+        if hashlib.sha256(patch.read_bytes()).hexdigest() != entry['sha256']:
+            raise SystemExit(f'checksum mismatch: {patch}')
+        subprocess.run(['patch', '-p1', '-F0', '-t', '-N', '-i', str(patch.resolve())], cwd=src, check=True)
     compiler = build / sdk_name / 'bin/clang'
     out = build / 'guest.wasm'
     command = [str(compiler), '-O2', '-mexec-model=reactor', '-DNDEBUG', '-D_GNU_SOURCE', '-fvisibility=hidden', '-fno-ident',
@@ -43,7 +48,8 @@ with tempfile.TemporaryDirectory(prefix='jsontrans-guest-build-') as directory:
                'abi_output_ptr','abi_output_len','abi_status']
     command += ['-Wl,--export=' + name for name in exports]
     command += ['-Wl,--wrap=__wasi_' + name for name in ['clock_time_get','fd_close','fd_seek','fd_write','proc_exit']]
-    command += [str(src / name) for name in ['cutils.c','dtoa.c','libregexp.c','libunicode.c','quickjs.c']]
+    # v0.18 moved cutils into its header; mirror the upstream core source list.
+    command += [str(src / name) for name in ['dtoa.c','libregexp.c','libunicode.c','quickjs.c']]
     # Copy ABI to a stable path so file/debug metadata cannot encode the checkout path.
     shutil.copyfile(HERE / 'abi.c', build / 'abi.c')
     command += [str(build / 'abi.c'), '-lm', '-o', str(out)]

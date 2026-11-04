@@ -1,14 +1,21 @@
 {
-  "quickjs_commit": "d01ca4491fb24ccfeccb4c7394e28a3b21fd5986",
-  "source_url": "https://codeload.github.com/quickjs-ng/quickjs/tar.gz/d01ca4491fb24ccfeccb4c7394e28a3b21fd5986",
-  "source_sha256": "40be727abd6f7d24911b6a33fc3d25603a3f89eee183f74ffe6ca8d5619d9922",
+  "quickjs_commit": "d7215b0ad3fc2c562e8317fd9bca058fd4863804",
+  "source_url": "https://codeload.github.com/quickjs-ng/quickjs/tar.gz/d7215b0ad3fc2c562e8317fd9bca058fd4863804",
+  "source_sha256": "a49defe70cbcae9226d9fac025af116e87ebae2440dcff1ca3c80b79e1cdef0b",
   "sdk_version": "34.0",
   "sdk_assets": {
     "arm64-macos": "9c59398106b417f8f14913380fdf0097a8cc0ff4af9eb3ce0065a859e88d49e9",
     "x86_64-linux": "b761e3a0721dbae9c09a0059e5fdb2bf917d1b4a8a7b430fb3b5aafb0984b2c4"
   },
-  "abi_version": 2,
-  "artifact_sha256": "29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e",
+  "abi_version": 3,
+  "artifact_sha256": "31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee",
   "sdk_llvm_commit": "895aa2c896ada719451be2e3673c83da8ddf1141",
-  "sdk_wasi_libc_commit": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13"
+  "sdk_wasi_libc_commit": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13",
+  "quickjs_version": "0.18.0",
+  "source_patches": [
+    {
+      "file": "quickjs-terminal-oom.patch",
+      "sha256": "41e04680ad186ec1d230874e949593bf0723c443c31966941509e25461eb146b"
+    }
+  ]
 }

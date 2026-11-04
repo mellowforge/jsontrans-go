@@ -104,7 +104,7 @@ func TestOwnedDiagnosticBoundsAndCancellation(t *testing.T) {
 	}
 }
 
-func TestOwnedDiagnosticHeapExhaustionPreservesOrigin(t *testing.T) {
+func TestOwnedDiagnosticTerminalFailuresPreservePhase(t *testing.T) {
 	e := newTestEngine(t)
 	healthy, err := e.Compile(context.Background(), `()=>42`)
 	if err != nil {
@@ -112,29 +112,24 @@ func TestOwnedDiagnosticHeapExhaustionPreservesOrigin(t *testing.T) {
 	}
 	for _, tc := range []struct {
 		name, source, phase string
-		conversion          bool
 	}{
-		{"trusted conversion", `()=>{globalThis.keep=[];try{for(;;)keep.push(new ArrayBuffer(1024))}catch(e){}return 1n}`, jt.PhaseOutput, true},
-		{"proxy throw", `()=>{const original={name:'Original',message:'original'};return new Proxy({}, {ownKeys(){globalThis.keep=[];try{for(;;)keep.push(new ArrayBuffer(1024))}catch(e){}throw original}})}`, jt.PhaseOutput, false},
-		{"stack getter", `()=>{throw {name:'Original',message:'original',get stack(){globalThis.keep=[];try{for(;;)keep.push(new ArrayBuffer(1024))}catch(e){}return 'trace'}}}`, jt.PhaseEvaluate, false},
+		{"execution before conversion", `()=>{globalThis.keep=[];try{for(;;)keep.push(new ArrayBuffer(1024))}catch(e){}return 1n}`, jt.PhaseEvaluate},
+		{"proxy throw", `()=>{const original={name:'Original',message:'original'};return new Proxy({}, {ownKeys(){globalThis.keep=[];try{for(;;)keep.push(new ArrayBuffer(1024))}catch(e){}throw original}})}`, jt.PhaseOutput},
+		{"stack getter", `()=>{throw {name:'Original',message:'original',get stack(){globalThis.keep=[];try{for(;;)keep.push(new ArrayBuffer(1024))}catch(e){}return 'trace'}}}`, jt.PhaseEvaluate},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			p, err := e.Compile(context.Background(), tc.source)
 			if err != nil {
 				t.Fatal(err)
 			}
-			_, err = p.Eval(context.Background(), nil, jt.EvalOptions{Limits: &jt.Limits{Timeout: 20 * time.Second}})
+			r, err := p.Eval(context.Background(), nil, jt.EvalOptions{Limits: &jt.Limits{Timeout: 20 * time.Second}})
 			var d *jt.Error
 			var ex *Exception
-			if !errors.As(err, &d) || d.Phase != tc.phase {
+			if r.Defined || r.Value != nil || !errors.As(err, &d) || d.Phase != tc.phase {
 				t.Fatalf("lost origin: %v", err)
 			}
-			if tc.conversion {
-				if !errors.Is(err, jt.ErrConversion) {
-					t.Fatalf("lost trusted conversion: %v", err)
-				}
-			} else if !errors.As(err, &ex) || ex.Message == "null" || ex.Message == "" || errors.Is(err, jt.ErrConversion) {
-				t.Fatalf("secondary replaced original: %#v %v", ex, err)
+			if !errors.As(err, &ex) || ex.Message == "null" || ex.Message == "" || errors.Is(err, jt.ErrConversion) || errors.Is(err, jt.ErrLimit) {
+				t.Fatalf("terminal error lost native provenance: %#v %v", ex, err)
 			}
 			if _, err = healthy.Eval(context.Background(), nil, jt.EvalOptions{}); err != nil {
 				t.Fatalf("recovery: %v", err)
@@ -143,21 +138,56 @@ func TestOwnedDiagnosticHeapExhaustionPreservesOrigin(t *testing.T) {
 	}
 }
 
-func TestOwnedConversionAfterTightHeapExhaustion(t *testing.T) {
+func TestOwnedTerminalFailurePrecedesConversion(t *testing.T) {
 	e, err := New(context.Background(), Config{GuestMemoryBytes: 8 << 20, Limits: jt.Limits{Timeout: semanticTestTimeout}})
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer e.Close()
 	// Retain small linked nodes instead of stopping at a failed large buffer or
-	// array resize. The returned primitive exists before the heap is exhausted.
+	// array resize. The primitive exists before OOM, but execution must never
+	// continue into conversion after that terminal allocation failure.
 	p, err := e.Compile(context.Background(), `()=>{const result=1n;globalThis.keep=null;try{for(;;)keep={next:keep}}catch(e){}return result}`)
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = p.Eval(context.Background(), nil, jt.EvalOptions{})
+	r, err := p.Eval(context.Background(), nil, jt.EvalOptions{})
 	var d *jt.Error
-	if !errors.Is(err, jt.ErrConversion) || !errors.As(err, &d) || d.Phase != jt.PhaseOutput {
-		t.Fatalf("lost trusted conversion after tight exhaustion: %v", err)
+	var ex *Exception
+	if r.Defined || r.Value != nil || !errors.As(err, &ex) || !errors.As(err, &d) || d.Phase != jt.PhaseEvaluate || errors.Is(err, jt.ErrConversion) || errors.Is(err, jt.ErrLimit) {
+		t.Fatalf("continued past terminal OOM: %+v %v", r, err)
+	}
+}
+
+func TestOwnedTrustedFailuresUnderBoundedHeapPressure(t *testing.T) {
+	e, err := New(context.Background(), Config{GuestMemoryBytes: 8 << 20, Limits: jt.Limits{Timeout: semanticTestTimeout}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer e.Close()
+	for _, tc := range []struct {
+		source            string
+		limits            *jt.Limits
+		conversion, limit bool
+	}{
+		{`()=>{globalThis.keep=new ArrayBuffer(1048576);return 1n}`, nil, true, false},
+		{`()=>{globalThis.keep=new ArrayBuffer(1048576);return {x:{y:1}}}`, &jt.Limits{MaxDepth: 2}, true, true},
+		{`()=>{globalThis.keep=new ArrayBuffer(1048576);return new Proxy({}, {ownKeys(){throw {name:'Original',message:'original'}}})}`, nil, false, false},
+	} {
+		p, err := e.Compile(context.Background(), tc.source)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, err = p.Eval(context.Background(), nil, jt.EvalOptions{Limits: tc.limits})
+		var d *jt.Error
+		if !errors.As(err, &d) || d.Phase != jt.PhaseOutput || errors.Is(err, jt.ErrConversion) != tc.conversion || errors.Is(err, jt.ErrLimit) != tc.limit {
+			t.Fatalf("lost trusted bounded-pressure classification: %v", err)
+		}
+		if !tc.conversion {
+			var ex *Exception
+			if !errors.As(err, &ex) || ex.Name != "Original" || ex.Message != "original" {
+				t.Fatalf("lost ordinary Proxy exception: %#v %v", ex, err)
+			}
+		}
 	}
 }

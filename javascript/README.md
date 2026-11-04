@@ -49,8 +49,14 @@ per guest, noncryptographic guest-local RNG, cooperative Go conversion limits,
 wall-clock cancellation and a default 64 MiB guest linear-memory cap. Configured
 memory ranges from 2–64 MiB in 64 KiB pages. Explicit JS instruction counting,
 separate regex deadlines and stack quotas remain unsupported. These controls do
-not bound total process RSS. Native compiler columns are coarse, so byte offsets
+not bound total process RSS. Native columns are retained, while byte offsets
 remain unavailable; runtime locations are explicitly reported/untrusted.
+
+OOM and InternalError stop the evaluation, including when they occur during
+output conversion or diagnostic formatting. JavaScript catch blocks cannot
+resume after them. Errors retain native fields or a bounded fallback, and the
+next evaluation starts with a fresh guest. Native error names/messages never
+grant trusted ErrLimit/ErrConversion classification.
 
 ## Installation and versions
 
@@ -69,12 +75,12 @@ root dependency is the real merged version
 `v1.1.1-0.20261103173822-e9b9c0c71fe0`, containing registry limit forwarding;
 released core v1.1.0 is too old for this adapter. Go 1.26 or newer is required.
 
-The [dependency/security review](../docs/javascript-security-review.md) identifies
-unsafe patterns in the current embedded QuickJS source and a reproducible guest
-trap. The current pin blocks production release. The linked remediation plan
-covers Go dependency updates and an explicit QuickJS terminal-error migration.
-The [Go dependency updates and automated scan gate](../docs/javascript-go-security-updates.md)
-are applied; the QuickJS migration and production approval remain pending.
+The [historical dependency/security review](../docs/javascript-security-review.md)
+identified unsafe patterns and a reproducible trap in the old guest. The
+[QuickJS upgrade record](../docs/javascript-quickjs-upgrade.md) describes v0.18.0,
+the owned terminal-OOM patch and the updated verification gates. Go dependency
+updates and the automated scan gate are also applied. The module remains a
+preview; production approval and release are separate decisions.
 
 The local `replace github.com/mellowforge/jsontrans-go => ..` is a development
 convenience only. Consumers ignore it and resolve the real minimum version.
@@ -105,10 +111,12 @@ working directory and checks dependency isolation. It requires full Git history
 and cached dependencies, and needs no network or credentials during the check.
 
 The canonical Wasm/ABI sources, manifest and third-party notices live under
-`internal/quickjswasm/guest`. The artifact hash is unchanged by extraction:
-`29556e8cbe4b78704c71304aa3da83ae8881dd3d1447c65d27ade3237721d60e`
-(929,138 bytes, ABI 2, zero host imports). Applications use the embedded artifact
-without a C compiler or Node; rebuilding uses the pinned WASI SDK and Python:
+`internal/quickjswasm/guest`. The current artifact hash is:
+`31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee`
+(1,034,164 bytes, ABI 3, zero host imports). Applications use the embedded artifact
+without a C compiler or Node; rebuilding uses the pinned WASI SDK, Python and
+the standard `patch` utility. Source archive and owned patch checksums are
+validated separately; patch application permits no fuzz:
 
 ```sh
 python3 internal/quickjswasm/guest/build.py --output /tmp/quickjs.wasm

@@ -1,0 +1,78 @@
+{
+  "before": {
+    "NewClose": {
+      "ns_per_op": 197931104,
+      "bytes_per_op": 44661352,
+      "allocs_per_op": 89912
+    },
+    "Compile": {
+      "ns_per_op": 2465740,
+      "bytes_per_op": 4540096,
+      "allocs_per_op": 3007
+    },
+    "Eval": {
+      "ns_per_op": 759256,
+      "bytes_per_op": 2299358,
+      "allocs_per_op": 1602
+    },
+    "EvalJSON": {
+      "ns_per_op": 763631,
+      "bytes_per_op": 2306470,
+      "allocs_per_op": 1733
+    },
+    "PreparedFallback": {
+      "ns_per_op": 750217,
+      "bytes_per_op": 2303344,
+      "allocs_per_op": 1664
+    },
+    "PreparedBatch4": {
+      "ns_per_op": 3000385,
+      "bytes_per_op": 9211117,
+      "allocs_per_op": 6618
+    },
+    "binary_bytes": {
+      "example": 9153090,
+      "assess": 22964402
+    },
+    "cold_median_ns": 191849625,
+    "cold_rss_max_bytes": 58900480
+  },
+  "after": {
+    "NewClose": {
+      "ns_per_op": 230773041,
+      "bytes_per_op": 49076032,
+      "allocs_per_op": 101631
+    },
+    "Compile": {
+      "ns_per_op": 2491782,
+      "bytes_per_op": 4545843,
+      "allocs_per_op": 3301
+    },
+    "Eval": {
+      "ns_per_op": 739587,
+      "bytes_per_op": 2302087,
+      "allocs_per_op": 1749
+    },
+    "EvalJSON": {
+      "ns_per_op": 743807,
+      "bytes_per_op": 2309198,
+      "allocs_per_op": 1880
+    },
+    "PreparedFallback": {
+      "ns_per_op": 759253,
+      "bytes_per_op": 2306071,
+      "allocs_per_op": 1811
+    },
+    "PreparedBatch4": {
+      "ns_per_op": 2958356,
+      "bytes_per_op": 9222025,
+      "allocs_per_op": 7206
+    },
+    "binary_bytes": {
+      "example": 9252162,
+      "assess": 23079986
+    },
+    "cold_median_ns": 231003750,
+    "cold_rss_max_bytes": 62210048
+  }
+}
