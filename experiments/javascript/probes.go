@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fastschema/qjs"
 	jt "github.com/mellowforge/jsontrans-go"
+	qjs "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat"
 )
 
 // Observation is assessment evidence, not a guarantee for arbitrary programs.

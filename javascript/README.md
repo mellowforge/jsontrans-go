@@ -72,8 +72,9 @@ released core v1.1.0 is too old for this adapter. Go 1.26 or newer is required.
 The [dependency/security review](../docs/javascript-security-review.md) identifies
 unsafe patterns in the current embedded QuickJS source and a reproducible guest
 trap. The current pin blocks production release. The linked remediation plan
-covers Go dependency updates and an explicit QuickJS terminal-error migration;
-these upgrades have not yet been applied.
+covers Go dependency updates and an explicit QuickJS terminal-error migration.
+The [Go dependency updates and automated scan gate](../docs/javascript-go-security-updates.md)
+are applied; the QuickJS migration and production approval remain pending.
 
 The local `replace github.com/mellowforge/jsontrans-go => ..` is a development
 convenience only. Consumers ignore it and resolve the real minimum version.

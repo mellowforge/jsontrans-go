@@ -1,0 +1,30 @@
+{
+  "upstream": "https://github.com/fastschema/qjs/tree/v0.0.6",
+  "module": "github.com/fastschema/qjs",
+  "version": "v0.0.6",
+  "commit": "461716f4f380f81ffd09378751f1812919cddbca",
+  "files": {
+    "LICENSE": "83ec9b77bd84b6de39c462468ced9c8e832944f0e0bdb0525054c75ab041efaa",
+    "collection.go": "5a25dad024743e52b2639773d26ca626289eeac5e17de198cc8bb7a6d68340d6",
+    "common.go": "9e9b6a2b5bd238d2bbe0be8eafc8e9a5d314cb6562c1974f2b4f24b70fade615",
+    "context.go": "ac1441efc687264ac5c88f785271bac3355225f20d034948f84ae9f307b71040",
+    "errors.go": "e0d7dd195e84e3ba8c076befeca9e35d6b5ae8ba5cc3ead8d3ed60f91d1c2974",
+    "eval.go": "98e05b25a233166b98cd05e58be6102a85331f244d878c35fef07a0eea8cb00e",
+    "functojs.go": "dfa52e88983b182a63062d603842d98005ec2f8d726caddf880514bc7b4d476d",
+    "gotojs.go": "043eeea0a4f823395b4129ea0b0c49a301700db51ab78f6313935c21f0df2683",
+    "handle.go": "27ed174f1c898693c548f640a096a02f388b2d23c0780bca0772aef971660c15",
+    "jstogo.go": "3a53cbf6d07c58ebdfd4be11e471bf7b0d1dbd7e7ab3b857ed00465e5cc24b2e",
+    "mem.go": "7533184a2fca2934ce3e6d3f0c47d0e1b0aafc3b8e6979298297062f83677617",
+    "options.go": "29a12343195e203a7d6c05c13e8f25690724588873da61315e85392802da2df9",
+    "proxy.go": "42badaa5eee2c0e2053d1c1cc9cdf7e3a6f57f3d5f2ac09c8e904a1281d731d4",
+    "qjs.wasm": "88fcbeead33cca3ec8394feb0fb3eec8047ec9ac5062aba7a63799cee11989b7",
+    "runtime.go": "683abc9495add4ac5ec0b45da7a0239e6de2099f026ccceb41b09bc5538056ef",
+    "utils.go": "90784cb79242b3dc7b714dc06f4be58c0d99b97bec3f2e8d5ba59dca42f8c3fc",
+    "value.go": "b012995c37cfa57d2538a19f19168c361782491bbb47b5b1608ea668cf23abf0"
+  },
+  "patched_files": {
+    "runtime.go": "6e9449dc653f209a29f7795d1af52c89973f260a20701f98a51c786e448f16ea"
+  },
+  "quickjs_submodule": "d01ca4491fb24ccfeccb4c7394e28a3b21fd5986",
+  "quickjs_license_source": "https://github.com/quickjs-ng/quickjs/blob/d01ca4491fb24ccfeccb4c7394e28a3b21fd5986/LICENSE"
+}
