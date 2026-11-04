@@ -1,13 +1,14 @@
 # JavaScript production readiness
 
-**Status: candidate awaiting maintainer approval.** This record proposes the
-first supported release of `github.com/mellowforge/jsontrans-go/javascript`.
-Preparing or merging verification evidence does not publish a module version.
-The module remains a preview until the maintainer explicitly approves the
-profile and supported-platform policy below. A tag/release requires a separate
-instruction after approval.
+**Status: approved for production on 2026-11-04.** The repository maintainer
+merged [PR #16](https://github.com/mellowforge/jsontrans-go/pull/16) at
+`f3213ce9713a0946a70b1be1989291f8abdca292`, then explicitly instructed preparation,
+merge and publication of the first supported JavaScript release. That instruction
+approves the profile, platform policy, reporting ownership, evidence and version
+below. The release tag is **`javascript/v1.0.0`**, cut from the verified merge
+commit of the release PR. The root module remains separately versioned.
 
-## Proposed support policy
+## Supported platform policy
 
 Initial support covers Linux amd64, macOS arm64 and Windows amd64, with native
 verification on Ubuntu 24.04, macOS 27.2 and Windows NT build 10.0.22621.0.
@@ -55,7 +56,7 @@ availability verification. The repository is private at preparation time.
 enable GitHub private vulnerability reporting as an additional route and verify
 that it is monitored; changing visibility is outside this PR.
 
-| Component | Candidate pin |
+| Component | Approved release pin |
 |---|---|
 | QuickJS-ng | v0.18.0, `d7215b0ad3fc2c562e8317fd9bca058fd4863804` |
 | Owned terminal-OOM patch SHA-256 | `41e04680ad186ec1d230874e949593bf0723c443c31966941509e25461eb146b` |
@@ -65,7 +66,7 @@ that it is monitored; changing visibility is outside this PR.
 | Guest artifact SHA-256 | `31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee` |
 
 The [manifest](../javascript/internal/quickjswasm/guest/lock.json) and Go module
-files are authoritative. This PR changes no runtime, guest, dependency or API.
+files are authoritative. The readiness and release PRs change no runtime, guest, dependency or API.
 The [upgrade record](javascript-quickjs-upgrade.md) supersedes the old guest's
 historical release blocker and describes the separately owned OOM patch.
 A Go scanner does not inspect the embedded C engine; current upstream notices
@@ -78,7 +79,7 @@ All **80 recorded steps passed** on candidate source
 `acbf01cb0271089c08de2f63ece849067a2137fb`, using local machines without hosted
 Actions. The [dated evidence](../javascript/testdata/readiness/2026-11-04/README.md)
 retains exact commands, source/toolchain identities, exit codes, raw logs and
-checksums. Results remain technical acceptance evidence, not maintainer sign-off.
+checksums. The maintainer approval above accepts this evidence and its stated scope.
 
 | Machine / toolchains | Fresh acceptance checks | Result |
 |---|---|---|
@@ -112,17 +113,17 @@ with their original source identities, not relabeled as fresh runs. The known
 minor observer-write-after-progress test remains a development-tool coverage
 improvement, not an observed processor failure or a hidden acceptance pass.
 
-## Candidate release notes and versioning
+## Release notes and versioning
 
-Proposed first supported module tag: **`javascript/v1.0.0`**, subject to maintainer
-approval. No tag or release is created by this readiness PR. The root module is
+First supported module tag: **`javascript/v1.0.0`**. Publication is authorized by
+the maintainer's release instruction recorded above. The root module is
 versioned separately; its current required minimum is the real merged
 `v1.1.1-0.20261103173822-e9b9c0c71fe0`, which contains registry limit forwarding.
 Core v1.1.0 is too old for this adapter. A separate stable core tag may replace
 the pseudo-version in a later release change; it is not necessary for consumers
 to resolve the existing valid requirement.
 
-Candidate release summary:
+Release summary:
 
 - Optional CGO-free JavaScript processor using owned QuickJS-ng/Wasm and Wazero;
   native JSONPath/JSONata remain independent of JavaScript dependencies.
@@ -130,23 +131,24 @@ Candidate release summary:
   integration with detached values and independent evaluations.
 - Typed phase/native diagnostics, cancellation, bounded conversion, terminal
   native OOM/InternalError handling, and documented capability/resource limits.
-- Native acceptance evidence for the proposed platform matrix, reproducible
+- Native acceptance evidence for the approved platform matrix, reproducible
   guest pins and a monitored private reporting contact.
 
-Before tagging, approve the exact merged commit, check that runtime/dependency
-pins have not changed since acceptance, and confirm the reporting contact is
-active. Replace preview wording only with that approval recorded; publish the
-nested module tag and release notes as a separately authorized action.
+The release process verifies that the exact merged release commit retains the
+accepted runtime/dependency pins, then creates an annotated nested-module tag
+and GitHub release from that commit. The maintainer-designated reporting route
+remains active policy; no automated email delivery test was sent.
 
 ## Maintainer decision
 
-The PR review should explicitly accept or amend:
+Approved on 2026-11-04 through the explicit release instruction following PR #16:
 
-- [ ] The execution profile and its resource/cancellation/diagnostic limitations.
-- [ ] The initial platform policy and recorded native verification matrix.
-- [ ] The designated reporting address and maintainer triage responsibility.
-- [ ] The security/source review and complete acceptance evidence.
-- [ ] The first-release version proposal and follow-up tagging procedure.
+- [x] The execution profile and its resource/cancellation/diagnostic limitations.
+- [x] The initial platform policy and recorded native verification matrix.
+- [x] The designated reporting address and maintainer triage responsibility.
+- [x] The security/source review and complete acceptance evidence.
+- [x] The first-release version and follow-up tagging procedure.
 
-Approval is pending; no unchecked item is represented as completed production
-sign-off. The pull request is the concrete artifact for that decision.
+The [v1.0.0 release notes](releases/javascript-v1.0.0.md) summarize the approved
+surface, installation, evidence and limitations. Historical evidence retains
+its original source identities and approval status at the time it was captured.

@@ -1,9 +1,9 @@
 # Owned JavaScript execution contract
 
-This contract describes the optional **preview** processor module
+This contract describes the optional **production-supported v1.0.0** processor module
 `github.com/mellowforge/jsontrans-go/javascript`. The assessment in
-`experiments/javascript` forwards its owned backend to this module. Production
-hardening and release remain separate work; native root dependencies are unchanged.
+`experiments/javascript` forwards its owned backend to this module. The [production approval](javascript-production-readiness.md) covers this
+restricted profile; native root dependencies are unchanged.
 
 ## Construction and ownership
 

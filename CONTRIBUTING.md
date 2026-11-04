@@ -49,14 +49,16 @@ The optional JavaScript assessment has a separate module and test commands in
 runtime dependencies to the core library. Historical benchmark environments
 remain recorded as measured; use Go 1.26.10 for new development measurements.
 
-The optional JavaScript processor is a separate preview module in `javascript`.
+The optional JavaScript processor is a separate supported module in `javascript`.
 Run its tests, race detection and vet with `go -C javascript ...`; the historical
 assessment remains in `experiments/javascript` and forwards owned calls to it.
 The root go.mod/go.sum must not acquire JavaScript runtime dependencies.
 `python3 javascript/scripts/check_module.py` validates actual module-zip
 consumption with no consumer replace/workspace. Run module tests first to cache
 dependencies and use a checkout with full Git history for minimum-core validation.
-Future JS release tags use `javascript/vX.Y.Z`; extraction does not tag a release.
+JS release tags use `javascript/vX.Y.Z`; root-library versions remain separate.
+Runtime, guest or dependency changes require the documented platform/security
+gates before a new release.
 
 The Go security gate scans all three modules with tests and a CGO-free public
 example. From the repository root:

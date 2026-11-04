@@ -1,10 +1,10 @@
 # Optional JavaScript processor
 
 A CGO-free synchronous JavaScript processor for jsontrans-go, powered by an owned
-QuickJS-ng/WebAssembly guest and Wazero. This is a **preview module**: extraction
-makes it independently consumable. The [production-readiness record](../docs/javascript-production-readiness.md)
-collects the proposed support policy, private reporting route, acceptance
-evidence and candidate release notes for maintainer approval. The native JSONPath/JSONata module has no JavaScript dependency.
+QuickJS-ng/WebAssembly guest and Wazero. **v1.0.0 is approved for production**
+under the documented [execution profile](../docs/javascript-execution-contract.md)
+and [platform policy](../docs/javascript-production-readiness.md). The native
+JSONPath/JSONata module has no JavaScript dependency.
 
 ```go
 import (
@@ -65,15 +65,13 @@ Module path: `github.com/mellowforge/jsontrans-go/javascript`; package: javascri
 The repository is private. Configure GOPRIVATE and Git access before fetching:
 
 ```sh
-# After this extraction is merged; add this prefix to existing GOPRIVATE patterns.
-GOPRIVATE=github.com/mellowforge/jsontrans-go go get github.com/mellowforge/jsontrans-go/javascript@main
-# Pin a merged commit or a future module tag for reproducible application builds.
+# Add this prefix to existing GOPRIVATE patterns.
+GOPRIVATE=github.com/mellowforge/jsontrans-go go get github.com/mellowforge/jsontrans-go/javascript@v1.0.0
 ```
 
-No JavaScript module tag is published by the readiness preparation. The proposed
-first supported tag is `javascript/v1.0.0`, pending explicit approval. JavaScript
-tags must use the nested
-module prefix `javascript/vX.Y.Z`; root-library tags use `vX.Y.Z`. The minimum
+The first supported version is **v1.0.0**, tagged `javascript/v1.0.0` in this
+repository. JavaScript tags use the nested module prefix `javascript/vX.Y.Z`;
+root-library tags use `vX.Y.Z`. The minimum
 root dependency is the real merged version
 `v1.1.1-0.20261103173822-e9b9c0c71fe0`, containing registry limit forwarding;
 released core v1.1.0 is too old for this adapter. Go 1.26 or newer is required.
@@ -82,8 +80,10 @@ The [historical dependency/security review](../docs/javascript-security-review.m
 identified unsafe patterns and a reproducible trap in the old guest. The
 [QuickJS upgrade record](../docs/javascript-quickjs-upgrade.md) describes v0.18.0,
 the owned terminal-OOM patch and the updated verification gates. Go dependency
-updates and the automated scan gate are also applied. The module remains a
-preview; production approval and release are separate decisions.
+updates and the automated scan gate are also applied. The
+[approval record](../docs/javascript-production-readiness.md) and
+[v1.0.0 release notes](../docs/releases/javascript-v1.0.0.md) record the accepted
+profile and verification evidence.
 
 The local `replace github.com/mellowforge/jsontrans-go => ..` is a development
 convenience only. Consumers ignore it and resolve the real minimum version.
