@@ -1,0 +1,15 @@
+File: C:\Users\Konstantin\jsontrans-ci\winmem-20261104\diagnostic.test.exe
+Build ID: C:\Users\Konstantin\jsontrans-ci\winmem-20261104\diagnostic.test.exe2026-11-04 18:06:37.5788906 +0500 +05
+Type: inuse_space
+Time: 2026-11-04 17:07:43 +04
+Showing nodes accounting for 3114.97kB, 100% of 3114.97kB total
+Showing top 8 nodes out of 26
+      flat  flat%   sum%        cum   cum%
+ 2086.21kB 66.97% 66.97%  2086.21kB 66.97%  github.com/tetratelabs/wazero/internal/wasm.NewMemoryInstance
+  514.38kB 16.51% 83.49%   514.38kB 16.51%  github.com/tetratelabs/wazero/internal/engine/wazevo.(*moduleEngine).FunctionInstanceReference
+  514.38kB 16.51%   100%   514.38kB 16.51%  github.com/tetratelabs/wazero/internal/wasm/binary.decodeCode
+         0     0%   100%  2600.59kB 83.49%  github.com/mellowforge/jsontrans-go/javascript.(*Program).Eval
+         0     0%   100%  2600.59kB 83.49%  github.com/mellowforge/jsontrans-go/javascript.(*Program).eval
+         0     0%   100%   514.38kB 16.51%  github.com/mellowforge/jsontrans-go/javascript.New
+         0     0%   100%   514.38kB 16.51%  github.com/mellowforge/jsontrans-go/javascript.newEngine
+         0     0%   100%   514.38kB 16.51%  github.com/mellowforge/jsontrans-go/javascript/cmd/hardening.TestMemoryDiagnostic

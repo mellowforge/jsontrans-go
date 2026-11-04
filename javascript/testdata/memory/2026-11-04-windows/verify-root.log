@@ -1,0 +1,22 @@
+ok  	github.com/mellowforge/jsontrans-go	(cached)
+ok  	github.com/mellowforge/jsontrans-go/conformance	(cached)
+ok  	github.com/mellowforge/jsontrans-go/examples/basic	(cached) [no tests to run]
+?   	github.com/mellowforge/jsontrans-go/examples/prepared	[no test files]
+ok  	github.com/mellowforge/jsontrans-go/internal/budget	(cached)
+ok  	github.com/mellowforge/jsontrans-go/internal/document	(cached)
+ok  	github.com/mellowforge/jsontrans-go/internal/errchain	(cached)
+ok  	github.com/mellowforge/jsontrans-go/internal/jsonvalue	(cached)
+ok  	github.com/mellowforge/jsontrans-go/internal/prepared	(cached)
+ok  	github.com/mellowforge/jsontrans-go/jsonata	(cached)
+ok  	github.com/mellowforge/jsontrans-go/jsonpath	(cached)
+ok  	github.com/mellowforge/jsontrans-go	(cached)
+ok  	github.com/mellowforge/jsontrans-go/conformance	(cached)
+ok  	github.com/mellowforge/jsontrans-go/examples/basic	(cached) [no tests to run]
+?   	github.com/mellowforge/jsontrans-go/examples/prepared	[no test files]
+ok  	github.com/mellowforge/jsontrans-go/internal/budget	(cached)
+ok  	github.com/mellowforge/jsontrans-go/internal/document	(cached)
+ok  	github.com/mellowforge/jsontrans-go/internal/errchain	(cached)
+ok  	github.com/mellowforge/jsontrans-go/internal/jsonvalue	(cached)
+ok  	github.com/mellowforge/jsontrans-go/internal/prepared	(cached)
+ok  	github.com/mellowforge/jsontrans-go/jsonata	(cached)
+ok  	github.com/mellowforge/jsontrans-go/jsonpath	(cached)

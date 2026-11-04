@@ -1,0 +1,237 @@
+goroutine 21 [running]:
+github.com/mellowforge/jsontrans-go/javascript/cmd/hardening.TestMonitorDiagnostic(0x14c7bc7fc200)
+	/private/tmp/jsontrans-winmem-20261104/source/javascript/cmd/hardening/monitor_diagnostic_test.go:23 +0x333
+testing.tRunner(0x14c7bc7fc200, 0x7ff7b3ddd1f0)
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/testing/testing.go:2036 +0xc3
+created by testing.(*T).Run in goroutine 1
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/testing/testing.go:2101 +0x4a9
+
+goroutine 1 [chan receive]:
+testing.(*T).Run(0x14c7bc7fc000, {0x7ff7b3dc759b?, 0x7ff7b3b4232e?}, 0x7ff7b3ddd1f0)
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/testing/testing.go:2109 +0x4c7
+testing.runTests.func1(0x14c7bc7fc000)
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/testing/testing.go:2585 +0x3e
+testing.tRunner(0x14c7bc7fc000, 0x14c7bc7f1c58)
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/testing/testing.go:2036 +0xc3
+testing.runTests({0x7ff7b3dd53ad, 0x2e}, {0x7ff7b3dd852b, 0x3c}, 0x14c7bc790138, {0x7ff7b416ee00, 0xa, 0xa}, {0xc2b2ea0dda4a5604, 0x53d1c31ad5, ...})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/testing/testing.go:2583 +0x4f0
+testing.(*M).Run(0x14c7bc78c5a0)
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/testing/testing.go:2443 +0x6ac
+main.main()
+	_testmain.go:64 +0x9b
+
+goroutine 129 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 128 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 127 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 126 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 125 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 124 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 123 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 122 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 121 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 120 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 119 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 118 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 117 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 116 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 115 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 114 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 113 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 112 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 111 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 110 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 109 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 108 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 107 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 106 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 105 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 104 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5
+
+goroutine 130 [runnable]:
+github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout.gowrap1()
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39
+runtime.goexit({})
+	/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/src/runtime/asm_amd64.s:1771 +0x1
+created by github.com/tetratelabs/wazero/internal/wasm.(*ModuleInstance).CloseModuleOnCanceledOrTimeout in goroutine 21
+	/Users/konstantinpenzin/go/pkg/mod/github.com/tetratelabs/wazero@v1.12.0/internal/wasm/module_instance.go:39 +0xa5

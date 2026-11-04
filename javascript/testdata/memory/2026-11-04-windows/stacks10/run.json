@@ -1,0 +1,14 @@
+﻿{
+    "started_utc":  "2026-11-04T13:12:47.3292481Z",
+    "platform":  "Microsoft Windows NT 10.0.22621.0",
+    "gomaxprocs":  2,
+    "binary_sha256":  "635BFC1B7C222FF3AF758D1D5D1E0094C4A56B1D8C9CE69DEE07830C35BE17F5",
+    "command":  [
+                    "C:\\Users\\Konstantin\\jsontrans-ci\\winmem-20261104\\diagnostic-stacks.test.exe",
+                    "-test.run",
+                    "^TestMonitorDiagnostic$",
+                    "-test.v",
+                    "-test.timeout",
+                    "6m"
+                ]
+}

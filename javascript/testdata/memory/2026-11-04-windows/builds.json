@@ -1,0 +1,26 @@
+{
+  "base_commit": "8e7e84c9e53d89923658da9139d797575ed745fe",
+  "host": "darwin/arm64",
+  "target": "windows/amd64",
+  "go": "go1.26.10",
+  "cgo_enabled": false,
+  "guest_sha256": "31aaf1d757a9071dafae75c424c49fb91d0ba70c455d5bde37afd37229b38dee",
+  "binaries": {
+    "diagnostic.test.exe": {
+      "sha256": "6e428177ebc95d45bac494ed628247981babea7d548bca6aebdba29fe6adb909",
+      "build_info": "/tmp/jsontrans-winmem-20261104/diagnostic.test.exe: go1.26.10\n\tpath\tgithub.com/mellowforge/jsontrans-go/javascript/cmd/hardening\n\tmod\tgithub.com/mellowforge/jsontrans-go/javascript\t(devel)\t\n\tdep\tgithub.com/mellowforge/jsontrans-go\tv1.1.1-0.20261103173822-e9b9c0c71fe0\n\t=>\t..\t(devel)\t\n\t\n\tdep\tgithub.com/tetratelabs/wazero\tv1.12.0\th1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=\n\tdep\tgolang.org/x/sys\tv0.44.0\th1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=windows\n\tbuild\tGOAMD64=v1\n"
+    },
+    "diagnostic2.test.exe": {
+      "sha256": "a682db08746928cf1d3083752e5324dddabac7b2c61088035545267e9276ed93",
+      "build_info": "/tmp/jsontrans-winmem-20261104/diagnostic2.test.exe: go1.26.10\n\tpath\tgithub.com/mellowforge/jsontrans-go/javascript/cmd/hardening\n\tmod\tgithub.com/mellowforge/jsontrans-go/javascript\t(devel)\t\n\tdep\tgithub.com/mellowforge/jsontrans-go\tv1.1.1-0.20261103173822-e9b9c0c71fe0\n\t=>\t..\t(devel)\t\n\t\n\tdep\tgithub.com/tetratelabs/wazero\tv1.12.0\th1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=\n\tdep\tgolang.org/x/sys\tv0.44.0\th1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=windows\n\tbuild\tGOAMD64=v1\n"
+    },
+    "diagnostic-wait.test.exe": {
+      "sha256": "f80d11d619b9a82af03c9b607c417aced00537853f68e48b0fdeee25a1b682df",
+      "build_info": "/tmp/jsontrans-winmem-20261104/diagnostic-wait.test.exe: go1.26.10\n\tpath\tgithub.com/mellowforge/jsontrans-go/javascript/cmd/hardening\n\tmod\tgithub.com/mellowforge/jsontrans-go/javascript\t(devel)\t\n\tdep\tgithub.com/mellowforge/jsontrans-go\tv1.1.1-0.20261103173822-e9b9c0c71fe0\n\t=>\t..\t(devel)\t\n\t\n\tdep\tgithub.com/tetratelabs/wazero\tv1.12.0\n\t=>\t/tmp/jsontrans-winmem-20261104/wazero-wait-control\t(devel)\t\n\t\n\tdep\tgolang.org/x/sys\tv0.44.0\th1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=windows\n\tbuild\tGOAMD64=v1\n"
+    },
+    "diagnostic-stacks.test.exe": {
+      "sha256": "635bfc1b7c222ff3af758d1d5d1e0094c4a56b1d8c9ce69dee07830c35be17f5",
+      "build_info": "/tmp/jsontrans-winmem-20261104/diagnostic-stacks.test.exe: go1.26.10\n\tpath\tgithub.com/mellowforge/jsontrans-go/javascript/cmd/hardening\n\tmod\tgithub.com/mellowforge/jsontrans-go/javascript\t(devel)\t\n\tdep\tgithub.com/mellowforge/jsontrans-go\tv1.1.1-0.20261103173822-e9b9c0c71fe0\n\t=>\t..\t(devel)\t\n\t\n\tdep\tgithub.com/tetratelabs/wazero\tv1.12.0\th1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=\n\tdep\tgolang.org/x/sys\tv0.44.0\th1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=windows\n\tbuild\tGOAMD64=v1\n"
+    }
+  }
+}

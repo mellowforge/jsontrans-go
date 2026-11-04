@@ -1,0 +1,14 @@
+﻿{
+    "started_utc":  "2026-11-04T13:11:34.3615500Z",
+    "platform":  "Microsoft Windows NT 10.0.22621.0",
+    "gomaxprocs":  2,
+    "binary_sha256":  "F80D11D619B9A82AF03C9B607C417ACED00537853F68E48B0FDEEE25A1B682DF",
+    "command":  [
+                    "C:\\Users\\Konstantin\\jsontrans-ci\\winmem-20261104\\diagnostic-wait.test.exe",
+                    "-test.run",
+                    "^TestMemoryDiagnostic$",
+                    "-test.v",
+                    "-test.timeout",
+                    "6m"
+                ]
+}

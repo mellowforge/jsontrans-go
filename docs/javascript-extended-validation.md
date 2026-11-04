@@ -114,9 +114,10 @@ proof against all leaks or a hard process-memory bound.
 Mac RSS settled near 110 MiB after warmup. Windows retained-heap medians rose
 about 0.07 MiB, with intermittent roughly 3.9 MiB after-Close observations that
 later returned lower; the higher final snapshot is retained. Windows RSS ended
-below its starting post-warmup window. The exact source of those transient
-residual snapshots was not isolated. Close does not promise immediate physical
-reclamation. Raw maxima and endpoints are exposed rather than replaced by only
+below its starting post-warmup window. The [follow-up Windows investigation](javascript-windows-memory.md) reproduced
+these snapshots and traced them to asynchronous Wazero cancellation monitors
+briefly retaining closed module instances across a GC cycle. Close does not
+promise immediate physical reclamation. Raw maxima and endpoints are exposed rather than replaced by only
 favorable medians.
 
 The first Windows runner lost the child's exit code despite a successful child
