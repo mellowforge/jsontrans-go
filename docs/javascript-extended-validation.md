@@ -127,5 +127,13 @@ Both attempts and scripts are retained. A separate intentional SIGTERM control
 also confirms incomplete runs exit nonzero, preserve partial counts and close
 the engine.
 
+The independent review identified an error-oracle gap: joined cancellation or
+closure and unrelated InternalError messages could pass the expected-failure
+branches. A regression reproduced it; the test-only correction rejects those
+causes and requires the known over-cap fixture diagnostic. The stricter resource
+fuzz run is recorded separately from the original campaign source. One Minor
+coverage improvement remains deferred: testing an observer-write error after
+nonzero workload progress, rather than only at baseline.
+
 Private reporting-route confirmation, supported-platform/production approval
 and module versioning remain separate release gates. No release/tag is created.
