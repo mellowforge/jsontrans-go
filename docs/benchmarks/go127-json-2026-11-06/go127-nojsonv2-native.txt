@@ -1,0 +1,312 @@
+
+# Round 1
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/1KiB/decode  	    8222	     21097 ns/op	  48.54 MB/s	   19024 B/op	     485 allocs/op
+BenchmarkJSONAPI/1KiB/encode  	   19144	      9418 ns/op	 108.73 MB/s	    6856 B/op	     106 allocs/op
+BenchmarkJSONAPI/1KiB/prepare 	   48028	      3779 ns/op	 271.00 MB/s	    9696 B/op	      19 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonata         	    5556	     33861 ns/op	   32827 B/op	     758 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonpath        	    5836	     32020 ns/op	   32179 B/op	     740 allocs/op
+BenchmarkJSONAPI/1KiB/large_output              	    3591	     52319 ns/op	   45820 B/op	     934 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N1                  	  416550	       447.8 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N1          	   42070	      4277 ns/op	   10120 B/op	      28 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N16                 	   31633	      5787 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N16         	   18482	      9790 ns/op	   11609 B/op	     150 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N64                 	    9090	     22399 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N64         	    7954	     26853 ns/op	   16601 B/op	     534 allocs/op
+BenchmarkJSONAPI/1KiB/reuse_mixed/N16           	   10000	     18223 ns/op	   25466 B/op	     413 allocs/op
+BenchmarkJSONAPI/8KiB/decode                    	    2724	     64010 ns/op	 127.98 MB/s	   70355 B/op	     488 allocs/op
+BenchmarkJSONAPI/8KiB/encode                    	    5467	     33804 ns/op	 242.34 MB/s	   14025 B/op	     106 allocs/op
+BenchmarkJSONAPI/8KiB/prepare                   	   22420	      8078 ns/op	1014.08 MB/s	   16864 B/op	      19 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonata         	    1790	     99118 ns/op	   84160 B/op	     761 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonpath        	    1874	     97508 ns/op	   83512 B/op	     743 allocs/op
+BenchmarkJSONAPI/8KiB/large_output              	    1105	    161124 ns/op	  104322 B/op	     937 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N1                  	  414375	       447.5 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N1          	   21127	      8505 ns/op	   17288 B/op	      28 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N16                 	   31635	      5753 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N16         	   12788	     14062 ns/op	   18777 B/op	     150 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N64                 	    8888	     22570 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N64         	    6753	     30913 ns/op	   23770 B/op	     534 allocs/op
+BenchmarkJSONAPI/8KiB/reuse_mixed/N16           	    9226	     19522 ns/op	   40572 B/op	     413 allocs/op
+BenchmarkJSONAPI/64KiB/decode                   	     435	    412452 ns/op	 158.89 MB/s	  471785 B/op	     491 allocs/op
+BenchmarkJSONAPI/64KiB/encode                   	     781	    223901 ns/op	 292.70 MB/s	   71375 B/op	     106 allocs/op
+BenchmarkJSONAPI/64KiB/prepare                  	    4473	     40286 ns/op	1626.77 MB/s	   74208 B/op	      19 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonata        	     295	    617293 ns/op	  485613 B/op	     764 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonpath       	     292	    614356 ns/op	  484964 B/op	     746 allocs/op
+BenchmarkJSONAPI/64KiB/large_output             	     175	   1029128 ns/op	  563128 B/op	     940 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N1                 	  412708	       450.6 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N1         	    4474	     40751 ns/op	   74635 B/op	      28 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N16                	   31284	      5767 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N16        	    3969	     46330 ns/op	   76128 B/op	     150 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N64                	    9004	     22374 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N64        	    2536	     63906 ns/op	   81120 B/op	     534 allocs/op
+BenchmarkJSONAPI/64KiB/reuse_mixed/N16          	    6380	     29180 ns/op	  155272 B/op	     413 allocs/op
+BenchmarkJSONAPI/array1MiB/decode               	       5	  36791233 ns/op	  28.50 MB/s	32495787 B/op	 1029890 allocs/op
+BenchmarkJSONAPI/array1MiB/encode               	      13	  15460058 ns/op	  67.82 MB/s	12598729 B/op	  205986 allocs/op
+BenchmarkJSONAPI/array1MiB/prepare              	      24	   7520637 ns/op	 139.43 MB/s	28384548 B/op	      76 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonata    	       3	  69215014 ns/op	61221570 B/op	 1535833 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonpath   	       3	  63606597 ns/op	60673578 B/op	 1498382 allocs/op
+BenchmarkJSONAPI/array1MiB/large_output         	       2	 107513188 ns/op	89612152 B/op	 1929071 allocs/op
+PASS
+
+# Round 2
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/1KiB/decode  	    7969	     19825 ns/op	  51.65 MB/s	   19024 B/op	     485 allocs/op
+BenchmarkJSONAPI/1KiB/encode  	   18948	      9472 ns/op	 108.10 MB/s	    6856 B/op	     106 allocs/op
+BenchmarkJSONAPI/1KiB/prepare 	   48024	      3760 ns/op	 272.32 MB/s	    9696 B/op	      19 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonata         	    5450	     33817 ns/op	   32827 B/op	     758 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonpath        	    5592	     31841 ns/op	   32179 B/op	     740 allocs/op
+BenchmarkJSONAPI/1KiB/large_output              	    3634	     51627 ns/op	   45820 B/op	     934 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N1                  	  410926	       450.1 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N1          	   42547	      4345 ns/op	   10120 B/op	      28 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N16                 	   31705	      5886 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N16         	   17610	     10215 ns/op	   11609 B/op	     150 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N64                 	    8973	     24298 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N64         	    7758	     28264 ns/op	   16601 B/op	     534 allocs/op
+BenchmarkJSONAPI/1KiB/reuse_mixed/N16           	   10000	     20533 ns/op	   25466 B/op	     413 allocs/op
+BenchmarkJSONAPI/8KiB/decode                    	    2504	     66980 ns/op	 122.31 MB/s	   70355 B/op	     488 allocs/op
+BenchmarkJSONAPI/8KiB/encode                    	    5252	     35726 ns/op	 229.30 MB/s	   14025 B/op	     106 allocs/op
+BenchmarkJSONAPI/8KiB/prepare                   	   20900	      8674 ns/op	 944.45 MB/s	   16864 B/op	      19 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonata         	    1600	    106838 ns/op	   84160 B/op	     761 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonpath        	    1813	    105248 ns/op	   83512 B/op	     743 allocs/op
+BenchmarkJSONAPI/8KiB/large_output              	    1063	    168953 ns/op	  104322 B/op	     937 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N1                  	  401557	       445.8 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N1          	   20902	      8558 ns/op	   17288 B/op	      28 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N16                 	   31882	      5662 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N16         	   12380	     14449 ns/op	   18777 B/op	     150 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N64                 	    9202	     22155 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N64         	    6846	     30750 ns/op	   23770 B/op	     534 allocs/op
+BenchmarkJSONAPI/8KiB/reuse_mixed/N16           	    9340	     19340 ns/op	   40572 B/op	     413 allocs/op
+BenchmarkJSONAPI/64KiB/decode                   	     421	    426132 ns/op	 153.79 MB/s	  471784 B/op	     491 allocs/op
+BenchmarkJSONAPI/64KiB/encode                   	     776	    229948 ns/op	 285.00 MB/s	   71375 B/op	     106 allocs/op
+BenchmarkJSONAPI/64KiB/prepare                  	    4641	     44228 ns/op	1481.77 MB/s	   74208 B/op	      19 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonata        	     283	    630826 ns/op	  485613 B/op	     764 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonpath       	     280	    622776 ns/op	  484965 B/op	     746 allocs/op
+BenchmarkJSONAPI/64KiB/large_output             	     172	   1045056 ns/op	  563127 B/op	     940 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N1                 	  422368	       446.8 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N1         	    4050	     42868 ns/op	   74636 B/op	      28 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N16                	   31255	      5687 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N16        	    3998	     46751 ns/op	   76128 B/op	     150 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N64                	    8869	     22290 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N64        	    2680	     63111 ns/op	   81121 B/op	     534 allocs/op
+BenchmarkJSONAPI/64KiB/reuse_mixed/N16          	    6248	     29699 ns/op	  155272 B/op	     413 allocs/op
+BenchmarkJSONAPI/array1MiB/decode               	       5	  37031600 ns/op	  28.32 MB/s	32495790 B/op	 1029890 allocs/op
+BenchmarkJSONAPI/array1MiB/encode               	      13	  15538141 ns/op	  67.48 MB/s	12598708 B/op	  205985 allocs/op
+BenchmarkJSONAPI/array1MiB/prepare              	      24	   7322757 ns/op	 143.19 MB/s	28384548 B/op	      76 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonata    	       3	  66245986 ns/op	61450893 B/op	 1535839 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonpath   	       3	  61722778 ns/op	60771842 B/op	 1498384 allocs/op
+BenchmarkJSONAPI/array1MiB/large_output         	       2	  99576625 ns/op	88760284 B/op	 1929066 allocs/op
+PASS
+
+# Round 3
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/1KiB/decode  	   10000	     19554 ns/op	  52.37 MB/s	   19024 B/op	     485 allocs/op
+BenchmarkJSONAPI/1KiB/encode  	   19432	      9397 ns/op	 108.97 MB/s	    6856 B/op	     106 allocs/op
+BenchmarkJSONAPI/1KiB/prepare 	   45291	      3856 ns/op	 265.58 MB/s	    9696 B/op	      19 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonata         	    5296	     34366 ns/op	   32827 B/op	     758 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonpath        	    5962	     32322 ns/op	   32179 B/op	     740 allocs/op
+BenchmarkJSONAPI/1KiB/large_output              	    3610	     52195 ns/op	   45820 B/op	     934 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N1                  	  406542	       457.1 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N1          	   41883	      4325 ns/op	   10120 B/op	      28 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N16                 	   30555	      5810 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N16         	   17637	     10324 ns/op	   11609 B/op	     150 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N64                 	    9176	     23217 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N64         	    8007	     26694 ns/op	   16601 B/op	     534 allocs/op
+BenchmarkJSONAPI/1KiB/reuse_mixed/N16           	   10000	     18582 ns/op	   25466 B/op	     413 allocs/op
+BenchmarkJSONAPI/8KiB/decode                    	    2874	     63482 ns/op	 129.05 MB/s	   70355 B/op	     488 allocs/op
+BenchmarkJSONAPI/8KiB/encode                    	    5769	     33568 ns/op	 244.04 MB/s	   14025 B/op	     106 allocs/op
+BenchmarkJSONAPI/8KiB/prepare                   	   21733	      8470 ns/op	 967.21 MB/s	   16864 B/op	      19 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonata         	    1736	    100450 ns/op	   84160 B/op	     761 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonpath        	    1918	     96147 ns/op	   83512 B/op	     743 allocs/op
+BenchmarkJSONAPI/8KiB/large_output              	    1142	    159383 ns/op	  104322 B/op	     937 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N1                  	  411534	       448.7 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N1          	   20547	      8710 ns/op	   17288 B/op	      28 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N16                 	   31807	      5763 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N16         	   12766	     14071 ns/op	   18777 B/op	     150 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N64                 	    9222	     22700 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N64         	    6627	     31018 ns/op	   23770 B/op	     534 allocs/op
+BenchmarkJSONAPI/8KiB/reuse_mixed/N16           	    9646	     19762 ns/op	   40572 B/op	     413 allocs/op
+BenchmarkJSONAPI/64KiB/decode                   	     442	    409532 ns/op	 160.03 MB/s	  471784 B/op	     491 allocs/op
+BenchmarkJSONAPI/64KiB/encode                   	     832	    218353 ns/op	 300.14 MB/s	   71375 B/op	     106 allocs/op
+BenchmarkJSONAPI/64KiB/prepare                  	    4594	     40474 ns/op	1619.20 MB/s	   74208 B/op	      19 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonata        	     306	    587779 ns/op	  485613 B/op	     764 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonpath       	     303	    592061 ns/op	  484964 B/op	     746 allocs/op
+BenchmarkJSONAPI/64KiB/large_output             	     180	    993916 ns/op	  563127 B/op	     940 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N1                 	  412741	       447.9 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N1         	    4299	     41003 ns/op	   74636 B/op	      28 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N16                	   31237	      5784 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N16        	    4004	     46529 ns/op	   76128 B/op	     150 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N64                	    9148	     22542 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N64        	    2896	     64244 ns/op	   81121 B/op	     534 allocs/op
+BenchmarkJSONAPI/64KiB/reuse_mixed/N16          	    5434	     29304 ns/op	  155272 B/op	     413 allocs/op
+BenchmarkJSONAPI/array1MiB/decode               	       4	  37843646 ns/op	  27.71 MB/s	32495792 B/op	 1029890 allocs/op
+BenchmarkJSONAPI/array1MiB/encode               	      13	  15337154 ns/op	  68.37 MB/s	12598686 B/op	  205985 allocs/op
+BenchmarkJSONAPI/array1MiB/prepare              	      22	   7420540 ns/op	 141.31 MB/s	28384549 B/op	      76 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonata    	       3	  67628500 ns/op	61057618 B/op	 1535826 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonpath   	       3	  63994111 ns/op	60640685 B/op	 1498379 allocs/op
+BenchmarkJSONAPI/array1MiB/large_output         	       2	 105265875 ns/op	90005620 B/op	 1929087 allocs/op
+PASS
+
+# Round 4
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/1KiB/decode  	    9705	     19851 ns/op	  51.58 MB/s	   19024 B/op	     485 allocs/op
+BenchmarkJSONAPI/1KiB/encode  	   19209	      9505 ns/op	 107.73 MB/s	    6856 B/op	     106 allocs/op
+BenchmarkJSONAPI/1KiB/prepare 	   46251	      3860 ns/op	 265.29 MB/s	    9696 B/op	      19 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonata         	    5385	     35811 ns/op	   32827 B/op	     758 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonpath        	    5708	     32773 ns/op	   32179 B/op	     740 allocs/op
+BenchmarkJSONAPI/1KiB/large_output              	    3442	     54222 ns/op	   45820 B/op	     934 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N1                  	  408642	       456.2 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N1          	   40814	      4363 ns/op	   10120 B/op	      28 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N16                 	   31392	      5783 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N16         	   18110	      9917 ns/op	   11609 B/op	     150 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N64                 	    9244	     22580 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N64         	    7412	     26862 ns/op	   16601 B/op	     534 allocs/op
+BenchmarkJSONAPI/1KiB/reuse_mixed/N16           	   10000	     19308 ns/op	   25466 B/op	     413 allocs/op
+BenchmarkJSONAPI/8KiB/decode                    	    2440	     72346 ns/op	 113.23 MB/s	   70355 B/op	     488 allocs/op
+BenchmarkJSONAPI/8KiB/encode                    	    5125	     36030 ns/op	 227.37 MB/s	   14025 B/op	     106 allocs/op
+BenchmarkJSONAPI/8KiB/prepare                   	   22351	      8139 ns/op	1006.50 MB/s	   16864 B/op	      19 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonata         	    1623	    110337 ns/op	   84160 B/op	     761 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonpath        	    1672	    107957 ns/op	   83512 B/op	     743 allocs/op
+BenchmarkJSONAPI/8KiB/large_output              	    1000	    178164 ns/op	  104322 B/op	     937 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N1                  	  392690	       467.4 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N1          	   20841	      8646 ns/op	   17288 B/op	      28 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N16                 	   31330	      5888 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N16         	   12667	     14247 ns/op	   18777 B/op	     150 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N64                 	    8925	     22513 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N64         	    6364	     31582 ns/op	   23770 B/op	     534 allocs/op
+BenchmarkJSONAPI/8KiB/reuse_mixed/N16           	    9456	     20179 ns/op	   40572 B/op	     413 allocs/op
+BenchmarkJSONAPI/64KiB/decode                   	     368	    475689 ns/op	 137.77 MB/s	  471784 B/op	     491 allocs/op
+BenchmarkJSONAPI/64KiB/encode                   	     747	    252336 ns/op	 259.72 MB/s	   71375 B/op	     106 allocs/op
+BenchmarkJSONAPI/64KiB/prepare                  	    4140	     41194 ns/op	1590.90 MB/s	   74208 B/op	      19 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonata        	     271	    669560 ns/op	  485612 B/op	     764 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonpath       	     262	    671051 ns/op	  484965 B/op	     746 allocs/op
+BenchmarkJSONAPI/64KiB/large_output             	     152	   1164780 ns/op	  563128 B/op	     940 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N1                 	  396027	       450.5 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N1         	    4221	     42053 ns/op	   74636 B/op	      28 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N16                	   30956	      5830 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N16        	    3768	     49015 ns/op	   76128 B/op	     150 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N64                	    8750	     23790 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N64        	    2532	     65224 ns/op	   81120 B/op	     534 allocs/op
+BenchmarkJSONAPI/64KiB/reuse_mixed/N16          	    6144	     29732 ns/op	  155272 B/op	     413 allocs/op
+BenchmarkJSONAPI/array1MiB/decode               	       4	  37823604 ns/op	  27.72 MB/s	32495792 B/op	 1029890 allocs/op
+BenchmarkJSONAPI/array1MiB/encode               	      13	  16027548 ns/op	  65.42 MB/s	12598729 B/op	  205986 allocs/op
+BenchmarkJSONAPI/array1MiB/prepare              	      24	   7552715 ns/op	 138.83 MB/s	28384548 B/op	      76 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonata    	       3	  67071611 ns/op	61418301 B/op	 1535841 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonpath   	       3	  66606514 ns/op	60804650 B/op	 1498386 allocs/op
+BenchmarkJSONAPI/array1MiB/large_output         	       2	 108635354 ns/op	89710516 B/op	 1929075 allocs/op
+PASS
+
+# Round 5
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/1KiB/decode  	    8505	     20114 ns/op	  50.91 MB/s	   19024 B/op	     485 allocs/op
+BenchmarkJSONAPI/1KiB/encode  	   18865	      9555 ns/op	 107.17 MB/s	    6856 B/op	     106 allocs/op
+BenchmarkJSONAPI/1KiB/prepare 	   45430	      3991 ns/op	 256.56 MB/s	    9696 B/op	      19 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonata         	    5019	     35542 ns/op	   32827 B/op	     758 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonpath        	    5484	     32391 ns/op	   32179 B/op	     740 allocs/op
+BenchmarkJSONAPI/1KiB/large_output              	    3574	     52210 ns/op	   45820 B/op	     934 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N1                  	  417285	       452.5 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N1          	   41126	      4394 ns/op	   10120 B/op	      28 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N16                 	   31060	      5847 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N16         	   16462	     11021 ns/op	   11609 B/op	     150 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N64                 	    9049	     22696 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N64         	    7561	     28226 ns/op	   16601 B/op	     534 allocs/op
+BenchmarkJSONAPI/1KiB/reuse_mixed/N16           	   10000	     19070 ns/op	   25466 B/op	     413 allocs/op
+BenchmarkJSONAPI/8KiB/decode                    	    2652	     65896 ns/op	 124.32 MB/s	   70355 B/op	     488 allocs/op
+BenchmarkJSONAPI/8KiB/encode                    	    5586	     34100 ns/op	 240.24 MB/s	   14025 B/op	     106 allocs/op
+BenchmarkJSONAPI/8KiB/prepare                   	   20788	      8626 ns/op	 949.72 MB/s	   16864 B/op	      19 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonata         	    1656	    109807 ns/op	   84160 B/op	     761 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonpath        	    1833	     98401 ns/op	   83512 B/op	     743 allocs/op
+BenchmarkJSONAPI/8KiB/large_output              	    1137	    163341 ns/op	  104322 B/op	     937 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N1                  	  400507	       455.4 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N1          	   20305	      8933 ns/op	   17288 B/op	      28 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N16                 	   29728	      5994 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N16         	   12462	     14415 ns/op	   18777 B/op	     150 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N64                 	    9037	     22619 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N64         	    6553	     31275 ns/op	   23770 B/op	     534 allocs/op
+BenchmarkJSONAPI/8KiB/reuse_mixed/N16           	    9402	     19801 ns/op	   40572 B/op	     413 allocs/op
+BenchmarkJSONAPI/64KiB/decode                   	     412	    442853 ns/op	 147.99 MB/s	  471785 B/op	     491 allocs/op
+BenchmarkJSONAPI/64KiB/encode                   	     758	    229171 ns/op	 285.97 MB/s	   71375 B/op	     106 allocs/op
+BenchmarkJSONAPI/64KiB/prepare                  	    4468	     40440 ns/op	1620.57 MB/s	   74208 B/op	      19 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonata        	     297	    616527 ns/op	  485612 B/op	     764 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonpath       	     290	    617512 ns/op	  484965 B/op	     746 allocs/op
+BenchmarkJSONAPI/64KiB/large_output             	     175	   1049908 ns/op	  563126 B/op	     940 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N1                 	  395006	       474.6 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N1         	    4368	     41925 ns/op	   74635 B/op	      28 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N16                	   28509	      6098 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N16        	    3775	     49055 ns/op	   76128 B/op	     150 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N64                	    8683	     22616 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N64        	    2619	     64753 ns/op	   81120 B/op	     534 allocs/op
+BenchmarkJSONAPI/64KiB/reuse_mixed/N16          	    6193	     30779 ns/op	  155272 B/op	     413 allocs/op
+BenchmarkJSONAPI/array1MiB/decode               	       5	  37430408 ns/op	  28.01 MB/s	32495790 B/op	 1029890 allocs/op
+BenchmarkJSONAPI/array1MiB/encode               	      10	  16596142 ns/op	  63.18 MB/s	12647129 B/op	  205986 allocs/op
+BenchmarkJSONAPI/array1MiB/prepare              	      24	   7613826 ns/op	 137.72 MB/s	28384548 B/op	      76 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonata    	       2	  77532834 ns/op	61139652 B/op	 1535831 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonpath   	       3	  69308792 ns/op	60870138 B/op	 1498387 allocs/op
+BenchmarkJSONAPI/array1MiB/large_output         	       2	 109112250 ns/op	89710520 B/op	 1929075 allocs/op
+PASS
+
+# Round 6
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/1KiB/decode  	   10000	     19064 ns/op	  53.71 MB/s	   19024 B/op	     485 allocs/op
+BenchmarkJSONAPI/1KiB/encode  	   19363	      9315 ns/op	 109.93 MB/s	    6856 B/op	     106 allocs/op
+BenchmarkJSONAPI/1KiB/prepare 	   47356	      3763 ns/op	 272.13 MB/s	    9696 B/op	      19 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonata         	    5533	     33520 ns/op	   32827 B/op	     758 allocs/op
+BenchmarkJSONAPI/1KiB/eval_json/jsonpath        	    6008	     31213 ns/op	   32179 B/op	     740 allocs/op
+BenchmarkJSONAPI/1KiB/large_output              	    3662	     51920 ns/op	   45820 B/op	     934 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N1                  	  424828	       438.9 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N1          	   42523	      4230 ns/op	   10120 B/op	      28 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N16                 	   32570	      5622 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N16         	   18692	      9648 ns/op	   11609 B/op	     150 allocs/op
+BenchmarkJSONAPI/1KiB/reuse/N64                 	    9241	     21890 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/1KiB/prepare_batch/N64         	    8006	     26266 ns/op	   16601 B/op	     534 allocs/op
+BenchmarkJSONAPI/1KiB/reuse_mixed/N16           	   10000	     17844 ns/op	   25466 B/op	     413 allocs/op
+BenchmarkJSONAPI/8KiB/decode                    	    2791	     63027 ns/op	 129.98 MB/s	   70355 B/op	     488 allocs/op
+BenchmarkJSONAPI/8KiB/encode                    	    5568	     34166 ns/op	 239.77 MB/s	   14025 B/op	     106 allocs/op
+BenchmarkJSONAPI/8KiB/prepare                   	   22294	      8050 ns/op	1017.68 MB/s	   16864 B/op	      19 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonata         	    1766	     99808 ns/op	   84160 B/op	     761 allocs/op
+BenchmarkJSONAPI/8KiB/eval_json/jsonpath        	    1914	     98014 ns/op	   83512 B/op	     743 allocs/op
+BenchmarkJSONAPI/8KiB/large_output              	    1117	    162907 ns/op	  104322 B/op	     937 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N1                  	  410353	       442.6 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N1          	   21280	      8430 ns/op	   17288 B/op	      28 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N16                 	   31959	      5663 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N16         	   13028	     13834 ns/op	   18777 B/op	     150 allocs/op
+BenchmarkJSONAPI/8KiB/reuse/N64                 	    9177	     22090 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/8KiB/prepare_batch/N64         	    6864	     30523 ns/op	   23770 B/op	     534 allocs/op
+BenchmarkJSONAPI/8KiB/reuse_mixed/N16           	    9580	     19064 ns/op	   40572 B/op	     413 allocs/op
+BenchmarkJSONAPI/64KiB/decode                   	     412	    425365 ns/op	 154.07 MB/s	  471785 B/op	     491 allocs/op
+BenchmarkJSONAPI/64KiB/encode                   	     786	    227475 ns/op	 288.10 MB/s	   71375 B/op	     106 allocs/op
+BenchmarkJSONAPI/64KiB/prepare                  	    4639	     39870 ns/op	1643.74 MB/s	   74208 B/op	      19 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonata        	     289	    611212 ns/op	  485613 B/op	     764 allocs/op
+BenchmarkJSONAPI/64KiB/eval_json/jsonpath       	     289	    609020 ns/op	  484965 B/op	     746 allocs/op
+BenchmarkJSONAPI/64KiB/large_output             	     175	   1030378 ns/op	  563126 B/op	     940 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N1                 	  417382	       438.4 ns/op	     424 B/op	       9 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N1         	    4501	     40418 ns/op	   74635 B/op	      28 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N16                	   31723	      5647 ns/op	    1912 B/op	     131 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N16        	    4078	     46002 ns/op	   76128 B/op	     150 allocs/op
+BenchmarkJSONAPI/64KiB/reuse/N64                	    9151	     22219 ns/op	    6904 B/op	     515 allocs/op
+BenchmarkJSONAPI/64KiB/prepare_batch/N64        	    2868	     63148 ns/op	   81121 B/op	     534 allocs/op
+BenchmarkJSONAPI/64KiB/reuse_mixed/N16          	    6264	     29712 ns/op	  155272 B/op	     413 allocs/op
+BenchmarkJSONAPI/array1MiB/decode               	       5	  36170033 ns/op	  28.99 MB/s	32495787 B/op	 1029890 allocs/op
+BenchmarkJSONAPI/array1MiB/encode               	      13	  15331282 ns/op	  68.39 MB/s	12598740 B/op	  205986 allocs/op
+BenchmarkJSONAPI/array1MiB/prepare              	      21	   7473774 ns/op	 140.30 MB/s	28384549 B/op	      76 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonata    	       3	  66144458 ns/op	60959250 B/op	 1535822 allocs/op
+BenchmarkJSONAPI/array1MiB/eval_json/jsonpath   	       3	  62703195 ns/op	60607896 B/op	 1498378 allocs/op
+BenchmarkJSONAPI/array1MiB/large_output         	       2	  99072417 ns/op	89710496 B/op	 1929075 allocs/op
+PASS

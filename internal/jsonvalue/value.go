@@ -19,7 +19,7 @@ import (
 var ErrInvalid = errors.New("invalid JSON value")
 var number = regexp.MustCompile(`^-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?$`)
 
-func Decode(data []byte, b *budget.Budget) (any, error) {
+func decodeLegacy(data []byte, b *budget.Budget) (any, error) {
 	if len(data) > b.Limits.MaxInputBytes {
 		return nil, fmt.Errorf("%w: input size", budget.ErrLimit)
 	}

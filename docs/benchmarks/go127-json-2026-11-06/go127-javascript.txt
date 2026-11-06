@@ -1,0 +1,60 @@
+
+# Round 1
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: Apple M5 Max
+BenchmarkJavaScript/Eval         	     226	    774584 ns/op	 2302080 B/op	    1737 allocs/op
+BenchmarkJavaScript/EvalJSON     	     228	    776062 ns/op	 2307749 B/op	    1847 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     208	    879893 ns/op	 2305249 B/op	    1797 allocs/op
+PASS
+
+# Round 2
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: Apple M5 Max
+BenchmarkJavaScript/Eval         	     236	    735881 ns/op	 2301960 B/op	    1737 allocs/op
+BenchmarkJavaScript/EvalJSON     	     220	    744662 ns/op	 2307922 B/op	    1848 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     250	    717960 ns/op	 2305234 B/op	    1797 allocs/op
+PASS
+
+# Round 3
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: Apple M5 Max
+BenchmarkJavaScript/Eval         	     230	    754370 ns/op	 2301935 B/op	    1736 allocs/op
+BenchmarkJavaScript/EvalJSON     	     231	    753562 ns/op	 2307719 B/op	    1847 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     243	    738715 ns/op	 2305260 B/op	    1797 allocs/op
+PASS
+
+# Round 4
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: Apple M5 Max
+BenchmarkJavaScript/Eval         	     222	    775491 ns/op	 2301933 B/op	    1737 allocs/op
+BenchmarkJavaScript/EvalJSON     	     238	    758211 ns/op	 2307900 B/op	    1847 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     237	    743998 ns/op	 2305244 B/op	    1797 allocs/op
+PASS
+
+# Round 5
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: Apple M5 Max
+BenchmarkJavaScript/Eval         	     230	    782091 ns/op	 2302343 B/op	    1737 allocs/op
+BenchmarkJavaScript/EvalJSON     	     210	    782338 ns/op	 2307594 B/op	    1847 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     242	    741124 ns/op	 2305247 B/op	    1797 allocs/op
+PASS
+
+# Round 6
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: Apple M5 Max
+BenchmarkJavaScript/Eval         	     232	    745510 ns/op	 2301941 B/op	    1737 allocs/op
+BenchmarkJavaScript/EvalJSON     	     240	    752702 ns/op	 2307986 B/op	    1848 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     242	    740536 ns/op	 2305244 B/op	    1797 allocs/op
+PASS

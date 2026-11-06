@@ -1,0 +1,280 @@
+[
+  {
+    "mode": "go126",
+    "check": "root-test",
+    "command": [
+      "go1.26.10",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0
+  },
+  {
+    "mode": "go126",
+    "check": "root-race",
+    "command": [
+      "go1.26.10",
+      "test",
+      "-race",
+      "-count=1",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0
+  },
+  {
+    "mode": "go126",
+    "check": "root-vet",
+    "command": [
+      "go1.26.10",
+      "vet",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0
+  },
+  {
+    "mode": "go126",
+    "check": "js-test",
+    "command": [
+      "go1.26.10",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "directory": "javascript",
+    "exit_code": 0
+  },
+  {
+    "mode": "go126",
+    "check": "js-race",
+    "command": [
+      "go1.26.10",
+      "test",
+      "-race",
+      "-count=1",
+      "./..."
+    ],
+    "directory": "javascript",
+    "exit_code": 0
+  },
+  {
+    "mode": "go126",
+    "check": "js-vet",
+    "command": [
+      "go1.26.10",
+      "vet",
+      "./..."
+    ],
+    "directory": "javascript",
+    "exit_code": 0
+  },
+  {
+    "mode": "go127-nojsonv2",
+    "check": "root-test",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0
+  },
+  {
+    "mode": "go127-nojsonv2",
+    "check": "root-race",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-race",
+      "-count=1",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0
+  },
+  {
+    "mode": "go127-nojsonv2",
+    "check": "root-vet",
+    "command": [
+      "go1.27.3",
+      "vet",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0
+  },
+  {
+    "mode": "go127",
+    "check": "root-test",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0
+  },
+  {
+    "mode": "go127",
+    "check": "root-race",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-race",
+      "-count=1",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0
+  },
+  {
+    "mode": "go127",
+    "check": "root-vet",
+    "command": [
+      "go1.27.3",
+      "vet",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0
+  },
+  {
+    "mode": "go127-jsontext",
+    "check": "root-test",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-count=1",
+      "-tags=jsontext_experiment",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0,
+    "post_review_fix": true
+  },
+  {
+    "mode": "go127-jsontext",
+    "check": "root-race",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-race",
+      "-count=1",
+      "-tags=jsontext_experiment",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0,
+    "post_review_fix": true
+  },
+  {
+    "mode": "go127-jsontext",
+    "check": "root-vet",
+    "command": [
+      "go1.27.3",
+      "vet",
+      "-tags=jsontext_experiment",
+      "./..."
+    ],
+    "directory": ".",
+    "exit_code": 0,
+    "post_review_fix": true
+  },
+  {
+    "mode": "go127-jsontext",
+    "check": "js-test",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-count=1",
+      "-tags=jsontext_experiment",
+      "./..."
+    ],
+    "directory": "javascript",
+    "exit_code": 0,
+    "post_review_fix": true
+  },
+  {
+    "mode": "go127-jsontext",
+    "check": "js-race",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-race",
+      "-count=1",
+      "-tags=jsontext_experiment",
+      "./..."
+    ],
+    "directory": "javascript",
+    "exit_code": 0,
+    "post_review_fix": true
+  },
+  {
+    "mode": "go127-jsontext",
+    "check": "js-vet",
+    "command": [
+      "go1.27.3",
+      "vet",
+      "-tags=jsontext_experiment",
+      "./..."
+    ],
+    "directory": "javascript",
+    "exit_code": 0,
+    "post_review_fix": true
+  },
+  {
+    "mode": "go127-jsontext",
+    "check": "decoder-fuzz",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-tags=jsontext_experiment",
+      "./internal/jsonvalue",
+      "-run=^$",
+      "-fuzz=^FuzzJSONTextCompatibility$",
+      "-fuzztime=15000x",
+      "-parallel=2"
+    ],
+    "directory": ".",
+    "exit_code": 0,
+    "post_review_fix": true
+  },
+  {
+    "mode": "go127-jsontext",
+    "check": "document-fuzz",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-tags=jsontext_experiment",
+      "./internal/document",
+      "-run=^$",
+      "-fuzz=^FuzzPrepareAndMaterialize$",
+      "-fuzztime=27000x",
+      "-parallel=2"
+    ],
+    "directory": ".",
+    "exit_code": 0,
+    "post_review_fix": true
+  },
+  {
+    "mode": "go127-jsontext",
+    "check": "js-json-fuzz",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-tags=jsontext_experiment",
+      "-run=^$",
+      "-fuzz=^FuzzOwnedJSONConversion$",
+      "-fuzztime=500x",
+      "-parallel=2"
+    ],
+    "directory": "javascript",
+    "exit_code": 0,
+    "post_review_fix": true
+  }
+]
