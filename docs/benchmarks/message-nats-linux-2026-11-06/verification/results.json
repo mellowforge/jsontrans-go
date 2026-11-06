@@ -1,0 +1,68 @@
+[
+  {
+    "command": [
+      "go1.26.10",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "go1.26.10",
+      "test",
+      "-race",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "go1.26.10",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "go1.27.3",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "go1.27.3",
+      "test",
+      "-race",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "go1.27.3",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "go1.27.3",
+      "test",
+      "-tags=integration",
+      "-race",
+      "-run=^TestContainerRoutes$",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0
+  }
+]

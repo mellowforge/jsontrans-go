@@ -28,6 +28,7 @@ covering scalar/object/array/bindings/host functions; fan-out1/4/16, workers1/4/
 paced offered rates1000/5000 inputs/sec. Default3 rounds rotate case/strategy order;
 32-message warmups are excluded. Setup/compilation/connections/image pulls and
 broker startup are outside timing. Each publish window is1second by default.
+End-to-end timing starts at actual publish, not the ideal scheduled arrival.
 Clock/pacing lateness and achieved offered rate are retained; sleep-based pacing
 may produce catch-up bursts and is not a Poisson traffic model.
 

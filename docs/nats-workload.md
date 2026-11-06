@@ -129,3 +129,12 @@ an independent guest per evaluation. Go JSON decoder improvements do not remove
 that initialization/execution cost; runtime pooling would need a separate design
 and security review. No processor behavior or pooling policy changes as part of
 this workload record.
+
+## Measured follow-up
+
+The [byte-path/NATS assessment](assessments/message-byte-path.md) now records the
+native and real-container experiments. Prepared byte-to-byte paths improved
+processing in the tested corpus and preserved complete output under fan-out
+loads where direct calls rejected inputs at the bounded queue. End-to-end tails
+did not improve in every configuration. The helper remains development-only;
+no automatic path selection or public API was added.

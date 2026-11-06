@@ -335,3 +335,8 @@ output encoding and concurrent-worker measurement requirements.
 The [Linux reproduction](assessments/go127-json-linux.md) confirms JSON decoding
 gains on Bertram and records the smaller prepared-route regression, rather than
 treating the Go upgrade as a universal speedup.
+
+The [fresh-message byte-path and NATS experiment](assessments/message-byte-path.md)
+measures complete JSON output for both single-program and fan-out routes, then
+validates their behavior through a separate pinned Testcontainers NATS broker.
+Loss, queue wait and tail-latency tradeoffs remain visible beside throughput.

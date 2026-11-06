@@ -1,0 +1,941 @@
+{
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "source_sha256": "eb6f4328bbb8dfe0a0563b91c35ebde840336d946255ff4abd8bcc3cd1879eea",
+  "profiles": {
+    "native127": {
+      "mode": "127",
+      "pattern": "^BenchmarkBytes$/(jsonata|jsonpath)/(scalar|object|array|fallback|bindings|limits|host|output)/(1024|65536)/N(1|4|16)$",
+      "cpu": "1",
+      "affinity": [
+        8
+      ]
+    },
+    "sizes127": {
+      "mode": "127",
+      "pattern": "^BenchmarkBytes$/(jsonata|jsonpath)/scalar/(512|8192)/N(1|4|16)$",
+      "cpu": "1",
+      "affinity": [
+        8
+      ]
+    },
+    "large127": {
+      "mode": "127",
+      "pattern": "^BenchmarkBytes$/(jsonata|jsonpath)/large-array/1048576/N1$",
+      "cpu": "1",
+      "affinity": [
+        8
+      ]
+    },
+    "parallel127": {
+      "mode": "127",
+      "pattern": "^BenchmarkParallelBytes$",
+      "cpu": "1,2,4,8",
+      "affinity": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14
+      ]
+    },
+    "javascript127": {
+      "mode": "127",
+      "pattern": "^BenchmarkJavaScriptBytes$",
+      "cpu": "1",
+      "affinity": [
+        8
+      ]
+    },
+    "control126": {
+      "mode": "126",
+      "pattern": "^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+      "cpu": "1",
+      "affinity": [
+        8
+      ]
+    },
+    "jsontext127": {
+      "mode": "jsontext",
+      "pattern": "^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+      "cpu": "1",
+      "affinity": [
+        8
+      ]
+    }
+  },
+  "rounds": 6,
+  "benchtime": "75ms",
+  "commit": "7c4d784e5b9187d210a360061a5a07a729cb2d21",
+  "dirty": "",
+  "commands": [
+    {
+      "profile": "native127",
+      "round": 1,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/(scalar|object|array|fallback|bindings|limits|host|output)/(1024|65536)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "sizes127",
+      "round": 1,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/scalar/(512|8192)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "large127",
+      "round": 1,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/large-array/1048576/N1$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "parallel127",
+      "round": 1,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "0,2,4,6,8,10,12,14",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkParallelBytes$",
+        "-test.cpu=1,2,4,8",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "javascript127",
+      "round": 1,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScriptBytes$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "control126",
+      "round": 1,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/126.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "jsontext127",
+      "round": 1,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/jsontext.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "sizes127",
+      "round": 2,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/scalar/(512|8192)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "large127",
+      "round": 2,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/large-array/1048576/N1$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "parallel127",
+      "round": 2,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "0,2,4,6,8,10,12,14",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkParallelBytes$",
+        "-test.cpu=1,2,4,8",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "javascript127",
+      "round": 2,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScriptBytes$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "control126",
+      "round": 2,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/126.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "jsontext127",
+      "round": 2,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/jsontext.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "native127",
+      "round": 2,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/(scalar|object|array|fallback|bindings|limits|host|output)/(1024|65536)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "large127",
+      "round": 3,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/large-array/1048576/N1$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "parallel127",
+      "round": 3,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "0,2,4,6,8,10,12,14",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkParallelBytes$",
+        "-test.cpu=1,2,4,8",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "javascript127",
+      "round": 3,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScriptBytes$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "control126",
+      "round": 3,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/126.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "jsontext127",
+      "round": 3,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/jsontext.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "native127",
+      "round": 3,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/(scalar|object|array|fallback|bindings|limits|host|output)/(1024|65536)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "sizes127",
+      "round": 3,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/scalar/(512|8192)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "parallel127",
+      "round": 4,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "0,2,4,6,8,10,12,14",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkParallelBytes$",
+        "-test.cpu=1,2,4,8",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "javascript127",
+      "round": 4,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScriptBytes$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "control126",
+      "round": 4,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/126.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "jsontext127",
+      "round": 4,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/jsontext.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "native127",
+      "round": 4,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/(scalar|object|array|fallback|bindings|limits|host|output)/(1024|65536)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "sizes127",
+      "round": 4,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/scalar/(512|8192)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "large127",
+      "round": 4,
+      "strategy_rotation": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/large-array/1048576/N1$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "javascript127",
+      "round": 5,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScriptBytes$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "control126",
+      "round": 5,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/126.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "jsontext127",
+      "round": 5,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/jsontext.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "native127",
+      "round": 5,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/(scalar|object|array|fallback|bindings|limits|host|output)/(1024|65536)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "sizes127",
+      "round": 5,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/scalar/(512|8192)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "large127",
+      "round": 5,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/large-array/1048576/N1$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "parallel127",
+      "round": 5,
+      "strategy_rotation": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "0,2,4,6,8,10,12,14",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkParallelBytes$",
+        "-test.cpu=1,2,4,8",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "control126",
+      "round": 6,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/126.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "jsontext127",
+      "round": 6,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/jsontext.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/jsonata/(scalar|object)/(1024|65536)/N(1|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "native127",
+      "round": 6,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/(scalar|object|array|fallback|bindings|limits|host|output)/(1024|65536)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "sizes127",
+      "round": 6,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/scalar/(512|8192)/N(1|4|16)$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "large127",
+      "round": 6,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkBytes$/(jsonata|jsonpath)/large-array/1048576/N1$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "parallel127",
+      "round": 6,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "0,2,4,6,8,10,12,14",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkParallelBytes$",
+        "-test.cpu=1,2,4,8",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "profile": "javascript127",
+      "round": 6,
+      "strategy_rotation": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "8",
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-messages-20261106-7c4d784/tmp/message-bench-9bzn4w2e/127.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScriptBytes$",
+        "-test.cpu=1",
+        "-test.benchtime=75ms",
+        "-test.benchmem",
+        "-test.count=1"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "requested_profiles": [
+    "native127",
+    "sizes127",
+    "large127",
+    "parallel127",
+    "javascript127",
+    "control126",
+    "jsontext127"
+  ],
+  "completed": true,
+  "final_source_sha256": "eb6f4328bbb8dfe0a0563b91c35ebde840336d946255ff4abd8bcc3cd1879eea",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900K",
+  "126": {
+    "version": "go version go1.26.10 linux/amd64",
+    "tags": []
+  },
+  "127": {
+    "version": "go version go1.27.3 linux/amd64",
+    "tags": []
+  },
+  "jsontext": {
+    "version": "go version go1.27.3 linux/amd64",
+    "tags": [
+      "-tags=jsontext_experiment"
+    ]
+  }
+}
