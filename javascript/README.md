@@ -62,11 +62,10 @@ grant trusted ErrLimit/ErrConversion classification.
 ## Installation and versions
 
 Module path: `github.com/mellowforge/jsontrans-go/javascript`; package: javascript.
-The repository is private. Configure GOPRIVATE and Git access before fetching:
+Install the separately versioned public module:
 
 ```sh
-# Add this prefix to existing GOPRIVATE patterns.
-GOPRIVATE=github.com/mellowforge/jsontrans-go go get github.com/mellowforge/jsontrans-go/javascript@v1.0.0
+go get github.com/mellowforge/jsontrans-go/javascript@v1.0.0
 ```
 
 The first supported version is **v1.0.0**, tagged `javascript/v1.0.0` in this

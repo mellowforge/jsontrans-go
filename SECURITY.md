@@ -64,9 +64,9 @@ minimal reproduction, expected versus observed behavior, and relevant resource
 settings. Share only the data needed to reproduce the issue; do not put exploit
 details or secrets in public issues.
 
-This email route applies while the repository is private. GitHub's built-in
-private vulnerability reporting is available for public repositories; if this
-repository becomes public, enable it as an additional monitored route. See
+The repository is public. You can also use GitHub's private vulnerability
+reporting through the repository's Security tab; the maintainer handles those
+reports privately. The email route remains available. See
 [GitHub's reporting documentation](https://docs.github.com/en/code-security/concepts/vulnerability-reporting-and-management/coordinated-disclosure).
 
 The optional JavaScript module v1.0.0 is approved for production under the
