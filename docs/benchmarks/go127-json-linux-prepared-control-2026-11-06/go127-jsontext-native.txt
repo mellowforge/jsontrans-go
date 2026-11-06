@@ -1,0 +1,48 @@
+
+# Round 1
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   22008	     54466 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 2
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   21340	     56222 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 3
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   21592	     55860 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 4
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   21370	     56086 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 5
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   21452	     55858 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 6
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   21914	     55541 ns/op	   76192 B/op	     158 allocs/op
+PASS

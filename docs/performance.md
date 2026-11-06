@@ -327,3 +327,11 @@ The [Go 1.27 assessment](assessments/go127-json.md) compares both standard-libra
 backends and an opt-in jsontext decoder. It separates JSON-boundary costs from
 prepared-document evaluation, with commands, raw results and allocation ranges.
 The experiment does not change the library's public API or minimum Go version.
+
+The [message-processing workload](nats-workload.md) records both one-program and
+multi-program routing for fresh NATS messages, including compilation reuse,
+output encoding and concurrent-worker measurement requirements.
+
+The [Linux reproduction](assessments/go127-json-linux.md) confirms JSON decoding
+gains on Bertram and records the smaller prepared-route regression, rather than
+treating the Go upgrade as a universal speedup.

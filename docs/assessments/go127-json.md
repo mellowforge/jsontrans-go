@@ -112,9 +112,10 @@ Recommendation:
 1. Prefer Go 1.27 application builds to capture the standard-library gains.
    Keep the Go 1.26 minimum unchanged during this experiment; raising go.mod
    alone is not a performance optimization.
-2. Keep jsontext opt-in until Linux measurements confirm the tradeoff and
-   cancellation/compatibility review is complete for a production switch.
-   A conditional decoder migration is sufficient; no engine rewrite is needed.
+2. Keep jsontext opt-in for this experiment. The [Linux follow-up](go127-json-linux.md)
+   confirms decoding gains but also records a prepared-route tradeoff.
+   A conditional decoder migration can be reviewed separately; no engine rewrite
+   is needed.
 3. For many expressions per prepared document, profile materialization and
    extend native fast-plan coverage before replacing the existing index.
 4. Treat reader/writer or NDJSON record streaming as a separate API design.
@@ -156,6 +157,22 @@ then affected checks were repeated. Review confirmed the fix without further
 findings. Formatting and diff checks are clean; Python summary tests pass.
 
 The [verification manifest](../benchmarks/go127-json-2026-11-06/verification.json)
-records commands and exit codes. No native Linux or Windows measurements/checks
-were added in this experiment. The existing JavaScript runtime/guest was not
-changed or rebuilt.
+records the macOS commands and exit codes. The subsequent [Linux validation](go127-json-linux.md)
+adds another 21 passing checks and independent measurements. No Windows prototype
+check ran in this experiment. The JavaScript runtime/guest was not changed or
+rebuilt.
+
+## Message-processing workload
+
+The library must support both one precompiled transformation per arriving NATS
+message and several transformations over the same arriving message, routed by
+subject across concurrent workers. This is fresh input per message; reusing a
+compiled program across messages is different from repeatedly evaluating one
+retained document. See the [workload record](../nats-workload.md).
+
+This makes byte-to-byte latency and allocation cost important alongside prepared
+batch reuse. A prepared single-program route may be a useful candidate, but
+preparation and output encoding must be included before comparing it with
+EvalJSON. The current batch benchmarks return Go values, not republishable bytes.
+Neither the Mac nor Linux microbenchmarks measure NATS, concurrent routing,
+queue wait, fan-in correlation, output ordering or p95/p99 delivery latency.

@@ -9,3 +9,20 @@ Approved scope: compare unchanged library on Go 1.26.10, Go 1.27.3, and Go 1.27.
 5. Run formatting, root tests/race/vet for baseline and prototype, pinned conformance, bounded decoder/document fuzzing, and relevant optional JavaScript checks. Document measured results, remaining limitations, and recommendation. Do not adopt a backend or publish a release in this experiment.
 
 The specimen is a materializing decoder, not a streaming evaluator or a zero-allocation guarantee. Check cancellation between tokens and retain existing bounded-but-uninterruptible individual token scanning behavior. No claim of hard process-memory control.
+
+## Linux reproduction and workload addition (2026-11-06)
+
+Validate the committed experiment on Bertram under /data/ci using the same Go
+1.26.10/1.27.3 four-configuration matrix, full six-round measurements and the
+longer isolated prepared control. Run the 21 root/JavaScript test/race/vet/fuzz
+checks before timing, retain exact source hashes, toolchain identities and host
+settings, and apply CPU affinity only to the benchmark process and its children.
+Keep remote source immutable and benchmark results separate from verification.
+
+Record both fresh-message patterns for the library's NATS use case: one
+precompiled transformation per input and several transformations per input,
+with subject-based routing across workers. Existing byte-to-byte EvalJSON and
+fresh-document batch benchmarks give component costs; do not claim NATS,
+concurrency or end-to-end fan-out capacity from single-threaded microbenchmarks.
+No NATS dependency, broker, runtime pooling, production decoder switch or new
+public API is part of this validation.

@@ -1,0 +1,122 @@
+{
+  "benchmarks": {
+    "go126": {
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 52929.0,
+          "min": 52860.0,
+          "max": 53325.0
+        },
+        "B/op": {
+          "median": 76128.0,
+          "min": 76128.0,
+          "max": 76128.0
+        },
+        "allocs/op": {
+          "median": 150.0,
+          "min": 150.0,
+          "max": 150.0
+        }
+      }
+    },
+    "go127-nojsonv2": {
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 53748.0,
+          "min": 53572.0,
+          "max": 53936.0
+        },
+        "B/op": {
+          "median": 76128.0,
+          "min": 76128.0,
+          "max": 76128.0
+        },
+        "allocs/op": {
+          "median": 150.0,
+          "min": 150.0,
+          "max": 150.0
+        }
+      }
+    },
+    "go127": {
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 56304.0,
+          "min": 55786.0,
+          "max": 56476.0
+        },
+        "B/op": {
+          "median": 76192.0,
+          "min": 76192.0,
+          "max": 76192.0
+        },
+        "allocs/op": {
+          "median": 158.0,
+          "min": 158.0,
+          "max": 158.0
+        }
+      }
+    },
+    "go127-jsontext": {
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 55859.0,
+          "min": 54466.0,
+          "max": 56222.0
+        },
+        "B/op": {
+          "median": 76192.0,
+          "min": 76192.0,
+          "max": 76192.0
+        },
+        "allocs/op": {
+          "median": 158.0,
+          "min": 158.0,
+          "max": 158.0
+        }
+      }
+    }
+  },
+  "peak_rss_bytes": {
+    "go126": {
+      "native": [
+        12582912,
+        12845056,
+        12582912,
+        12582912,
+        12320768,
+        12320768
+      ]
+    },
+    "go127-nojsonv2": {
+      "native": [
+        12582912,
+        12582912,
+        12582912,
+        12582912,
+        12582912,
+        12582912
+      ]
+    },
+    "go127": {
+      "native": [
+        13307904,
+        13406208,
+        13107200,
+        13340672,
+        13561856,
+        13107200
+      ]
+    },
+    "go127-jsontext": {
+      "native": [
+        13344768,
+        13369344,
+        13369344,
+        13107200,
+        13324288,
+        13107200
+      ]
+    }
+  }
+}
