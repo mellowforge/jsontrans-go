@@ -102,4 +102,5 @@ go test -tags oracle ./conformance ./jsonata
 - `docs/performance.md`: measured results.
 - `SECURITY.md`: execution safety.
 
-Design specs and implementation plans live in `docs/superpowers/{specs,plans}/`, and the running status in `docs/progress.md`.
+Keep agent specs, implementation plans, progress ledgers and review scratch
+local in ignored directories such as `.superpowers/`; do not commit them.

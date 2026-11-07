@@ -1,0 +1,48 @@
+
+# Round 1
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   24979	     47079 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 2
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   26090	     46034 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 3
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   25911	     46206 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 4
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   25820	     46210 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 5
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   24584	     47784 ns/op	   76192 B/op	     158 allocs/op
+PASS
+
+# Round 6
+goos: darwin
+goarch: arm64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: Apple M5 Max
+BenchmarkJSONAPI/64KiB/prepare_batch/N16         	   25927	     46216 ns/op	   76192 B/op	     158 allocs/op
+PASS

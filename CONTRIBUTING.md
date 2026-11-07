@@ -1,11 +1,16 @@
 # Contributing
 
-Read AGENTS.md and the [approved design](docs/superpowers/specs/2026-11-02-json-transformers-design.md)
-before changing public behavior.
+Read [AGENTS.md](AGENTS.md), the [compatibility policy](docs/compatibility.md),
+and the relevant [API contracts](docs/adapters.md) before changing public behavior.
 Use Go 1.26 or newer. Core runtime dependencies must be pure Go supporting utilities,
 not complete language engines. Use Context7 when checking dependency APIs.
 For verification on your own Linux, macOS and Windows machines, see the
 [local verification guide](docs/local-verification.md).
+
+Keep agent specifications, implementation plans, progress ledgers and review
+scratch local in ignored directories such as `.superpowers/`. They are not
+repository documentation. Commit maintained API guides, compatibility/security
+records, examples and relevant reproducible measurement evidence.
 
 Before submitting a change:
 

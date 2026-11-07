@@ -1,0 +1,825 @@
+{
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "commit": "dbd3057f96cf2ecaa1e31816255407132a3cc8a6",
+  "dirty": "",
+  "go_source_sha256": "63fdd9919d55ce2393fdc9ca8e2b5ede2e17e2dc80ca9148f43b004ef37c8f5f",
+  "count": 6,
+  "benchtime": "150ms",
+  "gomaxprocs": 1,
+  "modes": {
+    "go126": {
+      "version": "go version go1.26.10 linux/amd64",
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOARCH": "amd64",
+        "GOEXPERIMENT": "",
+        "GOOS": "linux"
+      },
+      "tags": []
+    },
+    "go127-nojsonv2": {
+      "version": "go version go1.27.3 linux/amd64",
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOARCH": "amd64",
+        "GOEXPERIMENT": "nojsonv2",
+        "GOOS": "linux"
+      },
+      "tags": []
+    },
+    "go127": {
+      "version": "go version go1.27.3 linux/amd64",
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOARCH": "amd64",
+        "GOEXPERIMENT": "",
+        "GOOS": "linux"
+      },
+      "tags": []
+    },
+    "go127-jsontext": {
+      "version": "go version go1.27.3 linux/amd64",
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOARCH": "amd64",
+        "GOEXPERIMENT": "",
+        "GOOS": "linux"
+      },
+      "tags": [
+        "-tags=jsontext_experiment"
+      ]
+    }
+  },
+  "commands": [
+    {
+      "round": 1,
+      "mode": "go126",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 1,
+      "mode": "go126",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 1,
+      "mode": "go127-nojsonv2",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 1,
+      "mode": "go127-nojsonv2",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 1,
+      "mode": "go127",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 1,
+      "mode": "go127",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 1,
+      "mode": "go127-jsontext",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 1,
+      "mode": "go127-jsontext",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 2,
+      "mode": "go127-nojsonv2",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 2,
+      "mode": "go127-nojsonv2",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 2,
+      "mode": "go127",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 2,
+      "mode": "go127",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 2,
+      "mode": "go127-jsontext",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 2,
+      "mode": "go127-jsontext",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 2,
+      "mode": "go126",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 2,
+      "mode": "go126",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 3,
+      "mode": "go127",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 3,
+      "mode": "go127",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 3,
+      "mode": "go127-jsontext",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 3,
+      "mode": "go127-jsontext",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 3,
+      "mode": "go126",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 3,
+      "mode": "go126",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 3,
+      "mode": "go127-nojsonv2",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 3,
+      "mode": "go127-nojsonv2",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 4,
+      "mode": "go127-jsontext",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 4,
+      "mode": "go127-jsontext",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 4,
+      "mode": "go126",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 4,
+      "mode": "go126",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 4,
+      "mode": "go127-nojsonv2",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 4,
+      "mode": "go127-nojsonv2",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 4,
+      "mode": "go127",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 4,
+      "mode": "go127",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 5,
+      "mode": "go126",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 5,
+      "mode": "go126",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 5,
+      "mode": "go127-nojsonv2",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 5,
+      "mode": "go127-nojsonv2",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 5,
+      "mode": "go127",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 5,
+      "mode": "go127",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 5,
+      "mode": "go127-jsontext",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 5,
+      "mode": "go127-jsontext",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 6,
+      "mode": "go127-nojsonv2",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 6,
+      "mode": "go127-nojsonv2",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-nojsonv2-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 6,
+      "mode": "go127",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 6,
+      "mode": "go127",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 6,
+      "mode": "go127-jsontext",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 6,
+      "mode": "go127-jsontext",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go127-jsontext-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 6,
+      "mode": "go126",
+      "suite": "native",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-native.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJSONAPI",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    },
+    {
+      "round": 6,
+      "mode": "go126",
+      "suite": "javascript",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "/data/ci/jsontrans-go127-20261106-dbd3057/tmp/jsontrans-go127-qsnhnqsv/go126-javascript.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkJavaScript/(Eval|EvalJSON|PreparedFallback)$",
+        "-test.benchtime=150ms",
+        "-test.benchmem",
+        "-test.cpu=1",
+        "-test.count=1"
+      ]
+    }
+  ],
+  "rss": "High-water RSS for each whole benchmark process, excluding compilation; not per operation or retained document memory."
+}

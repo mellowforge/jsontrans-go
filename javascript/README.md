@@ -31,6 +31,11 @@ with independent input/bindings. Each evaluation creates fresh guest state.
 Close stops admission, cancels and drains complete calls, then closes runtime
 and cache resources. Programs cannot be used after closure; errors.Is finds
 ErrClosed and context cancellation through registry/JSON/prepared/batch helpers.
+The root `EvalPreparedJSON` and `Batch.EvalPreparedJSON` helpers also work with
+compiled JavaScript programs, through detached materialization and the same
+fresh-runtime profile. They require a core version providing those APIs; the
+adapter's existing minimum dependency does not include them. See
+[prepared JSON results](../docs/prepared-json-results.md).
 
 ```go
 var exception *js.Exception

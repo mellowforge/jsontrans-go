@@ -1,0 +1,36 @@
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkPreparedJSON/direct/1         	   19306	     18597 ns/op	   12961 B/op	     136 allocs/op
+BenchmarkPreparedJSON/direct/1         	   19401	     18535 ns/op	   12961 B/op	     136 allocs/op
+BenchmarkPreparedJSON/direct/1         	   19416	     18534 ns/op	   12961 B/op	     136 allocs/op
+BenchmarkPreparedJSON/direct/1         	   19455	     18557 ns/op	   12961 B/op	     136 allocs/op
+BenchmarkPreparedJSON/direct/1         	   19455	     18542 ns/op	   12961 B/op	     136 allocs/op
+BenchmarkPreparedJSON/prepared/1       	   84916	      4258 ns/op	    5176 B/op	      55 allocs/op
+BenchmarkPreparedJSON/prepared/1       	   84218	      4301 ns/op	    5176 B/op	      55 allocs/op
+BenchmarkPreparedJSON/prepared/1       	   84204	      4301 ns/op	    5176 B/op	      55 allocs/op
+BenchmarkPreparedJSON/prepared/1       	   84043	      4305 ns/op	    5176 B/op	      55 allocs/op
+BenchmarkPreparedJSON/prepared/1       	   83752	      4299 ns/op	    5176 B/op	      55 allocs/op
+BenchmarkPreparedJSON/batch/1          	   82899	      4351 ns/op	    5392 B/op	      58 allocs/op
+BenchmarkPreparedJSON/batch/1          	   82731	      4353 ns/op	    5392 B/op	      58 allocs/op
+BenchmarkPreparedJSON/batch/1          	   82560	      4366 ns/op	    5392 B/op	      58 allocs/op
+BenchmarkPreparedJSON/batch/1          	   83013	      4358 ns/op	    5392 B/op	      58 allocs/op
+BenchmarkPreparedJSON/batch/1          	   82982	      4353 ns/op	    5392 B/op	      58 allocs/op
+BenchmarkPreparedJSON/direct/16        	    1208	    299630 ns/op	  207382 B/op	    2176 allocs/op
+BenchmarkPreparedJSON/direct/16        	    1201	    300648 ns/op	  207382 B/op	    2176 allocs/op
+BenchmarkPreparedJSON/direct/16        	    1209	    300743 ns/op	  207382 B/op	    2176 allocs/op
+BenchmarkPreparedJSON/direct/16        	    1206	    300153 ns/op	  207382 B/op	    2176 allocs/op
+BenchmarkPreparedJSON/direct/16        	    1206	    300862 ns/op	  207382 B/op	    2176 allocs/op
+BenchmarkPreparedJSON/prepared/16      	    5017	     71820 ns/op	   82820 B/op	     880 allocs/op
+BenchmarkPreparedJSON/prepared/16      	    5083	     71865 ns/op	   82820 B/op	     880 allocs/op
+BenchmarkPreparedJSON/prepared/16      	    5049	     71909 ns/op	   82820 B/op	     880 allocs/op
+BenchmarkPreparedJSON/prepared/16      	    5094	     71964 ns/op	   82820 B/op	     880 allocs/op
+BenchmarkPreparedJSON/prepared/16      	    5180	     71927 ns/op	   82820 B/op	     880 allocs/op
+BenchmarkPreparedJSON/batch/16         	    5335	     68861 ns/op	   81596 B/op	     868 allocs/op
+BenchmarkPreparedJSON/batch/16         	    5446	     69034 ns/op	   81596 B/op	     868 allocs/op
+BenchmarkPreparedJSON/batch/16         	    5456	     69011 ns/op	   81596 B/op	     868 allocs/op
+BenchmarkPreparedJSON/batch/16         	    5457	     68967 ns/op	   81596 B/op	     868 allocs/op
+BenchmarkPreparedJSON/batch/16         	    5457	     68904 ns/op	   81596 B/op	     868 allocs/op
+PASS
+ok  	github.com/mellowforge/jsontrans-go	10.934s

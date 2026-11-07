@@ -137,6 +137,14 @@ second. Constructors cap program count at the default collection limit before
 allocation; CompileBatch bounds the entire compilation with a shared deadline.
 No expressions run concurrently inside a batch.
 
+For callers that need encoded bytes, `jsontrans.EvalPreparedJSON` and
+`Batch.EvalPreparedJSON` reuse the same dispatch and limit forwarding without
+requiring another adapter interface. Each expression is encoded immediately
+under its continuing deadline. Batch destinations are `[]JSONResult`; capacity
+can be reused, while each output byte buffer remains independently owned. See
+[prepared JSON results](prepared-json-results.md) for output accounting and
+failure semantics.
+
 ```go
 batch, err := transformer.CompileBatch(ctx, "jsonata", []string{
     "name",

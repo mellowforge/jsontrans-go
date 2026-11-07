@@ -320,3 +320,23 @@ archived baseline showed no greater-than-10% regression on the existing mixed
 1 KiB ordinary-Eval workload; this is one fixture, not a general regression
 claim. The N=64 allocation profile points primarily to document scanner allocation
 and fast-budget allocation as opportunities for further work.
+
+## Go 1.27 JSON boundary experiment
+
+The [Go 1.27 assessment](assessments/go127-json.md) compares both standard-library
+backends and an opt-in jsontext decoder. It separates JSON-boundary costs from
+prepared-document evaluation, with commands, raw results and allocation ranges.
+The experiment does not change the library's public API or minimum Go version.
+
+The [message-processing workload](nats-workload.md) records both one-program and
+multi-program routing for fresh NATS messages, including compilation reuse,
+output encoding and concurrent-worker measurement requirements.
+
+The [Linux reproduction](assessments/go127-json-linux.md) confirms JSON decoding
+gains on Bertram and records the smaller prepared-route regression, rather than
+treating the Go upgrade as a universal speedup.
+
+The [fresh-message byte-path and NATS experiment](assessments/message-byte-path.md)
+measures complete JSON output for both single-program and fan-out routes, then
+validates their behavior through a separate pinned Testcontainers NATS broker.
+Loss, queue wait and tail-latency tradeoffs remain visible beside throughput.

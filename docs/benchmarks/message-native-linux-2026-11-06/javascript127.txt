@@ -1,0 +1,78 @@
+
+# round 1; strategy rotation 0
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/direct  	      70	   1442272 ns/op	 2481025 B/op	    3701 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/prepared         	      74	   1336512 ns/op	 2448118 B/op	    2588 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/batch            	      68	   1340656 ns/op	 2448535 B/op	    2596 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/direct           	      18	   5928091 ns/op	 9911174 B/op	   14732 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/prepared         	      18	   5201537 ns/op	 9701942 B/op	   10196 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/batch            	      19	   5284023 ns/op	 9703583 B/op	   10210 allocs/op
+PASS
+
+# round 2; strategy rotation 1
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/prepared         	      74	   1350598 ns/op	 2449458 B/op	    2590 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/batch            	      73	   1304035 ns/op	 2448443 B/op	    2595 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/direct           	      69	   1442370 ns/op	 2479555 B/op	    3699 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/prepared         	      18	   5518032 ns/op	 9701942 B/op	   10196 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/batch            	      18	   5249122 ns/op	 9702732 B/op	   10207 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/direct           	      14	   5605011 ns/op	 9915308 B/op	   14770 allocs/op
+PASS
+
+# round 3; strategy rotation 2
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/batch   	      73	   1381007 ns/op	 2450720 B/op	    2600 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/direct  	      70	   1394051 ns/op	 2479402 B/op	    3698 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/prepared         	      68	   1372482 ns/op	 2447868 B/op	    2587 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/batch            	      16	   5627924 ns/op	 9704863 B/op	   10222 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/direct           	      16	   5750524 ns/op	 9915267 B/op	   14768 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/prepared         	      18	   5274117 ns/op	 9701902 B/op	   10196 allocs/op
+PASS
+
+# round 4; strategy rotation 0
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/direct  	      70	   1438182 ns/op	 2481039 B/op	    3701 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/prepared         	      73	   1351686 ns/op	 2447838 B/op	    2587 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/batch            	      74	   1381143 ns/op	 2448673 B/op	    2595 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/direct           	      18	   5926956 ns/op	 9911219 B/op	   14732 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/prepared         	      18	   5256117 ns/op	 9701902 B/op	   10196 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/batch            	      16	   5603861 ns/op	 9704702 B/op	   10220 allocs/op
+PASS
+
+# round 5; strategy rotation 1
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/prepared         	      69	   1327470 ns/op	 2449739 B/op	    2592 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/batch            	      74	   1327594 ns/op	 2448512 B/op	    2595 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/direct           	      67	   1399561 ns/op	 2479232 B/op	    3696 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/prepared         	      16	   5604453 ns/op	 9703958 B/op	   10210 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/batch            	      19	   5404857 ns/op	 9703672 B/op	   10211 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/direct           	      18	   5850990 ns/op	 9911256 B/op	   14733 allocs/op
+PASS
+
+# round 6; strategy rotation 2
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/batch   	      58	   1336851 ns/op	 2450173 B/op	    2598 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/direct  	      70	   1393661 ns/op	 2479401 B/op	    3698 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N1/prepared         	      75	   1313560 ns/op	 2447850 B/op	    2587 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/batch            	      19	   5467383 ns/op	 9704314 B/op	   10211 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/direct           	      18	   5545311 ns/op	 9911219 B/op	   14732 allocs/op
+BenchmarkJavaScriptBytes/javascript/object/1024/N4/prepared         	      18	   5457658 ns/op	 9701942 B/op	   10196 allocs/op
+PASS

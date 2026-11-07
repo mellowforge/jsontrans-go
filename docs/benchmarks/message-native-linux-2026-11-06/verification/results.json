@@ -1,0 +1,120 @@
+[
+  {
+    "mode": "go126",
+    "command": [
+      "go1.26.10",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "go126",
+    "command": [
+      "go1.26.10",
+      "test",
+      "-race",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "go126",
+    "command": [
+      "go1.26.10",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "go127",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "go127",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-race",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "go127",
+    "command": [
+      "go1.27.3",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "jsontext",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-count=1",
+      "-tags=jsontext_experiment",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "jsontext",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-race",
+      "-count=1",
+      "-tags=jsontext_experiment",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "jsontext",
+    "command": [
+      "go1.27.3",
+      "vet",
+      "-tags=jsontext_experiment",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "fuzz",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-run=^$",
+      "-fuzz=^FuzzByteStrategies$",
+      "-fuzztime=12000x",
+      "-parallel=2"
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "fuzz-jsontext",
+    "command": [
+      "go1.27.3",
+      "test",
+      "-tags=jsontext_experiment",
+      "-run=^$",
+      "-fuzz=^FuzzByteStrategies$",
+      "-fuzztime=12000x",
+      "-parallel=2"
+    ],
+    "exit_code": 0
+  }
+]

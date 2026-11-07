@@ -1,0 +1,24 @@
+{
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900K",
+  "client_affinity": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14
+  ],
+  "broker_affinity": [
+    16,
+    17
+  ],
+  "broker_gomaxprocs": 2,
+  "broker_memory": 536870912,
+  "commit": "01fbb04a605e8212382d5327c44f1ae899e6485c",
+  "docker": "29.1.3",
+  "image": "nats@sha256:afae2fdbe2e326c65e1246cb83b9d05d319188734f3bd577ac8072daae78a10f",
+  "notes": "No other benchmark/test jobs run concurrently. CPU governor/frequency settings unchanged."
+}

@@ -1,0 +1,5 @@
+mode,benchmark,ns_median,ns_min,ns_max,bytes_median,allocs_median
+go126,BenchmarkJSONAPI/64KiB/prepare_batch/N16,46805.0,45739.0,49138.0,76128.0,150.0
+go127-nojsonv2,BenchmarkJSONAPI/64KiB/prepare_batch/N16,46778.0,45825.0,54459.0,76128.0,150.0
+go127,BenchmarkJSONAPI/64KiB/prepare_batch/N16,46530.0,46260.0,46796.0,76192.0,158.0
+go127-jsontext,BenchmarkJSONAPI/64KiB/prepare_batch/N16,46213.0,46034.0,47784.0,76192.0,158.0

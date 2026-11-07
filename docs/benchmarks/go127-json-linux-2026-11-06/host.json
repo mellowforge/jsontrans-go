@@ -1,0 +1,16 @@
+{
+  "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900K",
+  "logical_cpu_affinity": [
+    8
+  ],
+  "cpu8_core_id": "16",
+  "cpu8_max_khz": "5800000",
+  "governor": "powersave",
+  "loadavg_before": "1.38 1.07 0.49 1/1356 316761",
+  "benchmark_gomaxprocs": 1,
+  "frequency_locked": false,
+  "source_commit": "dbd3057f96cf2ecaa1e31816255407132a3cc8a6",
+  "verification_gomaxprocs": 8,
+  "notes": "Affinity applies only to this process and child benchmarks. Source checkout is clean. No tests/build jobs run concurrently with timing; compilation occurs first within the benchmark runner."
+}

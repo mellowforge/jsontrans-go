@@ -1,0 +1,60 @@
+
+# Round 1
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScript/Eval         	     168	   1055853 ns/op	 2371303 B/op	    1752 allocs/op
+BenchmarkJavaScript/EvalJSON     	     170	   1040170 ns/op	 2377521 B/op	    1881 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     175	   1023574 ns/op	 2374496 B/op	    1812 allocs/op
+PASS
+
+# Round 2
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScript/Eval         	     168	   1057944 ns/op	 2371307 B/op	    1752 allocs/op
+BenchmarkJavaScript/EvalJSON     	     169	   1053858 ns/op	 2377478 B/op	    1881 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     176	   1066321 ns/op	 2374566 B/op	    1812 allocs/op
+PASS
+
+# Round 3
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScript/Eval         	     169	   1042111 ns/op	 2371293 B/op	    1752 allocs/op
+BenchmarkJavaScript/EvalJSON     	     171	   1062209 ns/op	 2377555 B/op	    1881 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     171	   1051222 ns/op	 2374362 B/op	    1812 allocs/op
+PASS
+
+# Round 4
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScript/Eval         	     168	   1046910 ns/op	 2371293 B/op	    1752 allocs/op
+BenchmarkJavaScript/EvalJSON     	     175	   1043968 ns/op	 2377444 B/op	    1881 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     169	   1041783 ns/op	 2374537 B/op	    1812 allocs/op
+PASS
+
+# Round 5
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScript/Eval         	     166	   1075796 ns/op	 2371250 B/op	    1752 allocs/op
+BenchmarkJavaScript/EvalJSON     	     170	   1057949 ns/op	 2377563 B/op	    1881 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     172	   1049365 ns/op	 2374608 B/op	    1812 allocs/op
+PASS
+
+# Round 6
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/javascript
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkJavaScript/Eval         	     165	   1063991 ns/op	 2371503 B/op	    1752 allocs/op
+BenchmarkJavaScript/EvalJSON     	     169	   1039641 ns/op	 2377433 B/op	    1881 allocs/op
+BenchmarkJavaScript/PreparedFallback         	     170	   1037791 ns/op	 2374520 B/op	    1812 allocs/op
+PASS

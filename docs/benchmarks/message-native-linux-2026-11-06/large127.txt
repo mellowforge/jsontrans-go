@@ -1,0 +1,78 @@
+
+# round 1; strategy rotation 0
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/large-array/1048576/N1/direct  	       1	  90851529 ns/op	69891088 B/op	 1393766 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/prepared         	       3	  33206224 ns/op	48369064 B/op	  442832 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/batch            	       3	  33562526 ns/op	48369381 B/op	  442836 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/direct          	       1	  84576291 ns/op	70928656 B/op	 1360974 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/prepared        	       3	  28541521 ns/op	49608413 B/op	  475555 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/batch           	       3	  29519568 ns/op	49736733 B/op	  475565 allocs/op
+PASS
+
+# round 2; strategy rotation 1
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/large-array/1048576/N1/prepared         	       3	  33131954 ns/op	48369064 B/op	  442832 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/batch            	       3	  30496021 ns/op	48369381 B/op	  442836 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/direct           	       1	  86041771 ns/op	69891104 B/op	 1393766 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/prepared        	       3	  28773598 ns/op	49736514 B/op	  475563 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/batch           	       3	  30314156 ns/op	49736744 B/op	  475565 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/direct          	       1	  93317203 ns/op	70928672 B/op	 1360974 allocs/op
+PASS
+
+# round 3; strategy rotation 2
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/large-array/1048576/N1/batch   	       3	  33517028 ns/op	48369376 B/op	  442836 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/direct  	       1	  96367583 ns/op	69891384 B/op	 1393768 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/prepared         	       3	  32100080 ns/op	48369069 B/op	  442832 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/batch           	       3	  30551668 ns/op	49736784 B/op	  475566 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/direct          	       1	  87206578 ns/op	70928656 B/op	 1360974 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/prepared        	       3	  31782736 ns/op	49608362 B/op	  475554 allocs/op
+PASS
+
+# round 4; strategy rotation 0
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/large-array/1048576/N1/direct  	       1	  95531656 ns/op	69891384 B/op	 1393768 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/prepared         	       3	  30246315 ns/op	48369064 B/op	  442832 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/batch            	       3	  33482052 ns/op	48369376 B/op	  442836 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/direct          	       1	  89619693 ns/op	70544472 B/op	 1360949 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/prepared        	       3	  28913569 ns/op	49736514 B/op	  475563 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/batch           	       3	  31862288 ns/op	49736738 B/op	  475565 allocs/op
+PASS
+
+# round 5; strategy rotation 1
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/large-array/1048576/N1/prepared         	       3	  30833075 ns/op	48369069 B/op	  442832 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/batch            	       3	  35130412 ns/op	48369381 B/op	  442836 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/direct           	       1	  96611568 ns/op	69891536 B/op	 1393770 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/prepared        	       3	  29225223 ns/op	49736514 B/op	  475563 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/batch           	       3	  29313383 ns/op	49736834 B/op	  475567 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/direct          	       1	  95000926 ns/op	70928672 B/op	 1360974 allocs/op
+PASS
+
+# round 6; strategy rotation 2
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/large-array/1048576/N1/batch   	       3	  29945444 ns/op	48369376 B/op	  442836 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/direct  	       1	 101353927 ns/op	69891240 B/op	 1393766 allocs/op
+BenchmarkBytes/jsonata/large-array/1048576/N1/prepared         	       3	  30944491 ns/op	48369064 B/op	  442832 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/batch           	       3	  29163467 ns/op	49736738 B/op	  475565 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/direct          	       1	  95490024 ns/op	70928656 B/op	 1360974 allocs/op
+BenchmarkBytes/jsonpath/large-array/1048576/N1/prepared        	       3	  29883469 ns/op	49608456 B/op	  475555 allocs/op
+PASS

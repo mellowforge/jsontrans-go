@@ -122,36 +122,10 @@ func (x *Transformer) CompileBatch(ctx context.Context, processorName string, ex
 // addition to independent configured limits and counters for every expression.
 // Outer input dimensions apply even to empty batches and looser engine defaults.
 func (b *Batch) EvalPrepared(ctx context.Context, d *Document, dst []Result, o EvalOptions) ([]Result, error) {
-	if b == nil || d == nil || ctx == nil {
-		return nil, errors.New("nil batch, document, or context")
-	}
-	limits, err := budget.Resolve(DefaultLimits(), o.Limits)
-	if err != nil {
-		return nil, err
-	}
 	var outer budget.Budget
-	if err = budget.InitFastResolved(&outer, ctx, limits); err != nil {
-		return nil, err
-	}
 	defer outer.Close()
-	if err = outer.Collection(len(b.entries)); err != nil {
-		return nil, err
-	}
-	if b.unsupported&specifiedLimits(o.Limits) != 0 {
-		for i := range b.entries {
-			entry := &b.entries[i]
-			if err = outer.Check(); err != nil {
-				return nil, err
-			}
-			if err = rejectUnsupportedLimits(entry.unsupported, o.Limits); err != nil {
-				if entry.name != "" {
-					err = diagnostic(entry.name, PhaseEvaluate, err)
-				}
-				return nil, &BatchError{Index: i, Cause: err}
-			}
-		}
-	}
-	if err = d.CheckLimits(outer.Context(), limits); err != nil {
+	limits, err := b.initPreparedScope(&outer, ctx, d, o)
+	if err != nil {
 		return nil, err
 	}
 	count := len(b.entries)
@@ -216,4 +190,40 @@ func (b *Batch) EvalPrepared(ctx context.Context, d *Document, dst []Result, o E
 func batchFailure(dst []Result, i int, cause error) ([]Result, error) {
 	clear(dst[:i])
 	return nil, &BatchError{Index: i, Cause: cause}
+}
+
+// initPreparedScope performs the common preflight without touching a destination.
+// The caller closes outer even on failure after its initialization.
+func (b *Batch) initPreparedScope(outer *budget.Budget, ctx context.Context, d *Document, o EvalOptions) (Limits, error) {
+	if b == nil || d == nil || ctx == nil {
+		return Limits{}, errors.New("nil batch, document, or context")
+	}
+	limits, err := budget.Resolve(DefaultLimits(), o.Limits)
+	if err != nil {
+		return Limits{}, err
+	}
+	if err = budget.InitFastResolved(outer, ctx, limits); err != nil {
+		return Limits{}, err
+	}
+	if err = outer.Collection(len(b.entries)); err != nil {
+		return Limits{}, err
+	}
+	if b.unsupported&specifiedLimits(o.Limits) != 0 {
+		for i := range b.entries {
+			entry := &b.entries[i]
+			if err = outer.Check(); err != nil {
+				return Limits{}, err
+			}
+			if err = rejectUnsupportedLimits(entry.unsupported, o.Limits); err != nil {
+				if entry.name != "" {
+					err = diagnostic(entry.name, PhaseEvaluate, err)
+				}
+				return Limits{}, &BatchError{Index: i, Cause: err}
+			}
+		}
+	}
+	if err = d.CheckLimits(outer.Context(), limits); err != nil {
+		return Limits{}, err
+	}
+	return limits, nil
 }

@@ -1,0 +1,3350 @@
+{
+  "benchmarks": {
+    "go126": {
+      "BenchmarkJSONAPI/1KiB/decode": {
+        "ns/op": {
+          "median": 26241.5,
+          "min": 26143.0,
+          "max": 26394.0
+        },
+        "B/op": {
+          "median": 19024.0,
+          "min": 19024.0,
+          "max": 19024.0
+        },
+        "allocs/op": {
+          "median": 485.0,
+          "min": 485.0,
+          "max": 485.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/encode": {
+        "ns/op": {
+          "median": 11785.0,
+          "min": 11687.0,
+          "max": 11890.0
+        },
+        "B/op": {
+          "median": 6856.0,
+          "min": 6856.0,
+          "max": 6856.0
+        },
+        "allocs/op": {
+          "median": 106.0,
+          "min": 106.0,
+          "max": 106.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare": {
+        "ns/op": {
+          "median": 4585.0,
+          "min": 4545.0,
+          "max": 4647.0
+        },
+        "B/op": {
+          "median": 9696.0,
+          "min": 9696.0,
+          "max": 9696.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 45011.0,
+          "min": 44764.0,
+          "max": 45164.0
+        },
+        "B/op": {
+          "median": 32827.0,
+          "min": 32827.0,
+          "max": 32827.0
+        },
+        "allocs/op": {
+          "median": 758.0,
+          "min": 758.0,
+          "max": 758.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 42077.5,
+          "min": 41872.0,
+          "max": 42588.0
+        },
+        "B/op": {
+          "median": 32179.0,
+          "min": 32179.0,
+          "max": 32179.0
+        },
+        "allocs/op": {
+          "median": 740.0,
+          "min": 740.0,
+          "max": 740.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/large_output": {
+        "ns/op": {
+          "median": 67100.0,
+          "min": 66534.0,
+          "max": 68254.0
+        },
+        "B/op": {
+          "median": 45820.0,
+          "min": 45820.0,
+          "max": 45820.0
+        },
+        "allocs/op": {
+          "median": 934.0,
+          "min": 934.0,
+          "max": 934.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N1": {
+        "ns/op": {
+          "median": 567.9,
+          "min": 548.6,
+          "max": 571.3
+        },
+        "B/op": {
+          "median": 424.0,
+          "min": 424.0,
+          "max": 424.0
+        },
+        "allocs/op": {
+          "median": 9.0,
+          "min": 9.0,
+          "max": 9.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 5350.0,
+          "min": 5289.0,
+          "max": 5428.0
+        },
+        "B/op": {
+          "median": 10120.0,
+          "min": 10120.0,
+          "max": 10120.0
+        },
+        "allocs/op": {
+          "median": 28.0,
+          "min": 28.0,
+          "max": 28.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7703.0,
+          "min": 7482.0,
+          "max": 7741.0
+        },
+        "B/op": {
+          "median": 1912.0,
+          "min": 1912.0,
+          "max": 1912.0
+        },
+        "allocs/op": {
+          "median": 131.0,
+          "min": 131.0,
+          "max": 131.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 12711.5,
+          "min": 12475.0,
+          "max": 12750.0
+        },
+        "B/op": {
+          "median": 11609.0,
+          "min": 11609.0,
+          "max": 11609.0
+        },
+        "allocs/op": {
+          "median": 150.0,
+          "min": 150.0,
+          "max": 150.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N64": {
+        "ns/op": {
+          "median": 30145.5,
+          "min": 29534.0,
+          "max": 30310.0
+        },
+        "B/op": {
+          "median": 6904.0,
+          "min": 6904.0,
+          "max": 6904.0
+        },
+        "allocs/op": {
+          "median": 515.0,
+          "min": 515.0,
+          "max": 515.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 35523.5,
+          "min": 34634.0,
+          "max": 35574.0
+        },
+        "B/op": {
+          "median": 16601.0,
+          "min": 16601.0,
+          "max": 16601.0
+        },
+        "allocs/op": {
+          "median": 534.0,
+          "min": 534.0,
+          "max": 534.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 22813.0,
+          "min": 22374.0,
+          "max": 22872.0
+        },
+        "B/op": {
+          "median": 25466.0,
+          "min": 25466.0,
+          "max": 25466.0
+        },
+        "allocs/op": {
+          "median": 413.0,
+          "min": 413.0,
+          "max": 413.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/decode": {
+        "ns/op": {
+          "median": 74707.0,
+          "min": 74507.0,
+          "max": 75221.0
+        },
+        "B/op": {
+          "median": 70355.0,
+          "min": 70355.0,
+          "max": 70355.0
+        },
+        "allocs/op": {
+          "median": 488.0,
+          "min": 488.0,
+          "max": 488.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/encode": {
+        "ns/op": {
+          "median": 34820.5,
+          "min": 34782.0,
+          "max": 34857.0
+        },
+        "B/op": {
+          "median": 14025.0,
+          "min": 14025.0,
+          "max": 14025.0
+        },
+        "allocs/op": {
+          "median": 106.0,
+          "min": 106.0,
+          "max": 106.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare": {
+        "ns/op": {
+          "median": 9268.0,
+          "min": 9163.0,
+          "max": 9298.0
+        },
+        "B/op": {
+          "median": 16864.0,
+          "min": 16864.0,
+          "max": 16864.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 111697.5,
+          "min": 111328.0,
+          "max": 112175.0
+        },
+        "B/op": {
+          "median": 84160.0,
+          "min": 84160.0,
+          "max": 84160.0
+        },
+        "allocs/op": {
+          "median": 761.0,
+          "min": 761.0,
+          "max": 761.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 108722.5,
+          "min": 108528.0,
+          "max": 108877.0
+        },
+        "B/op": {
+          "median": 83512.0,
+          "min": 83512.0,
+          "max": 83512.0
+        },
+        "allocs/op": {
+          "median": 743.0,
+          "min": 743.0,
+          "max": 743.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/large_output": {
+        "ns/op": {
+          "median": 174516.0,
+          "min": 173635.0,
+          "max": 174971.0
+        },
+        "B/op": {
+          "median": 104322.0,
+          "min": 104322.0,
+          "max": 104322.0
+        },
+        "allocs/op": {
+          "median": 937.0,
+          "min": 937.0,
+          "max": 937.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N1": {
+        "ns/op": {
+          "median": 573.15,
+          "min": 550.4,
+          "max": 594.4
+        },
+        "B/op": {
+          "median": 424.0,
+          "min": 424.0,
+          "max": 424.0
+        },
+        "allocs/op": {
+          "median": 9.0,
+          "min": 9.0,
+          "max": 9.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 9969.0,
+          "min": 9909.0,
+          "max": 9979.0
+        },
+        "B/op": {
+          "median": 17288.0,
+          "min": 17288.0,
+          "max": 17288.0
+        },
+        "allocs/op": {
+          "median": 28.0,
+          "min": 28.0,
+          "max": 28.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7723.5,
+          "min": 7467.0,
+          "max": 7763.0
+        },
+        "B/op": {
+          "median": 1912.0,
+          "min": 1912.0,
+          "max": 1912.0
+        },
+        "allocs/op": {
+          "median": 131.0,
+          "min": 131.0,
+          "max": 131.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 17349.0,
+          "min": 16946.0,
+          "max": 17403.0
+        },
+        "B/op": {
+          "median": 18777.0,
+          "min": 18777.0,
+          "max": 18777.0
+        },
+        "allocs/op": {
+          "median": 150.0,
+          "min": 150.0,
+          "max": 150.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N64": {
+        "ns/op": {
+          "median": 30302.5,
+          "min": 30146.0,
+          "max": 30687.0
+        },
+        "B/op": {
+          "median": 6904.0,
+          "min": 6904.0,
+          "max": 6904.0
+        },
+        "allocs/op": {
+          "median": 515.0,
+          "min": 515.0,
+          "max": 515.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 40217.5,
+          "min": 40124.0,
+          "max": 40273.0
+        },
+        "B/op": {
+          "median": 23770.0,
+          "min": 23770.0,
+          "max": 23770.0
+        },
+        "allocs/op": {
+          "median": 534.0,
+          "min": 534.0,
+          "max": 534.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 24797.0,
+          "min": 24771.0,
+          "max": 24861.0
+        },
+        "B/op": {
+          "median": 40572.0,
+          "min": 40572.0,
+          "max": 40572.0
+        },
+        "allocs/op": {
+          "median": 413.0,
+          "min": 413.0,
+          "max": 413.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/decode": {
+        "ns/op": {
+          "median": 451530.0,
+          "min": 450471.0,
+          "max": 452204.0
+        },
+        "B/op": {
+          "median": 471785.0,
+          "min": 471784.0,
+          "max": 471785.0
+        },
+        "allocs/op": {
+          "median": 491.0,
+          "min": 491.0,
+          "max": 491.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/encode": {
+        "ns/op": {
+          "median": 216233.0,
+          "min": 215599.0,
+          "max": 223696.0
+        },
+        "B/op": {
+          "median": 71375.0,
+          "min": 71375.0,
+          "max": 71375.0
+        },
+        "allocs/op": {
+          "median": 106.0,
+          "min": 106.0,
+          "max": 106.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare": {
+        "ns/op": {
+          "median": 44835.0,
+          "min": 44699.0,
+          "max": 44966.0
+        },
+        "B/op": {
+          "median": 74208.0,
+          "min": 74208.0,
+          "max": 74208.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 635549.0,
+          "min": 634140.0,
+          "max": 637948.0
+        },
+        "B/op": {
+          "median": 485612.0,
+          "min": 485612.0,
+          "max": 485612.0
+        },
+        "allocs/op": {
+          "median": 764.0,
+          "min": 764.0,
+          "max": 764.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 632449.5,
+          "min": 629848.0,
+          "max": 633283.0
+        },
+        "B/op": {
+          "median": 484964.0,
+          "min": 484964.0,
+          "max": 484965.0
+        },
+        "allocs/op": {
+          "median": 746.0,
+          "min": 746.0,
+          "max": 746.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/large_output": {
+        "ns/op": {
+          "median": 1019103.0,
+          "min": 1016668.0,
+          "max": 1021713.0
+        },
+        "B/op": {
+          "median": 563126.0,
+          "min": 563126.0,
+          "max": 563126.0
+        },
+        "allocs/op": {
+          "median": 940.0,
+          "min": 940.0,
+          "max": 940.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N1": {
+        "ns/op": {
+          "median": 574.35,
+          "min": 572.9,
+          "max": 580.3
+        },
+        "B/op": {
+          "median": 424.0,
+          "min": 424.0,
+          "max": 424.0
+        },
+        "allocs/op": {
+          "median": 9.0,
+          "min": 9.0,
+          "max": 9.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 45628.0,
+          "min": 45600.0,
+          "max": 45707.0
+        },
+        "B/op": {
+          "median": 74635.5,
+          "min": 74635.0,
+          "max": 74636.0
+        },
+        "allocs/op": {
+          "median": 28.0,
+          "min": 28.0,
+          "max": 28.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7724.5,
+          "min": 7579.0,
+          "max": 7787.0
+        },
+        "B/op": {
+          "median": 1912.0,
+          "min": 1912.0,
+          "max": 1912.0
+        },
+        "allocs/op": {
+          "median": 131.0,
+          "min": 131.0,
+          "max": 131.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 53230.5,
+          "min": 53103.0,
+          "max": 54751.0
+        },
+        "B/op": {
+          "median": 76128.0,
+          "min": 76128.0,
+          "max": 76128.0
+        },
+        "allocs/op": {
+          "median": 150.0,
+          "min": 150.0,
+          "max": 150.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N64": {
+        "ns/op": {
+          "median": 30340.5,
+          "min": 30251.0,
+          "max": 30406.0
+        },
+        "B/op": {
+          "median": 6904.0,
+          "min": 6904.0,
+          "max": 6904.0
+        },
+        "allocs/op": {
+          "median": 515.0,
+          "min": 515.0,
+          "max": 515.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 76395.5,
+          "min": 76156.0,
+          "max": 76502.0
+        },
+        "B/op": {
+          "median": 81120.0,
+          "min": 81120.0,
+          "max": 81120.0
+        },
+        "allocs/op": {
+          "median": 534.0,
+          "min": 534.0,
+          "max": 534.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 36188.5,
+          "min": 36098.0,
+          "max": 36369.0
+        },
+        "B/op": {
+          "median": 155272.0,
+          "min": 155271.0,
+          "max": 155272.0
+        },
+        "allocs/op": {
+          "median": 413.0,
+          "min": 413.0,
+          "max": 413.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/decode": {
+        "ns/op": {
+          "median": 51774282.5,
+          "min": 50491119.0,
+          "max": 51815502.0
+        },
+        "B/op": {
+          "median": 32495800.0,
+          "min": 32495800.0,
+          "max": 32495845.0
+        },
+        "allocs/op": {
+          "median": 1029890.0,
+          "min": 1029890.0,
+          "max": 1029891.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/encode": {
+        "ns/op": {
+          "median": 20506149.5,
+          "min": 20381143.0,
+          "max": 20927895.0
+        },
+        "B/op": {
+          "median": 12684982.5,
+          "min": 12670402.0,
+          "max": 12699563.0
+        },
+        "allocs/op": {
+          "median": 205986.5,
+          "min": 205986.0,
+          "max": 205987.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/prepare": {
+        "ns/op": {
+          "median": 11360187.0,
+          "min": 11209381.0,
+          "max": 11641762.0
+        },
+        "B/op": {
+          "median": 28384548.5,
+          "min": 28384548.0,
+          "max": 28384550.0
+        },
+        "allocs/op": {
+          "median": 76.0,
+          "min": 76.0,
+          "max": 76.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 87055673.0,
+          "min": 86349566.0,
+          "max": 90798937.0
+        },
+        "B/op": {
+          "median": 61336388.0,
+          "min": 61041284.0,
+          "max": 61533124.0
+        },
+        "allocs/op": {
+          "median": 1535839.0,
+          "min": 1535827.0,
+          "max": 1535847.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 82678052.0,
+          "min": 81298940.0,
+          "max": 92598450.0
+        },
+        "B/op": {
+          "median": 60837454.0,
+          "min": 60591568.0,
+          "max": 61132592.0
+        },
+        "allocs/op": {
+          "median": 1498387.5,
+          "min": 1498378.0,
+          "max": 1498400.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/large_output": {
+        "ns/op": {
+          "median": 138606992.5,
+          "min": 136328827.0,
+          "max": 141907072.0
+        },
+        "B/op": {
+          "median": 88661896.0,
+          "min": 88465188.0,
+          "max": 89808972.0
+        },
+        "allocs/op": {
+          "median": 1929061.5,
+          "min": 1929054.0,
+          "max": 1929080.0
+        }
+      },
+      "BenchmarkJavaScript/Eval": {
+        "ns/op": {
+          "median": 1052366.0,
+          "min": 1043904.0,
+          "max": 1078318.0
+        },
+        "B/op": {
+          "median": 2371296.5,
+          "min": 2371149.0,
+          "max": 2371418.0
+        },
+        "allocs/op": {
+          "median": 1752.0,
+          "min": 1752.0,
+          "max": 1753.0
+        }
+      },
+      "BenchmarkJavaScript/EvalJSON": {
+        "ns/op": {
+          "median": 1049396.5,
+          "min": 1026073.0,
+          "max": 1089353.0
+        },
+        "B/op": {
+          "median": 2377434.0,
+          "min": 2377431.0,
+          "max": 2377591.0
+        },
+        "allocs/op": {
+          "median": 1881.0,
+          "min": 1881.0,
+          "max": 1881.0
+        }
+      },
+      "BenchmarkJavaScript/PreparedFallback": {
+        "ns/op": {
+          "median": 1061053.0,
+          "min": 1050408.0,
+          "max": 1089873.0
+        },
+        "B/op": {
+          "median": 2374346.0,
+          "min": 2374296.0,
+          "max": 2374516.0
+        },
+        "allocs/op": {
+          "median": 1812.0,
+          "min": 1812.0,
+          "max": 1812.0
+        }
+      }
+    },
+    "go127-nojsonv2": {
+      "BenchmarkJSONAPI/1KiB/decode": {
+        "ns/op": {
+          "median": 25222.5,
+          "min": 25186.0,
+          "max": 25316.0
+        },
+        "B/op": {
+          "median": 19024.0,
+          "min": 19024.0,
+          "max": 19024.0
+        },
+        "allocs/op": {
+          "median": 485.0,
+          "min": 485.0,
+          "max": 485.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/encode": {
+        "ns/op": {
+          "median": 11765.0,
+          "min": 11620.0,
+          "max": 11883.0
+        },
+        "B/op": {
+          "median": 6856.0,
+          "min": 6856.0,
+          "max": 6856.0
+        },
+        "allocs/op": {
+          "median": 106.0,
+          "min": 106.0,
+          "max": 106.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare": {
+        "ns/op": {
+          "median": 4608.0,
+          "min": 4548.0,
+          "max": 4775.0
+        },
+        "B/op": {
+          "median": 9696.0,
+          "min": 9696.0,
+          "max": 9696.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 43657.5,
+          "min": 43550.0,
+          "max": 44611.0
+        },
+        "B/op": {
+          "median": 32827.0,
+          "min": 32827.0,
+          "max": 32827.0
+        },
+        "allocs/op": {
+          "median": 758.0,
+          "min": 758.0,
+          "max": 758.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 40570.0,
+          "min": 40530.0,
+          "max": 40644.0
+        },
+        "B/op": {
+          "median": 32179.0,
+          "min": 32179.0,
+          "max": 32179.0
+        },
+        "allocs/op": {
+          "median": 740.0,
+          "min": 740.0,
+          "max": 740.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/large_output": {
+        "ns/op": {
+          "median": 65914.0,
+          "min": 65645.0,
+          "max": 66943.0
+        },
+        "B/op": {
+          "median": 45820.0,
+          "min": 45820.0,
+          "max": 45820.0
+        },
+        "allocs/op": {
+          "median": 934.0,
+          "min": 934.0,
+          "max": 934.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N1": {
+        "ns/op": {
+          "median": 580.05,
+          "min": 576.5,
+          "max": 605.3
+        },
+        "B/op": {
+          "median": 424.0,
+          "min": 424.0,
+          "max": 424.0
+        },
+        "allocs/op": {
+          "median": 9.0,
+          "min": 9.0,
+          "max": 9.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 5261.0,
+          "min": 5237.0,
+          "max": 5300.0
+        },
+        "B/op": {
+          "median": 10120.0,
+          "min": 10120.0,
+          "max": 10120.0
+        },
+        "allocs/op": {
+          "median": 28.0,
+          "min": 28.0,
+          "max": 28.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7434.5,
+          "min": 7415.0,
+          "max": 7629.0
+        },
+        "B/op": {
+          "median": 1912.0,
+          "min": 1912.0,
+          "max": 1912.0
+        },
+        "allocs/op": {
+          "median": 131.0,
+          "min": 131.0,
+          "max": 131.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 12389.5,
+          "min": 12330.0,
+          "max": 12594.0
+        },
+        "B/op": {
+          "median": 11609.0,
+          "min": 11609.0,
+          "max": 11609.0
+        },
+        "allocs/op": {
+          "median": 150.0,
+          "min": 150.0,
+          "max": 150.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N64": {
+        "ns/op": {
+          "median": 29157.0,
+          "min": 29033.0,
+          "max": 29794.0
+        },
+        "B/op": {
+          "median": 6904.0,
+          "min": 6904.0,
+          "max": 6904.0
+        },
+        "allocs/op": {
+          "median": 515.0,
+          "min": 515.0,
+          "max": 515.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 34501.0,
+          "min": 34416.0,
+          "max": 35136.0
+        },
+        "B/op": {
+          "median": 16601.0,
+          "min": 16601.0,
+          "max": 16601.0
+        },
+        "allocs/op": {
+          "median": 534.0,
+          "min": 534.0,
+          "max": 534.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 22240.5,
+          "min": 22221.0,
+          "max": 22422.0
+        },
+        "B/op": {
+          "median": 25466.0,
+          "min": 25466.0,
+          "max": 25466.0
+        },
+        "allocs/op": {
+          "median": 413.0,
+          "min": 413.0,
+          "max": 413.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/decode": {
+        "ns/op": {
+          "median": 72461.0,
+          "min": 71967.0,
+          "max": 72587.0
+        },
+        "B/op": {
+          "median": 70355.0,
+          "min": 70355.0,
+          "max": 70355.0
+        },
+        "allocs/op": {
+          "median": 488.0,
+          "min": 488.0,
+          "max": 488.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/encode": {
+        "ns/op": {
+          "median": 34567.5,
+          "min": 34269.0,
+          "max": 34742.0
+        },
+        "B/op": {
+          "median": 14025.0,
+          "min": 14025.0,
+          "max": 14025.0
+        },
+        "allocs/op": {
+          "median": 106.0,
+          "min": 106.0,
+          "max": 106.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare": {
+        "ns/op": {
+          "median": 9231.5,
+          "min": 9194.0,
+          "max": 9305.0
+        },
+        "B/op": {
+          "median": 16864.0,
+          "min": 16864.0,
+          "max": 16864.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 109640.0,
+          "min": 109295.0,
+          "max": 109735.0
+        },
+        "B/op": {
+          "median": 84160.0,
+          "min": 84160.0,
+          "max": 84160.0
+        },
+        "allocs/op": {
+          "median": 761.0,
+          "min": 761.0,
+          "max": 761.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 106226.5,
+          "min": 106149.0,
+          "max": 106486.0
+        },
+        "B/op": {
+          "median": 83512.0,
+          "min": 83512.0,
+          "max": 83512.0
+        },
+        "allocs/op": {
+          "median": 743.0,
+          "min": 743.0,
+          "max": 743.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/large_output": {
+        "ns/op": {
+          "median": 171986.5,
+          "min": 171812.0,
+          "max": 172457.0
+        },
+        "B/op": {
+          "median": 104322.0,
+          "min": 104322.0,
+          "max": 104322.0
+        },
+        "allocs/op": {
+          "median": 937.0,
+          "min": 937.0,
+          "max": 937.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N1": {
+        "ns/op": {
+          "median": 579.4000000000001,
+          "min": 578.3,
+          "max": 580.5
+        },
+        "B/op": {
+          "median": 424.0,
+          "min": 424.0,
+          "max": 424.0
+        },
+        "allocs/op": {
+          "median": 9.0,
+          "min": 9.0,
+          "max": 9.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 9900.0,
+          "min": 9875.0,
+          "max": 9920.0
+        },
+        "B/op": {
+          "median": 17288.0,
+          "min": 17288.0,
+          "max": 17288.0
+        },
+        "allocs/op": {
+          "median": 28.0,
+          "min": 28.0,
+          "max": 28.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7424.0,
+          "min": 7395.0,
+          "max": 7615.0
+        },
+        "B/op": {
+          "median": 1912.0,
+          "min": 1912.0,
+          "max": 1912.0
+        },
+        "allocs/op": {
+          "median": 131.0,
+          "min": 131.0,
+          "max": 131.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 17041.0,
+          "min": 16969.0,
+          "max": 17226.0
+        },
+        "B/op": {
+          "median": 18777.0,
+          "min": 18777.0,
+          "max": 18777.0
+        },
+        "allocs/op": {
+          "median": 150.0,
+          "min": 150.0,
+          "max": 150.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N64": {
+        "ns/op": {
+          "median": 29099.0,
+          "min": 29016.0,
+          "max": 29786.0
+        },
+        "B/op": {
+          "median": 6904.0,
+          "min": 6904.0,
+          "max": 6904.0
+        },
+        "allocs/op": {
+          "median": 515.0,
+          "min": 515.0,
+          "max": 515.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 39105.5,
+          "min": 38872.0,
+          "max": 39777.0
+        },
+        "B/op": {
+          "median": 23770.0,
+          "min": 23770.0,
+          "max": 23770.0
+        },
+        "allocs/op": {
+          "median": 534.0,
+          "min": 534.0,
+          "max": 534.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 24224.5,
+          "min": 24200.0,
+          "max": 24463.0
+        },
+        "B/op": {
+          "median": 40572.0,
+          "min": 40572.0,
+          "max": 40572.0
+        },
+        "allocs/op": {
+          "median": 413.0,
+          "min": 413.0,
+          "max": 413.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/decode": {
+        "ns/op": {
+          "median": 437808.5,
+          "min": 434296.0,
+          "max": 438818.0
+        },
+        "B/op": {
+          "median": 471784.0,
+          "min": 471784.0,
+          "max": 471785.0
+        },
+        "allocs/op": {
+          "median": 491.0,
+          "min": 491.0,
+          "max": 491.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/encode": {
+        "ns/op": {
+          "median": 215200.0,
+          "min": 214274.0,
+          "max": 215386.0
+        },
+        "B/op": {
+          "median": 71375.0,
+          "min": 71375.0,
+          "max": 71375.0
+        },
+        "allocs/op": {
+          "median": 106.0,
+          "min": 106.0,
+          "max": 106.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare": {
+        "ns/op": {
+          "median": 46299.0,
+          "min": 45794.0,
+          "max": 46852.0
+        },
+        "B/op": {
+          "median": 74208.0,
+          "min": 74208.0,
+          "max": 74208.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 621251.0,
+          "min": 619960.0,
+          "max": 622984.0
+        },
+        "B/op": {
+          "median": 485612.5,
+          "min": 485612.0,
+          "max": 485613.0
+        },
+        "allocs/op": {
+          "median": 764.0,
+          "min": 764.0,
+          "max": 764.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 616584.0,
+          "min": 612588.0,
+          "max": 625906.0
+        },
+        "B/op": {
+          "median": 484964.0,
+          "min": 484964.0,
+          "max": 484964.0
+        },
+        "allocs/op": {
+          "median": 746.0,
+          "min": 746.0,
+          "max": 746.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/large_output": {
+        "ns/op": {
+          "median": 1000059.5,
+          "min": 998219.0,
+          "max": 1005204.0
+        },
+        "B/op": {
+          "median": 563126.0,
+          "min": 563126.0,
+          "max": 563126.0
+        },
+        "allocs/op": {
+          "median": 940.0,
+          "min": 940.0,
+          "max": 940.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N1": {
+        "ns/op": {
+          "median": 580.25,
+          "min": 578.2,
+          "max": 580.8
+        },
+        "B/op": {
+          "median": 424.0,
+          "min": 424.0,
+          "max": 424.0
+        },
+        "allocs/op": {
+          "median": 9.0,
+          "min": 9.0,
+          "max": 9.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 47069.0,
+          "min": 46693.0,
+          "max": 47383.0
+        },
+        "B/op": {
+          "median": 74635.5,
+          "min": 74635.0,
+          "max": 74636.0
+        },
+        "allocs/op": {
+          "median": 28.0,
+          "min": 28.0,
+          "max": 28.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7498.5,
+          "min": 7423.0,
+          "max": 7646.0
+        },
+        "B/op": {
+          "median": 1912.0,
+          "min": 1912.0,
+          "max": 1912.0
+        },
+        "allocs/op": {
+          "median": 131.0,
+          "min": 131.0,
+          "max": 131.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 53961.5,
+          "min": 53675.0,
+          "max": 54081.0
+        },
+        "B/op": {
+          "median": 76128.0,
+          "min": 76128.0,
+          "max": 76128.0
+        },
+        "allocs/op": {
+          "median": 150.0,
+          "min": 150.0,
+          "max": 150.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N64": {
+        "ns/op": {
+          "median": 28926.5,
+          "min": 28875.0,
+          "max": 29863.0
+        },
+        "B/op": {
+          "median": 6904.0,
+          "min": 6904.0,
+          "max": 6904.0
+        },
+        "allocs/op": {
+          "median": 515.0,
+          "min": 515.0,
+          "max": 515.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 76404.5,
+          "min": 76008.0,
+          "max": 80509.0
+        },
+        "B/op": {
+          "median": 81120.0,
+          "min": 81120.0,
+          "max": 81120.0
+        },
+        "allocs/op": {
+          "median": 534.0,
+          "min": 534.0,
+          "max": 534.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 36244.5,
+          "min": 36092.0,
+          "max": 36491.0
+        },
+        "B/op": {
+          "median": 155272.0,
+          "min": 155271.0,
+          "max": 155272.0
+        },
+        "allocs/op": {
+          "median": 413.0,
+          "min": 413.0,
+          "max": 413.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/decode": {
+        "ns/op": {
+          "median": 47454181.0,
+          "min": 47035132.0,
+          "max": 47933930.0
+        },
+        "B/op": {
+          "median": 32495826.0,
+          "min": 32495792.0,
+          "max": 32495830.0
+        },
+        "allocs/op": {
+          "median": 1029890.0,
+          "min": 1029890.0,
+          "max": 1029890.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/encode": {
+        "ns/op": {
+          "median": 19934667.0,
+          "min": 19674051.0,
+          "max": 20193637.0
+        },
+        "B/op": {
+          "median": 12658795.5,
+          "min": 12647129.0,
+          "max": 12670448.0
+        },
+        "allocs/op": {
+          "median": 205987.0,
+          "min": 205986.0,
+          "max": 205987.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/prepare": {
+        "ns/op": {
+          "median": 11139114.0,
+          "min": 10810420.0,
+          "max": 11581217.0
+        },
+        "B/op": {
+          "median": 28384548.0,
+          "min": 28384548.0,
+          "max": 28384549.0
+        },
+        "allocs/op": {
+          "median": 76.0,
+          "min": 76.0,
+          "max": 76.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 83321405.5,
+          "min": 82788322.0,
+          "max": 86417546.0
+        },
+        "B/op": {
+          "median": 61287208.0,
+          "min": 60942972.0,
+          "max": 61434756.0
+        },
+        "allocs/op": {
+          "median": 1535837.0,
+          "min": 1535823.0,
+          "max": 1535843.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 78874771.0,
+          "min": 78535054.0,
+          "max": 80714018.0
+        },
+        "B/op": {
+          "median": 60862046.0,
+          "min": 60640800.0,
+          "max": 61083448.0
+        },
+        "allocs/op": {
+          "median": 1498389.0,
+          "min": 1498381.0,
+          "max": 1498399.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/large_output": {
+        "ns/op": {
+          "median": 132377237.5,
+          "min": 125132864.0,
+          "max": 133560163.0
+        },
+        "B/op": {
+          "median": 89563018.0,
+          "min": 88809420.0,
+          "max": 89710636.0
+        },
+        "allocs/op": {
+          "median": 1929070.0,
+          "min": 1929067.0,
+          "max": 1929077.0
+        }
+      },
+      "BenchmarkJavaScript/Eval": {
+        "ns/op": {
+          "median": 1056898.5,
+          "min": 1042111.0,
+          "max": 1075796.0
+        },
+        "B/op": {
+          "median": 2371298.0,
+          "min": 2371250.0,
+          "max": 2371503.0
+        },
+        "allocs/op": {
+          "median": 1752.0,
+          "min": 1752.0,
+          "max": 1752.0
+        }
+      },
+      "BenchmarkJavaScript/EvalJSON": {
+        "ns/op": {
+          "median": 1048913.0,
+          "min": 1039641.0,
+          "max": 1062209.0
+        },
+        "B/op": {
+          "median": 2377499.5,
+          "min": 2377433.0,
+          "max": 2377563.0
+        },
+        "allocs/op": {
+          "median": 1881.0,
+          "min": 1881.0,
+          "max": 1881.0
+        }
+      },
+      "BenchmarkJavaScript/PreparedFallback": {
+        "ns/op": {
+          "median": 1045574.0,
+          "min": 1023574.0,
+          "max": 1066321.0
+        },
+        "B/op": {
+          "median": 2374528.5,
+          "min": 2374362.0,
+          "max": 2374608.0
+        },
+        "allocs/op": {
+          "median": 1812.0,
+          "min": 1812.0,
+          "max": 1812.0
+        }
+      }
+    },
+    "go127": {
+      "BenchmarkJSONAPI/1KiB/decode": {
+        "ns/op": {
+          "median": 15639.0,
+          "min": 15607.0,
+          "max": 15703.0
+        },
+        "B/op": {
+          "median": 14008.0,
+          "min": 14008.0,
+          "max": 14008.0
+        },
+        "allocs/op": {
+          "median": 247.0,
+          "min": 247.0,
+          "max": 247.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/encode": {
+        "ns/op": {
+          "median": 11132.0,
+          "min": 11112.0,
+          "max": 11257.0
+        },
+        "B/op": {
+          "median": 5161.0,
+          "min": 5161.0,
+          "max": 5161.0
+        },
+        "allocs/op": {
+          "median": 60.0,
+          "min": 60.0,
+          "max": 60.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare": {
+        "ns/op": {
+          "median": 4649.0,
+          "min": 4633.0,
+          "max": 4656.0
+        },
+        "B/op": {
+          "median": 9696.0,
+          "min": 9696.0,
+          "max": 9696.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 34126.5,
+          "min": 34044.0,
+          "max": 34701.0
+        },
+        "B/op": {
+          "median": 27842.0,
+          "min": 27842.0,
+          "max": 27842.0
+        },
+        "allocs/op": {
+          "median": 523.0,
+          "min": 523.0,
+          "max": 523.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 31087.5,
+          "min": 31013.0,
+          "max": 31135.0
+        },
+        "B/op": {
+          "median": 27234.0,
+          "min": 27234.0,
+          "max": 27234.0
+        },
+        "allocs/op": {
+          "median": 505.0,
+          "min": 505.0,
+          "max": 505.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/large_output": {
+        "ns/op": {
+          "median": 56238.5,
+          "min": 56106.0,
+          "max": 56325.0
+        },
+        "B/op": {
+          "median": 39112.5,
+          "min": 39112.0,
+          "max": 39113.0
+        },
+        "allocs/op": {
+          "median": 658.0,
+          "min": 658.0,
+          "max": 658.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N1": {
+        "ns/op": {
+          "median": 617.95,
+          "min": 617.6,
+          "max": 623.9
+        },
+        "B/op": {
+          "median": 432.0,
+          "min": 432.0,
+          "max": 432.0
+        },
+        "allocs/op": {
+          "median": 10.0,
+          "min": 10.0,
+          "max": 10.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 5338.5,
+          "min": 5322.0,
+          "max": 5361.0
+        },
+        "B/op": {
+          "median": 10128.0,
+          "min": 10128.0,
+          "max": 10128.0
+        },
+        "allocs/op": {
+          "median": 29.0,
+          "min": 29.0,
+          "max": 29.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7825.5,
+          "min": 7788.0,
+          "max": 7874.0
+        },
+        "B/op": {
+          "median": 1976.0,
+          "min": 1976.0,
+          "max": 1976.0
+        },
+        "allocs/op": {
+          "median": 139.0,
+          "min": 139.0,
+          "max": 139.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 12921.5,
+          "min": 12898.0,
+          "max": 12941.0
+        },
+        "B/op": {
+          "median": 11673.0,
+          "min": 11673.0,
+          "max": 11673.0
+        },
+        "allocs/op": {
+          "median": 158.0,
+          "min": 158.0,
+          "max": 158.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N64": {
+        "ns/op": {
+          "median": 30744.0,
+          "min": 30666.0,
+          "max": 30894.0
+        },
+        "B/op": {
+          "median": 7160.0,
+          "min": 7160.0,
+          "max": 7160.0
+        },
+        "allocs/op": {
+          "median": 547.0,
+          "min": 547.0,
+          "max": 547.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 36155.5,
+          "min": 36043.0,
+          "max": 36315.0
+        },
+        "B/op": {
+          "median": 16857.0,
+          "min": 16857.0,
+          "max": 16857.0
+        },
+        "allocs/op": {
+          "median": 566.0,
+          "min": 566.0,
+          "max": 566.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 22607.0,
+          "min": 22530.0,
+          "max": 22700.0
+        },
+        "B/op": {
+          "median": 25530.0,
+          "min": 25530.0,
+          "max": 25530.0
+        },
+        "allocs/op": {
+          "median": 421.0,
+          "min": 421.0,
+          "max": 421.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/decode": {
+        "ns/op": {
+          "median": 47765.5,
+          "min": 47625.0,
+          "max": 47790.0
+        },
+        "B/op": {
+          "median": 51002.0,
+          "min": 51002.0,
+          "max": 51002.0
+        },
+        "allocs/op": {
+          "median": 250.0,
+          "min": 250.0,
+          "max": 250.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/encode": {
+        "ns/op": {
+          "median": 33822.0,
+          "min": 33756.0,
+          "max": 33844.0
+        },
+        "B/op": {
+          "median": 12330.0,
+          "min": 12330.0,
+          "max": 12330.0
+        },
+        "allocs/op": {
+          "median": 60.0,
+          "min": 60.0,
+          "max": 60.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare": {
+        "ns/op": {
+          "median": 9304.0,
+          "min": 9278.0,
+          "max": 9349.0
+        },
+        "B/op": {
+          "median": 16864.0,
+          "min": 16864.0,
+          "max": 16864.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 83648.5,
+          "min": 83558.0,
+          "max": 84058.0
+        },
+        "B/op": {
+          "median": 64838.0,
+          "min": 64838.0,
+          "max": 64838.0
+        },
+        "allocs/op": {
+          "median": 526.0,
+          "min": 526.0,
+          "max": 526.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 80541.0,
+          "min": 80437.0,
+          "max": 80755.0
+        },
+        "B/op": {
+          "median": 64230.0,
+          "min": 64230.0,
+          "max": 64230.0
+        },
+        "allocs/op": {
+          "median": 508.0,
+          "min": 508.0,
+          "max": 508.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/large_output": {
+        "ns/op": {
+          "median": 146654.5,
+          "min": 146078.0,
+          "max": 146920.0
+        },
+        "B/op": {
+          "median": 92436.5,
+          "min": 92436.0,
+          "max": 92437.0
+        },
+        "allocs/op": {
+          "median": 666.0,
+          "min": 666.0,
+          "max": 666.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N1": {
+        "ns/op": {
+          "median": 617.4,
+          "min": 616.2,
+          "max": 618.7
+        },
+        "B/op": {
+          "median": 432.0,
+          "min": 432.0,
+          "max": 432.0
+        },
+        "allocs/op": {
+          "median": 10.0,
+          "min": 10.0,
+          "max": 10.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 9976.5,
+          "min": 9952.0,
+          "max": 10017.0
+        },
+        "B/op": {
+          "median": 17296.0,
+          "min": 17296.0,
+          "max": 17296.0
+        },
+        "allocs/op": {
+          "median": 29.0,
+          "min": 29.0,
+          "max": 29.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7834.5,
+          "min": 7805.0,
+          "max": 7872.0
+        },
+        "B/op": {
+          "median": 1976.0,
+          "min": 1976.0,
+          "max": 1976.0
+        },
+        "allocs/op": {
+          "median": 139.0,
+          "min": 139.0,
+          "max": 139.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 17546.5,
+          "min": 17509.0,
+          "max": 17586.0
+        },
+        "B/op": {
+          "median": 18841.0,
+          "min": 18841.0,
+          "max": 18841.0
+        },
+        "allocs/op": {
+          "median": 158.0,
+          "min": 158.0,
+          "max": 158.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N64": {
+        "ns/op": {
+          "median": 30603.0,
+          "min": 30547.0,
+          "max": 30689.0
+        },
+        "B/op": {
+          "median": 7160.0,
+          "min": 7160.0,
+          "max": 7160.0
+        },
+        "allocs/op": {
+          "median": 547.0,
+          "min": 547.0,
+          "max": 547.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 40969.0,
+          "min": 40723.0,
+          "max": 41039.0
+        },
+        "B/op": {
+          "median": 24026.0,
+          "min": 24026.0,
+          "max": 24026.0
+        },
+        "allocs/op": {
+          "median": 566.0,
+          "min": 566.0,
+          "max": 566.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 24549.5,
+          "min": 24511.0,
+          "max": 25163.0
+        },
+        "B/op": {
+          "median": 40636.0,
+          "min": 40636.0,
+          "max": 40636.0
+        },
+        "allocs/op": {
+          "median": 421.0,
+          "min": 421.0,
+          "max": 421.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/decode": {
+        "ns/op": {
+          "median": 290880.5,
+          "min": 290280.0,
+          "max": 293384.0
+        },
+        "B/op": {
+          "median": 337737.0,
+          "min": 337737.0,
+          "max": 337738.0
+        },
+        "allocs/op": {
+          "median": 253.0,
+          "min": 253.0,
+          "max": 253.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/encode": {
+        "ns/op": {
+          "median": 211217.5,
+          "min": 209943.0,
+          "max": 213292.0
+        },
+        "B/op": {
+          "median": 69688.0,
+          "min": 69688.0,
+          "max": 69688.0
+        },
+        "allocs/op": {
+          "median": 60.0,
+          "min": 60.0,
+          "max": 60.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare": {
+        "ns/op": {
+          "median": 47563.0,
+          "min": 46867.0,
+          "max": 47859.0
+        },
+        "B/op": {
+          "median": 74208.0,
+          "min": 74208.0,
+          "max": 74208.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 468767.5,
+          "min": 466635.0,
+          "max": 470717.0
+        },
+        "B/op": {
+          "median": 351589.0,
+          "min": 351589.0,
+          "max": 351590.0
+        },
+        "allocs/op": {
+          "median": 529.0,
+          "min": 529.0,
+          "max": 529.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 467104.5,
+          "min": 465533.0,
+          "max": 476783.0
+        },
+        "B/op": {
+          "median": 350981.0,
+          "min": 350981.0,
+          "max": 350981.0
+        },
+        "allocs/op": {
+          "median": 511.0,
+          "min": 511.0,
+          "max": 511.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/large_output": {
+        "ns/op": {
+          "median": 857424.0,
+          "min": 854571.0,
+          "max": 860946.0
+        },
+        "B/op": {
+          "median": 493947.0,
+          "min": 493945.0,
+          "max": 493947.0
+        },
+        "allocs/op": {
+          "median": 670.0,
+          "min": 670.0,
+          "max": 670.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N1": {
+        "ns/op": {
+          "median": 617.3499999999999,
+          "min": 616.8,
+          "max": 626.0
+        },
+        "B/op": {
+          "median": 432.0,
+          "min": 432.0,
+          "max": 432.0
+        },
+        "allocs/op": {
+          "median": 10.0,
+          "min": 10.0,
+          "max": 10.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 49055.5,
+          "min": 48731.0,
+          "max": 49293.0
+        },
+        "B/op": {
+          "median": 74643.0,
+          "min": 74643.0,
+          "max": 74643.0
+        },
+        "allocs/op": {
+          "median": 29.0,
+          "min": 29.0,
+          "max": 29.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7810.0,
+          "min": 7674.0,
+          "max": 7910.0
+        },
+        "B/op": {
+          "median": 1976.0,
+          "min": 1976.0,
+          "max": 1976.0
+        },
+        "allocs/op": {
+          "median": 139.0,
+          "min": 139.0,
+          "max": 139.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 56163.0,
+          "min": 55783.0,
+          "max": 56556.0
+        },
+        "B/op": {
+          "median": 76192.0,
+          "min": 76192.0,
+          "max": 76192.0
+        },
+        "allocs/op": {
+          "median": 158.0,
+          "min": 158.0,
+          "max": 158.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N64": {
+        "ns/op": {
+          "median": 30863.0,
+          "min": 30444.0,
+          "max": 31138.0
+        },
+        "B/op": {
+          "median": 7160.0,
+          "min": 7160.0,
+          "max": 7160.0
+        },
+        "allocs/op": {
+          "median": 547.0,
+          "min": 547.0,
+          "max": 547.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 80124.5,
+          "min": 79647.0,
+          "max": 84668.0
+        },
+        "B/op": {
+          "median": 81376.0,
+          "min": 81376.0,
+          "max": 81376.0
+        },
+        "allocs/op": {
+          "median": 566.0,
+          "min": 566.0,
+          "max": 566.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 36784.0,
+          "min": 36574.0,
+          "max": 38950.0
+        },
+        "B/op": {
+          "median": 155336.0,
+          "min": 155336.0,
+          "max": 155336.0
+        },
+        "allocs/op": {
+          "median": 421.0,
+          "min": 421.0,
+          "max": 421.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/decode": {
+        "ns/op": {
+          "median": 27237345.0,
+          "min": 27034120.0,
+          "max": 27506666.0
+        },
+        "B/op": {
+          "median": 21412866.0,
+          "min": 21412866.0,
+          "max": 21412866.0
+        },
+        "allocs/op": {
+          "median": 486888.0,
+          "min": 486888.0,
+          "max": 486888.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/encode": {
+        "ns/op": {
+          "median": 18226302.0,
+          "min": 18028705.0,
+          "max": 18878876.0
+        },
+        "B/op": {
+          "median": 9125369.0,
+          "min": 9125369.0,
+          "max": 9125369.0
+        },
+        "allocs/op": {
+          "median": 93648.0,
+          "min": 93648.0,
+          "max": 93648.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/prepare": {
+        "ns/op": {
+          "median": 10969117.5,
+          "min": 10718077.0,
+          "max": 11191362.0
+        },
+        "B/op": {
+          "median": 28384548.0,
+          "min": 28384548.0,
+          "max": 28384549.0
+        },
+        "allocs/op": {
+          "median": 76.0,
+          "min": 76.0,
+          "max": 76.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 64992778.0,
+          "min": 63332474.0,
+          "max": 66547331.0
+        },
+        "B/op": {
+          "median": 50188041.0,
+          "min": 50040426.0,
+          "max": 50433898.0
+        },
+        "allocs/op": {
+          "median": 992837.0,
+          "min": 992830.0,
+          "max": 992846.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 59435065.5,
+          "min": 58033133.0,
+          "max": 61061387.0
+        },
+        "B/op": {
+          "median": 49836575.5,
+          "min": 49590757.0,
+          "max": 49951338.0
+        },
+        "allocs/op": {
+          "median": 955391.0,
+          "min": 955382.0,
+          "max": 955396.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/large_output": {
+        "ns/op": {
+          "median": 108675572.0,
+          "min": 104082536.0,
+          "max": 111559048.0
+        },
+        "B/op": {
+          "median": 77927278.0,
+          "min": 77632180.0,
+          "max": 78074828.0
+        },
+        "allocs/op": {
+          "median": 1292473.5,
+          "min": 1292461.0,
+          "max": 1292480.0
+        }
+      },
+      "BenchmarkJavaScript/Eval": {
+        "ns/op": {
+          "median": 1063472.0,
+          "min": 1040681.0,
+          "max": 1065339.0
+        },
+        "B/op": {
+          "median": 2370386.5,
+          "min": 2370323.0,
+          "max": 2370476.0
+        },
+        "allocs/op": {
+          "median": 1738.0,
+          "min": 1738.0,
+          "max": 1738.0
+        }
+      },
+      "BenchmarkJavaScript/EvalJSON": {
+        "ns/op": {
+          "median": 1051202.0,
+          "min": 1034473.0,
+          "max": 1065770.0
+        },
+        "B/op": {
+          "median": 2375871.5,
+          "min": 2375815.0,
+          "max": 2376038.0
+        },
+        "allocs/op": {
+          "median": 1848.0,
+          "min": 1848.0,
+          "max": 1848.0
+        }
+      },
+      "BenchmarkJavaScript/PreparedFallback": {
+        "ns/op": {
+          "median": 1066498.0,
+          "min": 1048643.0,
+          "max": 1088911.0
+        },
+        "B/op": {
+          "median": 2373500.0,
+          "min": 2373474.0,
+          "max": 2373686.0
+        },
+        "allocs/op": {
+          "median": 1798.0,
+          "min": 1798.0,
+          "max": 1798.0
+        }
+      }
+    },
+    "go127-jsontext": {
+      "BenchmarkJSONAPI/1KiB/decode": {
+        "ns/op": {
+          "median": 13761.5,
+          "min": 13723.0,
+          "max": 13898.0
+        },
+        "B/op": {
+          "median": 12368.0,
+          "min": 12368.0,
+          "max": 12368.0
+        },
+        "allocs/op": {
+          "median": 167.0,
+          "min": 167.0,
+          "max": 167.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/encode": {
+        "ns/op": {
+          "median": 11345.5,
+          "min": 11298.0,
+          "max": 11396.0
+        },
+        "B/op": {
+          "median": 5161.0,
+          "min": 5161.0,
+          "max": 5161.0
+        },
+        "allocs/op": {
+          "median": 60.0,
+          "min": 60.0,
+          "max": 60.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare": {
+        "ns/op": {
+          "median": 4613.5,
+          "min": 4594.0,
+          "max": 4645.0
+        },
+        "B/op": {
+          "median": 9696.0,
+          "min": 9696.0,
+          "max": 9696.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 32089.0,
+          "min": 32025.0,
+          "max": 32274.0
+        },
+        "B/op": {
+          "median": 26194.0,
+          "min": 26194.0,
+          "max": 26194.0
+        },
+        "allocs/op": {
+          "median": 443.0,
+          "min": 443.0,
+          "max": 443.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 29249.0,
+          "min": 29106.0,
+          "max": 29482.0
+        },
+        "B/op": {
+          "median": 25586.0,
+          "min": 25586.0,
+          "max": 25586.0
+        },
+        "allocs/op": {
+          "median": 425.0,
+          "min": 425.0,
+          "max": 425.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/large_output": {
+        "ns/op": {
+          "median": 54434.0,
+          "min": 54337.0,
+          "max": 56083.0
+        },
+        "B/op": {
+          "median": 37472.0,
+          "min": 37472.0,
+          "max": 37472.0
+        },
+        "allocs/op": {
+          "median": 578.0,
+          "min": 578.0,
+          "max": 578.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N1": {
+        "ns/op": {
+          "median": 624.5,
+          "min": 621.8,
+          "max": 627.5
+        },
+        "B/op": {
+          "median": 432.0,
+          "min": 432.0,
+          "max": 432.0
+        },
+        "allocs/op": {
+          "median": 10.0,
+          "min": 10.0,
+          "max": 10.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 5328.5,
+          "min": 5304.0,
+          "max": 5353.0
+        },
+        "B/op": {
+          "median": 10128.0,
+          "min": 10128.0,
+          "max": 10128.0
+        },
+        "allocs/op": {
+          "median": 29.0,
+          "min": 29.0,
+          "max": 29.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7895.0,
+          "min": 7772.0,
+          "max": 7933.0
+        },
+        "B/op": {
+          "median": 1976.0,
+          "min": 1976.0,
+          "max": 1976.0
+        },
+        "allocs/op": {
+          "median": 139.0,
+          "min": 139.0,
+          "max": 139.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 12889.0,
+          "min": 12862.0,
+          "max": 12969.0
+        },
+        "B/op": {
+          "median": 11673.0,
+          "min": 11673.0,
+          "max": 11673.0
+        },
+        "allocs/op": {
+          "median": 158.0,
+          "min": 158.0,
+          "max": 158.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse/N64": {
+        "ns/op": {
+          "median": 30813.0,
+          "min": 30680.0,
+          "max": 31026.0
+        },
+        "B/op": {
+          "median": 7160.0,
+          "min": 7160.0,
+          "max": 7160.0
+        },
+        "allocs/op": {
+          "median": 547.0,
+          "min": 547.0,
+          "max": 547.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 36105.0,
+          "min": 36084.0,
+          "max": 36305.0
+        },
+        "B/op": {
+          "median": 16857.0,
+          "min": 16857.0,
+          "max": 16857.0
+        },
+        "allocs/op": {
+          "median": 566.0,
+          "min": 566.0,
+          "max": 566.0
+        }
+      },
+      "BenchmarkJSONAPI/1KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 22705.5,
+          "min": 22623.0,
+          "max": 22780.0
+        },
+        "B/op": {
+          "median": 25530.0,
+          "min": 25530.0,
+          "max": 25530.0
+        },
+        "allocs/op": {
+          "median": 421.0,
+          "min": 421.0,
+          "max": 421.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/decode": {
+        "ns/op": {
+          "median": 43784.5,
+          "min": 43705.0,
+          "max": 44215.0
+        },
+        "B/op": {
+          "median": 41810.0,
+          "min": 41810.0,
+          "max": 41810.0
+        },
+        "allocs/op": {
+          "median": 170.0,
+          "min": 170.0,
+          "max": 170.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/encode": {
+        "ns/op": {
+          "median": 34499.0,
+          "min": 34367.0,
+          "max": 34710.0
+        },
+        "B/op": {
+          "median": 12330.0,
+          "min": 12330.0,
+          "max": 12330.0
+        },
+        "allocs/op": {
+          "median": 60.0,
+          "min": 60.0,
+          "max": 60.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare": {
+        "ns/op": {
+          "median": 9299.0,
+          "min": 9266.0,
+          "max": 9474.0
+        },
+        "B/op": {
+          "median": 16864.0,
+          "min": 16864.0,
+          "max": 16864.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 80069.0,
+          "min": 79907.0,
+          "max": 80179.0
+        },
+        "B/op": {
+          "median": 55637.0,
+          "min": 55637.0,
+          "max": 55637.0
+        },
+        "allocs/op": {
+          "median": 446.0,
+          "min": 446.0,
+          "max": 446.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 77653.5,
+          "min": 77251.0,
+          "max": 77945.0
+        },
+        "B/op": {
+          "median": 55029.0,
+          "min": 55029.0,
+          "max": 55029.0
+        },
+        "allocs/op": {
+          "median": 428.0,
+          "min": 428.0,
+          "max": 428.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/large_output": {
+        "ns/op": {
+          "median": 144381.0,
+          "min": 144139.0,
+          "max": 145085.0
+        },
+        "B/op": {
+          "median": 83243.0,
+          "min": 83242.0,
+          "max": 83243.0
+        },
+        "allocs/op": {
+          "median": 586.0,
+          "min": 586.0,
+          "max": 586.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N1": {
+        "ns/op": {
+          "median": 625.9,
+          "min": 620.7,
+          "max": 660.8
+        },
+        "B/op": {
+          "median": 432.0,
+          "min": 432.0,
+          "max": 432.0
+        },
+        "allocs/op": {
+          "median": 10.0,
+          "min": 10.0,
+          "max": 10.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 9971.0,
+          "min": 9961.0,
+          "max": 10425.0
+        },
+        "B/op": {
+          "median": 17296.0,
+          "min": 17296.0,
+          "max": 17296.0
+        },
+        "allocs/op": {
+          "median": 29.0,
+          "min": 29.0,
+          "max": 29.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7894.5,
+          "min": 7861.0,
+          "max": 7918.0
+        },
+        "B/op": {
+          "median": 1976.0,
+          "min": 1976.0,
+          "max": 1976.0
+        },
+        "allocs/op": {
+          "median": 139.0,
+          "min": 139.0,
+          "max": 139.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 17575.5,
+          "min": 17512.0,
+          "max": 17614.0
+        },
+        "B/op": {
+          "median": 18841.0,
+          "min": 18841.0,
+          "max": 18841.0
+        },
+        "allocs/op": {
+          "median": 158.0,
+          "min": 158.0,
+          "max": 158.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse/N64": {
+        "ns/op": {
+          "median": 30729.0,
+          "min": 30658.0,
+          "max": 30937.0
+        },
+        "B/op": {
+          "median": 7160.0,
+          "min": 7160.0,
+          "max": 7160.0
+        },
+        "allocs/op": {
+          "median": 547.0,
+          "min": 547.0,
+          "max": 547.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 40829.5,
+          "min": 40796.0,
+          "max": 41408.0
+        },
+        "B/op": {
+          "median": 24026.0,
+          "min": 24026.0,
+          "max": 24026.0
+        },
+        "allocs/op": {
+          "median": 566.0,
+          "min": 566.0,
+          "max": 566.0
+        }
+      },
+      "BenchmarkJSONAPI/8KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 24748.5,
+          "min": 24599.0,
+          "max": 24957.0
+        },
+        "B/op": {
+          "median": 40636.0,
+          "min": 40636.0,
+          "max": 40636.0
+        },
+        "allocs/op": {
+          "median": 421.0,
+          "min": 421.0,
+          "max": 421.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/decode": {
+        "ns/op": {
+          "median": 269538.5,
+          "min": 268835.0,
+          "max": 271239.0
+        },
+        "B/op": {
+          "median": 271198.0,
+          "min": 271198.0,
+          "max": 271198.0
+        },
+        "allocs/op": {
+          "median": 173.0,
+          "min": 173.0,
+          "max": 173.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/encode": {
+        "ns/op": {
+          "median": 215958.5,
+          "min": 215095.0,
+          "max": 221070.0
+        },
+        "B/op": {
+          "median": 69688.0,
+          "min": 69688.0,
+          "max": 69689.0
+        },
+        "allocs/op": {
+          "median": 60.0,
+          "min": 60.0,
+          "max": 60.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare": {
+        "ns/op": {
+          "median": 46756.0,
+          "min": 45909.0,
+          "max": 47290.0
+        },
+        "B/op": {
+          "median": 74208.0,
+          "min": 74208.0,
+          "max": 74208.0
+        },
+        "allocs/op": {
+          "median": 19.0,
+          "min": 19.0,
+          "max": 19.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 449047.0,
+          "min": 446870.0,
+          "max": 477181.0
+        },
+        "B/op": {
+          "median": 285038.0,
+          "min": 285038.0,
+          "max": 285039.0
+        },
+        "allocs/op": {
+          "median": 449.0,
+          "min": 449.0,
+          "max": 449.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 447867.5,
+          "min": 444201.0,
+          "max": 459224.0
+        },
+        "B/op": {
+          "median": 284430.0,
+          "min": 284430.0,
+          "max": 284431.0
+        },
+        "allocs/op": {
+          "median": 431.0,
+          "min": 431.0,
+          "max": 431.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/large_output": {
+        "ns/op": {
+          "median": 839936.5,
+          "min": 837537.0,
+          "max": 843575.0
+        },
+        "B/op": {
+          "median": 427393.5,
+          "min": 427392.0,
+          "max": 427395.0
+        },
+        "allocs/op": {
+          "median": 590.0,
+          "min": 590.0,
+          "max": 590.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N1": {
+        "ns/op": {
+          "median": 624.8,
+          "min": 622.1,
+          "max": 629.0
+        },
+        "B/op": {
+          "median": 432.0,
+          "min": 432.0,
+          "max": 432.0
+        },
+        "allocs/op": {
+          "median": 10.0,
+          "min": 10.0,
+          "max": 10.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N1": {
+        "ns/op": {
+          "median": 48643.5,
+          "min": 47176.0,
+          "max": 49084.0
+        },
+        "B/op": {
+          "median": 74643.0,
+          "min": 74643.0,
+          "max": 74643.0
+        },
+        "allocs/op": {
+          "median": 29.0,
+          "min": 29.0,
+          "max": 29.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N16": {
+        "ns/op": {
+          "median": 7722.5,
+          "min": 7703.0,
+          "max": 7932.0
+        },
+        "B/op": {
+          "median": 1976.0,
+          "min": 1976.0,
+          "max": 1976.0
+        },
+        "allocs/op": {
+          "median": 139.0,
+          "min": 139.0,
+          "max": 139.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N16": {
+        "ns/op": {
+          "median": 56365.0,
+          "min": 54631.0,
+          "max": 56560.0
+        },
+        "B/op": {
+          "median": 76192.0,
+          "min": 76192.0,
+          "max": 76192.0
+        },
+        "allocs/op": {
+          "median": 158.0,
+          "min": 158.0,
+          "max": 158.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse/N64": {
+        "ns/op": {
+          "median": 30824.5,
+          "min": 30666.0,
+          "max": 30948.0
+        },
+        "B/op": {
+          "median": 7160.0,
+          "min": 7160.0,
+          "max": 7160.0
+        },
+        "allocs/op": {
+          "median": 547.0,
+          "min": 547.0,
+          "max": 547.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/prepare_batch/N64": {
+        "ns/op": {
+          "median": 79992.5,
+          "min": 78704.0,
+          "max": 81877.0
+        },
+        "B/op": {
+          "median": 81376.0,
+          "min": 81376.0,
+          "max": 81376.0
+        },
+        "allocs/op": {
+          "median": 566.0,
+          "min": 566.0,
+          "max": 566.0
+        }
+      },
+      "BenchmarkJSONAPI/64KiB/reuse_mixed/N16": {
+        "ns/op": {
+          "median": 36826.5,
+          "min": 36646.0,
+          "max": 37609.0
+        },
+        "B/op": {
+          "median": 155335.5,
+          "min": 155335.0,
+          "max": 155336.0
+        },
+        "allocs/op": {
+          "median": 421.0,
+          "min": 421.0,
+          "max": 421.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/decode": {
+        "ns/op": {
+          "median": 24353975.0,
+          "min": 23736457.0,
+          "max": 24624001.0
+        },
+        "B/op": {
+          "median": 19168262.5,
+          "min": 19168259.0,
+          "max": 19168283.0
+        },
+        "allocs/op": {
+          "median": 318364.0,
+          "min": 318364.0,
+          "max": 318364.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/encode": {
+        "ns/op": {
+          "median": 18821120.5,
+          "min": 17951461.0,
+          "max": 18915355.0
+        },
+        "B/op": {
+          "median": 9198135.0,
+          "min": 9125369.0,
+          "max": 9198212.0
+        },
+        "allocs/op": {
+          "median": 93648.0,
+          "min": 93648.0,
+          "max": 93649.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/prepare": {
+        "ns/op": {
+          "median": 10869001.0,
+          "min": 10744511.0,
+          "max": 11531520.0
+        },
+        "B/op": {
+          "median": 28384549.0,
+          "min": 28384549.0,
+          "max": 28384550.0
+        },
+        "allocs/op": {
+          "median": 76.0,
+          "min": 76.0,
+          "max": 76.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/eval_json/jsonata": {
+        "ns/op": {
+          "median": 60734829.0,
+          "min": 59073663.0,
+          "max": 62330376.0
+        },
+        "B/op": {
+          "median": 47943384.0,
+          "min": 47730162.0,
+          "max": 48025538.0
+        },
+        "allocs/op": {
+          "median": 824312.5,
+          "min": 824302.0,
+          "max": 824317.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/eval_json/jsonpath": {
+        "ns/op": {
+          "median": 55141629.5,
+          "min": 53881693.0,
+          "max": 55421934.0
+        },
+        "B/op": {
+          "median": 47493415.5,
+          "min": 47280290.0,
+          "max": 47706448.0
+        },
+        "allocs/op": {
+          "median": 786861.0,
+          "min": 786852.0,
+          "max": 786868.0
+        }
+      },
+      "BenchmarkJSONAPI/array1MiB/large_output": {
+        "ns/op": {
+          "median": 100401418.0,
+          "min": 99039997.0,
+          "max": 102283026.0
+        },
+        "B/op": {
+          "median": 75805556.0,
+          "min": 75436536.0,
+          "max": 75928544.0
+        },
+        "allocs/op": {
+          "median": 1123952.0,
+          "min": 1123935.0,
+          "max": 1123959.0
+        }
+      },
+      "BenchmarkJavaScript/Eval": {
+        "ns/op": {
+          "median": 1048408.5,
+          "min": 1043420.0,
+          "max": 1075851.0
+        },
+        "B/op": {
+          "median": 2370136.5,
+          "min": 2370105.0,
+          "max": 2370308.0
+        },
+        "allocs/op": {
+          "median": 1734.0,
+          "min": 1734.0,
+          "max": 1734.0
+        }
+      },
+      "BenchmarkJavaScript/EvalJSON": {
+        "ns/op": {
+          "median": 1055995.5,
+          "min": 1024535.0,
+          "max": 1078171.0
+        },
+        "B/op": {
+          "median": 2375527.0,
+          "min": 2375426.0,
+          "max": 2375600.0
+        },
+        "allocs/op": {
+          "median": 1836.0,
+          "min": 1836.0,
+          "max": 1836.0
+        }
+      },
+      "BenchmarkJavaScript/PreparedFallback": {
+        "ns/op": {
+          "median": 1052923.0,
+          "min": 1042860.0,
+          "max": 1063262.0
+        },
+        "B/op": {
+          "median": 2373422.0,
+          "min": 2373378.0,
+          "max": 2373594.0
+        },
+        "allocs/op": {
+          "median": 1794.0,
+          "min": 1794.0,
+          "max": 1795.0
+        }
+      }
+    }
+  },
+  "peak_rss_bytes": {
+    "go126": {
+      "native": [
+        149921792,
+        153042944,
+        150638592,
+        148041728,
+        147742720,
+        139255808
+      ],
+      "javascript": [
+        131715072,
+        130551808,
+        126922752,
+        112939008,
+        129081344,
+        121802752
+      ]
+    },
+    "go127-nojsonv2": {
+      "native": [
+        157450240,
+        148631552,
+        158527488,
+        140107776,
+        151924736,
+        137572352
+      ],
+      "javascript": [
+        136278016,
+        147316736,
+        132644864,
+        143134720,
+        124956672,
+        149037056
+      ]
+    },
+    "go127": {
+      "native": [
+        125394944,
+        134090752,
+        131272704,
+        131772416,
+        120573952,
+        122114048
+      ],
+      "javascript": [
+        129761280,
+        137334784,
+        146448384,
+        132362240,
+        141819904,
+        120762368
+      ]
+    },
+    "go127-jsontext": {
+      "native": [
+        133431296,
+        137076736,
+        135286784,
+        133160960,
+        134545408,
+        137351168
+      ],
+      "javascript": [
+        133955584,
+        132907008,
+        141590528,
+        127156224,
+        135528448,
+        129118208
+      ]
+    }
+  }
+}

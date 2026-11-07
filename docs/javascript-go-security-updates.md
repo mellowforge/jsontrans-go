@@ -1,8 +1,8 @@
 # Go dependency security updates
 
 Reviewed **2026-11-04**, on `codex/go-security-updates`, based on merged PR #11
-(`f5c53c4652151eda8c5c939c29fd74754b15edcc`). This implements PR A of the
-[remediation plan](superpowers/plans/2026-11-03-javascript-security-remediation.md).
+(`f5c53c4652151eda8c5c939c29fd74754b15edcc`). This records the Go dependency
+remediation following the [JavaScript security review](javascript-security-review.md).
 The [2026-11-03 audit](javascript-security-review.md) remains a historical record.
 **The JavaScript module remains a preview: its embedded QuickJS pin still blocks
 production release.** No release or terminal-error contract change is included.
