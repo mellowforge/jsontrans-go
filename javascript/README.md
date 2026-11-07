@@ -33,8 +33,10 @@ and cache resources. Programs cannot be used after closure; errors.Is finds
 ErrClosed and context cancellation through registry/JSON/prepared/batch helpers.
 The root `EvalPreparedJSON` and `Batch.EvalPreparedJSON` helpers also work with
 compiled JavaScript programs, through detached materialization and the same
-fresh-runtime profile. They require a core version providing those APIs; the
-adapter's existing minimum dependency does not include them. See
+fresh-runtime profile. They require core v1.2.0 or the
+[verified merged commit](../docs/releases/v1.2.0.md#install) before publication;
+the adapter's existing minimum dependency does not include them. JavaScript
+v1.0.0 works with the new core without an adapter upgrade. See
 [prepared JSON results](../docs/prepared-json-results.md).
 
 ```go

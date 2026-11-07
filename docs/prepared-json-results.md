@@ -1,5 +1,8 @@
 # Prepared JSON results
 
+Introduced in core [v1.2.0](releases/v1.2.0.md). The release notes include
+installation from the verified merged commit before the tag is published.
+
 The root package adds two byte-result entry points alongside the existing
 `Eval`, `EvalJSON`, `EvalPrepared`, and `Batch.EvalPrepared` APIs:
 
