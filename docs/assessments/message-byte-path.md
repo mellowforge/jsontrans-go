@@ -1,5 +1,12 @@
 # Fresh-message byte-path experiment
 
+**Follow-up (2026-11-07):** The proposed byte-result helpers are implemented as
+public `EvalPreparedJSON` and `Batch.EvalPreparedJSON`. The
+[final NATS validation](../benchmarks/message-nats-public-api-2026-11-07/README.md)
+exercises those APIs and records 486 valid cases, including single-rule and
+fan-out routes. The sections below retain the original prototype's source,
+measurements and recommendations.
+
 Date: 2026-11-06. Native measurements ran first on Bertram (Ubuntu24.04,
 amd64/i9-13900K), then the NATS/Testcontainers phase. Production APIs, decoder
 defaults and execution profiles remain unchanged. Both one transformation and

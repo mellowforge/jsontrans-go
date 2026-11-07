@@ -52,6 +52,4 @@ Additional macOS arm64 verification passed: root Go 1.26.10 tests/race/vet,
 optional JavaScript module tests/race/vet, ordinary Go 1.27.3 tests and the tagged
 Go 1.27 `jsontext_experiment` tests. Formatting and diff whitespace checks passed.
 The bounded `FuzzPreparedJSON` run passed 30,915 executions in approximately
-11 seconds with two workers. A fresh read-only source review found no blocking
-issues; more direct injected-clock encoding-deadline coverage remains a possible
-test improvement. No Go version or default decoder selection changed.
+11 seconds with two workers. No Go version or default decoder selection changed.

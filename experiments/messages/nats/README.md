@@ -31,6 +31,10 @@ message's timed processing window. Reports identify these entry points with
 Historical reports from 2026-11-06 used the earlier internal encoding prototype
 and retain their original source identities.
 
+The [2026-11-07 public API validation](../../../docs/benchmarks/message-nats-public-api-2026-11-07/README.md)
+records the completed three-round run, full counters, limitations and native
+Go 1.26/1.27 checks.
+
 Cases: JSONata scalar, JSONata object, and eight mixed JSONata/JSONPath routes
 covering scalar/object/array/bindings/host functions; fan-out1/4/16, workers1/4/8,
 paced offered rates1000/5000 inputs/sec. Default3 rounds rotate case/strategy order;
