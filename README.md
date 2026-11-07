@@ -15,8 +15,9 @@ function expressions without adding JavaScript dependencies to the native engine
 Compile an expression once, prepare a document once, and reuse them wherever
 your application needs to evaluate JSON rules.
 
-> **Status:** Native processors are available in
-> [v1.1.0](https://github.com/mellowforge/jsontrans-go/releases/tag/v1.1.0).
+> **Versions:** [Core v1.2.0 release notes](docs/releases/v1.2.0.md) cover the new
+> prepared JSON-result APIs. See [published releases](https://github.com/mellowforge/jsontrans-go/releases)
+> for available tags and the release notes for installation before publication.
 > The optional JavaScript processor is approved for production in
 > [javascript/v1.0.0](javascript/README.md). See the
 > [compatibility policy](docs/compatibility.md) for coverage and documented differences.
@@ -71,6 +72,8 @@ go get github.com/mellowforge/jsontrans-go
 
 The root package is named `jsontrans`. Built-in processors live in the
 `jsonpath` and `jsonata` subpackages.
+The prepared JSON-result helpers require core v1.2.0 or the
+[verified merged commit](docs/releases/v1.2.0.md#install) before that tag is published.
 
 ## Quick start
 
@@ -270,6 +273,7 @@ batches, host functions, and JSONata's raw-value API.
 
 ## Explore further
 
+- [Core v1.2.0 release notes](docs/releases/v1.2.0.md)
 - [Runnable basic example](examples/basic/main.go)
 - [Prepared-document example](examples/prepared/main.go)
 - [Prepared JSON-result example](examples/prepared-json/main.go)

@@ -18,6 +18,11 @@ requires Go 1.26 and does not bundle JavaScript. The independently versioned
 its [restricted execution profile](javascript-execution-contract.md) and
 [platform policy](javascript-production-readiness.md).
 
+Core [v1.2.0](releases/v1.2.0.md) introduces the prepared JSON-result helpers and
+optional adapter limit-support declarations while preserving these language
+targets and the Go 1.26 minimum. The release notes include merged-commit
+installation instructions until the stable tag is published.
+
 Pinned suites execute both ordinary evaluation and prepared evaluation for
 every representable JSON input. JSONata fixtures with undefined input retain the
 raw API because undefined is not a JSON document. The Node comparison also runs
