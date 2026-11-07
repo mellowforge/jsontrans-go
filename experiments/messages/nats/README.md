@@ -23,6 +23,14 @@ copied at enqueue so asynchronous workers own them. Worker scratch is local.
 Correlation headers are not passed to expressions; bindings in mixed routes are
 static route-local fixture metadata, not variable per-message headers.
 
+The message worker now calls public `jsontrans.EvalPreparedJSON` for the
+`prepared` strategy and `Batch.EvalPreparedJSON` for `batch`; `direct` retains
+precompiled `jsontrans.EvalJSON`. Preparation and encoding remain inside each
+message's timed processing window. Reports identify these entry points with
+`api_profile: public-prepared-json-v1` and an `entry_points` map in metadata.
+Historical reports from 2026-11-06 used the earlier internal encoding prototype
+and retain their original source identities.
+
 Cases: JSONata scalar, JSONata object, and eight mixed JSONata/JSONPath routes
 covering scalar/object/array/bindings/host functions; fan-out1/4/16, workers1/4/8,
 paced offered rates1000/5000 inputs/sec. Default3 rounds rotate case/strategy order;

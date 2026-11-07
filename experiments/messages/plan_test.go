@@ -117,19 +117,59 @@ func TestByteStrategiesPreserveNativeErrorAndBindings(t *testing.T) {
 	wg.Wait()
 }
 
-func TestWorkerReleasesIntermediateTrees(t *testing.T) {
+func TestWorkerReusesDestinationWithoutOverwritingRetainedBytes(t *testing.T) {
 	p, err := NewPlan(context.Background(), Config{Engine: "jsonata", Expressions: []string{"$"}})
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer p.Close()
-	worker := p.NewWorker()
-	if _, err = worker.Eval(context.Background(), []byte(`{"x":[1,2]}`), Batched); err != nil {
+	for _, strategy := range Strategies {
+		worker := p.NewWorker()
+		first, err := worker.Eval(context.Background(), []byte(`{"x":[1,2]}`), strategy)
+		if err != nil {
+			t.Fatal(err)
+		}
+		retained := first[0].Value
+		before := string(retained)
+		second, err := worker.Eval(context.Background(), []byte(`{"x":[3]}`), strategy)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if &first[0] != &second[0] {
+			t.Fatalf("%s did not reuse destination", strategy)
+		}
+		second[0].Value[0] = 'x'
+		if string(retained) != before {
+			t.Fatalf("%s overwrote retained bytes", strategy)
+		}
+	}
+}
+
+func TestBatchWorkerPreservesPublicOutputDiagnosticsAndRecovers(t *testing.T) {
+	p, err := NewPlan(context.Background(), Config{
+		Engine: "jsonata", Expressions: []string{"x", "x"},
+		Options: jt.EvalOptions{Limits: &jt.Limits{MaxOutputBytes: 15}},
+	})
+	if err != nil {
 		t.Fatal(err)
 	}
-	for _, v := range worker.values {
+	defer p.Close()
+	w := p.NewWorker()
+	// Each escaped string encodes to eight bytes. The second result crosses the
+	// aggregate limit while remaining within its independent expression limit.
+	out, err := w.Eval(context.Background(), []byte(`{"x":"<"}`), Batched)
+	var batch *jt.BatchError
+	var diagnostic *jt.Error
+	if out != nil || !errors.Is(err, jt.ErrLimit) || !errors.As(err, &batch) || batch.Index != 1 || !errors.As(err, &diagnostic) || diagnostic.Phase != jt.PhaseOutput || diagnostic.Processor != "jsonata" {
+		t.Fatalf("public batch output diagnostic lost: results=%+v error=%v", out, err)
+	}
+	for _, v := range w.out {
 		if v.Defined || v.Value != nil {
-			t.Fatal("worker retained intermediate Go tree after encoding")
+			t.Fatal("worker retained partial output")
 		}
+	}
+	out, err = w.Eval(context.Background(), []byte(`{"x":1}`), Batched)
+	if err != nil || len(out) != 2 || string(out[0].Value) != "1" || string(out[1].Value) != "1" {
+		t.Fatalf("recovery: %+v %v", out, err)
 	}
 }

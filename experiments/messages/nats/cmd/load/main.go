@@ -48,6 +48,12 @@ func run() (returned error) {
 		return err
 	}
 	metadata := map[string]any{"image": *image, "container_id": broker.Container.GetContainerID(), "broker_cpus": *brokerCPUs, "broker_memory_bytes": 512 << 20, "client_affinity": "external driver pins performance cores", "go": runtime.Version(), "rounds": *rounds, "duration": duration.String(), "completed": false, "load": "paced deterministic arrivals; all completed-output percentiles exclude rejected/failed inputs; loss counters retained", "mode": "Core NATS, no persistence, TLS or acknowledgements; trace/debug disabled"}
+	metadata["api_profile"] = "public-prepared-json-v1"
+	metadata["entry_points"] = map[string]string{
+		"direct":   "jsontrans.EvalJSON",
+		"prepared": "jsontrans.EvalPreparedJSON",
+		"batch":    "Batch.EvalPreparedJSON",
+	}
 	if info, ok := debug.ReadBuildInfo(); ok {
 		metadata["build_info"] = info
 	}

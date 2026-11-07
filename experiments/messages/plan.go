@@ -1,5 +1,5 @@
 // Package messages contains development-only byte-to-byte experiment helpers.
-// It does not change the production processor or JSON APIs.
+// It exercises production APIs without changing processor behavior or defaults.
 package messages
 
 import (
@@ -45,9 +45,8 @@ type Plan struct {
 // Worker is local to a goroutine. The returned result slice is reused at its next
 // Eval; JSON byte buffers themselves own storage and are never overwritten.
 type Worker struct {
-	plan   *Plan
-	out    []jt.JSONResult
-	values []jt.Result
+	plan *Plan
+	out  []jt.JSONResult
 }
 
 func NewPlan(ctx context.Context, c Config) (p *Plan, err error) {
@@ -166,7 +165,7 @@ func NewPlan(ctx context.Context, c Config) (p *Plan, err error) {
 }
 func (p *Plan) Close() error { return p.closeFn() }
 func (p *Plan) NewWorker() *Worker {
-	return &Worker{plan: p, out: make([]jt.JSONResult, len(p.programs)), values: make([]jt.Result, len(p.programs))}
+	return &Worker{plan: p, out: make([]jt.JSONResult, len(p.programs))}
 }
 
 func (w *Worker) Eval(ctx context.Context, raw []byte, s Strategy) (out []jt.JSONResult, err error) {
@@ -181,7 +180,6 @@ func (w *Worker) Eval(ctx context.Context, raw []byte, s Strategy) (out []jt.JSO
 	defer scope.Close()
 	clear(w.out)
 	defer func() {
-		clear(w.values)
 		if err != nil {
 			clear(w.out)
 			out = nil
@@ -200,10 +198,16 @@ func (w *Worker) Eval(ctx context.Context, raw []byte, s Strategy) (out []jt.JSO
 			return nil, err
 		}
 		if s == Batched {
-			w.values, err = p.batch.EvalPrepared(scope.Context(), doc, w.values, p.options)
+			var results []jt.JSONResult
+			results, err = p.batch.EvalPreparedJSON(scope.Context(), doc, w.out, p.options)
 			if err != nil {
 				return nil, err
 			}
+			w.out = results
+			if err = scope.Check(); err != nil {
+				return nil, err
+			}
+			return w.out, nil
 		}
 	}
 	used := 0
@@ -215,22 +219,7 @@ func (w *Worker) Eval(ctx context.Context, raw []byte, s Strategy) (out []jt.JSO
 		if s == Direct {
 			r, err = jt.EvalJSON(scope.Context(), program, raw, p.options)
 		} else {
-			var value jt.Result
-			if s == Prepared {
-				value, err = jt.EvalPrepared(scope.Context(), program, doc, p.options)
-			} else {
-				value = w.values[i]
-			}
-			if err == nil && value.Defined {
-				limit := scope.Limits.MaxOutputBytes
-				scope.Limits.MaxOutputBytes = limit - used
-				r.Value, err = jsonvalue.Encode(value.Value, scope)
-				scope.Limits.MaxOutputBytes = limit
-				r.Defined = err == nil
-				if err != nil {
-					err = fmt.Errorf("%w: %w", jt.ErrConversion, err)
-				}
-			}
+			r, err = jt.EvalPreparedJSON(scope.Context(), program, doc, p.options)
 		}
 		if err != nil {
 			return nil, fmt.Errorf("expression %d: %w", i, err)

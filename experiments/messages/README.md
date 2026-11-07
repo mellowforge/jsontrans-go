@@ -1,25 +1,28 @@
 # Fresh-message byte-to-byte experiment
 
-Development-only module. Production JSON APIs and backends are unchanged.
+Development-only module exercising the production JSON APIs. Backends and
+production defaults are unchanged.
 
 `Plan` compiles subject-specific transformations once. Each `Worker.Eval` accepts
 fresh JSON bytes and returns owned JSON output bytes for every defined result:
 
 - `direct`: independent precompiled EvalJSON calls.
-- `prepared`: one PrepareJSON, individual EvalPrepared calls, bounded encoding.
-- `batch`: one PrepareJSON, Batch.EvalPrepared, bounded encoding of every result.
+- `prepared`: one PrepareJSON, individual public EvalPreparedJSON calls.
+- `batch`: one PrepareJSON, public Batch.EvalPreparedJSON.
 
 All variants have a common per-message deadline and aggregate encoded-output cap,
 plus the engines' existing per-expression limits. Actual work counters differ
-between strategies. The adapter is an experiment, not a proposed production API.
+between strategies. The Plan/Worker wrapper remains an experiment; prepared
+evaluation and encoding now use the public production helpers.
 Failures return no outputs; missing and null remain distinct. Transform atomicity
 does not imply transactional delivery of multiple NATS publications.
 
 Compiled plans are immutable and shared; each worker owns scratch/destinations.
 The returned result slice is reused at the worker's next Eval. JSON byte buffers
 own storage and are not overwritten. Close plans after workers finish. No worker
-or JavaScript guest pooling changes are made. Intermediate Go results are cleared
-after encoding. JavaScript initialization/compilation gets a 30-second setup
+or JavaScript guest pooling changes are made. Workers retain JSON-result scratch
+only, without an additional slice of intermediate Go results. JavaScript
+initialization/compilation gets a 30-second setup
 budget for cold/race builds; per-evaluation timeout is restored to one second
 through a supported option, with all other execution controls unchanged.
 
@@ -87,3 +90,8 @@ hard memory guarantee. No NATS broker is involved in these native profiles.
 A later nested `nats` module owns Testcontainers/client dependencies and the real
 message transport/load harness. It is deliberately separate from native timing
 and from the production library's module graph.
+
+The original 2026-11-06 measurements used Go-result helpers followed by an
+internal encoder. Keep those reports associated with their original source.
+New NATS reports identify the public helper entry points in `metadata.json`;
+their execution scopes and allocation costs need not match the old prototype.
