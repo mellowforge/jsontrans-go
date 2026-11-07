@@ -1,6 +1,7 @@
 # Project instructions
 
 - Use Context7 for current dependency and library documentation.
+- Keep agent specs, implementation plans, progress ledgers and review scratch local and ignored; do not commit process artifacts. Commit maintained library documentation and relevant reproducible verification evidence.
 - Module: `github.com/mellowforge/jsontrans-go`; package: `jsontrans`; Go 1.26 or newer; MIT license.
 - Implement JSONPath RFC 9535 and JSONata 2.2.2 natively. Do not depend on complete JSONPath/JSONata engines. Embedded JavaScript is permitted in the separately optional `javascript` processor module; `experiments/javascript` retains development-only comparison backends. JSONPath and JSONata remain native. The optional JavaScript module is approved for production under `docs/javascript-production-readiness.md`; preserve its supported execution profile and module-specific versioning. Focused pure Go utilities are allowed.
 - Keep processor adapters public, registration explicit and instance-local, and language-specific syntax and runtime values inside each engine.

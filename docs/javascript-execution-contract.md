@@ -155,7 +155,6 @@ cross-host reproducibility protect the embedded boundary.
 See the [upgrade and terminal-error record](javascript-quickjs-upgrade.md) for
 the source patch, security evidence, measurements and remaining release gates.
 
-See the editable [processor architecture atlas](https://www.figma.com/board/lTXgmGOWS3Hmh6IQzzmMmB),
-[approved design](superpowers/specs/2026-11-03-javascript-contract-diagnostics-design.md),
-[implementation plan](superpowers/plans/2026-11-03-javascript-contract-diagnostics.md),
+See the [processor architecture atlas](processor-architecture.md),
+[production acceptance record](javascript-production-readiness.md),
 and [assessment commands](../experiments/javascript/README.md).

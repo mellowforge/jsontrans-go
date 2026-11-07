@@ -1,5 +1,8 @@
 .DS_Store
 .superpowers/
+/docs/superpowers/
+/docs/progress.md
+/progress.md
 .serena/
 .worktrees/
 coverage.out

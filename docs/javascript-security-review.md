@@ -218,6 +218,7 @@ requires a new review. No third-party issue/report was filed by this work.
 4. Pass the full native and JS gates, remeasure, complete longer deployment
    soaks and choose a reporting route before a separately approved release.
 
-The concrete [upgrade implementation plan](superpowers/plans/2026-11-03-javascript-security-remediation.md)
-keeps these changes reviewable. No dependency upgrade or terminal-error behavior
-change is silently included in this audit PR.
+The subsequent [Go dependency updates](javascript-go-security-updates.md) and
+[QuickJS upgrade record](javascript-quickjs-upgrade.md) document the implemented
+remediation. No dependency upgrade or terminal-error behavior change was
+included in this historical audit PR.
