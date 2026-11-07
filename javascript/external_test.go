@@ -42,6 +42,32 @@ func TestPublicProcessorRegistry(t *testing.T) {
 	if err != nil || results[0].Value != json.Number("5") {
 		t.Fatalf("batch: %+v %v", results, err)
 	}
+	encoded, err := jt.EvalPreparedJSON(ctx, p, doc, o)
+	if err != nil || !encoded.Defined || string(encoded.Value) != "5" {
+		t.Fatalf("prepared JSON: %+v %v", encoded, err)
+	}
+	bytes, err := batch.EvalPreparedJSON(ctx, doc, nil, o)
+	if err != nil || len(bytes) != 1 || string(bytes[0].Value) != "5" {
+		t.Fatalf("batch JSON: %+v %v", bytes, err)
+	}
+	for _, expression := range []string{`()=>undefined`, `()=>null`} {
+		value, err := e.Compile(ctx, expression)
+		if err != nil {
+			t.Fatal(err)
+		}
+		r, err := jt.EvalPreparedJSON(ctx, value, doc, o)
+		if err != nil || (expression == `()=>undefined` && (r.Defined || r.Value != nil)) || (expression == `()=>null` && (!r.Defined || string(r.Value) != "null")) {
+			t.Fatalf("%s: %+v %v", expression, r, err)
+		}
+	}
+	unsupported := jt.EvalOptions{Limits: &jt.Limits{MaxSteps: 1}}
+	if _, err := jt.EvalPreparedJSON(ctx, p, doc, unsupported); !errors.Is(err, jt.ErrUnsupported) {
+		t.Fatalf("prepared JSON unsupported limits: %v", err)
+	}
+	dst := []jt.JSONResult{{Value: json.RawMessage(`"unchanged"`), Defined: true}}
+	if _, err := batch.EvalPreparedJSON(ctx, doc, dst, unsupported); !errors.Is(err, jt.ErrUnsupported) || string(dst[0].Value) != `"unchanged"` {
+		t.Fatalf("batch JSON preflight: %+v %v", dst, err)
+	}
 	bad, err := e.Compile(ctx, `()=>{throw new TypeError('sentinel')}`)
 	if err != nil {
 		t.Fatal(err)

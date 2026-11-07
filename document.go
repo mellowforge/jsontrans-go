@@ -69,6 +69,7 @@ type preparedEntry struct {
 	customized  bool
 	reuseBudget bool
 	unsupported LimitSet
+	jsonOutput  bool // local dispatch copy: classify boundary conversion as output
 }
 
 func newPreparedEntry(p Program) (preparedEntry, error) {
@@ -195,6 +196,9 @@ func (e *preparedEntry) evalExternal(ctx context.Context, d *Document, o EvalOpt
 	}
 	r.Value, size, err = jsonvalue.CloneDetachedSize(r.Value, &local, l.MaxOutputBytes)
 	if err != nil {
+		if e.jsonOutput {
+			return Result{}, 0, preparedJSONError(e.name, errors.Join(ErrConversion, err))
+		}
 		return Result{}, 0, errors.Join(ErrConversion, err)
 	}
 	if err = local.Check(); err != nil {

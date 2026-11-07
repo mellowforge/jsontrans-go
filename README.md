@@ -155,6 +155,31 @@ Batch errors identify the first failing expression through `BatchError.Index`.
 Errors that apply to the whole call, such as invalid options, are returned
 directly.
 
+For message handlers that need JSON bytes for publishing or storage, use the
+additive prepared JSON-result APIs. Compile programs once at startup, then
+prepare each incoming message once:
+
+```go
+// One transformation selected for this message:
+result, err := jsontrans.EvalPreparedJSON(ctx, program, document, jsontrans.EvalOptions{})
+// Or several transformations over the same message:
+outputs, err := batch.EvalPreparedJSON(ctx, document, nil, jsontrans.EvalOptions{})
+```
+
+Handle errors before using either result. Both APIs return `JSONResult`: a defined
+value owns its encoded JSON bytes, `null` is defined with `Value` equal to `null`,
+and missing has `Defined == false` and nil bytes. Batch encoding shares document
+indexes across expressions and encodes each result before evaluating the next.
+Pass a reusable `[]jsontrans.JSONResult` destination to reuse slice capacity;
+previously returned byte buffers remain independent. There is no zero-allocation
+or zero-copy output guarantee.
+
+Evaluation and encoding share a deadline. A batch additionally limits the sum of
+actual encoded output bytes and returns no partial results on failure. Existing
+Go-value and JSON APIs remain available. See the
+[prepared JSON example](examples/prepared-json/main.go) and
+[execution details](docs/prepared-json-results.md).
+
 ## Performance
 
 The following measurements evaluate **whole batches** of JSONata expressions over a
@@ -229,6 +254,7 @@ batches, host functions, and JSONata's raw-value API.
 
 - [Runnable basic example](examples/basic/main.go)
 - [Prepared-document example](examples/prepared/main.go)
+- [Prepared JSON-result example](examples/prepared-json/main.go)
 - [API reference](https://pkg.go.dev/github.com/mellowforge/jsontrans-go)
 - [Contributing and development commands](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
