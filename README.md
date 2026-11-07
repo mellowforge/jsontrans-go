@@ -22,6 +22,7 @@ your application needs to evaluate JSON rules.
 > [compatibility policy](docs/compatibility.md) for coverage and documented differences.
 
 [Quick start](#quick-start) · [Document reuse](#prepare-once-evaluate-many) ·
+[Use cases and diagrams](docs/use-cases.md) ·
 [Performance](#performance) · [API reference](https://pkg.go.dev/github.com/mellowforge/jsontrans-go)
 
 ## Why jsontrans-go?
@@ -42,6 +43,23 @@ your application needs to evaluate JSON rules.
 | JSONPath | Selecting values from nested documents with paths and filters | RFC 9535 |
 | JSONata | Transformations, calculations, aggregation, and expression-based rules | JSONata 2.2.2 |
 | [JavaScript (optional module)](javascript/README.md) | Synchronous functions over JSON input and bindings | [Restricted execution profile](docs/javascript-execution-contract.md) |
+
+```mermaid
+flowchart TD
+    rules["Expressions"] --> compile["Compile once with a registered processor"]
+    compile --> program["Reusable Program or Batch"]
+    payload["Incoming JSON bytes"] --> prepare["PrepareJSON once per message"]
+    prepare --> document["Immutable Document"]
+    program --> evaluate["EvalPreparedJSON or Batch.EvalPreparedJSON"]
+    document --> evaluate
+    evaluate --> result["Owned JSON results"]
+    result --> application["Application publishes or stores defined results"]
+```
+
+This is the prepared byte-result path. Existing APIs also evaluate Go values or
+fresh JSON bytes directly. The [use-case guide](docs/use-cases.md) shows how to
+choose an API and organize single transformations, fan-out, and concurrent
+message processing.
 
 ## Install
 
@@ -255,6 +273,7 @@ batches, host functions, and JSONata's raw-value API.
 - [Runnable basic example](examples/basic/main.go)
 - [Prepared-document example](examples/prepared/main.go)
 - [Prepared JSON-result example](examples/prepared-json/main.go)
+- [Use cases and Mermaid diagrams](docs/use-cases.md)
 - [API reference](https://pkg.go.dev/github.com/mellowforge/jsontrans-go)
 - [Contributing and development commands](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)

@@ -21,6 +21,9 @@ materialized value. The optional JavaScript processor works through this
 fallback, retaining fresh guest state and its supported execution profile.
 No new adapter methods are required.
 
+See the [use-case guide](use-cases.md) for diagrams and examples of single-message
+transforms, ordered fan-out, concurrent subject routing and mixed processors.
+
 ## Results and ownership
 
 `JSONResult.Value` owns its JSON bytes. A top-level missing result has nil bytes
@@ -36,6 +39,22 @@ it never overwrites an earlier output's backing byte buffer. Retain a copy of a
 later. Returned buffers can be modified without changing the document, another
 result, or future evaluations. Encoding allocates; this API does not promise
 zero-copy or zero-allocation processing.
+
+```mermaid
+flowchart TD
+    call["Prepared JSON-result call"] --> success{"Call succeeded?"}
+    success -->|No| failure["Handle error; batch returns nil results"]
+    success -->|Yes| result["One JSONResult, or each batch entry in order"]
+    result --> defined{"Defined?"}
+    defined -->|No| missing["Missing: nil bytes; application chooses how to handle"]
+    defined -->|Yes| bytes["Owned JSON bytes, including null when defined"]
+    bytes --> consume["Consume, retain or publish bytes"]
+    consume --> reuse["Reuse destination slice only after consuming entries"]
+```
+
+The application may retain an output buffer across destination reuse; each new
+encoded result gets independent storage. Undefined entries remain present in
+the batch slice, so expression indexes stay stable.
 
 ## Limits and errors
 
