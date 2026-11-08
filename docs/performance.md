@@ -1,5 +1,17 @@
 # Performance measurements
 
+## Prepared-result encoding (2026-11-08)
+
+Prepared byte-result calls now reuse validated result sizes and traverse without
+cloning the result tree again. On Bertram with Go 1.27.3, target-1-KiB scalar
+16-rule batches take about 12–14% less time and 63–64 fewer allocations per
+message; object batches improve about 3–6%. Single-rule changes are small.
+Preparation, result ownership, external-adapter validation and cooperative limits
+remain in place. The Go 1.26 control confirms the direction of the gains.
+
+See the [profile and measurement report](benchmarks/prepared-encoding-linux-2026-11-08/README.md)
+for all cases, controls, sample ranges, reproduction commands and verification.
+
 ## Batch setup consolidation (2026-11-03)
 
 The retained experiment combines immutable wrapper/native limit configuration

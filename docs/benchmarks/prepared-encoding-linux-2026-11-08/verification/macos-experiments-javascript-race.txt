@@ -1,0 +1,7 @@
+ok  	github.com/mellowforge/jsontrans-go/experiments/javascript	42.126s
+?   	github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/assess	[no test files]
+?   	github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/bare	[no test files]
+?   	github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/goja-min	[no test files]
+?   	github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/owned-min	[no test files]
+?   	github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/quickjs-min	[no test files]
+ok  	github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat	7.501s

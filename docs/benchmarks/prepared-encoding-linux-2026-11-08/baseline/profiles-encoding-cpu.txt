@@ -1,0 +1,215 @@
+Profile: jsonata-object-N1-prepared.cpu-encoding.txt
+File: messages.test
+Build ID: b2afa741fde0a984697de090f7c80b88e4bfb626
+Type: cpu
+Time: 2026-11-08 13:39:59 +04
+Duration: 2.38s, Total samples = 2.38s (100.05%)
+Active filters:
+   focus=jsonvalue.Encode
+Showing nodes accounting for 0.01s, 0.42% of 2.38s total
+Showing top 15 nodes out of 43
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      0.08s  3.36%  github.com/mellowforge/jsontrans-go.EvalPreparedJSON
+         0     0%     0%      0.08s  3.36%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      0.08s  3.36%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      0.08s  3.36%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%      0.08s  3.36%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode
+         0     0%     0%      0.08s  3.36%  testing.(*B).run1.func1
+         0     0%     0%      0.08s  3.36%  testing.(*B).runN
+         0     0%     0%      0.05s  2.10%  encoding/json.Marshal (inline)
+         0     0%     0%      0.05s  2.10%  encoding/json/v2.Marshal
+         0     0%     0%      0.05s  2.10%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+         0     0%     0%      0.05s  2.10%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Clone
+         0     0%     0%      0.03s  1.26%  encoding/json/v2.marshalEncode
+         0     0%     0%      0.02s  0.84%  encoding/json/jsontext.export.GetBufferedEncoder (inline)
+     0.01s  0.42%  0.42%      0.02s  0.84%  encoding/json/jsontext.getBufferedEncoder
+         0     0%  0.42%      0.02s  0.84%  encoding/json/v2.makeMapArshaler.func2
+
+Profile: jsonata-object-N16-batch.cpu-encoding.txt
+File: messages.test
+Build ID: b2afa741fde0a984697de090f7c80b88e4bfb626
+Type: cpu
+Time: 2026-11-08 13:33:45 +04
+Duration: 2.29s, Total samples = 2.29s (100.21%)
+Active filters:
+   focus=jsonvalue.Encode
+Showing nodes accounting for 0.03s, 1.31% of 2.29s total
+Showing top 15 nodes out of 66
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      0.17s  7.42%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+         0     0%     0%      0.17s  7.42%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      0.17s  7.42%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      0.17s  7.42%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%      0.17s  7.42%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode
+         0     0%     0%      0.17s  7.42%  testing.(*B).run1.func1
+         0     0%     0%      0.17s  7.42%  testing.(*B).runN
+         0     0%     0%      0.13s  5.68%  encoding/json.Marshal (inline)
+         0     0%     0%      0.13s  5.68%  encoding/json/v2.Marshal
+         0     0%     0%      0.10s  4.37%  encoding/json/v2.marshalEncode
+         0     0%     0%      0.09s  3.93%  encoding/json/v2.makeMapArshaler.func2
+     0.01s  0.44%  0.44%      0.06s  2.62%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+         0     0%  0.44%      0.06s  2.62%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Clone
+     0.02s  0.87%  1.31%      0.04s  1.75%  runtime.bulkBarrierPreWrite
+         0     0%  1.31%      0.04s  1.75%  runtime.mallocgc
+
+Profile: jsonata-scalar-N1-prepared.cpu-encoding.txt
+File: messages.test
+Build ID: b2afa741fde0a984697de090f7c80b88e4bfb626
+Type: cpu
+Time: 2026-11-08 13:39:55 +04
+Duration: 2.33s, Total samples = 2320ms (99.69%)
+Active filters:
+   focus=jsonvalue.Encode
+Showing nodes accounting for 0, 0% of 2320ms total
+Showing top 15 nodes out of 52
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      110ms  4.74%  github.com/mellowforge/jsontrans-go.EvalPreparedJSON
+         0     0%     0%      110ms  4.74%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      110ms  4.74%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      110ms  4.74%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%      110ms  4.74%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode
+         0     0%     0%      110ms  4.74%  testing.(*B).run1.func1
+         0     0%     0%      110ms  4.74%  testing.(*B).runN
+         0     0%     0%       80ms  3.45%  encoding/json.Marshal (inline)
+         0     0%     0%       80ms  3.45%  encoding/json/v2.Marshal
+         0     0%     0%       60ms  2.59%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+         0     0%     0%       60ms  2.59%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Clone
+         0     0%     0%       30ms  1.29%  encoding/json/v2.marshalEncode
+         0     0%     0%       30ms  1.29%  runtime.systemstack
+         0     0%     0%       30ms  1.29%  runtime.wbBufFlush
+         0     0%     0%       30ms  1.29%  runtime.wbBufFlush.func1
+
+Profile: jsonata-scalar-N16-batch.cpu-encoding.txt
+File: messages.test
+Build ID: b2afa741fde0a984697de090f7c80b88e4bfb626
+Type: cpu
+Time: 2026-11-08 13:33:33 +04
+Duration: 2.39s, Total samples = 2.39s (  100%)
+Active filters:
+   focus=jsonvalue.Encode
+Showing nodes accounting for 0.08s, 3.35% of 2.39s total
+Showing top 15 nodes out of 75
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      0.57s 23.85%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+         0     0%     0%      0.57s 23.85%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      0.57s 23.85%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      0.57s 23.85%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+     0.01s  0.42%  0.42%      0.57s 23.85%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode
+         0     0%  0.42%      0.57s 23.85%  testing.(*B).run1.func1
+         0     0%  0.42%      0.57s 23.85%  testing.(*B).runN
+         0     0%  0.42%      0.49s 20.50%  encoding/json.Marshal (inline)
+     0.02s  0.84%  1.26%      0.49s 20.50%  encoding/json/v2.Marshal
+     0.01s  0.42%  1.67%      0.27s 11.30%  encoding/json/v2.marshalEncode
+     0.02s  0.84%  2.51%      0.27s 11.30%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Clone
+     0.01s  0.42%  2.93%      0.25s 10.46%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+         0     0%  2.93%      0.12s  5.02%  encoding/json/jsontext.export.GetBufferedEncoder (inline)
+     0.01s  0.42%  3.35%      0.12s  5.02%  encoding/json/jsontext.getBufferedEncoder
+         0     0%  3.35%      0.11s  4.60%  encoding/json/internal/jsonwire.AppendFloat
+
+Profile: jsonpath-object-N1-prepared.cpu-encoding.txt
+File: messages.test
+Build ID: b2afa741fde0a984697de090f7c80b88e4bfb626
+Type: cpu
+Time: 2026-11-08 13:40:07 +04
+Duration: 2.41s, Total samples = 2.40s (99.63%)
+Active filters:
+   focus=jsonvalue.Encode
+Showing nodes accounting for 0.02s, 0.83% of 2.40s total
+Showing top 15 nodes out of 49
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      0.09s  3.75%  github.com/mellowforge/jsontrans-go.EvalPreparedJSON
+         0     0%     0%      0.09s  3.75%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      0.09s  3.75%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      0.09s  3.75%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%      0.09s  3.75%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode
+         0     0%     0%      0.09s  3.75%  testing.(*B).run1.func1
+         0     0%     0%      0.09s  3.75%  testing.(*B).runN
+     0.01s  0.42%  0.42%      0.07s  2.92%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+         0     0%  0.42%      0.07s  2.92%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Clone
+         0     0%  0.42%      0.02s  0.83%  encoding/json.Marshal (inline)
+         0     0%  0.42%      0.02s  0.83%  encoding/json/v2.Marshal
+     0.01s  0.42%  0.83%      0.02s  0.83%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).stringSize
+         0     0%  0.83%      0.02s  0.83%  regexp.(*Regexp).MatchString (inline)
+         0     0%  0.83%      0.02s  0.83%  regexp.(*Regexp).doMatch (inline)
+         0     0%  0.83%      0.02s  0.83%  regexp.(*Regexp).doOnePass
+
+Profile: jsonpath-object-N16-batch.cpu-encoding.txt
+File: messages.test
+Build ID: b2afa741fde0a984697de090f7c80b88e4bfb626
+Type: cpu
+Time: 2026-11-08 13:34:09 +04
+Duration: 2.40s, Total samples = 2400ms (99.90%)
+Active filters:
+   focus=jsonvalue.Encode
+Showing nodes accounting for 0, 0% of 2400ms total
+Showing top 15 nodes out of 61
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      140ms  5.83%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+         0     0%     0%      140ms  5.83%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      140ms  5.83%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      140ms  5.83%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%      140ms  5.83%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode
+         0     0%     0%      140ms  5.83%  testing.(*B).run1.func1
+         0     0%     0%      140ms  5.83%  testing.(*B).runN
+         0     0%     0%      110ms  4.58%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+         0     0%     0%      110ms  4.58%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Clone
+         0     0%     0%       40ms  1.67%  runtime.systemstack
+         0     0%     0%       30ms  1.25%  encoding/json.Marshal (inline)
+         0     0%     0%       30ms  1.25%  encoding/json/v2.Marshal
+         0     0%     0%       30ms  1.25%  gcWriteBarrier
+         0     0%     0%       30ms  1.25%  regexp.(*Regexp).MatchString (inline)
+         0     0%     0%       30ms  1.25%  regexp.(*Regexp).doMatch (inline)
+
+Profile: jsonpath-scalar-N1-prepared.cpu-encoding.txt
+File: messages.test
+Build ID: b2afa741fde0a984697de090f7c80b88e4bfb626
+Type: cpu
+Time: 2026-11-08 13:40:03 +04
+Duration: 2.36s, Total samples = 2.36s (99.82%)
+Active filters:
+   focus=jsonvalue.Encode
+Showing nodes accounting for 0.01s, 0.42% of 2.36s total
+Showing top 15 nodes out of 67
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      0.16s  6.78%  github.com/mellowforge/jsontrans-go.EvalPreparedJSON
+         0     0%     0%      0.16s  6.78%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      0.16s  6.78%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      0.16s  6.78%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%      0.16s  6.78%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode
+         0     0%     0%      0.16s  6.78%  testing.(*B).run1.func1
+         0     0%     0%      0.16s  6.78%  testing.(*B).runN
+         0     0%     0%      0.08s  3.39%  encoding/json.Marshal (inline)
+         0     0%     0%      0.08s  3.39%  encoding/json/v2.Marshal
+         0     0%     0%      0.08s  3.39%  encoding/json/v2.marshalEncode
+         0     0%     0%      0.08s  3.39%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Clone
+         0     0%     0%      0.07s  2.97%  encoding/json/v2.makeSliceArshaler.func2
+     0.01s  0.42%  0.42%      0.06s  2.54%  encoding/json/v2.makeInterfaceArshaler.func1
+         0     0%  0.42%      0.06s  2.54%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+         0     0%  0.42%      0.05s  2.12%  runtime.mallocgc
+
+Profile: jsonpath-scalar-N16-batch.cpu-encoding.txt
+File: messages.test
+Build ID: b2afa741fde0a984697de090f7c80b88e4bfb626
+Type: cpu
+Time: 2026-11-08 13:33:57 +04
+Duration: 2.38s, Total samples = 2.38s (  100%)
+Active filters:
+   focus=jsonvalue.Encode
+Showing nodes accounting for 0.04s, 1.68% of 2.38s total
+Showing top 15 nodes out of 141
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      0.89s 37.39%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+         0     0%     0%      0.89s 37.39%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      0.89s 37.39%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      0.89s 37.39%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%      0.89s 37.39%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode
+         0     0%     0%      0.89s 37.39%  testing.(*B).run1.func1
+         0     0%     0%      0.89s 37.39%  testing.(*B).runN
+         0     0%     0%      0.49s 20.59%  encoding/json.Marshal (inline)
+         0     0%     0%      0.49s 20.59%  encoding/json/v2.Marshal
+     0.03s  1.26%  1.26%      0.41s 17.23%  encoding/json/v2.marshalEncode
+         0     0%  1.26%      0.36s 15.13%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.Clone
+         0     0%  1.26%      0.35s 14.71%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+     0.01s  0.42%  1.68%      0.27s 11.34%  encoding/json/v2.makeSliceArshaler.func2
+         0     0%  1.68%      0.20s  8.40%  encoding/json/v2.makeInterfaceArshaler.func1
+         0     0%  1.68%      0.19s  7.98%  runtime.mallocgc
