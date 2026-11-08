@@ -1,0 +1,78 @@
+baseline/messages.test: go1.27.3
+	path	github.com/mellowforge/jsontrans-go/experiments/messages.test
+	mod	github.com/mellowforge/jsontrans-go/experiments/messages	(devel)
+	dep	github.com/dlclark/regexp2/v2	v2.12.0	h1:GsCgDZZeHluUDHASr2yqQonZk4Tma5LFmLH9CSsFFEE=
+	dep	github.com/mellowforge/jsontrans-go	v1.2.0
+	=>	../..	(devel)
+
+	dep	github.com/mellowforge/jsontrans-go/javascript	v1.0.0
+	=>	../../javascript	(devel)
+
+	dep	github.com/tetratelabs/wazero	v1.12.0	h1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=
+	dep	golang.org/x/sys	v0.44.0	h1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=
+	dep	golang.org/x/text	v0.43.0	h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	DefaultGODEBUG=tracebacklabels=0,x509sslcertoverrideplatform=0
+	build	CGO_ENABLED=1
+	build	CGO_CFLAGS=
+	build	CGO_CPPFLAGS=
+	build	CGO_CXXFLAGS=
+	build	CGO_LDFLAGS=
+	build	GOARCH=amd64
+	build	GOOS=linux
+	build	GOAMD64=v1
+baseline/messages-go126.test: go1.26.10
+	path	github.com/mellowforge/jsontrans-go/experiments/messages.test
+	mod	github.com/mellowforge/jsontrans-go/experiments/messages	(devel)
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	CGO_ENABLED=1
+	build	CGO_CFLAGS=
+	build	CGO_CPPFLAGS=
+	build	CGO_CXXFLAGS=
+	build	CGO_LDFLAGS=
+	build	GOARCH=amd64
+	build	GOOS=linux
+	build	GOAMD64=v1
+816a61d20c85e29dd90e68074208e3c48441ac291dba75cd195c7239abc23985  baseline/messages.test
+019dbda174dc7bca67a0c3d4f1ecc14212c87f39affb04f7a383a5d218c358ca  baseline/messages-go126.test
+candidate/messages.test: go1.27.3
+	path	github.com/mellowforge/jsontrans-go/experiments/messages.test
+	mod	github.com/mellowforge/jsontrans-go/experiments/messages	(devel)
+	dep	github.com/dlclark/regexp2/v2	v2.12.0	h1:GsCgDZZeHluUDHASr2yqQonZk4Tma5LFmLH9CSsFFEE=
+	dep	github.com/mellowforge/jsontrans-go	v1.2.0
+	=>	../..	(devel)
+
+	dep	github.com/mellowforge/jsontrans-go/javascript	v1.0.0
+	=>	../../javascript	(devel)
+
+	dep	github.com/tetratelabs/wazero	v1.12.0	h1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=
+	dep	golang.org/x/sys	v0.44.0	h1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=
+	dep	golang.org/x/text	v0.43.0	h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	DefaultGODEBUG=tracebacklabels=0,x509sslcertoverrideplatform=0
+	build	CGO_ENABLED=1
+	build	CGO_CFLAGS=
+	build	CGO_CPPFLAGS=
+	build	CGO_CXXFLAGS=
+	build	CGO_LDFLAGS=
+	build	GOARCH=amd64
+	build	GOOS=linux
+	build	GOAMD64=v1
+candidate/messages-go126.test: go1.26.10
+	path	github.com/mellowforge/jsontrans-go/experiments/messages.test
+	mod	github.com/mellowforge/jsontrans-go/experiments/messages	(devel)
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	CGO_ENABLED=1
+	build	CGO_CFLAGS=
+	build	CGO_CPPFLAGS=
+	build	CGO_CXXFLAGS=
+	build	CGO_LDFLAGS=
+	build	GOARCH=amd64
+	build	GOOS=linux
+	build	GOAMD64=v1
+7f49e2a968038d08207fcfce986f564eb185b65053799b6fd6a831fc0b59f6d9  candidate/messages.test
+4f0c20297de31a489f5bf16cc44c13ce9f96e0c1df0ca86d06776de5d667c6f7  candidate/messages-go126.test

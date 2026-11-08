@@ -103,7 +103,7 @@ func (e preparedEntry) evalJSON(ctx context.Context, d *Document, o EvalOptions,
 	}
 	defer scope.Close()
 	e.jsonOutput = true
-	r, _, err := e.evalResolved(scope.Context(), d, o, &l, plan, state, index, scratch)
+	r, size, err := e.evalResolved(scope.Context(), d, o, &l, plan, state, index, scratch)
 	if err != nil {
 		return JSONResult{}, 0, err
 	}
@@ -113,7 +113,7 @@ func (e preparedEntry) evalJSON(ctx context.Context, d *Document, o EvalOptions,
 	if !r.Defined {
 		return JSONResult{}, 0, nil
 	}
-	data, err := jsonvalue.Encode(r.Value, &scope)
+	data, err := jsonvalue.EncodeValidated(r.Value, size, &scope)
 	if err != nil {
 		return JSONResult{}, 0, preparedJSONError(e.name, errors.Join(ErrConversion, err))
 	}

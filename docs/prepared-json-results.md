@@ -86,8 +86,13 @@ may be returned directly. Native diagnostics and cancellation remain available
 through `errors.As` and `errors.Is`. Common boundary encoding/conversion errors
 have phase `output`; adapter-native diagnostics retain their native phase.
 
-Limits remain cooperative in-process controls. JSON encoding uses bounded
-validation and checks cancellation before returning; individual standard-library
-marshal operations are not forcibly interruptible. Host functions remain trusted
-code and must honor context. This API changes neither those guarantees nor the
-JavaScript execution contract.
+After evaluation has validated and detached a result, encoding reuses its exact
+encoded-size measurement. A bounded traversal checks encoding work, depth,
+collection sizes and cancellation without cloning the result again. External
+adapters still pass through validation and detachment first. Exact work-counter
+thresholds are implementation details and can change as redundant work is removed.
+
+Limits remain cooperative in-process controls. JSON encoding checks cancellation
+before returning; individual standard-library marshal operations are not forcibly
+interruptible. Host functions remain trusted code and must honor context. This
+API changes neither those guarantees nor the JavaScript execution contract.

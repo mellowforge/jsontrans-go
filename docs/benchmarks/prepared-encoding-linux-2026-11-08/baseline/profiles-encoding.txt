@@ -1,0 +1,127 @@
+Profile: jsonata-object-N1-prepared.encode.txt
+Total: 69.39MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode in /data/ci/jsontrans-encoding-20261108/baseline/source/internal/jsonvalue/value.go
+         0   700.51kB (flat, cum)  0.99% of Total
+         .          .    346:func Encode(v any, b *budget.Budget) ([]byte, error) {
+         .   518.91kB    347:	v, err := Clone(v, b, b.Limits.MaxOutputBytes)
+         .          .    348:	if err != nil {
+         .          .    349:		return nil, err
+         .          .    350:	}
+         .   181.60kB    351:	data, err := json.Marshal(v)
+         .          .    352:	if err != nil {
+         .          .    353:		return nil, err
+         .          .    354:	}
+         .          .    355:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .    356:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonata-object-N16-batch.encode.txt
+Total: 39.26MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode in /data/ci/jsontrans-encoding-20261108/baseline/source/internal/jsonvalue/value.go
+         0   838.92kB (flat, cum)  2.09% of Total
+         .          .    346:func Encode(v any, b *budget.Budget) ([]byte, error) {
+         .   623.80kB    347:	v, err := Clone(v, b, b.Limits.MaxOutputBytes)
+         .          .    348:	if err != nil {
+         .          .    349:		return nil, err
+         .          .    350:	}
+         .   215.12kB    351:	data, err := json.Marshal(v)
+         .          .    352:	if err != nil {
+         .          .    353:		return nil, err
+         .          .    354:	}
+         .          .    355:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .    356:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonata-scalar-N1-prepared.encode.txt
+Total: 220.59MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode in /data/ci/jsontrans-encoding-20261108/baseline/source/internal/jsonvalue/value.go
+         0   663.25kB (flat, cum)  0.29% of Total
+         .          .    346:func Encode(v any, b *budget.Budget) ([]byte, error) {
+         .   432.56kB    347:	v, err := Clone(v, b, b.Limits.MaxOutputBytes)
+         .          .    348:	if err != nil {
+         .          .    349:		return nil, err
+         .          .    350:	}
+         .   230.69kB    351:	data, err := json.Marshal(v)
+         .          .    352:	if err != nil {
+         .          .    353:		return nil, err
+         .          .    354:	}
+         .          .    355:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .    356:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonata-scalar-N16-batch.encode.txt
+Total: 86.15MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode in /data/ci/jsontrans-encoding-20261108/baseline/source/internal/jsonvalue/value.go
+         0     3.63MB (flat, cum)  4.22% of Total
+         .          .    346:func Encode(v any, b *budget.Budget) ([]byte, error) {
+         .     2.42MB    347:	v, err := Clone(v, b, b.Limits.MaxOutputBytes)
+         .          .    348:	if err != nil {
+         .          .    349:		return nil, err
+         .          .    350:	}
+         .     1.21MB    351:	data, err := json.Marshal(v)
+         .          .    352:	if err != nil {
+         .          .    353:		return nil, err
+         .          .    354:	}
+         .          .    355:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .    356:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonpath-object-N1-prepared.encode.txt
+Total: 71.72MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode in /data/ci/jsontrans-encoding-20261108/baseline/source/internal/jsonvalue/value.go
+         0   753.30kB (flat, cum)  1.03% of Total
+         .          .    346:func Encode(v any, b *budget.Budget) ([]byte, error) {
+         .   629.28kB    347:	v, err := Clone(v, b, b.Limits.MaxOutputBytes)
+         .          .    348:	if err != nil {
+         .          .    349:		return nil, err
+         .          .    350:	}
+         .   124.02kB    351:	data, err := json.Marshal(v)
+         .          .    352:	if err != nil {
+         .          .    353:		return nil, err
+         .          .    354:	}
+         .          .    355:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .    356:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonpath-object-N16-batch.encode.txt
+Total: 37.36MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode in /data/ci/jsontrans-encoding-20261108/baseline/source/internal/jsonvalue/value.go
+         0   867.82kB (flat, cum)  2.27% of Total
+         .          .    346:func Encode(v any, b *budget.Budget) ([]byte, error) {
+         .      729kB    347:	v, err := Clone(v, b, b.Limits.MaxOutputBytes)
+         .          .    348:	if err != nil {
+         .          .    349:		return nil, err
+         .          .    350:	}
+         .   138.82kB    351:	data, err := json.Marshal(v)
+         .          .    352:	if err != nil {
+         .          .    353:		return nil, err
+         .          .    354:	}
+         .          .    355:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .    356:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonpath-scalar-N1-prepared.encode.txt
+Total: 152.01MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode in /data/ci/jsontrans-encoding-20261108/baseline/source/internal/jsonvalue/value.go
+         0     1.38MB (flat, cum)  0.91% of Total
+         .          .    346:func Encode(v any, b *budget.Budget) ([]byte, error) {
+         .   781.88kB    347:	v, err := Clone(v, b, b.Limits.MaxOutputBytes)
+         .          .    348:	if err != nil {
+         .          .    349:		return nil, err
+         .          .    350:	}
+         .   633.59kB    351:	data, err := json.Marshal(v)
+         .          .    352:	if err != nil {
+         .          .    353:		return nil, err
+         .          .    354:	}
+         .          .    355:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .    356:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonpath-scalar-N16-batch.encode.txt
+Total: 42.34MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.Encode in /data/ci/jsontrans-encoding-20261108/baseline/source/internal/jsonvalue/value.go
+         0     4.68MB (flat, cum) 11.04% of Total
+         .          .    346:func Encode(v any, b *budget.Budget) ([]byte, error) {
+         .     2.60MB    347:	v, err := Clone(v, b, b.Limits.MaxOutputBytes)
+         .          .    348:	if err != nil {
+         .          .    349:		return nil, err
+         .          .    350:	}
+         .     2.08MB    351:	data, err := json.Marshal(v)
+         .          .    352:	if err != nil {
+         .          .    353:		return nil, err
+         .          .    354:	}
+         .          .    355:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .    356:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)

@@ -1,0 +1,191 @@
+Profile: jsonata-object-N1-prepared.encode.txt
+Total: 71.45MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.EncodeValidated in /data/ci/jsontrans-encoding-20261108/candidate/source/internal/jsonvalue/encode_validated.go
+         0   188.46kB (flat, cum)  0.26% of Total
+         .          .     15:func EncodeValidated(v any, size int, b *budget.Budget) ([]byte, error) {
+         .          .     16:	if err := b.Check(); err != nil {
+         .          .     17:		return nil, err
+         .          .     18:	}
+         .          .     19:	if size <= 0 {
+         .          .     20:		return Encode(v, b)
+         .          .     21:	}
+         .          .     22:	if size > b.Limits.MaxOutputBytes {
+         .          .     23:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+         .          .     24:	}
+         .          .     25:	if err := checkEncoding(v, b); err != nil {
+         .          .     26:		return nil, err
+         .          .     27:	}
+         .   188.46kB     28:	data, err := json.Marshal(v)
+         .          .     29:	if err != nil {
+         .          .     30:		return nil, err
+         .          .     31:	}
+         .          .     32:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .     33:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonata-object-N16-batch.encode.txt
+Total: 40.44MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.EncodeValidated in /data/ci/jsontrans-encoding-20261108/candidate/source/internal/jsonvalue/encode_validated.go
+         0   223.75kB (flat, cum)  0.54% of Total
+         .          .     15:func EncodeValidated(v any, size int, b *budget.Budget) ([]byte, error) {
+         .          .     16:	if err := b.Check(); err != nil {
+         .          .     17:		return nil, err
+         .          .     18:	}
+         .          .     19:	if size <= 0 {
+         .          .     20:		return Encode(v, b)
+         .          .     21:	}
+         .          .     22:	if size > b.Limits.MaxOutputBytes {
+         .          .     23:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+         .          .     24:	}
+         .          .     25:	if err := checkEncoding(v, b); err != nil {
+         .          .     26:		return nil, err
+         .          .     27:	}
+         .   223.75kB     28:	data, err := json.Marshal(v)
+         .          .     29:	if err != nil {
+         .          .     30:		return nil, err
+         .          .     31:	}
+         .          .     32:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .     33:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonata-scalar-N1-prepared.encode.txt
+Total: 232.09MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.EncodeValidated in /data/ci/jsontrans-encoding-20261108/candidate/source/internal/jsonvalue/encode_validated.go
+         0   243.33kB (flat, cum)   0.1% of Total
+         .          .     15:func EncodeValidated(v any, size int, b *budget.Budget) ([]byte, error) {
+         .          .     16:	if err := b.Check(); err != nil {
+         .          .     17:		return nil, err
+         .          .     18:	}
+         .          .     19:	if size <= 0 {
+         .          .     20:		return Encode(v, b)
+         .          .     21:	}
+         .          .     22:	if size > b.Limits.MaxOutputBytes {
+         .          .     23:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+         .          .     24:	}
+         .          .     25:	if err := checkEncoding(v, b); err != nil {
+         .          .     26:		return nil, err
+         .          .     27:	}
+         .   243.33kB     28:	data, err := json.Marshal(v)
+         .          .     29:	if err != nil {
+         .          .     30:		return nil, err
+         .          .     31:	}
+         .          .     32:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .     33:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonata-scalar-N16-batch.encode.txt
+Total: 112.10MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.EncodeValidated in /data/ci/jsontrans-encoding-20261108/candidate/source/internal/jsonvalue/encode_validated.go
+         0     1.63MB (flat, cum)  1.46% of Total
+         .          .     15:func EncodeValidated(v any, size int, b *budget.Budget) ([]byte, error) {
+         .          .     16:	if err := b.Check(); err != nil {
+         .          .     17:		return nil, err
+         .          .     18:	}
+         .          .     19:	if size <= 0 {
+         .          .     20:		return Encode(v, b)
+         .          .     21:	}
+         .          .     22:	if size > b.Limits.MaxOutputBytes {
+         .          .     23:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+         .          .     24:	}
+         .          .     25:	if err := checkEncoding(v, b); err != nil {
+         .          .     26:		return nil, err
+         .          .     27:	}
+         .     1.63MB     28:	data, err := json.Marshal(v)
+         .          .     29:	if err != nil {
+         .          .     30:		return nil, err
+         .          .     31:	}
+         .          .     32:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .     33:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonpath-object-N1-prepared.encode.txt
+Total: 73MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.EncodeValidated in /data/ci/jsontrans-encoding-20261108/candidate/source/internal/jsonvalue/encode_validated.go
+         0   127.23kB (flat, cum)  0.17% of Total
+         .          .     15:func EncodeValidated(v any, size int, b *budget.Budget) ([]byte, error) {
+         .          .     16:	if err := b.Check(); err != nil {
+         .          .     17:		return nil, err
+         .          .     18:	}
+         .          .     19:	if size <= 0 {
+         .          .     20:		return Encode(v, b)
+         .          .     21:	}
+         .          .     22:	if size > b.Limits.MaxOutputBytes {
+         .          .     23:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+         .          .     24:	}
+         .          .     25:	if err := checkEncoding(v, b); err != nil {
+         .          .     26:		return nil, err
+         .          .     27:	}
+         .   127.23kB     28:	data, err := json.Marshal(v)
+         .          .     29:	if err != nil {
+         .          .     30:		return nil, err
+         .          .     31:	}
+         .          .     32:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .     33:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonpath-object-N16-batch.encode.txt
+Total: 37.07MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.EncodeValidated in /data/ci/jsontrans-encoding-20261108/candidate/source/internal/jsonvalue/encode_validated.go
+         0   138.95kB (flat, cum)  0.37% of Total
+         .          .     15:func EncodeValidated(v any, size int, b *budget.Budget) ([]byte, error) {
+         .          .     16:	if err := b.Check(); err != nil {
+         .          .     17:		return nil, err
+         .          .     18:	}
+         .          .     19:	if size <= 0 {
+         .          .     20:		return Encode(v, b)
+         .          .     21:	}
+         .          .     22:	if size > b.Limits.MaxOutputBytes {
+         .          .     23:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+         .          .     24:	}
+         .          .     25:	if err := checkEncoding(v, b); err != nil {
+         .          .     26:		return nil, err
+         .          .     27:	}
+         .   138.95kB     28:	data, err := json.Marshal(v)
+         .          .     29:	if err != nil {
+         .          .     30:		return nil, err
+         .          .     31:	}
+         .          .     32:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .     33:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonpath-scalar-N1-prepared.encode.txt
+Total: 185.17MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.EncodeValidated in /data/ci/jsontrans-encoding-20261108/candidate/source/internal/jsonvalue/encode_validated.go
+         0   777.71kB (flat, cum)  0.41% of Total
+         .          .     15:func EncodeValidated(v any, size int, b *budget.Budget) ([]byte, error) {
+         .          .     16:	if err := b.Check(); err != nil {
+         .          .     17:		return nil, err
+         .          .     18:	}
+         .          .     19:	if size <= 0 {
+         .          .     20:		return Encode(v, b)
+         .          .     21:	}
+         .          .     22:	if size > b.Limits.MaxOutputBytes {
+         .          .     23:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+         .          .     24:	}
+         .          .     25:	if err := checkEncoding(v, b); err != nil {
+         .          .     26:		return nil, err
+         .          .     27:	}
+         .   777.71kB     28:	data, err := json.Marshal(v)
+         .          .     29:	if err != nil {
+         .          .     30:		return nil, err
+         .          .     31:	}
+         .          .     32:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .     33:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+
+Profile: jsonpath-scalar-N16-batch.encode.txt
+Total: 49.17MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/jsonvalue.EncodeValidated in /data/ci/jsontrans-encoding-20261108/candidate/source/internal/jsonvalue/encode_validated.go
+         0     2.57MB (flat, cum)  5.24% of Total
+         .          .     15:func EncodeValidated(v any, size int, b *budget.Budget) ([]byte, error) {
+         .          .     16:	if err := b.Check(); err != nil {
+         .          .     17:		return nil, err
+         .          .     18:	}
+         .          .     19:	if size <= 0 {
+         .          .     20:		return Encode(v, b)
+         .          .     21:	}
+         .          .     22:	if size > b.Limits.MaxOutputBytes {
+         .          .     23:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)
+         .          .     24:	}
+         .          .     25:	if err := checkEncoding(v, b); err != nil {
+         .          .     26:		return nil, err
+         .          .     27:	}
+         .     2.57MB     28:	data, err := json.Marshal(v)
+         .          .     29:	if err != nil {
+         .          .     30:		return nil, err
+         .          .     31:	}
+         .          .     32:	if len(data) > b.Limits.MaxOutputBytes {
+         .          .     33:		return nil, fmt.Errorf("%w: encoded output size", budget.ErrLimit)

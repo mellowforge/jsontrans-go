@@ -1,0 +1,12 @@
+ok  	github.com/mellowforge/jsontrans-go	2.120s
+ok  	github.com/mellowforge/jsontrans-go/conformance	27.655s
+ok  	github.com/mellowforge/jsontrans-go/examples/basic	1.009s [no tests to run]
+?   	github.com/mellowforge/jsontrans-go/examples/prepared	[no test files]
+?   	github.com/mellowforge/jsontrans-go/examples/prepared-json	[no test files]
+ok  	github.com/mellowforge/jsontrans-go/internal/budget	1.014s
+ok  	github.com/mellowforge/jsontrans-go/internal/document	1.047s
+ok  	github.com/mellowforge/jsontrans-go/internal/errchain	1.009s
+ok  	github.com/mellowforge/jsontrans-go/internal/jsonvalue	1.014s
+ok  	github.com/mellowforge/jsontrans-go/internal/prepared	1.008s
+ok  	github.com/mellowforge/jsontrans-go/jsonata	1.535s
+ok  	github.com/mellowforge/jsontrans-go/jsonpath	1.043s
