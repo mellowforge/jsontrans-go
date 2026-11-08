@@ -1306,6 +1306,9 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				return nil, err
 			}
 			k = e.stripTuples(k)
+			if IsUndefined(k) {
+				continue
+			}
 			s, ok := k.(string)
 			if !ok {
 				return nil, evalError("T1003", n.pos, "", fmt.Errorf("object key must be string"))

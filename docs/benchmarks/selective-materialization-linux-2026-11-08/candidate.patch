@@ -1,0 +1,649 @@
+diff --git a/internal/document/document.go b/internal/document/document.go
+index 4d00a73..5808ce9 100644
+--- a/internal/document/document.go
++++ b/internal/document/document.go
+@@ -225,6 +225,19 @@ func MaterializeWithBudget(d *Document, b *budget.Budget) (any, error) {
+ 	return d.Root().materialize(b)
+ }
+ 
++// MaterializeNodeWithBudget converts only a selected subtree while retaining
++// the whole document's input dimension checks. The caller supplies its current
++// evaluation budget, so traversal shares work, depth and cancellation accounting.
++func MaterializeNodeWithBudget(n Node, b *budget.Budget) (any, error) {
++	if b == nil {
++		return nil, fmt.Errorf("%w: nil budget", jsonvalue.ErrInvalid)
++	}
++	if err := n.doc.CheckLimits(b.Context(), b.Limits); err != nil {
++		return nil, err
++	}
++	return n.materialize(b)
++}
++
+ func (n Node) materialize(b *budget.Budget) (any, error) {
+ 	if err := b.Enter(); err != nil {
+ 		return nil, err
+diff --git a/jsonata/core.go b/jsonata/core.go
+index e02b8d3..b52adc1 100644
+--- a/jsonata/core.go
++++ b/jsonata/core.go
+@@ -1306,6 +1306,9 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
+ 				return nil, err
+ 			}
+ 			k = e.stripTuples(k)
++			if IsUndefined(k) {
++				continue
++			}
+ 			s, ok := k.(string)
+ 			if !ok {
+ 				return nil, evalError("T1003", n.pos, "", fmt.Errorf("object key must be string"))
+diff --git a/jsonata/fastplan.go b/jsonata/fastplan.go
+index 48e3c63..cecf835 100644
+--- a/jsonata/fastplan.go
++++ b/jsonata/fastplan.go
+@@ -12,6 +12,7 @@ import (
+ // fastPlan retains only immutable syntax. Unsupported runtime shapes fall back.
+ type fastPlan struct {
+ 	root            *node
++	objectKeys      []string
+ 	projection      []*node
+ 	sumProjection   bool
+ 	memoIDs         map[*node]int
+@@ -38,9 +39,46 @@ func compileFastPlan(n *node) *fastPlan {
+ 		return false
+ 	}
+ 	rootNode := n
++	// Constructor arithmetic is deliberately numeric and singular. Runtime
++	// arrays, missing operands and type errors retain the interpreter fallback.
++	var arithmeticSupported func(*node) bool
++	arithmeticSupported = func(n *node) bool {
++		switch n.op {
++		case "number":
++			return true
++		case "block":
++			return len(n.children) == 1 && arithmeticSupported(n.children[0])
++		case "+", "-", "*":
++			return arithmeticSupported(n.children[0]) && arithmeticSupported(n.children[1])
++		}
++		return pathSupported(n)
++	}
++	var objectKeys []string
+ 	var supported func(*node) bool
+ 	supported = func(n *node) bool {
+ 		switch n.op {
++		case "object":
++			// Restrict this extension to the root constructor. Existing scalar
++			// operators must not start receiving new container-valued operands.
++			if n != rootNode {
++				return false
++			}
++			seen := make(map[string]bool)
++			for i := 0; i < len(n.children); i += 2 {
++				key := n.children[i]
++				if key.op != "string" || !supported(n.children[i+1]) {
++					return false
++				}
++				name := jsonvalue.CanonicalString(key.val.(string))
++				if seen[name] {
++					return false // preserve D1009 and its source position
++				}
++				seen[name] = true
++				objectKeys = append(objectKeys, name)
++			}
++			return true
++		case "+", "-", "*", "block":
++			return rootNode.op == "object" && arithmeticSupported(n)
+ 		case "name", "number", "string", "literal":
+ 			return true
+ 		case "variable":
+@@ -93,7 +131,7 @@ func compileFastPlan(n *node) *fastPlan {
+ 	if depth(n) > 120 {
+ 		return nil
+ 	}
+-	plan := &fastPlan{root: n, projection: projection, sumProjection: sumProjection && projection != nil}
++	plan := &fastPlan{root: n, objectKeys: objectKeys, projection: projection, sumProjection: sumProjection && projection != nil}
+ 	switch n.op {
+ 	case "=", "!=", "<", ">", "<=", ">=":
+ 		if n.children[1].op == "number" && pathSupported(n.children[0]) {
+@@ -213,6 +251,50 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
+ 		}
+ 		defer bd.Leave()
+ 		switch n.op {
++		case "object":
++			if evalErr = bd.Collection(len(p.objectKeys)); evalErr != nil {
++				return nil, false
++			}
++			out := make(map[string]any, len(p.objectKeys))
++			for i, key := range p.objectKeys {
++				value, handled := eval(n.children[2*i+1])
++				if !handled {
++					return nil, false
++				}
++				if !IsUndefined(value) {
++					out[key] = value
++				}
++			}
++			return out, true
++		case "block":
++			return eval(n.children[0])
++		case "+", "-", "*":
++			a, handled := eval(n.children[0])
++			if !handled {
++				return nil, false
++			}
++			b, handled := eval(n.children[1])
++			if !handled {
++				return nil, false
++			}
++			x, xok := a.(float64)
++			y, yok := b.(float64)
++			if !xok || !yok {
++				return nil, false
++			}
++			var value float64
++			switch n.op {
++			case "+":
++				value = x + y
++			case "-":
++				value = x - y
++			case "*":
++				value = x * y
++			}
++			if math.IsInf(value, 0) || math.IsNaN(value) {
++				return nil, false
++			}
++			return value + 0, true // JSONata renders negative zero as zero.
+ 		case "name", ".", "filter", "variable":
+ 			if n == p.root && n.op == "." && n.children[1].op == "name" && (n.children[0].op == "name" || (n.children[0].op == "filter" && n.children[0].children[0].op == "name" && n.children[0].children[1].op != "number")) {
+ 				left := n.children[0]
+diff --git a/jsonata/fastplan_oracle_test.go b/jsonata/fastplan_oracle_test.go
+index d503978..3f442db 100644
+--- a/jsonata/fastplan_oracle_test.go
++++ b/jsonata/fastplan_oracle_test.go
+@@ -16,8 +16,14 @@ import (
+ )
+ 
+ func TestNestedFastPlansReference(t *testing.T) {
+-	expressions := []string{`Account.Order.Product.SKU`, `Account.Order.Product[UnitPrice>50].SKU`, `$sum(Account.Order.Product.(UnitPrice * Quantity * (1 - Discount)))`}
++	expressions := []string{`Account.Order.Product.SKU`, `Account.Order.Product[UnitPrice>50].SKU`, `$sum(Account.Order.Product.(UnitPrice * Quantity * (1 - Discount)))`, `{"name":customer.name,"code":meta.id+2}`, `{"n":(meta.id*3)-1,"missing":absent,"null":nil}`, `{"zero":meta.id*0}`, `{"a":meta.id,"a":missing}`, `{customer.name:meta.id}`, `{missing:$error("must not run"),"present":null}`}
+ 	inputs := []string{
++		`{"customer":{"name":"Ada"},"meta":{"id":4},"nil":null}`,
++		`{"customer":{"name":"é😀"},"meta":{"id":-0},"nil":false}`,
++		`{"customer":[{"name":"A"},{"name":"B"}],"meta":{"id":2}}`,
++		`{"customer":{"name":"A"},"meta":{"id":"bad"}}`,
++		`{"meta":{"id":1e308}}`,
++		`[{"customer":{"name":"X"},"meta":{"id":1}}]`,
+ 		`{"Account":{"Order":[{"Product":[{"SKU":"A","UnitPrice":10,"Quantity":2,"Discount":0.25},{"SKU":"B","UnitPrice":60,"Quantity":3,"Discount":0.5}]},{"Product":{"SKU":"C","UnitPrice":5,"Quantity":4,"Discount":0}}]}}`,
+ 		`{"Account":{"Order":{"Product":[]}}}`,
+ 		`{"Account":{"Order":{"Product":{"SKU":null,"UnitPrice":70,"Quantity":1,"Discount":0}}}}`,
+diff --git a/jsonpath/prepared.go b/jsonpath/prepared.go
+index 9dd9dc7..cfb0956 100644
+--- a/jsonpath/prepared.go
++++ b/jsonpath/prepared.go
+@@ -12,8 +12,8 @@ import (
+ 	"github.com/mellowforge/jsontrans-go/internal/prepared"
+ )
+ 
+-// EvalPrepared executes singular scalar selections directly against the indexed
+-// document. Other queries and selected containers use the ordinary evaluator.
++// EvalPrepared executes singular selections against the indexed document,
++// materializing only selected containers. Other queries use the ordinary evaluator.
+ func (p *program) EvalPrepared(ctx context.Context, d *jsontrans.Document, o jsontrans.EvalOptions) (jsontrans.Result, error) {
+ 	if p == nil {
+ 		return jsontrans.Result{}, errors.New("nil prepared program")
+@@ -96,7 +96,10 @@ func (p *program) evalPrepared(req prepared.Request) (prepared.Result, error) {
+ 				value = jsonvalue.UTF16String(text)
+ 			}
+ 		default:
+-			return fallback()
++			value, err = document.MaterializeNodeWithBudget(n, b)
++			if err != nil {
++				return prepared.Result{}, err
++			}
+ 		}
+ 		values = append(values, value)
+ 	}
+diff --git a/internal/document/selective_test.go b/internal/document/selective_test.go
+new file mode 100644
+index 0000000..1808451
+--- /dev/null
++++ b/internal/document/selective_test.go
+@@ -0,0 +1,84 @@
++package document
++
++import (
++	"context"
++	"errors"
++	"reflect"
++	"strings"
++	"testing"
++
++	"github.com/mellowforge/jsontrans-go/internal/budget"
++	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
++)
++
++func TestMaterializeSelectedNodeBoundaries(t *testing.T) {
++	ctx := context.Background()
++	d, err := Parse(ctx, []byte(`{"take":{"\ud800":["\udfff",1e999]},"unused":[[null,null,null]]}`), Options{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	n, _ := d.Root().Member("take")
++	b, _ := budget.New(ctx, budget.Limits{})
++	v, err := MaterializeNodeWithBudget(n, b)
++	b.Close()
++	if err != nil {
++		t.Fatal(err)
++	}
++	b, _ = budget.New(ctx, budget.Limits{})
++	root, err := MaterializeWithBudget(d, b)
++	b.Close()
++	if err != nil {
++		t.Fatal(err)
++	}
++	if !reflect.DeepEqual(v, root.(map[string]any)["take"]) {
++		t.Fatalf("subtree %#v != %#v", v, root)
++	}
++	for _, l := range []budget.Limits{{MaxInputBytes: 4}, {MaxDepth: 3}, {MaxCollectionItems: 2}, {MaxSteps: 1}} {
++		b, _ := budget.New(ctx, l)
++		_, err := MaterializeNodeWithBudget(n, b)
++		b.Close()
++		if !errors.Is(err, budget.ErrLimit) {
++			t.Fatalf("%+v: %v", l, err)
++		}
++	}
++	cctx, cancel := context.WithCancel(ctx)
++	b, _ = budget.New(cctx, budget.Limits{})
++	cancel()
++	_, err = MaterializeNodeWithBudget(n, b)
++	b.Close()
++	if !errors.Is(err, context.Canceled) {
++		t.Fatalf("canceled: %v", err)
++	}
++	b, _ = budget.New(ctx, budget.Limits{})
++	_, err = MaterializeNodeWithBudget(Node{}, b)
++	b.Close()
++	if !errors.Is(err, jsonvalue.ErrInvalid) {
++		t.Fatalf("invalid node: %v", err)
++	}
++	if _, err := MaterializeNodeWithBudget(n, nil); !errors.Is(err, jsonvalue.ErrInvalid) {
++		t.Fatalf("nil budget: %v", err)
++	}
++}
++
++func TestMaterializeSelectedNodeOwnsStorage(t *testing.T) {
++	ctx := context.Background()
++	text := strings.Repeat("selected-", 512)
++	d, err := Parse(ctx, []byte(`{"take":{"text":"`+text+`"},"unused":"padding"}`), Options{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	n, _ := d.Root().Member("take")
++	b, _ := budget.New(ctx, budget.Limits{})
++	v, err := MaterializeNodeWithBudget(n, b)
++	b.Close()
++	if err != nil {
++		t.Fatal(err)
++	}
++	v.(map[string]any)["text"] = "modified"
++	b, _ = budget.New(ctx, budget.Limits{})
++	again, err := MaterializeNodeWithBudget(n, b)
++	b.Close()
++	if err != nil || again.(map[string]any)["text"] != text {
++		t.Fatalf("aliased result: %#v %v", again, err)
++	}
++}
+diff --git a/jsonata/prepared_object_test.go b/jsonata/prepared_object_test.go
+new file mode 100644
+index 0000000..4d96e0a
+--- /dev/null
++++ b/jsonata/prepared_object_test.go
+@@ -0,0 +1,224 @@
++package jsonata
++
++import (
++	"context"
++	"errors"
++	"reflect"
++	"testing"
++
++	"github.com/mellowforge/jsontrans-go"
++	"github.com/mellowforge/jsontrans-go/internal/budget"
++	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
++)
++
++func TestPreparedObjectSelectiveFields(t *testing.T) {
++	ctx := context.Background()
++	e, _ := New()
++	for _, expr := range []string{`{}`, `{"name":customer.name,"code":meta.id+2}`, `{"n":(meta.id*3)-1,"missing":absent,"null":nil}`, `{"\ud800":customer.name,"zero":meta.id*0}`, `{"ok":meta.id>0,"kind":$type(customer.name)}`} {
++		p, err := e.CompileRaw(ctx, expr)
++		if err != nil {
++			t.Fatal(err)
++		}
++		if p.fast == nil {
++			t.Fatalf("%s: missing selective object plan", expr)
++		}
++		for _, raw := range []string{`{"customer":{"name":"Ada"},"meta":{"id":4},"nil":null}`, `{"customer":{"name":"\ud800"},"meta":{"id":-0},"nil":false}`, `{"meta":{"id":9007199254740993}}`, `null`, `{}`} {
++			d, err := jsontrans.PrepareJSON(ctx, []byte(raw), jsontrans.PrepareOptions{})
++			if err != nil {
++				t.Fatal(err)
++			}
++			b, _ := budget.New(ctx, budget.Limits{})
++			direct, handled, err := p.fast.eval(d.Root(), b)
++			b.Close()
++			// Missing numeric operands may fall back for native diagnostics/semantics.
++			if err != nil {
++				t.Fatal(err)
++			}
++			if !handled && raw != `null` && raw != `{}` && raw != `{"meta":{"id":9007199254740993}}` {
++				t.Fatalf("%s %s unexpectedly fell back", expr, raw)
++			}
++			input, err := d.Materialize(ctx, jsontrans.PrepareOptions{})
++			if err != nil {
++				t.Fatal(err)
++			}
++			want, werr := p.Eval(ctx, input, jsontrans.EvalOptions{})
++			got, gerr := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
++			compareObjectResults(t, expr, raw, got, gerr, want, werr)
++			if handled {
++				b, _ := budget.New(ctx, budget.Limits{})
++				direct.Value, err = jsonvalue.Clone(direct.Value, b, b.Limits.MaxOutputBytes)
++				b.Close()
++				if err != nil || !reflect.DeepEqual(direct, got) {
++					t.Fatalf("direct %s: %#v/%v != %#v", expr, direct, err, got)
++				}
++			}
++		}
++	}
++}
++
++func compareObjectResults(t *testing.T, expr, raw string, got jsontrans.Result, gerr error, want jsontrans.Result, werr error) {
++	t.Helper()
++	if (gerr == nil) != (werr == nil) {
++		t.Fatalf("%s %s: got %#v/%v want %#v/%v", expr, raw, got, gerr, want, werr)
++	}
++	if werr != nil {
++		var g, w *jsontrans.Error
++		if errors.As(werr, &w) && (!errors.As(gerr, &g) || g.Code != w.Code || g.Position != w.Position || g.Token != w.Token) {
++			t.Fatalf("diagnostics: %v != %v", gerr, werr)
++		}
++		return
++	}
++	if !reflect.DeepEqual(got, want) {
++		t.Fatalf("%s %s: %#v != %#v", expr, raw, got, want)
++	}
++}
++
++func TestPreparedObjectFallbackSemantics(t *testing.T) {
++	ctx := context.Background()
++	e, _ := New()
++	for _, expr := range []string{`{"name":customer.name,"code":meta.id+2}`, `{"a":meta.id,"a":missing}`, `{customer.name:meta.id}`, `{"a":customer}`, `{"a":meta.id*meta.id}`, `{"a":1,"b":1/0}`, `{"a":missing+meta.id}`} {
++		p, err := e.CompileRaw(ctx, expr)
++		if err != nil {
++			t.Fatal(err)
++		}
++		for _, raw := range []string{`{"customer":[{"name":"A"},{"name":"B"}],"meta":{"id":2}}`, `{"customer":{"name":"A"},"meta":{"id":"bad"}}`, `{"meta":{"id":null}}`, `{"meta":{"id":1e308}}`, `[{"customer":{"name":"X"},"meta":{"id":1}}]`, `{}`} {
++			d, err := jsontrans.PrepareJSON(ctx, []byte(raw), jsontrans.PrepareOptions{})
++			if err != nil {
++				t.Fatal(err)
++			}
++			input, err := d.Materialize(ctx, jsontrans.PrepareOptions{})
++			if err != nil {
++				t.Fatal(err)
++			}
++			got, gerr := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
++			want, werr := p.Eval(ctx, input, jsontrans.EvalOptions{})
++			compareObjectResults(t, expr, raw, got, gerr, want, werr)
++		}
++	}
++	p, _ := e.CompileRaw(ctx, `{"n":meta.id}`)
++	d, _ := jsontrans.PrepareJSON(ctx, []byte(`{"meta":{"id":1},"unused":1e400}`), jsontrans.PrepareOptions{})
++	if _, err := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{}); !errors.Is(err, jsontrans.ErrInvalidInput) {
++		t.Fatalf("unused overflow: %v", err)
++	}
++}
++
++func TestPreparedObjectLimitsAndOwnership(t *testing.T) {
++	ctx := context.Background()
++	e, _ := New()
++	p, err := e.CompileRaw(ctx, `{"name":customer.name,"n":meta.id+1}`)
++	if err != nil {
++		t.Fatal(err)
++	}
++	d, err := jsontrans.PrepareJSON(ctx, []byte(`{"customer":{"name":"Ada"},"meta":{"id":1},"unused":[1,2,3]}`), jsontrans.PrepareOptions{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	for _, l := range []jsontrans.Limits{{MaxSteps: 1}, {MaxOutputBytes: 5}, {MaxDepth: 2}, {MaxCollectionItems: 2}, {MaxInputBytes: 5}} {
++		_, err := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{Limits: &l})
++		if !errors.Is(err, jsontrans.ErrLimit) {
++			t.Fatalf("%+v: %v", l, err)
++		}
++	}
++	// Direct fast-plan accounting remains bounded even when common wrappers
++	// deliberately disable fast paths for explicit per-call limits.
++	for _, l := range []budget.Limits{{MaxSteps: 1}, {MaxCollectionItems: 1}, {MaxDepth: 1}} {
++		b, _ := budget.New(ctx, l)
++		_, _, err := p.fast.eval(d.Root(), b)
++		b.Close()
++		if !errors.Is(err, budget.ErrLimit) {
++			t.Fatalf("direct %+v: %v", l, err)
++		}
++	}
++	r, err := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	r.Value.(map[string]any)["name"] = "changed"
++	again, err := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
++	if err != nil || again.Value.(map[string]any)["name"] != "Ada" {
++		t.Fatalf("aliased %#v %v", again, err)
++	}
++	cctx, cancel := context.WithCancel(ctx)
++	cancel()
++	if _, err := p.EvalPrepared(cctx, d, jsontrans.EvalOptions{}); !errors.Is(err, context.Canceled) {
++		t.Fatalf("canceled: %v", err)
++	}
++}
++
++func FuzzPreparedObjectPlans(f *testing.F) {
++	for _, raw := range []string{`{"customer":{"name":"Ada"},"meta":{"id":1}}`, `{"customer":{"name":"\ud800"},"meta":{"id":-0}}`, `{"customer":[{"name":"A"}],"meta":{"id":"bad"}}`, `{"meta":{"id":1e308}}`, `null`, `{}`} {
++		f.Add([]byte(raw))
++	}
++	f.Fuzz(func(t *testing.T, raw []byte) {
++		if len(raw) > 4096 {
++			return
++		}
++		ctx := context.Background()
++		d, err := jsontrans.PrepareJSON(ctx, raw, jsontrans.PrepareOptions{Limits: &jsontrans.Limits{MaxDepth: 32, MaxCollectionItems: 128}})
++		if err != nil || d.Stats().Binary64Overflow {
++			return
++		}
++		input, err := d.Materialize(ctx, jsontrans.PrepareOptions{})
++		if err != nil {
++			t.Fatal(err)
++		}
++		e, _ := New()
++		for _, expr := range []string{`{"name":customer.name,"code":meta.id+2}`, `{"n":(meta.id*3)-1,"missing":absent,"null":nil}`, `{"\ud800":customer.name,"zero":meta.id*0}`, `{"ok":meta.id>0,"kind":$type(customer.name)}`} {
++			p, err := e.CompileRaw(ctx, expr)
++			if err != nil {
++				t.Fatal(err)
++			}
++			got, gerr := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
++			want, werr := p.Eval(ctx, input, jsontrans.EvalOptions{})
++			compareObjectResults(t, expr, string(raw), got, gerr, want, werr)
++		}
++	})
++}
++
++func TestPreparedObjectBindingsAndHostOverride(t *testing.T) {
++	ctx := context.Background()
++	d, _ := jsontrans.PrepareJSON(ctx, []byte(`{"customer":{"name":"Ada"},"meta":{"id":1}}`), jsontrans.PrepareOptions{})
++	e, _ := New(WithFunction("type", NativeFunction{N: 1, Fn: func(*CallContext, []Value) (Value, error) { return "host", nil }}))
++	p, err := e.CompileRaw(ctx, `{"kind":$type(customer.name)}`)
++	if err != nil {
++		t.Fatal(err)
++	}
++	got, err := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
++	if err != nil || got.Value.(map[string]any)["kind"] != "host" {
++		t.Fatalf("host override %#v %v", got, err)
++	}
++	e, _ = New()
++	p, _ = e.CompileRaw(ctx, `{"source":$$.meta.id,"focus":$.meta.id}`)
++	opts := jsontrans.EvalOptions{Bindings: map[string]any{"$": map[string]any{"meta": map[string]any{"id": 9}}}}
++	input, _ := d.Materialize(ctx, jsontrans.PrepareOptions{})
++	got, gerr := p.EvalPrepared(ctx, d, opts)
++	want, werr := p.Eval(ctx, input, opts)
++	compareObjectResults(t, "bindings", "", got, gerr, want, werr)
++}
++
++func TestObjectUndefinedKeyOmitsValue(t *testing.T) {
++	ctx := context.Background()
++	e, _ := New()
++	for _, expr := range []string{`{missing:1}`, `{missing:$error("must not run"),"present":null}`, `{"a":1,missing:2,"b":3}`} {
++		p, err := e.CompileRaw(ctx, expr)
++		if err != nil {
++			t.Fatal(err)
++		}
++		d, _ := jsontrans.PrepareJSON(ctx, []byte(`{}`), jsontrans.PrepareOptions{})
++		got, err := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
++		if err != nil {
++			t.Fatalf("%s: undefined key should omit entry: %v", expr, err)
++		}
++		want := map[string]any{}
++		if expr == `{missing:$error("must not run"),"present":null}` {
++			want["present"] = nil
++		}
++		if expr == `{"a":1,missing:2,"b":3}` {
++			want["a"] = float64(1)
++			want["b"] = float64(3)
++		}
++		if !reflect.DeepEqual(got, jsontrans.Result{Value: want, Defined: true}) {
++			t.Fatalf("%s: %#v != %#v", expr, got, want)
++		}
++	}
++}
+diff --git a/jsonpath/prepared_selective_test.go b/jsonpath/prepared_selective_test.go
+new file mode 100644
+index 0000000..9b9cce0
+--- /dev/null
++++ b/jsonpath/prepared_selective_test.go
+@@ -0,0 +1,34 @@
++package jsonpath
++
++import (
++	"context"
++	"encoding/json"
++	"reflect"
++	"strings"
++	"testing"
++
++	"github.com/mellowforge/jsontrans-go"
++	"github.com/mellowforge/jsontrans-go/internal/jsonvalue"
++)
++
++func TestPreparedContainerSkipsUnselectedMaterialization(t *testing.T) {
++	ctx := context.Background()
++	e, _ := New()
++	raw := `{"selected":{"n":123456789012345678901234567890,"s":"\ud800"},"unused":[` + strings.Repeat(`null,`, 2000) + `null]}`
++	d, err := jsontrans.PrepareJSON(ctx, []byte(raw), jsontrans.PrepareOptions{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	p, err := e.Compile(ctx, `$.selected`)
++	if err != nil {
++		t.Fatal(err)
++	}
++	got, err := jsontrans.EvalPrepared(ctx, p, d, jsontrans.EvalOptions{Limits: &jsontrans.Limits{MaxSteps: 100}})
++	if err != nil {
++		t.Fatalf("selected subtree should fit work budget: %v", err)
++	}
++	want := []any{map[string]any{"n": json.Number("123456789012345678901234567890"), "s": jsonvalue.UTF16String("\xed\xa0\x80")}}
++	if !reflect.DeepEqual(got.Value, want) {
++		t.Fatalf("got %#v want %#v", got.Value, want)
++	}
++}
+diff --git a/prepared_selective_test.go b/prepared_selective_test.go
+new file mode 100644
+index 0000000..ce41103
+--- /dev/null
++++ b/prepared_selective_test.go
+@@ -0,0 +1,79 @@
++package jsontrans_test
++
++import (
++	"bytes"
++	"context"
++	"errors"
++	"reflect"
++	"sync"
++	"testing"
++
++	jt "github.com/mellowforge/jsontrans-go"
++	"github.com/mellowforge/jsontrans-go/jsonata"
++	"github.com/mellowforge/jsontrans-go/jsonpath"
++)
++
++func TestSelectivePreparedJSONBatchParityAndConcurrency(t *testing.T) {
++	ctx := context.Background()
++	a, _ := jsonata.New()
++	p, _ := jsonpath.New()
++	for _, processors := range [][]jt.Processor{{a, a}, {p, p}, {a, p}} {
++		exprs := []string{`{"name":customer.name,"code":meta.id+2}`, `{"id":meta.id*3}`}
++		if processors[0] == p {
++			exprs[0] = `$.customer`
++		}
++		if processors[1] == p {
++			exprs[1] = `$.meta`
++		}
++		programs := make([]jt.Program, 2)
++		for i := range programs {
++			var err error
++			programs[i], err = processors[i].Compile(ctx, exprs[i])
++			if err != nil {
++				t.Fatal(err)
++			}
++		}
++		batch, err := jt.NewBatch(programs)
++		if err != nil {
++			t.Fatal(err)
++		}
++		for _, raw := range []string{`{"customer":{"name":"Ada"},"meta":{"id":1}}`, `{"customer":{"name":"\ud800"},"meta":{"id":-0}}`, `{"customer":{"name":["A","B"]},"meta":{"id":2}}`} {
++			d, err := jt.PrepareJSON(ctx, []byte(raw), jt.PrepareOptions{})
++			if err != nil {
++				t.Fatal(err)
++			}
++			want := make([]jt.JSONResult, 2)
++			for i := range programs {
++				want[i], err = jt.EvalJSON(ctx, programs[i], []byte(raw), jt.EvalOptions{})
++				if err != nil {
++					t.Fatal(err)
++				}
++			}
++			var wg sync.WaitGroup
++			for range 4 {
++				wg.Go(func() {
++					for range 8 {
++						got, err := batch.EvalPreparedJSON(ctx, d, nil, jt.EvalOptions{})
++						if err != nil || !reflect.DeepEqual(got, want) {
++							t.Errorf("batch %#v/%v != %#v", got, err, want)
++							return
++						}
++						saved := bytes.Clone(got[0].Value)
++						prior := got[0]
++						_, err = batch.EvalPreparedJSON(ctx, d, got, jt.EvalOptions{})
++						if err != nil || !bytes.Equal(prior.Value, saved) {
++							t.Errorf("reused bytes: %v", err)
++							return
++						}
++					}
++				})
++			}
++			wg.Wait()
++			// Exact escaped-byte aggregate limit, including isolated-surrogate output.
++			total := len(want[0].Value) + len(want[1].Value)
++			if _, err = batch.EvalPreparedJSON(ctx, d, nil, jt.EvalOptions{Limits: &jt.Limits{MaxOutputBytes: total - 1}}); !errors.Is(err, jt.ErrLimit) {
++				t.Fatalf("aggregate output cap: %v", err)
++			}
++		}
++	}
++}

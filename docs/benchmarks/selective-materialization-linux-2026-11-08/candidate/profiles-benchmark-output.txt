@@ -1,0 +1,63 @@
+Profile: jsonata-object-N1-prepared.alloc-bench.txt
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/object/1024/N1/prepared         	    8979	    143987 ns/op	   30023 B/op	      70 allocs/op
+PASS
+
+Profile: jsonata-object-N1-prepared.cpu-bench.txt
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/object/1024/N1/prepared         	  130005	     17993 ns/op	   30024 B/op	      70 allocs/op
+PASS
+
+Profile: jsonata-object-N16-batch.alloc-bench.txt
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/object/1024/N16/batch   	    1377	    959908 ns/op	   43717 B/op	     414 allocs/op
+PASS
+
+Profile: jsonata-object-N16-batch.cpu-bench.txt
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/object/1024/N16/batch   	   50716	     47920 ns/op	   43720 B/op	     414 allocs/op
+PASS
+
+Profile: jsonpath-object-N1-prepared.alloc-bench.txt
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonpath/object/1024/N1/prepared         	    8000	    149701 ns/op	   30100 B/op	      72 allocs/op
+PASS
+
+Profile: jsonpath-object-N1-prepared.cpu-bench.txt
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonpath/object/1024/N1/prepared         	  132616	     17743 ns/op	   30101 B/op	      72 allocs/op
+PASS
+
+Profile: jsonpath-object-N16-batch.alloc-bench.txt
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonpath/object/1024/N16/batch   	    1203	   1075585 ns/op	   44524 B/op	     446 allocs/op
+PASS
+
+Profile: jsonpath-object-N16-batch.cpu-bench.txt
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonpath/object/1024/N16/batch   	   52179	     45935 ns/op	   44528 B/op	     446 allocs/op
+PASS

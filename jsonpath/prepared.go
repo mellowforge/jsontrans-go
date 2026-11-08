@@ -12,8 +12,8 @@ import (
 	"github.com/mellowforge/jsontrans-go/internal/prepared"
 )
 
-// EvalPrepared executes singular scalar selections directly against the indexed
-// document. Other queries and selected containers use the ordinary evaluator.
+// EvalPrepared executes singular selections against the indexed document,
+// materializing only selected containers. Other queries use the ordinary evaluator.
 func (p *program) EvalPrepared(ctx context.Context, d *jsontrans.Document, o jsontrans.EvalOptions) (jsontrans.Result, error) {
 	if p == nil {
 		return jsontrans.Result{}, errors.New("nil prepared program")
@@ -96,7 +96,10 @@ func (p *program) evalPrepared(req prepared.Request) (prepared.Result, error) {
 				value = jsonvalue.UTF16String(text)
 			}
 		default:
-			return fallback()
+			value, err = document.MaterializeNodeWithBudget(n, b)
+			if err != nil {
+				return prepared.Result{}, err
+			}
 		}
 		values = append(values, value)
 	}

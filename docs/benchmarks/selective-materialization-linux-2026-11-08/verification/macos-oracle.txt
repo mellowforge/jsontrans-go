@@ -1,0 +1,2 @@
+ok  	github.com/mellowforge/jsontrans-go/conformance	(cached)
+ok  	github.com/mellowforge/jsontrans-go/jsonata	(cached)

@@ -1,0 +1,5 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/28 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 28/28 completed, now fuzzing with 4 workers
+fuzz: elapsed: 0s, execs: 20000 (81721/sec), new interesting: 28 (total: 56)
+PASS
+ok  	github.com/mellowforge/jsontrans-go/jsonata	0.542s

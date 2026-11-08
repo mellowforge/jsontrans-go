@@ -1,0 +1,107 @@
+Profile: jsonata-object-N1-prepared.cpu-materialize.txt
+File: messages.test
+Build ID: 987f719deb97f229dec86ffc46ac3871c70453ed
+Type: cpu
+Time: 2026-11-08 16:16:35 +04
+Duration: 2.38s, Total samples = 2370ms (99.70%)
+Active filters:
+   focus=document.Node.materialize
+Showing nodes accounting for 60ms, 2.53% of 2370ms total
+Showing top 15 nodes out of 112
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      690ms 29.11%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalNative
+         0     0%     0%      690ms 29.11%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalResolved
+         0     0%     0%      690ms 29.11%  github.com/mellowforge/jsontrans-go.EvalPreparedJSON
+         0     0%     0%      690ms 29.11%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      690ms 29.11%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      690ms 29.11%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%      690ms 29.11%  github.com/mellowforge/jsontrans-go/internal/document.MaterializeWithBudget
+      30ms  1.27%  1.27%      690ms 29.11%  github.com/mellowforge/jsontrans-go/internal/document.Node.materialize
+         0     0%  1.27%      690ms 29.11%  github.com/mellowforge/jsontrans-go/internal/prepared.(*Handler).Eval
+         0     0%  1.27%      690ms 29.11%  github.com/mellowforge/jsontrans-go/internal/prepared.Evaluate
+         0     0%  1.27%      690ms 29.11%  github.com/mellowforge/jsontrans-go/internal/prepared.evaluate
+         0     0%  1.27%      690ms 29.11%  github.com/mellowforge/jsontrans-go/jsonata.(*Program).evalPrepared
+         0     0%  1.27%      690ms 29.11%  testing.(*B).run1.func1
+         0     0%  1.27%      690ms 29.11%  testing.(*B).runN
+      30ms  1.27%  2.53%      390ms 16.46%  runtime.mallocgc
+
+Profile: jsonata-object-N16-batch.cpu-materialize.txt
+File: messages.test
+Build ID: 987f719deb97f229dec86ffc46ac3871c70453ed
+Type: cpu
+Time: 2026-11-08 16:16:39 +04
+Duration: 2.29s, Total samples = 2290ms (99.91%)
+Active filters:
+   focus=document.Node.materialize
+Showing nodes accounting for 30ms, 1.31% of 2290ms total
+Showing top 15 nodes out of 157
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%     1180ms 51.53%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+         0     0%     0%     1180ms 51.53%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalNative
+         0     0%     0%     1180ms 51.53%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalNative.func1
+         0     0%     0%     1180ms 51.53%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalResolved
+         0     0%     0%     1180ms 51.53%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%     1180ms 51.53%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%     1180ms 51.53%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%     1180ms 51.53%  github.com/mellowforge/jsontrans-go/internal/document.MaterializeWithBudget
+      30ms  1.31%  1.31%     1180ms 51.53%  github.com/mellowforge/jsontrans-go/internal/document.Node.materialize
+         0     0%  1.31%     1180ms 51.53%  github.com/mellowforge/jsontrans-go/internal/prepared.(*Handler).Eval (inline)
+         0     0%  1.31%     1180ms 51.53%  github.com/mellowforge/jsontrans-go/internal/prepared.Evaluate
+         0     0%  1.31%     1180ms 51.53%  github.com/mellowforge/jsontrans-go/internal/prepared.evaluate
+         0     0%  1.31%     1180ms 51.53%  github.com/mellowforge/jsontrans-go/jsonata.(*Program).evalPrepared
+         0     0%  1.31%     1180ms 51.53%  github.com/mellowforge/jsontrans-go/jsonata.(*preparedBatchPlan).Eval
+         0     0%  1.31%     1180ms 51.53%  testing.(*B).run1.func1
+
+Profile: jsonpath-object-N1-prepared.cpu-materialize.txt
+File: messages.test
+Build ID: 987f719deb97f229dec86ffc46ac3871c70453ed
+Type: cpu
+Time: 2026-11-08 16:16:43 +04
+Duration: 2.41s, Total samples = 2.41s (100.06%)
+Active filters:
+   focus=document.Node.materialize
+Showing nodes accounting for 0.01s, 0.41% of 2.41s total
+Showing top 15 nodes out of 127
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      0.85s 35.27%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalNative
+         0     0%     0%      0.85s 35.27%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalResolved
+         0     0%     0%      0.85s 35.27%  github.com/mellowforge/jsontrans-go.EvalPreparedJSON
+         0     0%     0%      0.85s 35.27%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%      0.85s 35.27%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%      0.85s 35.27%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%      0.85s 35.27%  github.com/mellowforge/jsontrans-go/internal/document.MaterializeWithBudget
+     0.01s  0.41%  0.41%      0.85s 35.27%  github.com/mellowforge/jsontrans-go/internal/document.Node.materialize
+         0     0%  0.41%      0.85s 35.27%  github.com/mellowforge/jsontrans-go/internal/prepared.(*Handler).Eval
+         0     0%  0.41%      0.85s 35.27%  github.com/mellowforge/jsontrans-go/internal/prepared.Evaluate
+         0     0%  0.41%      0.85s 35.27%  github.com/mellowforge/jsontrans-go/internal/prepared.evaluate
+         0     0%  0.41%      0.85s 35.27%  github.com/mellowforge/jsontrans-go/jsonpath.(*program).evalPrepared
+         0     0%  0.41%      0.85s 35.27%  github.com/mellowforge/jsontrans-go/jsonpath.(*program).evalPrepared.func2
+         0     0%  0.41%      0.85s 35.27%  testing.(*B).run1.func1
+         0     0%  0.41%      0.85s 35.27%  testing.(*B).runN
+
+Profile: jsonpath-object-N16-batch.cpu-materialize.txt
+File: messages.test
+Build ID: 987f719deb97f229dec86ffc46ac3871c70453ed
+Type: cpu
+Time: 2026-11-08 16:16:47 +04
+Duration: 2.21s, Total samples = 2210ms (99.82%)
+Active filters:
+   focus=document.Node.materialize
+Showing nodes accounting for 70ms, 3.17% of 2210ms total
+Showing top 15 nodes out of 154
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%     1590ms 71.95%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+         0     0%     0%     1590ms 71.95%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalNative
+         0     0%     0%     1590ms 71.95%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalResolved
+         0     0%     0%     1590ms 71.95%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0%     0%     1590ms 71.95%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0%     0%     1590ms 71.95%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0%     0%     1590ms 71.95%  github.com/mellowforge/jsontrans-go/internal/document.MaterializeWithBudget
+      70ms  3.17%  3.17%     1590ms 71.95%  github.com/mellowforge/jsontrans-go/internal/document.Node.materialize
+         0     0%  3.17%     1590ms 71.95%  github.com/mellowforge/jsontrans-go/internal/prepared.(*Handler).Eval
+         0     0%  3.17%     1590ms 71.95%  github.com/mellowforge/jsontrans-go/internal/prepared.EvaluateInto (inline)
+         0     0%  3.17%     1590ms 71.95%  github.com/mellowforge/jsontrans-go/internal/prepared.evaluate
+         0     0%  3.17%     1590ms 71.95%  github.com/mellowforge/jsontrans-go/jsonpath.(*program).evalPrepared
+         0     0%  3.17%     1590ms 71.95%  github.com/mellowforge/jsontrans-go/jsonpath.(*program).evalPrepared.func2
+         0     0%  3.17%     1590ms 71.95%  testing.(*B).run1.func1
+         0     0%  3.17%     1590ms 71.95%  testing.(*B).runN

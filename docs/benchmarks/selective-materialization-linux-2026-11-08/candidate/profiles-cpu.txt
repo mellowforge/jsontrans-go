@@ -1,0 +1,143 @@
+Profile: jsonata-object-N1-prepared.cpu-top.txt
+File: messages.test
+Build ID: fc425f4701129366c4812d8bf26710fd198cba1c
+Type: cpu
+Time: 2026-11-08 16:27:18 +04
+Duration: 2.34s, Total samples = 2.34s (99.83%)
+Showing nodes accounting for 1.60s, 68.38% of 2.34s total
+Dropped 110 nodes (cum <= 0.01s)
+Showing top 25 nodes out of 156
+      flat  flat%   sum%        cum   cum%
+     0.29s 12.39% 12.39%      1.76s 75.21%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+     0.23s  9.83% 22.22%      0.23s  9.83%  runtime.nanotime (inline)
+     0.10s  4.27% 26.50%      0.17s  7.26%  runtime.tryDeferToSpanScan
+     0.10s  4.27% 30.77%      0.11s  4.70%  runtime.typePointers.next
+     0.08s  3.42% 34.19%      0.16s  6.84%  runtime.findObject
+     0.07s  2.99% 37.18%      0.18s  7.69%  runtime.scanObject
+     0.07s  2.99% 40.17%      0.07s  2.99%  runtime.spanOf (inline)
+     0.06s  2.56% 42.74%      0.06s  2.56%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).string
+     0.05s  2.14% 44.87%      0.25s 10.68%  gcWriteBarrier
+     0.05s  2.14% 47.01%      0.05s  2.14%  memeqbody
+     0.05s  2.14% 49.15%      0.05s  2.14%  runtime.arenaIndex (inline)
+     0.04s  1.71% 50.85%      0.04s  1.71%  internal/runtime/maps.memHashAES
+     0.04s  1.71% 52.56%      0.22s  9.40%  runtime.(*_panic).nextDefer
+     0.04s  1.71% 54.27%      0.18s  7.69%  runtime.popDefer
+     0.04s  1.71% 55.98%      0.09s  3.85%  runtime.scanObjectsSmall
+     0.04s  1.71% 57.69%      0.10s  4.27%  runtime.scanblock
+     0.04s  1.71% 59.40%      0.04s  1.71%  runtime.typePointers.nextFast (inline)
+     0.04s  1.71% 61.11%      0.27s 11.54%  runtime.wbBufFlush1
+     0.03s  1.28% 62.39%      0.03s  1.28%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).space
+     0.03s  1.28% 63.68%      0.03s  1.28%  internal/strconv.formatBase10
+     0.03s  1.28% 64.96%      0.03s  1.28%  runtime.nextFreeFast (inline)
+     0.02s  0.85% 65.81%      0.07s  2.99%  github.com/mellowforge/jsontrans-go/internal/budget.initFastResolved
+     0.02s  0.85% 66.67%      0.02s  0.85%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.ObjectKeys
+     0.02s  0.85% 67.52%      0.09s  3.85%  github.com/mellowforge/jsontrans-go/jsonata.(*fastPlan).evalWithMemo.func2
+     0.02s  0.85% 68.38%      0.02s  0.85%  internal/runtime/maps.(*Iter).Next
+
+Profile: jsonata-object-N16-batch.cpu-top.txt
+File: messages.test
+Build ID: fc425f4701129366c4812d8bf26710fd198cba1c
+Type: cpu
+Time: 2026-11-08 16:27:22 +04
+Duration: 2.43s, Total samples = 2.43s (99.82%)
+Showing nodes accounting for 1.23s, 50.62% of 2.43s total
+Dropped 121 nodes (cum <= 0.01s)
+Showing top 25 nodes out of 187
+      flat  flat%   sum%        cum   cum%
+     0.15s  6.17%  6.17%      0.15s  6.17%  runtime.nanotime (inline)
+     0.14s  5.76% 11.93%      0.16s  6.58%  runtime.tryDeferToSpanScan
+     0.12s  4.94% 16.87%      0.69s 28.40%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+     0.06s  2.47% 19.34%      0.06s  2.47%  internal/runtime/maps.memHashAES
+     0.06s  2.47% 21.81%      0.10s  4.12%  runtime.findObject
+     0.06s  2.47% 24.28%      0.06s  2.47%  unicode/utf8.ValidString
+     0.05s  2.06% 26.34%      0.22s  9.05%  gcWriteBarrier
+     0.05s  2.06% 28.40%      0.15s  6.17%  runtime.(*_panic).nextDefer
+     0.05s  2.06% 30.45%      0.10s  4.12%  runtime.mallocgcTinySC2
+     0.05s  2.06% 32.51%      0.05s  2.06%  runtime.spanOf (inline)
+     0.04s  1.65% 34.16%      0.63s 25.93%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+     0.04s  1.65% 35.80%      0.27s 11.11%  github.com/mellowforge/jsontrans-go/jsonata.(*fastPlan).evalWithMemo.func2
+     0.04s  1.65% 37.45%      0.94s 38.68%  github.com/mellowforge/jsontrans-go/jsonata.(*preparedBatchPlan).Eval
+     0.04s  1.65% 39.09%      0.06s  2.47%  runtime.gcmarknewobject
+     0.03s  1.23% 40.33%      0.07s  2.88%  encoding/json/jsontext.(*encoderState).WriteToken
+     0.03s  1.23% 41.56%      1.69s 69.55%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+     0.03s  1.23% 42.80%      0.03s  1.23%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).charge
+     0.03s  1.23% 44.03%      0.04s  1.65%  internal/runtime/maps.(*Iter).Next
+     0.03s  1.23% 45.27%      0.03s  1.23%  runtime.(*mspan).base (inline)
+     0.03s  1.23% 46.50%      0.11s  4.53%  runtime.mallocgcSmallScanNoHeaderSC2
+     0.02s  0.82% 47.33%      0.02s  0.82%  encoding/json/internal/jsonwire.AppendQuote
+     0.02s  0.82% 48.15%      0.55s 22.63%  encoding/json/v2.marshalEncode
+     0.02s  0.82% 48.97%      0.02s  0.82%  github.com/mellowforge/jsontrans-go/internal/budget.(*Budget).Step
+     0.02s  0.82% 49.79%      0.02s  0.82%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).string
+     0.02s  0.82% 50.62%      0.06s  2.47%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.checkEncoding
+
+Profile: jsonpath-object-N1-prepared.cpu-top.txt
+File: messages.test
+Build ID: fc425f4701129366c4812d8bf26710fd198cba1c
+Type: cpu
+Time: 2026-11-08 16:27:26 +04
+Duration: 2.36s, Total samples = 2.35s (99.61%)
+Showing nodes accounting for 1.45s, 61.70% of 2.35s total
+Dropped 98 nodes (cum <= 0.01s)
+Showing top 25 nodes out of 164
+      flat  flat%   sum%        cum   cum%
+     0.29s 12.34% 12.34%      1.86s 79.15%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+     0.20s  8.51% 20.85%      0.20s  8.51%  runtime.nanotime (inline)
+     0.08s  3.40% 24.26%      0.17s  7.23%  runtime.findObject
+     0.07s  2.98% 27.23%      0.07s  2.98%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).string
+     0.07s  2.98% 30.21%      0.10s  4.26%  runtime.tryDeferToSpanScan
+     0.06s  2.55% 32.77%      0.15s  6.38%  runtime.scanObject
+     0.06s  2.55% 35.32%      0.06s  2.55%  runtime.spanOf (inline)
+     0.05s  2.13% 37.45%      0.05s  2.13%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).space
+     0.05s  2.13% 39.57%      0.08s  3.40%  runtime.bulkBarrierPreWrite
+     0.05s  2.13% 41.70%      0.09s  3.83%  runtime.scanblock
+     0.05s  2.13% 43.83%      0.06s  2.55%  runtime.typePointers.next
+     0.04s  1.70% 45.53%      0.05s  2.13%  github.com/mellowforge/jsontrans-go/internal/budget.(*Budget).Step
+     0.04s  1.70% 47.23%      0.04s  1.70%  internal/strconv.readFloat
+     0.04s  1.70% 48.94%      0.12s  5.11%  runtime.(*_panic).nextDefer
+     0.03s  1.28% 50.21%      0.03s  1.28%  runtime.(*gcBitsArena).tryAlloc (inline)
+     0.03s  1.28% 51.49%      0.03s  1.28%  runtime.deferprocStack
+     0.03s  1.28% 52.77%      0.55s 23.40%  runtime.growslice
+     0.03s  1.28% 54.04%      0.03s  1.28%  runtime.memclrNoHeapPointers
+     0.03s  1.28% 55.32%      0.03s  1.28%  runtime.memmove
+     0.03s  1.28% 56.60%      0.03s  1.28%  runtime.typePointers.nextFast (inline)
+     0.03s  1.28% 57.87%      0.23s  9.79%  runtime.wbBufFlush1
+     0.03s  1.28% 59.15%      0.03s  1.28%  unicode/utf8.Valid
+     0.02s  0.85% 60.00%      0.22s  9.36%  gcWriteBarrier
+     0.02s  0.85% 60.85%      0.22s  9.36%  github.com/mellowforge/jsontrans-go/internal/budget.(*Budget).Collection
+     0.02s  0.85% 61.70%      0.02s  0.85%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value.func1
+
+Profile: jsonpath-object-N16-batch.cpu-top.txt
+File: messages.test
+Build ID: fc425f4701129366c4812d8bf26710fd198cba1c
+Type: cpu
+Time: 2026-11-08 16:27:30 +04
+Duration: 2.40s, Total samples = 2.40s (  100%)
+Showing nodes accounting for 1.28s, 53.33% of 2.40s total
+Dropped 100 nodes (cum <= 0.01s)
+Showing top 25 nodes out of 181
+      flat  flat%   sum%        cum   cum%
+     0.24s 10.00% 10.00%      0.24s 10.00%  runtime.nanotime (inline)
+     0.11s  4.58% 14.58%      0.60s 25.00%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+     0.07s  2.92% 17.50%      0.67s 27.92%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+     0.07s  2.92% 20.42%      0.08s  3.33%  runtime.tryDeferToSpanScan
+     0.06s  2.50% 22.92%      0.06s  2.50%  runtime.spanOf (inline)
+     0.05s  2.08% 25.00%      0.05s  2.08%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).space
+     0.05s  2.08% 27.08%      0.15s  6.25%  runtime.mapassign_faststr
+     0.05s  2.08% 29.17%      0.05s  2.08%  runtime.typePointers.next
+     0.05s  2.08% 31.25%      0.19s  7.92%  runtime.wbBufFlush1
+     0.04s  1.67% 32.92%      0.04s  1.67%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).string
+     0.04s  1.67% 34.58%      0.09s  3.75%  internal/runtime/maps.(*Iter).Next
+     0.04s  1.67% 36.25%      0.14s  5.83%  runtime.(*_panic).nextDefer
+     0.04s  1.67% 37.92%      0.08s  3.33%  runtime.mallocgcSmallScanSlowPath
+     0.04s  1.67% 39.58%      0.04s  1.67%  unicode/utf8.Valid
+     0.04s  1.67% 41.25%      0.04s  1.67%  unicode/utf8.ValidString
+     0.03s  1.25% 42.50%      0.05s  2.08%  encoding/json/jsontext.(*encoderState).WriteValue
+     0.03s  1.25% 43.75%      0.03s  1.25%  internal/abi.(*Type).Pointers (inline)
+     0.03s  1.25% 45.00%      0.03s  1.25%  internal/runtime/maps.memHashAES
+     0.03s  1.25% 46.25%      0.08s  3.33%  internal/sync.(*HashTrieMap[go.shape.interface {},go.shape.interface {}]).Load
+     0.03s  1.25% 47.50%      0.03s  1.25%  runtime.(*spanSet).push
+     0.03s  1.25% 48.75%      0.08s  3.33%  runtime.findObject
+     0.03s  1.25% 50.00%      0.03s  1.25%  runtime.memclrNoHeapPointers
+     0.03s  1.25% 51.25%      0.09s  3.75%  runtime.popDefer
+     0.03s  1.25% 52.50%      0.03s  1.25%  sync/atomic.(*Value).Load (inline)
+     0.02s  0.83% 53.33%      0.02s  0.83%  encoding/json/jsontext.(*stateEntry).Increment

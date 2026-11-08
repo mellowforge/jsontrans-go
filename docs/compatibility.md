@@ -32,8 +32,11 @@ duplicate-key behavior, exact JSONPath numbers and lossless surrogate handling.
 
 JSONata currently specializes conservative singular paths, scalar predicates,
 selected builtins, direct array count/sum and simple object-array projections
-and filters. JSONPath specializes singular scalar selectors. Unsupported syntax
-or shapes use the full evaluator. JSONata bindings, host functions, nondefault
+and filters. Root object constructors with unique literal keys can select scalar
+fields directly, including conservative numeric `+`, `-` and `*` expressions.
+JSONPath specializes singular selectors and materializes only a selected
+container subtree. Whole-input dimension checks remain effective. Unsupported
+syntax or shapes use the full evaluator. JSONata bindings, host functions, nondefault
 limits, explicit expression-depth instrumentation and documents with 10,000 or
 more nodes also use that fallback. Batch prefix memoization applies only when
 every program in the batch is native JSONata. These are optimization
@@ -112,6 +115,12 @@ ordinary, prepared and batch paths:
 - dates outside ±8.64e15 ms, whose numeric components format as NaN, year
   widths, and timezones read as `parseInt` with `floor(v/100)` hours and
   `v % 100` minutes (so `"-0530"` is `-06:30`).
+
+Computed object keys that evaluate to missing omit the entry without evaluating
+its value, matching JSONata 2.2.2. This corrects an earlier `T1003` error for that
+case; null and other non-string keys still report their native type error.
+Regression coverage is in `jsonata/prepared_object_test.go` and the extended
+Node reference comparison.
 
 ## Differences at the Go boundary
 

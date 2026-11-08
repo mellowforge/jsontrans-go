@@ -1,0 +1,5 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/28 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 28/28 completed, now fuzzing with 4 workers
+fuzz: elapsed: 0s, execs: 5015 (48993/sec), new interesting: 17 (total: 45)
+PASS
+ok  	github.com/mellowforge/jsontrans-go	0.402s

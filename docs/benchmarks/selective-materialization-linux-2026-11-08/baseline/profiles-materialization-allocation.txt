@@ -1,0 +1,267 @@
+Profile: jsonata-object-N1-prepared.materialize.txt
+Total: 70.21MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/document.Node.materialize in /data/ci/jsontrans-selective-20261108/baseline/source/internal/document/document.go
+   17.25MB    51.03MB (flat, cum) 72.68% of Total
+         .          .    228:func (n Node) materialize(b *budget.Budget) (any, error) {
+         .          .    229:	if err := b.Enter(); err != nil {
+         .          .    230:		return nil, err
+         .          .    231:	}
+         .          .    232:	defer b.Leave()
+         .          .    233:	e := n.data()
+         .          .    234:	if e == nil {
+         .          .    235:		return nil, fmt.Errorf("%w: invalid node", jsonvalue.ErrInvalid)
+         .          .    236:	}
+         .          .    237:	switch e.kind {
+         .          .    238:	case 'z':
+         .          .    239:		return nil, nil
+         .          .    240:	case 'b':
+         .          .    241:		v, _ := n.Boolean()
+         .          .    242:		return v, nil
+         .          .    243:	case 'n':
+  878.53kB     1.15MB    244:		return json.Number(strings.Clone(n.JSON())), nil
+         .          .    245:	case 's':
+         .          .    246:		value, _ := n.Text()
+         .   421.27kB    247:		text := strings.Clone(value)
+         .          .    248:		if !utf8.ValidString(text) {
+         .          .    249:			return jsonvalue.UTF16String(text), nil
+         .          .    250:		}
+  507.16kB   507.16kB    251:		return text, nil
+         .          .    252:	case 'a':
+         .          .    253:		if err := b.Collection(e.itemsLen); err != nil {
+         .          .    254:			return nil, err
+         .          .    255:		}
+  124.69kB   124.69kB    256:		out := make([]any, e.itemsLen)
+         .          .    257:		for i, id := range n.doc.children[e.itemsStart : e.itemsStart+e.itemsLen] {
+         .     3.90MB    258:			v, err := (Node{n.doc, id}).materialize(b)
+         .          .    259:			if err != nil {
+         .          .    260:				return nil, err
+         .          .    261:			}
+         .          .    262:			out[i] = v
+         .          .    263:		}
+   33.26kB    33.26kB    264:		return out, nil
+         .          .    265:	case 'o':
+         .          .    266:		if err := b.Collection(e.itemsLen); err != nil {
+         .          .    267:			return nil, err
+         .          .    268:		}
+    4.96MB     4.96MB    269:		out := make(map[string]any, e.itemsLen)
+    1.19MB     1.19MB    270:		keys := make([]string, 0, e.itemsLen)
+         .          .    271:		needsUTF16 := false
+         .          .    272:		for _, m := range n.doc.members[e.itemsStart : e.itemsStart+e.itemsLen] {
+         .    22.95MB    273:			v, err := (Node{n.doc, m.node}).materialize(b)
+         .          .    274:			if err != nil {
+         .          .    275:				return nil, err
+         .          .    276:			}
+         .   396.52kB    277:			name := strings.Clone(m.name)
+         .          .    278:			if !utf8.ValidString(name) {
+         .          .    279:				needsUTF16 = true
+         .          .    280:			}
+    9.60MB     9.60MB    281:			out[name] = v
+         .          .    282:			keys = append(keys, name)
+         .          .    283:		}
+         .     5.84MB    284:		jsonvalue.RememberObject(b.Context(), out, keys)
+         .          .    285:		if needsUTF16 {
+         .          .    286:			return jsonvalue.UTF16Object(out), nil
+         .          .    287:		}
+         .          .    288:		return out, nil
+         .          .    289:	}
+
+Profile: jsonata-object-N16-batch.materialize.txt
+Total: 40.44MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/document.Node.materialize in /data/ci/jsontrans-selective-20261108/baseline/source/internal/document/document.go
+      21MB    62.08MB (flat, cum) 153.54% of Total
+         .          .    228:func (n Node) materialize(b *budget.Budget) (any, error) {
+         .          .    229:	if err := b.Enter(); err != nil {
+         .          .    230:		return nil, err
+         .          .    231:	}
+         .          .    232:	defer b.Leave()
+         .          .    233:	e := n.data()
+         .          .    234:	if e == nil {
+         .          .    235:		return nil, fmt.Errorf("%w: invalid node", jsonvalue.ErrInvalid)
+         .          .    236:	}
+         .          .    237:	switch e.kind {
+         .          .    238:	case 'z':
+         .          .    239:		return nil, nil
+         .          .    240:	case 'b':
+         .          .    241:		v, _ := n.Boolean()
+         .          .    242:		return v, nil
+         .          .    243:	case 'n':
+    1.04MB     1.39MB    244:		return json.Number(strings.Clone(n.JSON())), nil
+         .          .    245:	case 's':
+         .          .    246:		value, _ := n.Text()
+         .   513.25kB    247:		text := strings.Clone(value)
+         .          .    248:		if !utf8.ValidString(text) {
+         .          .    249:			return jsonvalue.UTF16String(text), nil
+         .          .    250:		}
+  617.50kB   617.50kB    251:		return text, nil
+         .          .    252:	case 'a':
+         .          .    253:		if err := b.Collection(e.itemsLen); err != nil {
+         .          .    254:			return nil, err
+         .          .    255:		}
+  151.75kB   151.75kB    256:		out := make([]any, e.itemsLen)
+         .          .    257:		for i, id := range n.doc.children[e.itemsStart : e.itemsStart+e.itemsLen] {
+         .     4.74MB    258:			v, err := (Node{n.doc, id}).materialize(b)
+         .          .    259:			if err != nil {
+         .          .    260:				return nil, err
+         .          .    261:			}
+         .          .    262:			out[i] = v
+         .          .    263:		}
+   40.50kB    40.50kB    264:		return out, nil
+         .          .    265:	case 'o':
+         .          .    266:		if err := b.Collection(e.itemsLen); err != nil {
+         .          .    267:			return nil, err
+         .          .    268:		}
+    6.03MB     6.03MB    269:		out := make(map[string]any, e.itemsLen)
+    1.45MB     1.45MB    270:		keys := make([]string, 0, e.itemsLen)
+         .          .    271:		needsUTF16 := false
+         .          .    272:		for _, m := range n.doc.members[e.itemsStart : e.itemsStart+e.itemsLen] {
+         .    27.94MB    273:			v, err := (Node{n.doc, m.node}).materialize(b)
+         .          .    274:			if err != nil {
+         .          .    275:				return nil, err
+         .          .    276:			}
+         .   483.44kB    277:			name := strings.Clone(m.name)
+         .          .    278:			if !utf8.ValidString(name) {
+         .          .    279:				needsUTF16 = true
+         .          .    280:			}
+   11.69MB    11.69MB    281:			out[name] = v
+         .          .    282:			keys = append(keys, name)
+         .          .    283:		}
+         .     7.09MB    284:		jsonvalue.RememberObject(b.Context(), out, keys)
+         .          .    285:		if needsUTF16 {
+         .          .    286:			return jsonvalue.UTF16Object(out), nil
+         .          .    287:		}
+         .          .    288:		return out, nil
+         .          .    289:	}
+
+Profile: jsonpath-object-N1-prepared.materialize.txt
+Total: 76.96MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/document.Node.materialize in /data/ci/jsontrans-selective-20261108/baseline/source/internal/document/document.go
+   19.67MB    58.19MB (flat, cum) 75.61% of Total
+         .          .    228:func (n Node) materialize(b *budget.Budget) (any, error) {
+         .          .    229:	if err := b.Enter(); err != nil {
+         .          .    230:		return nil, err
+         .          .    231:	}
+         .          .    232:	defer b.Leave()
+         .          .    233:	e := n.data()
+         .          .    234:	if e == nil {
+         .          .    235:		return nil, fmt.Errorf("%w: invalid node", jsonvalue.ErrInvalid)
+         .          .    236:	}
+         .          .    237:	switch e.kind {
+         .          .    238:	case 'z':
+         .          .    239:		return nil, nil
+         .          .    240:	case 'b':
+         .          .    241:		v, _ := n.Boolean()
+         .          .    242:		return v, nil
+         .          .    243:	case 'n':
+ 1001.73kB     1.31MB    244:		return json.Number(strings.Clone(n.JSON())), nil
+         .          .    245:	case 's':
+         .          .    246:		value, _ := n.Text()
+         .   480.28kB    247:		text := strings.Clone(value)
+         .          .    248:		if !utf8.ValidString(text) {
+         .          .    249:			return jsonvalue.UTF16String(text), nil
+         .          .    250:		}
+  578.28kB   578.28kB    251:		return text, nil
+         .          .    252:	case 'a':
+         .          .    253:		if err := b.Collection(e.itemsLen); err != nil {
+         .          .    254:			return nil, err
+         .          .    255:		}
+  142.17kB   142.17kB    256:		out := make([]any, e.itemsLen)
+         .          .    257:		for i, id := range n.doc.children[e.itemsStart : e.itemsStart+e.itemsLen] {
+         .     4.45MB    258:			v, err := (Node{n.doc, id}).materialize(b)
+         .          .    259:			if err != nil {
+         .          .    260:				return nil, err
+         .          .    261:			}
+         .          .    262:			out[i] = v
+         .          .    263:		}
+   37.92kB    37.92kB    264:		return out, nil
+         .          .    265:	case 'o':
+         .          .    266:		if err := b.Collection(e.itemsLen); err != nil {
+         .          .    267:			return nil, err
+         .          .    268:		}
+    5.65MB     5.65MB    269:		out := make(map[string]any, e.itemsLen)
+    1.35MB     1.35MB    270:		keys := make([]string, 0, e.itemsLen)
+         .          .    271:		needsUTF16 := false
+         .          .    272:		for _, m := range n.doc.members[e.itemsStart : e.itemsStart+e.itemsLen] {
+         .    26.18MB    273:			v, err := (Node{n.doc, m.node}).materialize(b)
+         .          .    274:			if err != nil {
+         .          .    275:				return nil, err
+         .          .    276:			}
+         .   452.41kB    277:			name := strings.Clone(m.name)
+         .          .    278:			if !utf8.ValidString(name) {
+         .          .    279:				needsUTF16 = true
+         .          .    280:			}
+   10.94MB    10.94MB    281:			out[name] = v
+         .          .    282:			keys = append(keys, name)
+         .          .    283:		}
+         .     6.66MB    284:		jsonvalue.RememberObject(b.Context(), out, keys)
+         .          .    285:		if needsUTF16 {
+         .          .    286:			return jsonvalue.UTF16Object(out), nil
+         .          .    287:		}
+         .          .    288:		return out, nil
+         .          .    289:	}
+
+Profile: jsonpath-object-N16-batch.materialize.txt
+Total: 37.07MB
+ROUTINE ======================== github.com/mellowforge/jsontrans-go/internal/document.Node.materialize in /data/ci/jsontrans-selective-20261108/baseline/source/internal/document/document.go
+      21MB    62.08MB (flat, cum) 167.47% of Total
+         .          .    228:func (n Node) materialize(b *budget.Budget) (any, error) {
+         .          .    229:	if err := b.Enter(); err != nil {
+         .          .    230:		return nil, err
+         .          .    231:	}
+         .          .    232:	defer b.Leave()
+         .          .    233:	e := n.data()
+         .          .    234:	if e == nil {
+         .          .    235:		return nil, fmt.Errorf("%w: invalid node", jsonvalue.ErrInvalid)
+         .          .    236:	}
+         .          .    237:	switch e.kind {
+         .          .    238:	case 'z':
+         .          .    239:		return nil, nil
+         .          .    240:	case 'b':
+         .          .    241:		v, _ := n.Boolean()
+         .          .    242:		return v, nil
+         .          .    243:	case 'n':
+    1.04MB     1.38MB    244:		return json.Number(strings.Clone(n.JSON())), nil
+         .          .    245:	case 's':
+         .          .    246:		value, _ := n.Text()
+         .   511.22kB    247:		text := strings.Clone(value)
+         .          .    248:		if !utf8.ValidString(text) {
+         .          .    249:			return jsonvalue.UTF16String(text), nil
+         .          .    250:		}
+  617.50kB   617.50kB    251:		return text, nil
+         .          .    252:	case 'a':
+         .          .    253:		if err := b.Collection(e.itemsLen); err != nil {
+         .          .    254:			return nil, err
+         .          .    255:		}
+  151.75kB   151.75kB    256:		out := make([]any, e.itemsLen)
+         .          .    257:		for i, id := range n.doc.children[e.itemsStart : e.itemsStart+e.itemsLen] {
+         .     4.74MB    258:			v, err := (Node{n.doc, id}).materialize(b)
+         .          .    259:			if err != nil {
+         .          .    260:				return nil, err
+         .          .    261:			}
+         .          .    262:			out[i] = v
+         .          .    263:		}
+   40.50kB    40.50kB    264:		return out, nil
+         .          .    265:	case 'o':
+         .          .    266:		if err := b.Collection(e.itemsLen); err != nil {
+         .          .    267:			return nil, err
+         .          .    268:		}
+    6.03MB     6.03MB    269:		out := make(map[string]any, e.itemsLen)
+    1.45MB     1.45MB    270:		keys := make([]string, 0, e.itemsLen)
+         .          .    271:		needsUTF16 := false
+         .          .    272:		for _, m := range n.doc.members[e.itemsStart : e.itemsStart+e.itemsLen] {
+         .    27.93MB    273:			v, err := (Node{n.doc, m.node}).materialize(b)
+         .          .    274:			if err != nil {
+         .          .    275:				return nil, err
+         .          .    276:			}
+         .   486.45kB    277:			name := strings.Clone(m.name)
+         .          .    278:			if !utf8.ValidString(name) {
+         .          .    279:				needsUTF16 = true
+         .          .    280:			}
+   11.69MB    11.69MB    281:			out[name] = v
+         .          .    282:			keys = append(keys, name)
+         .          .    283:		}
+         .     7.09MB    284:		jsonvalue.RememberObject(b.Context(), out, keys)
+         .          .    285:		if needsUTF16 {
+         .          .    286:			return jsonvalue.UTF16Object(out), nil
+         .          .    287:		}
+         .          .    288:		return out, nil
+         .          .    289:	}
