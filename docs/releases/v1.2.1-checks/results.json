@@ -1,0 +1,2686 @@
+{
+  "commit": "949cd9b13a68f3c62494af0055b38aead84834f1",
+  "archive_sha256": "9cb579375b641a19aec78b782add68009a6f5786648000aacb2c98641dcf63cd",
+  "runtime_delta_since_v1.2.0": [
+    "f533e6020b5321d4c506a48ae481df8c9a523661",
+    "9e06911e37ac43dadd3c0f3655a3e2961e60ac55"
+  ],
+  "go_minimum": "1.26.0",
+  "date": "2026-11-08",
+  "checks": {
+    "macos-arm64": [
+      {
+        "name": "1.26.10-version",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "version"
+        ],
+        "exit_code": 0,
+        "seconds": 0.036
+      },
+      {
+        "name": "1.26.10-test",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 3.18
+      },
+      {
+        "name": "1.26.10-race",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 25.814
+      },
+      {
+        "name": "1.26.10-vet",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "1.26.10-verify",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "mod",
+          "verify"
+        ],
+        "exit_code": 0,
+        "seconds": 0.178
+      },
+      {
+        "name": "1.27.3-version",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.darwin-arm64/bin/go",
+          "version"
+        ],
+        "exit_code": 0,
+        "seconds": 0.04
+      },
+      {
+        "name": "1.27.3-test",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.darwin-arm64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 3.836
+      },
+      {
+        "name": "1.27.3-race",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.darwin-arm64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 30.72
+      },
+      {
+        "name": "1.27.3-vet",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.darwin-arm64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.606
+      },
+      {
+        "name": "1.27.3-verify",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.darwin-arm64/bin/go",
+          "mod",
+          "verify"
+        ],
+        "exit_code": 0,
+        "seconds": 0.123
+      },
+      {
+        "name": "oracle",
+        "command": [
+          "go",
+          "test",
+          "-tags",
+          "oracle",
+          "-count=1",
+          "./conformance",
+          "./jsonata"
+        ],
+        "exit_code": 0,
+        "seconds": 2.656
+      }
+    ],
+    "linux-amd64": [
+      {
+        "name": "1.26.10-version",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "version"
+        ],
+        "exit_code": 0,
+        "seconds": 0.002
+      },
+      {
+        "name": "1.26.10-test",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 3.692
+      },
+      {
+        "name": "1.26.10-race",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 28.081
+      },
+      {
+        "name": "1.26.10-vet",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.192
+      },
+      {
+        "name": "1.26.10-verify",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "mod",
+          "verify"
+        ],
+        "exit_code": 0,
+        "seconds": 0.217
+      },
+      {
+        "name": "1.27.3-version",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "version"
+        ],
+        "exit_code": 0,
+        "seconds": 0.004
+      },
+      {
+        "name": "1.27.3-test",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 3.635
+      },
+      {
+        "name": "1.27.3-race",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 29.172
+      },
+      {
+        "name": "1.27.3-vet",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.218
+      },
+      {
+        "name": "1.27.3-verify",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "mod",
+          "verify"
+        ],
+        "exit_code": 0,
+        "seconds": 0.132
+      },
+      {
+        "name": "FuzzCompileAndEval-jsonpath",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "./jsonpath",
+          "-run",
+          "^$",
+          "-fuzz",
+          "^FuzzCompileAndEval$",
+          "-fuzztime=40000x",
+          "-parallel=2"
+        ],
+        "exit_code": 0,
+        "seconds": 1.529
+      },
+      {
+        "name": "FuzzCompileAndEval-jsonata",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "./jsonata",
+          "-run",
+          "^$",
+          "-fuzz",
+          "^FuzzCompileAndEval$",
+          "-fuzztime=14000x",
+          "-parallel=2"
+        ],
+        "exit_code": 0,
+        "seconds": 4.454
+      },
+      {
+        "name": "FuzzPrepareAndMaterialize-internal-document",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "./internal/document",
+          "-run",
+          "^$",
+          "-fuzz",
+          "^FuzzPrepareAndMaterialize$",
+          "-fuzztime=27000x",
+          "-parallel=2"
+        ],
+        "exit_code": 0,
+        "seconds": 0.786
+      },
+      {
+        "name": "FuzzEncodeValidated-internal-jsonvalue",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "./internal/jsonvalue",
+          "-run",
+          "^$",
+          "-fuzz",
+          "^FuzzEncodeValidated$",
+          "-fuzztime=10000x",
+          "-parallel=2"
+        ],
+        "exit_code": 0,
+        "seconds": 0.529
+      },
+      {
+        "name": "FuzzPreparedObjectPlans-jsonata",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "./jsonata",
+          "-run",
+          "^$",
+          "-fuzz",
+          "^FuzzPreparedObjectPlans$",
+          "-fuzztime=10000x",
+          "-parallel=2"
+        ],
+        "exit_code": 0,
+        "seconds": 0.845
+      },
+      {
+        "name": "FuzzPreparedNestedPlans-jsonata",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "./jsonata",
+          "-run",
+          "^$",
+          "-fuzz",
+          "^FuzzPreparedNestedPlans$",
+          "-fuzztime=10000x",
+          "-parallel=2"
+        ],
+        "exit_code": 0,
+        "seconds": 0.407
+      },
+      {
+        "name": "FuzzPreparedJSON-.",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "./.",
+          "-run",
+          "^$",
+          "-fuzz",
+          "^FuzzPreparedJSON$",
+          "-fuzztime=10000x",
+          "-parallel=2"
+        ],
+        "exit_code": 0,
+        "seconds": 1.534
+      },
+      {
+        "name": "1.26.10-javascript-test",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 10.149
+      },
+      {
+        "name": "1.26.10-javascript-race",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 81.695
+      },
+      {
+        "name": "1.26.10-javascript-vet",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.105
+      },
+      {
+        "name": "1.26.10-experiments-javascript-test",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 5.248
+      },
+      {
+        "name": "1.26.10-experiments-javascript-race",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 41.874
+      },
+      {
+        "name": "1.26.10-experiments-javascript-vet",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.164
+      },
+      {
+        "name": "1.26.10-experiments-messages-test",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.979
+      },
+      {
+        "name": "1.26.10-experiments-messages-race",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 4.657
+      },
+      {
+        "name": "1.26.10-experiments-messages-vet",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.26.10.linux-amd64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "1.27.3-javascript-test",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 10.218
+      },
+      {
+        "name": "1.27.3-javascript-race",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 77.398
+      },
+      {
+        "name": "1.27.3-javascript-vet",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.135
+      },
+      {
+        "name": "1.27.3-experiments-javascript-test",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 5.258
+      },
+      {
+        "name": "1.27.3-experiments-javascript-race",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 39.706
+      },
+      {
+        "name": "1.27.3-experiments-javascript-vet",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.154
+      },
+      {
+        "name": "1.27.3-experiments-messages-test",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "test",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.821
+      },
+      {
+        "name": "1.27.3-experiments-messages-race",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 4.586
+      },
+      {
+        "name": "1.27.3-experiments-messages-vet",
+        "command": [
+          "/data/ci/jsontrans-go-20261104-07de350/go-modules/golang.org/toolchain@v0.0.1-go1.27.3.linux-amd64/bin/go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 0.094
+      },
+      {
+        "name": "security-parser-tests",
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "test_check_go_security.py"
+        ],
+        "exit_code": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "security-linux",
+        "command": [
+          "python3",
+          "scripts/check_go_security.py",
+          "--govulncheck",
+          "/data/ci/jsontrans-go-20261104-07de350/tools/govulncheck",
+          "--output",
+          "/data/ci/jsontrans-core-v121-20261108/results/security-linux"
+        ],
+        "exit_code": 0,
+        "seconds": 14.187
+      },
+      {
+        "name": "security-windows",
+        "command": [
+          "python3",
+          "scripts/check_go_security.py",
+          "--govulncheck",
+          "/data/ci/jsontrans-go-20261104-07de350/tools/govulncheck",
+          "--output",
+          "/data/ci/jsontrans-core-v121-20261108/results/security-windows"
+        ],
+        "exit_code": 0,
+        "seconds": 13.225
+      },
+      {
+        "name": "security-darwin",
+        "command": [
+          "python3",
+          "scripts/check_go_security.py",
+          "--govulncheck",
+          "/data/ci/jsontrans-go-20261104-07de350/tools/govulncheck",
+          "--output",
+          "/data/ci/jsontrans-core-v121-20261108/results/security-darwin"
+        ],
+        "exit_code": 0,
+        "seconds": 13.657
+      }
+    ],
+    "public-consumers": [
+      {
+        "name": "1.26.10-version",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "env",
+          "GOVERSION"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "1.27.3-version",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.darwin-arm64/bin/go",
+          "env",
+          "GOVERSION"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "native-tidy",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "mod",
+          "tidy"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "native-modules",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "list",
+          "-m",
+          "-json",
+          "all"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "native-deps",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "list",
+          "-deps",
+          "."
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "native-verify",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "mod",
+          "verify"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "native-1.26.10-build",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "build",
+          "-mod=readonly",
+          "-o",
+          "/private/tmp/jsontrans-v121-release/reproduced-consumers/native-1.26.10",
+          "."
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "native-1.26.10-run",
+        "command": [
+          "/private/tmp/jsontrans-v121-release/reproduced-consumers/native-1.26.10"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "native-1.27.3-build",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.darwin-arm64/bin/go",
+          "build",
+          "-mod=readonly",
+          "-o",
+          "/private/tmp/jsontrans-v121-release/reproduced-consumers/native-1.27.3",
+          "."
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "native-1.27.3-run",
+        "command": [
+          "/private/tmp/jsontrans-v121-release/reproduced-consumers/native-1.27.3"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "javascript-tidy",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "mod",
+          "tidy"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "javascript-modules",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "list",
+          "-m",
+          "-json",
+          "all"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "javascript-deps",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "list",
+          "-deps",
+          "."
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "javascript-verify",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "mod",
+          "verify"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "javascript-1.26.10-build",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.10.darwin-arm64/bin/go",
+          "build",
+          "-mod=readonly",
+          "-o",
+          "/private/tmp/jsontrans-v121-release/reproduced-consumers/javascript-1.26.10",
+          "."
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "javascript-1.26.10-run",
+        "command": [
+          "/private/tmp/jsontrans-v121-release/reproduced-consumers/javascript-1.26.10"
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "javascript-1.27.3-build",
+        "command": [
+          "/Users/konstantinpenzin/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.27.3.darwin-arm64/bin/go",
+          "build",
+          "-mod=readonly",
+          "-o",
+          "/private/tmp/jsontrans-v121-release/reproduced-consumers/javascript-1.27.3",
+          "."
+        ],
+        "exit_code": 0
+      },
+      {
+        "name": "javascript-1.27.3-run",
+        "command": [
+          "/private/tmp/jsontrans-v121-release/reproduced-consumers/javascript-1.27.3"
+        ],
+        "exit_code": 0
+      }
+    ]
+  },
+  "packaging": {
+    "module_zip_exit_code": 0,
+    "detached_regressions_exit_code": 0
+  },
+  "security": {
+    "security-darwin": {
+      "status": "passed",
+      "target": {
+        "GOARCH": "arm64",
+        "GOOS": "darwin",
+        "GOVERSION": "go1.26.10"
+      },
+      "tool_version": "v1.9.0",
+      "source_scans": [
+        {
+          "config": {
+            "protocol_version": "v1.0.0",
+            "scanner_name": "govulncheck",
+            "scanner_version": "v1.9.0",
+            "db": "https://vuln.go.dev",
+            "db_last_modified": "2026-11-05T23:49:57Z",
+            "go_version": "go1.26.10",
+            "scan_level": "symbol",
+            "scan_mode": "source"
+          },
+          "sbom": {
+            "go_version": "go1.26.10",
+            "modules": [
+              {
+                "path": "github.com/mellowforge/jsontrans-go"
+              },
+              {
+                "path": "github.com/dlclark/regexp2/v2",
+                "version": "v2.12.0"
+              },
+              {
+                "path": "golang.org/x/text",
+                "version": "v0.43.0"
+              },
+              {
+                "path": "stdlib",
+                "version": "v1.26.10"
+              }
+            ],
+            "roots": [
+              "github.com/mellowforge/jsontrans-go/internal/budget",
+              "github.com/mellowforge/jsontrans-go/internal/jsonvalue",
+              "github.com/mellowforge/jsontrans-go/internal/document",
+              "github.com/mellowforge/jsontrans-go/internal/errchain",
+              "github.com/mellowforge/jsontrans-go/internal/prepared",
+              "github.com/mellowforge/jsontrans-go",
+              "github.com/mellowforge/jsontrans-go/conformance",
+              "github.com/mellowforge/jsontrans-go/jsonata",
+              "github.com/mellowforge/jsontrans-go/jsonpath",
+              "github.com/mellowforge/jsontrans-go/examples/basic",
+              "github.com/mellowforge/jsontrans-go/examples/prepared",
+              "github.com/mellowforge/jsontrans-go/examples/prepared-json",
+              "github.com/mellowforge/jsontrans-go",
+              "github.com/mellowforge/jsontrans-go_test",
+              "github.com/mellowforge/jsontrans-go.test",
+              "github.com/mellowforge/jsontrans-go/conformance",
+              "github.com/mellowforge/jsontrans-go/conformance.test",
+              "github.com/mellowforge/jsontrans-go/examples/basic",
+              "github.com/mellowforge/jsontrans-go/examples/basic.test",
+              "github.com/mellowforge/jsontrans-go/internal/budget",
+              "github.com/mellowforge/jsontrans-go/internal/budget.test",
+              "github.com/mellowforge/jsontrans-go/internal/document",
+              "github.com/mellowforge/jsontrans-go/internal/document.test",
+              "github.com/mellowforge/jsontrans-go/internal/errchain",
+              "github.com/mellowforge/jsontrans-go/internal/errchain.test",
+              "github.com/mellowforge/jsontrans-go/internal/jsonvalue",
+              "github.com/mellowforge/jsontrans-go/internal/jsonvalue.test",
+              "github.com/mellowforge/jsontrans-go/internal/prepared",
+              "github.com/mellowforge/jsontrans-go/internal/prepared.test",
+              "github.com/mellowforge/jsontrans-go/jsonata",
+              "github.com/mellowforge/jsontrans-go/jsonata_test",
+              "github.com/mellowforge/jsontrans-go/jsonata.test",
+              "github.com/mellowforge/jsontrans-go/jsonpath",
+              "github.com/mellowforge/jsontrans-go/jsonpath.test"
+            ]
+          },
+          "findings": [],
+          "raw_sha256": "789bd9d65f4a5811ece4205030da9cad7d169cffedf8c0b931abf9ec6134883f",
+          "raw_file": "source-0.json",
+          "module": "github.com/mellowforge/jsontrans-go",
+          "imported": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            }
+          ],
+          "selected": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ],
+          "selected_not_imported": [
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ]
+        },
+        {
+          "config": {
+            "protocol_version": "v1.0.0",
+            "scanner_name": "govulncheck",
+            "scanner_version": "v1.9.0",
+            "db": "https://vuln.go.dev",
+            "db_last_modified": "2026-11-05T23:49:57Z",
+            "go_version": "go1.26.10",
+            "scan_level": "symbol",
+            "scan_mode": "source"
+          },
+          "sbom": {
+            "go_version": "go1.26.10",
+            "modules": [
+              {
+                "path": "github.com/mellowforge/jsontrans-go/javascript"
+              },
+              {
+                "path": ".."
+              },
+              {
+                "path": ".."
+              },
+              {
+                "path": "github.com/tetratelabs/wazero",
+                "version": "v1.12.0"
+              },
+              {
+                "path": "golang.org/x/sys",
+                "version": "v0.44.0"
+              },
+              {
+                "path": "stdlib",
+                "version": "v1.26.10"
+              }
+            ],
+            "roots": [
+              "github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm",
+              "github.com/mellowforge/jsontrans-go/javascript",
+              "github.com/mellowforge/jsontrans-go/javascript/cmd/hardening",
+              "github.com/mellowforge/jsontrans-go/javascript/examples/basic",
+              "github.com/mellowforge/jsontrans-go/javascript",
+              "github.com/mellowforge/jsontrans-go/javascript_test",
+              "github.com/mellowforge/jsontrans-go/javascript.test",
+              "github.com/mellowforge/jsontrans-go/javascript/cmd/hardening",
+              "github.com/mellowforge/jsontrans-go/javascript/cmd/hardening.test",
+              "github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm",
+              "github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm.test"
+            ]
+          },
+          "findings": [],
+          "raw_sha256": "e40f60487320eefb74a2dcae5b49c802b68ee60af48fba4215a9af7e5a5d747b",
+          "raw_file": "source-1.json",
+          "module": "github.com/mellowforge/jsontrans-go/javascript",
+          "imported": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            }
+          ],
+          "selected": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ],
+          "selected_not_imported": [
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ]
+        },
+        {
+          "config": {
+            "protocol_version": "v1.0.0",
+            "scanner_name": "govulncheck",
+            "scanner_version": "v1.9.0",
+            "db": "https://vuln.go.dev",
+            "db_last_modified": "2026-11-05T23:49:57Z",
+            "go_version": "go1.26.10",
+            "scan_level": "symbol",
+            "scan_mode": "source"
+          },
+          "sbom": {
+            "go_version": "go1.26.10",
+            "modules": [
+              {
+                "path": "github.com/mellowforge/jsontrans-go/experiments/javascript"
+              },
+              {
+                "path": "../.."
+              },
+              {
+                "path": "../.."
+              },
+              {
+                "path": "../../javascript"
+              },
+              {
+                "path": "../../javascript"
+              },
+              {
+                "path": "github.com/dlclark/regexp2/v2",
+                "version": "v2.12.0"
+              },
+              {
+                "path": "github.com/dop251/goja",
+                "version": "v0.0.0-20261102223426-a177d211bf60"
+              },
+              {
+                "path": "github.com/fastschema/qjs",
+                "version": "v0.0.6"
+              },
+              {
+                "path": "github.com/go-sourcemap/sourcemap",
+                "version": "v2.1.3+incompatible"
+              },
+              {
+                "path": "github.com/google/pprof",
+                "version": "v0.0.0-20230207041349-798e818bf904"
+              },
+              {
+                "path": "github.com/tetratelabs/wazero",
+                "version": "v1.12.0"
+              },
+              {
+                "path": "golang.org/x/sys",
+                "version": "v0.44.0"
+              },
+              {
+                "path": "golang.org/x/text",
+                "version": "v0.43.0"
+              },
+              {
+                "path": "stdlib",
+                "version": "v1.26.10"
+              }
+            ],
+            "roots": [
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/assess",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/bare",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/goja-min",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/owned-min",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/quickjs-min",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript.test",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat.test"
+            ]
+          },
+          "findings": [],
+          "raw_sha256": "b75e8e64d0cdbb3f5bf0f24e38857bbed6e7d96a90caa7683a22728db42fb36b",
+          "raw_file": "source-2.json",
+          "module": "github.com/mellowforge/jsontrans-go/experiments/javascript",
+          "imported": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/dop251/goja",
+              "version": "v0.0.0-20261102223426-a177d211bf60"
+            },
+            {
+              "path": "github.com/fastschema/qjs",
+              "version": "v0.0.6"
+            },
+            {
+              "path": "github.com/go-sourcemap/sourcemap",
+              "version": "v2.1.3+incompatible"
+            },
+            {
+              "path": "github.com/google/pprof",
+              "version": "v0.0.0-20230207041349-798e818bf904"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            }
+          ],
+          "selected": [
+            {
+              "path": "github.com/Masterminds/semver/v3",
+              "version": "v3.5.0"
+            },
+            {
+              "path": "github.com/chzyer/readline",
+              "version": "v1.5.0"
+            },
+            {
+              "path": "github.com/davecgh/go-spew",
+              "version": "v1.1.1"
+            },
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/dop251/goja",
+              "version": "v0.0.0-20261102223426-a177d211bf60"
+            },
+            {
+              "path": "github.com/dop251/goja_nodejs",
+              "version": "v0.0.0-20211022123610-8dd9abb0616d"
+            },
+            {
+              "path": "github.com/fastschema/qjs",
+              "version": "v0.0.6"
+            },
+            {
+              "path": "github.com/go-sourcemap/sourcemap",
+              "version": "v2.1.3+incompatible"
+            },
+            {
+              "path": "github.com/goccy/go-yaml",
+              "version": "v1.19.2"
+            },
+            {
+              "path": "github.com/google/pprof",
+              "version": "v0.0.0-20230207041349-798e818bf904"
+            },
+            {
+              "path": "github.com/ianlancetaylor/demangle",
+              "version": "v0.0.0-20220319035150-800ac71e25c2"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/pmezard/go-difflib",
+              "version": "v1.0.0"
+            },
+            {
+              "path": "github.com/stretchr/testify",
+              "version": "v1.11.1"
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            },
+            {
+              "path": "gopkg.in/yaml.v3",
+              "version": "v3.0.1"
+            }
+          ],
+          "selected_not_imported": [
+            {
+              "path": "github.com/Masterminds/semver/v3",
+              "version": "v3.5.0"
+            },
+            {
+              "path": "github.com/chzyer/readline",
+              "version": "v1.5.0"
+            },
+            {
+              "path": "github.com/davecgh/go-spew",
+              "version": "v1.1.1"
+            },
+            {
+              "path": "github.com/dop251/goja_nodejs",
+              "version": "v0.0.0-20211022123610-8dd9abb0616d"
+            },
+            {
+              "path": "github.com/goccy/go-yaml",
+              "version": "v1.19.2"
+            },
+            {
+              "path": "github.com/ianlancetaylor/demangle",
+              "version": "v0.0.0-20220319035150-800ac71e25c2"
+            },
+            {
+              "path": "github.com/pmezard/go-difflib",
+              "version": "v1.0.0"
+            },
+            {
+              "path": "github.com/stretchr/testify",
+              "version": "v1.11.1"
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            },
+            {
+              "path": "gopkg.in/yaml.v3",
+              "version": "v3.0.1"
+            }
+          ]
+        }
+      ],
+      "embedded_C_review": "separate release gate",
+      "binary_scan": {
+        "config": {
+          "protocol_version": "v1.0.0",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0",
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-11-05T23:49:57Z",
+          "scan_level": "symbol",
+          "scan_mode": "binary"
+        },
+        "sbom": {
+          "go_version": "go1.26.10",
+          "modules": [
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": "(devel)"
+            },
+            {
+              "path": "..",
+              "version": "(devel)"
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "stdlib",
+              "version": "go1.26.10"
+            }
+          ],
+          "roots": [
+            "github.com/mellowforge/jsontrans-go/javascript"
+          ]
+        },
+        "findings": [],
+        "raw_sha256": "e78b359dd83d32437a07675845ec087ca47d018d2a22ad1e1d0966d415f6c56e",
+        "raw_file": "binary.json",
+        "imported": [
+          {
+            "path": "github.com/mellowforge/jsontrans-go",
+            "version": ""
+          },
+          {
+            "path": "github.com/mellowforge/jsontrans-go/javascript",
+            "version": ""
+          },
+          {
+            "path": "github.com/tetratelabs/wazero",
+            "version": "v1.12.0"
+          },
+          {
+            "path": "golang.org/x/sys",
+            "version": "v0.44.0"
+          }
+        ],
+        "source_roots": [
+          "github.com/mellowforge/jsontrans-go/javascript/examples/basic"
+        ],
+        "binary_sha256": "a4c4570546029a352c026db49f2e918d285b323fe4ffc61b944787c4db7d95e9"
+      }
+    },
+    "security-linux": {
+      "status": "passed",
+      "target": {
+        "GOARCH": "amd64",
+        "GOOS": "linux",
+        "GOVERSION": "go1.26.10"
+      },
+      "tool_version": "v1.9.0",
+      "source_scans": [
+        {
+          "config": {
+            "protocol_version": "v1.0.0",
+            "scanner_name": "govulncheck",
+            "scanner_version": "v1.9.0",
+            "db": "https://vuln.go.dev",
+            "db_last_modified": "2026-11-05T23:49:57Z",
+            "go_version": "go1.26.10",
+            "scan_level": "symbol",
+            "scan_mode": "source"
+          },
+          "sbom": {
+            "go_version": "go1.26.10",
+            "modules": [
+              {
+                "path": "github.com/mellowforge/jsontrans-go"
+              },
+              {
+                "path": "github.com/dlclark/regexp2/v2",
+                "version": "v2.12.0"
+              },
+              {
+                "path": "golang.org/x/text",
+                "version": "v0.43.0"
+              },
+              {
+                "path": "stdlib",
+                "version": "v1.26.10"
+              }
+            ],
+            "roots": [
+              "github.com/mellowforge/jsontrans-go/internal/budget",
+              "github.com/mellowforge/jsontrans-go/internal/jsonvalue",
+              "github.com/mellowforge/jsontrans-go/internal/document",
+              "github.com/mellowforge/jsontrans-go/internal/errchain",
+              "github.com/mellowforge/jsontrans-go/internal/prepared",
+              "github.com/mellowforge/jsontrans-go",
+              "github.com/mellowforge/jsontrans-go/conformance",
+              "github.com/mellowforge/jsontrans-go/jsonata",
+              "github.com/mellowforge/jsontrans-go/jsonpath",
+              "github.com/mellowforge/jsontrans-go/examples/basic",
+              "github.com/mellowforge/jsontrans-go/examples/prepared",
+              "github.com/mellowforge/jsontrans-go/examples/prepared-json",
+              "github.com/mellowforge/jsontrans-go",
+              "github.com/mellowforge/jsontrans-go_test",
+              "github.com/mellowforge/jsontrans-go.test",
+              "github.com/mellowforge/jsontrans-go/conformance",
+              "github.com/mellowforge/jsontrans-go/conformance.test",
+              "github.com/mellowforge/jsontrans-go/examples/basic",
+              "github.com/mellowforge/jsontrans-go/examples/basic.test",
+              "github.com/mellowforge/jsontrans-go/internal/budget",
+              "github.com/mellowforge/jsontrans-go/internal/budget.test",
+              "github.com/mellowforge/jsontrans-go/internal/document",
+              "github.com/mellowforge/jsontrans-go/internal/document.test",
+              "github.com/mellowforge/jsontrans-go/internal/errchain",
+              "github.com/mellowforge/jsontrans-go/internal/errchain.test",
+              "github.com/mellowforge/jsontrans-go/internal/jsonvalue",
+              "github.com/mellowforge/jsontrans-go/internal/jsonvalue.test",
+              "github.com/mellowforge/jsontrans-go/internal/prepared",
+              "github.com/mellowforge/jsontrans-go/internal/prepared.test",
+              "github.com/mellowforge/jsontrans-go/jsonata",
+              "github.com/mellowforge/jsontrans-go/jsonata_test",
+              "github.com/mellowforge/jsontrans-go/jsonata.test",
+              "github.com/mellowforge/jsontrans-go/jsonpath",
+              "github.com/mellowforge/jsontrans-go/jsonpath.test"
+            ]
+          },
+          "findings": [],
+          "raw_sha256": "db142f70332db9c16cba2ea94ebc2d26b3136307da28ee9176163016f7936ac4",
+          "raw_file": "source-0.json",
+          "module": "github.com/mellowforge/jsontrans-go",
+          "imported": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            }
+          ],
+          "selected": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ],
+          "selected_not_imported": [
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ]
+        },
+        {
+          "config": {
+            "protocol_version": "v1.0.0",
+            "scanner_name": "govulncheck",
+            "scanner_version": "v1.9.0",
+            "db": "https://vuln.go.dev",
+            "db_last_modified": "2026-11-05T23:49:57Z",
+            "go_version": "go1.26.10",
+            "scan_level": "symbol",
+            "scan_mode": "source"
+          },
+          "sbom": {
+            "go_version": "go1.26.10",
+            "modules": [
+              {
+                "path": "github.com/mellowforge/jsontrans-go/javascript"
+              },
+              {
+                "path": ".."
+              },
+              {
+                "path": ".."
+              },
+              {
+                "path": "github.com/tetratelabs/wazero",
+                "version": "v1.12.0"
+              },
+              {
+                "path": "golang.org/x/sys",
+                "version": "v0.44.0"
+              },
+              {
+                "path": "stdlib",
+                "version": "v1.26.10"
+              }
+            ],
+            "roots": [
+              "github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm",
+              "github.com/mellowforge/jsontrans-go/javascript",
+              "github.com/mellowforge/jsontrans-go/javascript/cmd/hardening",
+              "github.com/mellowforge/jsontrans-go/javascript/examples/basic",
+              "github.com/mellowforge/jsontrans-go/javascript",
+              "github.com/mellowforge/jsontrans-go/javascript_test",
+              "github.com/mellowforge/jsontrans-go/javascript.test",
+              "github.com/mellowforge/jsontrans-go/javascript/cmd/hardening",
+              "github.com/mellowforge/jsontrans-go/javascript/cmd/hardening.test",
+              "github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm",
+              "github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm.test"
+            ]
+          },
+          "findings": [],
+          "raw_sha256": "525ef6ff99d12eb59e25cc779c911f554f836216f038879c5f5ffa010e73c07d",
+          "raw_file": "source-1.json",
+          "module": "github.com/mellowforge/jsontrans-go/javascript",
+          "imported": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            }
+          ],
+          "selected": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ],
+          "selected_not_imported": [
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ]
+        },
+        {
+          "config": {
+            "protocol_version": "v1.0.0",
+            "scanner_name": "govulncheck",
+            "scanner_version": "v1.9.0",
+            "db": "https://vuln.go.dev",
+            "db_last_modified": "2026-11-05T23:49:57Z",
+            "go_version": "go1.26.10",
+            "scan_level": "symbol",
+            "scan_mode": "source"
+          },
+          "sbom": {
+            "go_version": "go1.26.10",
+            "modules": [
+              {
+                "path": "github.com/mellowforge/jsontrans-go/experiments/javascript"
+              },
+              {
+                "path": "../.."
+              },
+              {
+                "path": "../.."
+              },
+              {
+                "path": "../../javascript"
+              },
+              {
+                "path": "../../javascript"
+              },
+              {
+                "path": "github.com/dlclark/regexp2/v2",
+                "version": "v2.12.0"
+              },
+              {
+                "path": "github.com/dop251/goja",
+                "version": "v0.0.0-20261102223426-a177d211bf60"
+              },
+              {
+                "path": "github.com/fastschema/qjs",
+                "version": "v0.0.6"
+              },
+              {
+                "path": "github.com/go-sourcemap/sourcemap",
+                "version": "v2.1.3+incompatible"
+              },
+              {
+                "path": "github.com/google/pprof",
+                "version": "v0.0.0-20230207041349-798e818bf904"
+              },
+              {
+                "path": "github.com/tetratelabs/wazero",
+                "version": "v1.12.0"
+              },
+              {
+                "path": "golang.org/x/sys",
+                "version": "v0.44.0"
+              },
+              {
+                "path": "golang.org/x/text",
+                "version": "v0.43.0"
+              },
+              {
+                "path": "stdlib",
+                "version": "v1.26.10"
+              }
+            ],
+            "roots": [
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/assess",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/bare",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/goja-min",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/owned-min",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/quickjs-min",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript.test",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat.test"
+            ]
+          },
+          "findings": [],
+          "raw_sha256": "2e3ebf39d04b677ee94c2d72c72be49d70a70e70e7edbd210a979a37940d20c2",
+          "raw_file": "source-2.json",
+          "module": "github.com/mellowforge/jsontrans-go/experiments/javascript",
+          "imported": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/dop251/goja",
+              "version": "v0.0.0-20261102223426-a177d211bf60"
+            },
+            {
+              "path": "github.com/fastschema/qjs",
+              "version": "v0.0.6"
+            },
+            {
+              "path": "github.com/go-sourcemap/sourcemap",
+              "version": "v2.1.3+incompatible"
+            },
+            {
+              "path": "github.com/google/pprof",
+              "version": "v0.0.0-20230207041349-798e818bf904"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            }
+          ],
+          "selected": [
+            {
+              "path": "github.com/Masterminds/semver/v3",
+              "version": "v3.5.0"
+            },
+            {
+              "path": "github.com/chzyer/readline",
+              "version": "v1.5.0"
+            },
+            {
+              "path": "github.com/davecgh/go-spew",
+              "version": "v1.1.1"
+            },
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/dop251/goja",
+              "version": "v0.0.0-20261102223426-a177d211bf60"
+            },
+            {
+              "path": "github.com/dop251/goja_nodejs",
+              "version": "v0.0.0-20211022123610-8dd9abb0616d"
+            },
+            {
+              "path": "github.com/fastschema/qjs",
+              "version": "v0.0.6"
+            },
+            {
+              "path": "github.com/go-sourcemap/sourcemap",
+              "version": "v2.1.3+incompatible"
+            },
+            {
+              "path": "github.com/goccy/go-yaml",
+              "version": "v1.19.2"
+            },
+            {
+              "path": "github.com/google/pprof",
+              "version": "v0.0.0-20230207041349-798e818bf904"
+            },
+            {
+              "path": "github.com/ianlancetaylor/demangle",
+              "version": "v0.0.0-20220319035150-800ac71e25c2"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/pmezard/go-difflib",
+              "version": "v1.0.0"
+            },
+            {
+              "path": "github.com/stretchr/testify",
+              "version": "v1.11.1"
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            },
+            {
+              "path": "gopkg.in/yaml.v3",
+              "version": "v3.0.1"
+            }
+          ],
+          "selected_not_imported": [
+            {
+              "path": "github.com/Masterminds/semver/v3",
+              "version": "v3.5.0"
+            },
+            {
+              "path": "github.com/chzyer/readline",
+              "version": "v1.5.0"
+            },
+            {
+              "path": "github.com/davecgh/go-spew",
+              "version": "v1.1.1"
+            },
+            {
+              "path": "github.com/dop251/goja_nodejs",
+              "version": "v0.0.0-20211022123610-8dd9abb0616d"
+            },
+            {
+              "path": "github.com/goccy/go-yaml",
+              "version": "v1.19.2"
+            },
+            {
+              "path": "github.com/ianlancetaylor/demangle",
+              "version": "v0.0.0-20220319035150-800ac71e25c2"
+            },
+            {
+              "path": "github.com/pmezard/go-difflib",
+              "version": "v1.0.0"
+            },
+            {
+              "path": "github.com/stretchr/testify",
+              "version": "v1.11.1"
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            },
+            {
+              "path": "gopkg.in/yaml.v3",
+              "version": "v3.0.1"
+            }
+          ]
+        }
+      ],
+      "embedded_C_review": "separate release gate",
+      "binary_scan": {
+        "config": {
+          "protocol_version": "v1.0.0",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0",
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-11-05T23:49:57Z",
+          "scan_level": "symbol",
+          "scan_mode": "binary"
+        },
+        "sbom": {
+          "go_version": "go1.26.10",
+          "modules": [
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": "(devel)"
+            },
+            {
+              "path": "..",
+              "version": "(devel)"
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "stdlib",
+              "version": "go1.26.10"
+            }
+          ],
+          "roots": [
+            "github.com/mellowforge/jsontrans-go/javascript"
+          ]
+        },
+        "findings": [],
+        "raw_sha256": "e78b359dd83d32437a07675845ec087ca47d018d2a22ad1e1d0966d415f6c56e",
+        "raw_file": "binary.json",
+        "imported": [
+          {
+            "path": "github.com/mellowforge/jsontrans-go",
+            "version": ""
+          },
+          {
+            "path": "github.com/mellowforge/jsontrans-go/javascript",
+            "version": ""
+          },
+          {
+            "path": "github.com/tetratelabs/wazero",
+            "version": "v1.12.0"
+          },
+          {
+            "path": "golang.org/x/sys",
+            "version": "v0.44.0"
+          }
+        ],
+        "source_roots": [
+          "github.com/mellowforge/jsontrans-go/javascript/examples/basic"
+        ],
+        "binary_sha256": "b8c6a01eeff565f02fe8e9bdbd2d2bd4c4d0bc36fec6bb5d543413f8a3b85035"
+      }
+    },
+    "security-windows": {
+      "status": "passed",
+      "target": {
+        "GOARCH": "amd64",
+        "GOOS": "windows",
+        "GOVERSION": "go1.26.10"
+      },
+      "tool_version": "v1.9.0",
+      "source_scans": [
+        {
+          "config": {
+            "protocol_version": "v1.0.0",
+            "scanner_name": "govulncheck",
+            "scanner_version": "v1.9.0",
+            "db": "https://vuln.go.dev",
+            "db_last_modified": "2026-11-05T23:49:57Z",
+            "go_version": "go1.26.10",
+            "scan_level": "symbol",
+            "scan_mode": "source"
+          },
+          "sbom": {
+            "go_version": "go1.26.10",
+            "modules": [
+              {
+                "path": "github.com/mellowforge/jsontrans-go"
+              },
+              {
+                "path": "github.com/dlclark/regexp2/v2",
+                "version": "v2.12.0"
+              },
+              {
+                "path": "golang.org/x/text",
+                "version": "v0.43.0"
+              },
+              {
+                "path": "stdlib",
+                "version": "v1.26.10"
+              }
+            ],
+            "roots": [
+              "github.com/mellowforge/jsontrans-go/internal/budget",
+              "github.com/mellowforge/jsontrans-go/internal/jsonvalue",
+              "github.com/mellowforge/jsontrans-go/internal/document",
+              "github.com/mellowforge/jsontrans-go/internal/errchain",
+              "github.com/mellowforge/jsontrans-go/internal/prepared",
+              "github.com/mellowforge/jsontrans-go",
+              "github.com/mellowforge/jsontrans-go/conformance",
+              "github.com/mellowforge/jsontrans-go/jsonata",
+              "github.com/mellowforge/jsontrans-go/jsonpath",
+              "github.com/mellowforge/jsontrans-go/examples/basic",
+              "github.com/mellowforge/jsontrans-go/examples/prepared",
+              "github.com/mellowforge/jsontrans-go/examples/prepared-json",
+              "github.com/mellowforge/jsontrans-go",
+              "github.com/mellowforge/jsontrans-go_test",
+              "github.com/mellowforge/jsontrans-go.test",
+              "github.com/mellowforge/jsontrans-go/conformance",
+              "github.com/mellowforge/jsontrans-go/conformance.test",
+              "github.com/mellowforge/jsontrans-go/examples/basic",
+              "github.com/mellowforge/jsontrans-go/examples/basic.test",
+              "github.com/mellowforge/jsontrans-go/internal/budget",
+              "github.com/mellowforge/jsontrans-go/internal/budget.test",
+              "github.com/mellowforge/jsontrans-go/internal/document",
+              "github.com/mellowforge/jsontrans-go/internal/document.test",
+              "github.com/mellowforge/jsontrans-go/internal/errchain",
+              "github.com/mellowforge/jsontrans-go/internal/errchain.test",
+              "github.com/mellowforge/jsontrans-go/internal/jsonvalue",
+              "github.com/mellowforge/jsontrans-go/internal/jsonvalue.test",
+              "github.com/mellowforge/jsontrans-go/internal/prepared",
+              "github.com/mellowforge/jsontrans-go/internal/prepared.test",
+              "github.com/mellowforge/jsontrans-go/jsonata",
+              "github.com/mellowforge/jsontrans-go/jsonata_test",
+              "github.com/mellowforge/jsontrans-go/jsonata.test",
+              "github.com/mellowforge/jsontrans-go/jsonpath",
+              "github.com/mellowforge/jsontrans-go/jsonpath.test"
+            ]
+          },
+          "findings": [],
+          "raw_sha256": "789bd9d65f4a5811ece4205030da9cad7d169cffedf8c0b931abf9ec6134883f",
+          "raw_file": "source-0.json",
+          "module": "github.com/mellowforge/jsontrans-go",
+          "imported": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            }
+          ],
+          "selected": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ],
+          "selected_not_imported": [
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ]
+        },
+        {
+          "config": {
+            "protocol_version": "v1.0.0",
+            "scanner_name": "govulncheck",
+            "scanner_version": "v1.9.0",
+            "db": "https://vuln.go.dev",
+            "db_last_modified": "2026-11-05T23:49:57Z",
+            "go_version": "go1.26.10",
+            "scan_level": "symbol",
+            "scan_mode": "source"
+          },
+          "sbom": {
+            "go_version": "go1.26.10",
+            "modules": [
+              {
+                "path": "github.com/mellowforge/jsontrans-go/javascript"
+              },
+              {
+                "path": ".."
+              },
+              {
+                "path": ".."
+              },
+              {
+                "path": "github.com/tetratelabs/wazero",
+                "version": "v1.12.0"
+              },
+              {
+                "path": "golang.org/x/sys",
+                "version": "v0.44.0"
+              },
+              {
+                "path": "stdlib",
+                "version": "v1.26.10"
+              }
+            ],
+            "roots": [
+              "github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm",
+              "github.com/mellowforge/jsontrans-go/javascript",
+              "github.com/mellowforge/jsontrans-go/javascript/cmd/hardening",
+              "github.com/mellowforge/jsontrans-go/javascript/examples/basic",
+              "github.com/mellowforge/jsontrans-go/javascript",
+              "github.com/mellowforge/jsontrans-go/javascript_test",
+              "github.com/mellowforge/jsontrans-go/javascript.test",
+              "github.com/mellowforge/jsontrans-go/javascript/cmd/hardening",
+              "github.com/mellowforge/jsontrans-go/javascript/cmd/hardening.test",
+              "github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm",
+              "github.com/mellowforge/jsontrans-go/javascript/internal/quickjswasm.test"
+            ]
+          },
+          "findings": [],
+          "raw_sha256": "e40f60487320eefb74a2dcae5b49c802b68ee60af48fba4215a9af7e5a5d747b",
+          "raw_file": "source-1.json",
+          "module": "github.com/mellowforge/jsontrans-go/javascript",
+          "imported": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            }
+          ],
+          "selected": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ],
+          "selected_not_imported": [
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            }
+          ]
+        },
+        {
+          "config": {
+            "protocol_version": "v1.0.0",
+            "scanner_name": "govulncheck",
+            "scanner_version": "v1.9.0",
+            "db": "https://vuln.go.dev",
+            "db_last_modified": "2026-11-05T23:49:57Z",
+            "go_version": "go1.26.10",
+            "scan_level": "symbol",
+            "scan_mode": "source"
+          },
+          "sbom": {
+            "go_version": "go1.26.10",
+            "modules": [
+              {
+                "path": "github.com/mellowforge/jsontrans-go/experiments/javascript"
+              },
+              {
+                "path": "../.."
+              },
+              {
+                "path": "../.."
+              },
+              {
+                "path": "../../javascript"
+              },
+              {
+                "path": "../../javascript"
+              },
+              {
+                "path": "github.com/dlclark/regexp2/v2",
+                "version": "v2.12.0"
+              },
+              {
+                "path": "github.com/dop251/goja",
+                "version": "v0.0.0-20261102223426-a177d211bf60"
+              },
+              {
+                "path": "github.com/fastschema/qjs",
+                "version": "v0.0.6"
+              },
+              {
+                "path": "github.com/go-sourcemap/sourcemap",
+                "version": "v2.1.3+incompatible"
+              },
+              {
+                "path": "github.com/google/pprof",
+                "version": "v0.0.0-20230207041349-798e818bf904"
+              },
+              {
+                "path": "github.com/tetratelabs/wazero",
+                "version": "v1.12.0"
+              },
+              {
+                "path": "golang.org/x/sys",
+                "version": "v0.44.0"
+              },
+              {
+                "path": "golang.org/x/text",
+                "version": "v0.43.0"
+              },
+              {
+                "path": "stdlib",
+                "version": "v1.26.10"
+              }
+            ],
+            "roots": [
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/assess",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/bare",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/goja-min",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/owned-min",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/cmd/quickjs-min",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript.test",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat",
+              "github.com/mellowforge/jsontrans-go/experiments/javascript/internal/qjscompat.test"
+            ]
+          },
+          "findings": [],
+          "raw_sha256": "03199b55e50de5a939645d44d7ebb6cc37c019721a8589298a0b09310271dc26",
+          "raw_file": "source-2.json",
+          "module": "github.com/mellowforge/jsontrans-go/experiments/javascript",
+          "imported": [
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/dop251/goja",
+              "version": "v0.0.0-20261102223426-a177d211bf60"
+            },
+            {
+              "path": "github.com/fastschema/qjs",
+              "version": "v0.0.6"
+            },
+            {
+              "path": "github.com/go-sourcemap/sourcemap",
+              "version": "v2.1.3+incompatible"
+            },
+            {
+              "path": "github.com/google/pprof",
+              "version": "v0.0.0-20230207041349-798e818bf904"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            }
+          ],
+          "selected": [
+            {
+              "path": "github.com/Masterminds/semver/v3",
+              "version": "v3.5.0"
+            },
+            {
+              "path": "github.com/chzyer/readline",
+              "version": "v1.5.0"
+            },
+            {
+              "path": "github.com/davecgh/go-spew",
+              "version": "v1.1.1"
+            },
+            {
+              "path": "github.com/dlclark/regexp2/v2",
+              "version": "v2.12.0"
+            },
+            {
+              "path": "github.com/dop251/goja",
+              "version": "v0.0.0-20261102223426-a177d211bf60"
+            },
+            {
+              "path": "github.com/dop251/goja_nodejs",
+              "version": "v0.0.0-20211022123610-8dd9abb0616d"
+            },
+            {
+              "path": "github.com/fastschema/qjs",
+              "version": "v0.0.6"
+            },
+            {
+              "path": "github.com/go-sourcemap/sourcemap",
+              "version": "v2.1.3+incompatible"
+            },
+            {
+              "path": "github.com/goccy/go-yaml",
+              "version": "v1.19.2"
+            },
+            {
+              "path": "github.com/google/pprof",
+              "version": "v0.0.0-20230207041349-798e818bf904"
+            },
+            {
+              "path": "github.com/ianlancetaylor/demangle",
+              "version": "v0.0.0-20220319035150-800ac71e25c2"
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/experiments/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": ""
+            },
+            {
+              "path": "github.com/pmezard/go-difflib",
+              "version": "v1.0.0"
+            },
+            {
+              "path": "github.com/stretchr/testify",
+              "version": "v1.11.1"
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "golang.org/x/text",
+              "version": "v0.43.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            },
+            {
+              "path": "gopkg.in/yaml.v3",
+              "version": "v3.0.1"
+            }
+          ],
+          "selected_not_imported": [
+            {
+              "path": "github.com/Masterminds/semver/v3",
+              "version": "v3.5.0"
+            },
+            {
+              "path": "github.com/chzyer/readline",
+              "version": "v1.5.0"
+            },
+            {
+              "path": "github.com/davecgh/go-spew",
+              "version": "v1.1.1"
+            },
+            {
+              "path": "github.com/dop251/goja_nodejs",
+              "version": "v0.0.0-20211022123610-8dd9abb0616d"
+            },
+            {
+              "path": "github.com/goccy/go-yaml",
+              "version": "v1.19.2"
+            },
+            {
+              "path": "github.com/ianlancetaylor/demangle",
+              "version": "v0.0.0-20220319035150-800ac71e25c2"
+            },
+            {
+              "path": "github.com/pmezard/go-difflib",
+              "version": "v1.0.0"
+            },
+            {
+              "path": "github.com/stretchr/testify",
+              "version": "v1.11.1"
+            },
+            {
+              "path": "golang.org/x/mod",
+              "version": "v0.41.0"
+            },
+            {
+              "path": "golang.org/x/sync",
+              "version": "v0.24.0"
+            },
+            {
+              "path": "golang.org/x/tools",
+              "version": "v0.51.0"
+            },
+            {
+              "path": "gopkg.in/yaml.v3",
+              "version": "v3.0.1"
+            }
+          ]
+        }
+      ],
+      "embedded_C_review": "separate release gate",
+      "binary_scan": {
+        "config": {
+          "protocol_version": "v1.0.0",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0",
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-11-05T23:49:57Z",
+          "scan_level": "symbol",
+          "scan_mode": "binary"
+        },
+        "sbom": {
+          "go_version": "go1.26.10",
+          "modules": [
+            {
+              "path": "github.com/mellowforge/jsontrans-go/javascript",
+              "version": "(devel)"
+            },
+            {
+              "path": "..",
+              "version": "(devel)"
+            },
+            {
+              "path": "github.com/tetratelabs/wazero",
+              "version": "v1.12.0"
+            },
+            {
+              "path": "golang.org/x/sys",
+              "version": "v0.44.0"
+            },
+            {
+              "path": "stdlib",
+              "version": "go1.26.10"
+            }
+          ],
+          "roots": [
+            "github.com/mellowforge/jsontrans-go/javascript"
+          ]
+        },
+        "findings": [],
+        "raw_sha256": "e78b359dd83d32437a07675845ec087ca47d018d2a22ad1e1d0966d415f6c56e",
+        "raw_file": "binary.json",
+        "imported": [
+          {
+            "path": "github.com/mellowforge/jsontrans-go",
+            "version": ""
+          },
+          {
+            "path": "github.com/mellowforge/jsontrans-go/javascript",
+            "version": ""
+          },
+          {
+            "path": "github.com/tetratelabs/wazero",
+            "version": "v1.12.0"
+          },
+          {
+            "path": "golang.org/x/sys",
+            "version": "v0.44.0"
+          }
+        ],
+        "source_roots": [
+          "github.com/mellowforge/jsontrans-go/javascript/examples/basic"
+        ],
+        "binary_sha256": "21dd03e4c42e742a596b764a4cb6bf59d44ec719d6010b2885760b302d61902d"
+      }
+    }
+  },
+  "hosted": {
+    "hosted-ci": {
+      "headSha": "949cd9b13a68f3c62494af0055b38aead84834f1",
+      "url": "https://github.com/mellowforge/jsontrans-go/actions/runs/42499164478",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "reference",
+          "conclusion": "success"
+        },
+        {
+          "name": "javascript-windows",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (stable, ubuntu-latest)",
+          "conclusion": "success"
+        },
+        {
+          "name": "fuzz",
+          "conclusion": "success"
+        },
+        {
+          "name": "javascript-module",
+          "conclusion": "success"
+        },
+        {
+          "name": "javascript-assessment",
+          "conclusion": "success"
+        },
+        {
+          "name": "quickjs-guest-reproducibility",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (1.26.x, ubuntu-latest)",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (1.26.x, macos-latest)",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (stable, macos-latest)",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "hosted-security": {
+      "headSha": "949cd9b13a68f3c62494af0055b38aead84834f1",
+      "url": "https://github.com/mellowforge/jsontrans-go/actions/runs/42499164463",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "scan (linux-amd64, linux, amd64)",
+          "conclusion": "success"
+        },
+        {
+          "name": "scan (windows-amd64, windows, amd64)",
+          "conclusion": "success"
+        },
+        {
+          "name": "scan (darwin-arm64, darwin, arm64)",
+          "conclusion": "success"
+        }
+      ]
+    }
+  },
+  "other_checks": {
+    "gofmt_empty_output": true,
+    "git_diff_check_exit_code": 0,
+    "go_mod_tidy_diff_empty_output": true
+  },
+  "log_sha256": "87ba4464239dc63f64738ac354ac7f0e923d34a8ce09c8f7d48e70853580aff7"
+}

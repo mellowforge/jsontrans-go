@@ -1,0 +1,60 @@
+package main
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	jt "github.com/mellowforge/jsontrans-go"
+	js "github.com/mellowforge/jsontrans-go/javascript"
+	"time"
+)
+
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+func main() {
+	ctx := context.Background()
+	engine, err := js.New(ctx, js.Config{Limits: jt.Limits{Timeout: 30 * time.Second}})
+	must(err)
+	defer engine.Close()
+	x, err := jt.New(map[string]jt.Processor{"js": engine})
+	must(err)
+	p, err := x.Compile(ctx, "js", `(input,bindings)=>({total:input.x+bindings.n})`)
+	must(err)
+	d, err := jt.PrepareJSON(ctx, []byte(`{"x":3}`), jt.PrepareOptions{})
+	must(err)
+	o := jt.EvalOptions{Bindings: map[string]any{"n": 2}, Limits: &jt.Limits{Timeout: time.Second}}
+	r, err := jt.EvalPreparedJSON(ctx, p, d, o)
+	must(err)
+	if !r.Defined || string(r.Value) != `{"total":5}` {
+		panic(fmt.Sprint(r))
+	}
+	b, err := jt.NewBatch([]jt.Program{p})
+	must(err)
+	results, err := b.EvalPreparedJSON(ctx, d, nil, o)
+	must(err)
+	if len(results) != 1 || string(results[0].Value) != `{"total":5}` {
+		panic(fmt.Sprint(results))
+	}
+	for _, expr := range []string{`()=>undefined`, `()=>null`} {
+		q, err := engine.Compile(ctx, expr)
+		must(err)
+		r, err := jt.EvalPreparedJSON(ctx, q, d, o)
+		must(err)
+		if (expr == `()=>undefined` && (r.Defined || r.Value != nil)) || (expr == `()=>null` && (!r.Defined || string(r.Value) != "null")) {
+			panic(fmt.Sprint(r))
+		}
+	}
+	_, err = jt.EvalPreparedJSON(ctx, p, d, jt.EvalOptions{Limits: &jt.Limits{MaxSteps: 1}})
+	if !errors.Is(err, jt.ErrUnsupported) {
+		panic(fmt.Sprint(err))
+	}
+	must(engine.Close())
+	_, err = jt.EvalPreparedJSON(ctx, p, d, o)
+	if !errors.Is(err, js.ErrClosed) {
+		panic(fmt.Sprint(err))
+	}
+	fmt.Println("javascript outside consumer: PASS")
+}
