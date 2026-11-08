@@ -1,0 +1,27 @@
+2026/11/08 18:26:10 github.com/testcontainers/testcontainers-go - Connected to docker:
+  Server Version: 29.1.3
+  API Version: 1.52
+  Operating System: Ubuntu 24.04.5 LTS
+  Total Memory: 128577 MB
+  Testcontainers for Go Version: v0.45.0
+  Resolved Docker Host: unix:///var/run/docker.sock
+  Resolved Docker Socket Path: /var/run/docker.sock
+  Test SessionID: 576ac03d2ce76ea4ec7d59dfd7e431f8838d9b74ac6947d1cba94372769fe3b7
+  Test ProcessID: 7f95c7d4-c731-4de4-ace2-824c5d1176b6
+2026/11/08 18:26:10 🐳 Creating container for image nats@sha256:afae2fdbe2e326c65e1246cb83b9d05d319188734f3bd577ac8072daae78a10f
+2026/11/08 18:26:10 🐳 Creating container for image testcontainers/ryuk:0.14.0
+2026/11/08 18:26:10 ✅ Container created: ca84a6a6165a
+2026/11/08 18:26:10 🐳 Starting container: ca84a6a6165a
+2026/11/08 18:26:11 ✅ Container started: ca84a6a6165a
+2026/11/08 18:26:11 ⏳ Waiting for container id ca84a6a6165a image: testcontainers/ryuk:0.14.0. Waiting for: all of: [log message "Started", port 8080/tcp to be listening]
+2026/11/08 18:26:11 Shell not found in container
+2026/11/08 18:26:11 🔔 Container is ready: ca84a6a6165a
+2026/11/08 18:26:11 ✅ Container created: 7ad1ef7ec969
+2026/11/08 18:26:11 🐳 Starting container: 7ad1ef7ec969
+2026/11/08 18:26:11 ✅ Container started: 7ad1ef7ec969
+2026/11/08 18:26:11 ⏳ Waiting for container id 7ad1ef7ec969 image: nats@sha256:afae2fdbe2e326c65e1246cb83b9d05d319188734f3bd577ac8072daae78a10f. Waiting for: all of: [port 4222/tcp to be listening]
+2026/11/08 18:26:11 🔔 Container is ready: 7ad1ef7ec969
+2026/11/08 18:26:16 🐳 Stopping container: 7ad1ef7ec969
+2026/11/08 18:26:17 ✅ Container stopped: 7ad1ef7ec969
+2026/11/08 18:26:17 🐳 Terminating container: 7ad1ef7ec969
+2026/11/08 18:26:17 🚫 Container terminated: 7ad1ef7ec969

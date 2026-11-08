@@ -1,0 +1,51 @@
+diff --git a/experiments/messages/nats/load.go b/experiments/messages/nats/load.go
+index bfbb887..ff300c3 100644
+--- a/experiments/messages/nats/load.go
++++ b/experiments/messages/nats/load.go
+@@ -15,15 +15,17 @@ import (
+ )
+ 
+ type Config struct {
+-	Engine   string     `json:"engine"`
+-	Kind     string     `json:"kind"`
+-	Strategy m.Strategy `json:"strategy"`
+-	Fanout   int        `json:"fanout"`
+-	Workers  int        `json:"workers"`
+-	Rate     int        `json:"target_rate"`
+-	Count    int        `json:"count"`
+-	Queue    int        `json:"queue_capacity"`
+-	Size     int        `json:"target_bytes"`
++	// ClientProcs overrides the diagnostic runtime width; zero follows Workers.
++	ClientProcs int        `json:"client_procs,omitempty"`
++	Engine      string     `json:"engine"`
++	Kind        string     `json:"kind"`
++	Strategy    m.Strategy `json:"strategy"`
++	Fanout      int        `json:"fanout"`
++	Workers     int        `json:"workers"`
++	Rate        int        `json:"target_rate"`
++	Count       int        `json:"count"`
++	Queue       int        `json:"queue_capacity"`
++	Size        int        `json:"target_bytes"`
+ }
+ type Report struct {
+ 	Config               Config      `json:"config"`
+@@ -74,13 +76,17 @@ type job struct {
+ var sequence atomic.Uint64
+ 
+ func Run(ctx context.Context, url string, c Config) (report Report, err error) {
+-	if c.Count < 1 || c.Count > 50000 || c.Workers < 1 || c.Workers > 8 || c.Fanout < 1 || c.Fanout > 16 || c.Queue < 1 || c.Queue > 8192 || c.Rate < 0 || c.Rate > 100000 {
++	if c.ClientProcs < 0 || c.ClientProcs > 8 || c.Count < 1 || c.Count > 50000 || c.Workers < 1 || c.Workers > 8 || c.Fanout < 1 || c.Fanout > 16 || c.Queue < 1 || c.Queue > 8192 || c.Rate < 0 || c.Rate > 100000 {
+ 		return report, fmt.Errorf("load config bounds")
+ 	}
+ 	if c.Strategy != m.Direct && c.Strategy != m.Prepared && c.Strategy != m.Batched {
+ 		return report, fmt.Errorf("strategy")
+ 	}
+-	runtime.GOMAXPROCS(c.Workers)
++	procs := c.Workers
++	if c.ClientProcs != 0 {
++		procs = c.ClientProcs
++	}
++	runtime.GOMAXPROCS(procs)
+ 	routes := make([]route, 8)
+ 	for i := range routes {
+ 		engine, kind := c.Engine, c.Kind

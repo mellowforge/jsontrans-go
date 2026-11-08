@@ -77,6 +77,35 @@ taskset -c 0,2,4,6,8,10,12,14 /tmp/message-load \
   -output /data/ci/message-nats-results -rounds 3 -duration 1s
 ```
 
+For separately paired baseline/current processes, `-rounds 1 -round-offset 0`
+(and then offsets 1 and 2) preserves the full matrix while rotating case and
+strategy order across invocations. The offset is recorded in metadata. The
+[matched optimization comparison](../../../docs/benchmarks/nats-optimization-linux-2026-11-08/README.md)
+provides a driver, source identities, strict paired validation and complete loss,
+latency, allocation and GC results. `compare.py` checks all three pairs without
+creating per-run summary artifacts; only its final CSV/JSON reports are written.
+
+The `object-one-worker` profile focuses on JSONata object fan-out1/4, one worker,
+5,000 offered inputs/sec and all three strategies. It permits1–10second windows,
+up to the existing50,000-input cap; the default full profile retains its5second
+limit. Use six separately paired runs with offsets0..5:
+
+```sh
+taskset -c 0,2,4,6,8,10,12,14 /tmp/message-load \
+  -output /data/ci/focused-new -profile object-one-worker -duration 10s \
+  -rounds 1 -round-offset 0
+```
+
+The [focused tail investigation](../../../docs/benchmarks/nats-focused-linux-2026-11-08/README.md)
+records the longer results and separate diagnostics. Single-rule prepared and
+four-rule batch regressions did not repeat; four individual prepared calls
+remained higher in all six pairs. The optional `cmd/diagnose` captures traces
+separately. Its `-procs` flag controls runtime execution slots while keeping one
+transform worker, and `-trace=false` permits untraced configuration controls.
+`Config.ClientProcs` is a development-harness override; zero preserves the
+existing Workers-based runtime default. Such controls are exploratory and must
+not be mixed with primary timing results or treated as production sizing rules.
+
 Use an empty/new output directory. Configured broker containers are removed on
 exit with bounded cleanup; Testcontainers also manages its reaper. Metadata
 records the image/build/container settings, successful completion and cleanup.

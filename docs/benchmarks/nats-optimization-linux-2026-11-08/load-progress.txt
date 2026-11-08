@@ -1,0 +1,19 @@
+START pair=1 version=baseline offset=0 2026-11-08T13:11:06Z
+VALIDATED round-1 cases 162 lossless 145 queue_rejected 34060 container removed
+COMPLETE pair=1 version=baseline 2026-11-08T13:14:07Z
+START pair=1 version=main offset=0 2026-11-08T13:14:07Z
+VALIDATED round-1 cases 162 lossless 149 queue_rejected 29468 container removed
+COMPLETE pair=1 version=main 2026-11-08T13:17:07Z
+START pair=2 version=main offset=1 2026-11-08T13:17:08Z
+VALIDATED round-2 cases 162 lossless 149 queue_rejected 29282 container removed
+COMPLETE pair=2 version=main 2026-11-08T13:20:08Z
+START pair=2 version=baseline offset=1 2026-11-08T13:20:08Z
+VALIDATED round-2 cases 162 lossless 146 queue_rejected 34205 container removed
+COMPLETE pair=2 version=baseline 2026-11-08T13:23:09Z
+START pair=3 version=baseline offset=2 2026-11-08T13:23:09Z
+VALIDATED round-3 cases 162 lossless 145 queue_rejected 34661 container removed
+COMPLETE pair=3 version=baseline 2026-11-08T13:26:10Z
+START pair=3 version=main offset=2 2026-11-08T13:26:10Z
+VALIDATED round-3 cases 162 lossless 149 queue_rejected 29435 container removed
+COMPLETE pair=3 version=main 2026-11-08T13:29:10Z
+ALL SIX RUNS COMPLETE

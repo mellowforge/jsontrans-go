@@ -9,13 +9,21 @@ import statistics
 import re
 
 
+def duration_seconds(meta):
+    match=re.fullmatch(r"([0-9.]+)(ns|us|µs|ms|s)",meta['duration'])
+    if not match:raise ValueError('unsupported duration')
+    return float(match.group(1))*{'ns':1e-9,'us':1e-6,'µs':1e-6,'ms':1e-3,'s':1}[match.group(2)]
+
+
 def expected_keys(meta):
-    if meta['cases_per_round']==6:
+    if meta.get('workload_profile')=='object-one-worker':
+        seconds=duration_seconds(meta)
+        if meta['cases_per_round']!=6 or not 1<=seconds<=10:raise ValueError('invalid focused matrix/duration')
+        cases=[('jsonata','object',n,1,5000,int(seconds*5000),64,1024) for n in [1,4]]
+    elif meta['cases_per_round']==6:
         cases=[('mixed','mixed',n,2,500,128,128,1024) for n in [1,4]]
     elif meta['cases_per_round']==162:
-        match=re.fullmatch(r"([0-9.]+)(ns|us|µs|ms|s)",meta['duration'])
-        if not match:raise ValueError('unsupported duration')
-        seconds=float(match.group(1))*{'ns':1e-9,'us':1e-6,'µs':1e-6,'ms':1e-3,'s':1}[match.group(2)]
+        seconds=duration_seconds(meta)
         count=lambda rate:max(1,int(seconds*rate))
         cases=[(engine,kind,n,w,r,count(r),w*64,1024)
                for engine,kind in [('jsonata','scalar'),('jsonata','object'),('mixed','mixed')]
@@ -24,7 +32,7 @@ def expected_keys(meta):
     return {(round_id,*case,strategy) for round_id in range(1,meta['rounds']+1) for case in cases for strategy in ['direct','prepared','batch']}
 
 
-def summarize(directory):
+def summarize(directory, write_output=True):
     meta=json.loads((directory/'metadata.json').read_text())
     if not meta.get('completed') or not meta.get('container_removed') or meta.get('cleanup_error'):
         raise ValueError('run or cleanup incomplete')
@@ -65,6 +73,8 @@ def summarize(directory):
                     'e2e_p99_us':median(lambda r:r['end_to_end']['p99_ns']/1000),
                     'pacing_late_max_us':max(r['max_pacing_lateness_ns']/1000 for r in values),
                     'allocated_bytes_median':median(lambda r:r['allocated_bytes_during_run'])})
+    if not write_output:
+        return out
     (directory/'summary.json').write_text(json.dumps(out,indent=2)+'\n')
     with (directory/'summary.csv').open('w',newline='') as f:
         writer=csv.DictWriter(f,fieldnames=list(out[0]),lineterminator='\n');writer.writeheader();writer.writerows(out)

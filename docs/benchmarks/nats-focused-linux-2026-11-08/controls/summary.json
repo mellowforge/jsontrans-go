@@ -1,0 +1,198 @@
+{
+  "observations": [
+    {
+      "version": "baseline",
+      "procs": 1,
+      "round": 1,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 4999.585463370972,
+      "processing_p50_us": 72.172,
+      "queue_p99_ms": 0.826694,
+      "e2e_p99_ms": 3.262451
+    },
+    {
+      "version": "baseline",
+      "procs": 1,
+      "round": 2,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 4999.761457381059,
+      "processing_p50_us": 72.551,
+      "queue_p99_ms": 0.94597,
+      "e2e_p99_ms": 3.74676
+    },
+    {
+      "version": "baseline",
+      "procs": 1,
+      "round": 3,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 5000.164551415255,
+      "processing_p50_us": 71.915,
+      "queue_p99_ms": 0.84019,
+      "e2e_p99_ms": 3.325175
+    },
+    {
+      "version": "baseline",
+      "procs": 2,
+      "round": 1,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 4999.96216828625,
+      "processing_p50_us": 133.759,
+      "queue_p99_ms": 2.509601,
+      "e2e_p99_ms": 3.081188
+    },
+    {
+      "version": "baseline",
+      "procs": 2,
+      "round": 2,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 5000.12032289545,
+      "processing_p50_us": 134.22,
+      "queue_p99_ms": 4.427696,
+      "e2e_p99_ms": 4.972736
+    },
+    {
+      "version": "baseline",
+      "procs": 2,
+      "round": 3,
+      "lossless": false,
+      "completed": 24999,
+      "queue_rejected": 1,
+      "actual_offered": 5000.194258546983,
+      "processing_p50_us": 133.063,
+      "queue_p99_ms": 7.288889,
+      "e2e_p99_ms": 7.900005
+    },
+    {
+      "version": "main",
+      "procs": 1,
+      "round": 1,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 5000.122052979313,
+      "processing_p50_us": 45.226,
+      "queue_p99_ms": 0.909353,
+      "e2e_p99_ms": 4.941008
+    },
+    {
+      "version": "main",
+      "procs": 1,
+      "round": 2,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 5000.196616731323,
+      "processing_p50_us": 44.912,
+      "queue_p99_ms": 1.096276,
+      "e2e_p99_ms": 5.384455
+    },
+    {
+      "version": "main",
+      "procs": 1,
+      "round": 3,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 4999.358181396801,
+      "processing_p50_us": 44.838,
+      "queue_p99_ms": 0.612189,
+      "e2e_p99_ms": 3.514098
+    },
+    {
+      "version": "main",
+      "procs": 2,
+      "round": 1,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 5000.07610315832,
+      "processing_p50_us": 74.041,
+      "queue_p99_ms": 0.311504,
+      "e2e_p99_ms": 1.373193
+    },
+    {
+      "version": "main",
+      "procs": 2,
+      "round": 2,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 5000.147577355686,
+      "processing_p50_us": 74.118,
+      "queue_p99_ms": 0.302338,
+      "e2e_p99_ms": 1.37576
+    },
+    {
+      "version": "main",
+      "procs": 2,
+      "round": 3,
+      "lossless": true,
+      "completed": 25000,
+      "queue_rejected": 0,
+      "actual_offered": 5000.153568716525,
+      "processing_p50_us": 73.917,
+      "queue_p99_ms": 0.345777,
+      "e2e_p99_ms": 1.442783
+    }
+  ],
+  "summary": [
+    {
+      "version": "baseline",
+      "procs": 1,
+      "lossless_runs": 3,
+      "queue_rejected": 0,
+      "actual_offered": 4999.761457381059,
+      "processing_p50_us": 72.172,
+      "queue_p99_ms": 0.84019,
+      "e2e_p99_ms": 3.325175,
+      "e2e_p99_min_ms": 3.262451,
+      "e2e_p99_max_ms": 3.74676
+    },
+    {
+      "version": "baseline",
+      "procs": 2,
+      "lossless_runs": 2,
+      "queue_rejected": 1,
+      "actual_offered": 5000.12032289545,
+      "processing_p50_us": 133.759,
+      "queue_p99_ms": 4.427696,
+      "e2e_p99_ms": 4.972736,
+      "e2e_p99_min_ms": 3.081188,
+      "e2e_p99_max_ms": 7.900005
+    },
+    {
+      "version": "main",
+      "procs": 1,
+      "lossless_runs": 3,
+      "queue_rejected": 0,
+      "actual_offered": 5000.122052979313,
+      "processing_p50_us": 44.912,
+      "queue_p99_ms": 0.909353,
+      "e2e_p99_ms": 4.941008,
+      "e2e_p99_min_ms": 3.514098,
+      "e2e_p99_max_ms": 5.384455
+    },
+    {
+      "version": "main",
+      "procs": 2,
+      "lossless_runs": 3,
+      "queue_rejected": 0,
+      "actual_offered": 5000.147577355686,
+      "processing_p50_us": 74.041,
+      "queue_p99_ms": 0.311504,
+      "e2e_p99_ms": 1.37576,
+      "e2e_p99_min_ms": 1.373193,
+      "e2e_p99_max_ms": 1.442783
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+2026/11/08 18:27:14 github.com/testcontainers/testcontainers-go - Connected to docker:
+  Server Version: 29.1.3
+  API Version: 1.52
+  Operating System: Ubuntu 24.04.5 LTS
+  Total Memory: 128577 MB
+  Testcontainers for Go Version: v0.45.0
+  Resolved Docker Host: unix:///var/run/docker.sock
+  Resolved Docker Socket Path: /var/run/docker.sock
+  Test SessionID: 576ac03d2ce76ea4ec7d59dfd7e431f8838d9b74ac6947d1cba94372769fe3b7
+  Test ProcessID: 7b33c53a-7bde-43b3-88f9-23cfc71b8c0e
+2026/11/08 18:27:14 🐳 Creating container for image nats@sha256:afae2fdbe2e326c65e1246cb83b9d05d319188734f3bd577ac8072daae78a10f
+2026/11/08 18:27:14 ⏳ Waiting for Reaper "ca84a6a6" to be ready
+2026/11/08 18:27:14 🔥 Reaper obtained from Docker for this test session ca84a6a6
+2026/11/08 18:27:14 ✅ Container created: 515cd17e9a03
+2026/11/08 18:27:14 🐳 Starting container: 515cd17e9a03
+2026/11/08 18:27:14 ✅ Container started: 515cd17e9a03
+2026/11/08 18:27:14 ⏳ Waiting for container id 515cd17e9a03 image: nats@sha256:afae2fdbe2e326c65e1246cb83b9d05d319188734f3bd577ac8072daae78a10f. Waiting for: all of: [port 4222/tcp to be listening]
+2026/11/08 18:27:14 🔔 Container is ready: 515cd17e9a03
+2026/11/08 18:27:19 🐳 Stopping container: 515cd17e9a03
+2026/11/08 18:27:19 ✅ Container stopped: 515cd17e9a03
+2026/11/08 18:27:19 🐳 Terminating container: 515cd17e9a03
+2026/11/08 18:27:19 🚫 Container terminated: 515cd17e9a03

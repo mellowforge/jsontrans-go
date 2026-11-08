@@ -1,0 +1,250 @@
+diff --git a/experiments/messages/nats/cmd/load/main.go b/experiments/messages/nats/cmd/load/main.go
+index 2e2db59..d0a37a7 100644
+--- a/experiments/messages/nats/cmd/load/main.go
++++ b/experiments/messages/nats/cmd/load/main.go
+@@ -29,13 +29,19 @@ func run() (returned error) {
+ 	image := flag.String("image", n.DefaultImage, "immutable NATS image digest")
+ 	output := flag.String("output", "", "new report directory")
+ 	rounds := flag.Int("rounds", 3, "repeated process-local rounds")
++	roundOffset := flag.Int("round-offset", 0, "starting case/strategy rotation for separately paired runs (0..5)")
+ 	duration := flag.Duration("duration", time.Second, "offered publish window per case")
++	profile := flag.String("profile", "full", "workload profile: full or object-one-worker")
+ 	smoke := flag.Bool("smoke", false, "small lossless transport validation")
+ 	brokerCPUs := flag.String("broker-cpus", "16,17", "broker affinity on Bertram; empty disables")
+ 	flag.Parse()
+-	if *output == "" || *rounds < 1 || *rounds > 6 || *duration <= 0 || *duration > 5*time.Second {
++	if *output == "" || *rounds < 1 || *rounds > 6 || *roundOffset < 0 || *roundOffset > 5 {
+ 		return fmt.Errorf("invalid output/round/duration")
+ 	}
++	configs, err := loadConfigurations(*profile, *duration, *smoke)
++	if err != nil {
++		return err
++	}
+ 	if err := os.Mkdir(*output, 0755); err != nil {
+ 		return err
+ 	}
+@@ -48,6 +54,11 @@ func run() (returned error) {
+ 		return err
+ 	}
+ 	metadata := map[string]any{"image": *image, "container_id": broker.Container.GetContainerID(), "broker_cpus": *brokerCPUs, "broker_memory_bytes": 512 << 20, "client_affinity": "external driver pins performance cores", "go": runtime.Version(), "rounds": *rounds, "duration": duration.String(), "completed": false, "load": "paced deterministic arrivals; all completed-output percentiles exclude rejected/failed inputs; loss counters retained", "mode": "Core NATS, no persistence, TLS or acknowledgements; trace/debug disabled"}
++	metadata["workload_profile"] = *profile
++	if *smoke {
++		metadata["workload_profile"] = "smoke"
++	}
++	metadata["round_offset"] = *roundOffset
+ 	metadata["api_profile"] = "public-prepared-json-v1"
+ 	metadata["entry_points"] = map[string]string{
+ 		"direct":   "jsontrans.EvalJSON",
+@@ -86,28 +97,6 @@ func run() (returned error) {
+ 			}
+ 		}
+ 	}
+-	configs := []n.Config{}
+-	for _, family := range []string{"scalar", "object", "mixed"} {
+-		for _, fanout := range []int{1, 4, 16} {
+-			for _, workers := range []int{1, 4, 8} {
+-				for _, rate := range []int{1000, 5000} {
+-					kind, engine := family, "jsonata"
+-					if family == "mixed" {
+-						kind = "mixed"
+-						engine = "mixed"
+-					}
+-					count := int(duration.Seconds() * float64(rate))
+-					if count < 1 {
+-						count = 1
+-					}
+-					configs = append(configs, n.Config{Engine: engine, Kind: kind, Fanout: fanout, Workers: workers, Rate: rate, Count: count, Queue: workers * 64, Size: 1024})
+-				}
+-			}
+-		}
+-	}
+-	if *smoke {
+-		configs = []n.Config{{Engine: "mixed", Kind: "mixed", Fanout: 1, Workers: 2, Rate: 500, Count: 128, Queue: 128, Size: 1024}, {Engine: "mixed", Kind: "mixed", Fanout: 4, Workers: 2, Rate: 500, Count: 128, Queue: 128, Size: 1024}}
+-	}
+ 	file, err := os.Create(filepath.Join(*output, "runs.jsonl"))
+ 	if err != nil {
+ 		return err
+@@ -116,11 +105,12 @@ func run() (returned error) {
+ 	enc := json.NewEncoder(file)
+ 	for round := 0; round < *rounds; round++ {
+ 		// Rotate both configuration order and strategy order across repetitions.
+-		offset := round % len(configs)
++		rotation := round + *roundOffset
++		offset := rotation % len(configs)
+ 		order := append(append([]n.Config(nil), configs[offset:]...), configs[:offset]...)
+ 		for caseIndex, config := range order {
+ 			for si := 0; si < 3; si++ {
+-				strategy := []m.Strategy{m.Direct, m.Prepared, m.Batched}[(si+round)%3]
++				strategy := []m.Strategy{m.Direct, m.Prepared, m.Batched}[(si+rotation)%3]
+ 				config.Strategy = strategy
+ 				warm := config
+ 				warm.Count = 32
+diff --git a/experiments/messages/nats/cmd/load/config.go b/experiments/messages/nats/cmd/load/config.go
+new file mode 100644
+index 0000000..bde8859
+--- /dev/null
++++ b/experiments/messages/nats/cmd/load/config.go
+@@ -0,0 +1,55 @@
++package main
++
++import (
++	"fmt"
++	"time"
++
++	n "github.com/mellowforge/jsontrans-go/experiments/messages/nats"
++)
++
++// Profiles change only the development load matrix; evaluation limits and the
++// library's production execution paths are unaffected.
++func loadConfigurations(profile string, duration time.Duration, smoke bool) ([]n.Config, error) {
++	maxDuration := 5 * time.Second
++	switch profile {
++	case "full":
++	case "object-one-worker":
++		maxDuration = 10 * time.Second
++		if duration < time.Second {
++			return nil, fmt.Errorf("focused duration must be at least one second")
++		}
++		if smoke {
++			return nil, fmt.Errorf("focused profile cannot be combined with smoke")
++		}
++	default:
++		return nil, fmt.Errorf("unknown workload profile %q", profile)
++	}
++	if duration <= 0 || duration > maxDuration {
++		return nil, fmt.Errorf("invalid duration for %s profile", profile)
++	}
++	if smoke {
++		return []n.Config{{Engine: "mixed", Kind: "mixed", Fanout: 1, Workers: 2, Rate: 500, Count: 128, Queue: 128, Size: 1024}, {Engine: "mixed", Kind: "mixed", Fanout: 4, Workers: 2, Rate: 500, Count: 128, Queue: 128, Size: 1024}}, nil
++	}
++	if profile == "object-one-worker" {
++		out := []n.Config{}
++		for _, count := range []int{1, 4} {
++			out = append(out, n.Config{Engine: "jsonata", Kind: "object", Fanout: count, Workers: 1, Rate: 5000, Count: max(1, int(duration.Seconds()*5000)), Queue: 64, Size: 1024})
++		}
++		return out, nil
++	}
++	out := []n.Config{}
++	for _, family := range []string{"scalar", "object", "mixed"} {
++		for _, fanout := range []int{1, 4, 16} {
++			for _, workers := range []int{1, 4, 8} {
++				for _, rate := range []int{1000, 5000} {
++					engine := "jsonata"
++					if family == "mixed" {
++						engine = "mixed"
++					}
++					out = append(out, n.Config{Engine: engine, Kind: family, Fanout: fanout, Workers: workers, Rate: rate, Count: max(1, int(duration.Seconds()*float64(rate))), Queue: workers * 64, Size: 1024})
++				}
++			}
++		}
++	}
++	return out, nil
++}
+diff --git a/experiments/messages/nats/cmd/load/config_test.go b/experiments/messages/nats/cmd/load/config_test.go
+new file mode 100644
+index 0000000..ecc5ca4
+--- /dev/null
++++ b/experiments/messages/nats/cmd/load/config_test.go
+@@ -0,0 +1,34 @@
++package main
++
++import (
++	"reflect"
++	"testing"
++	"time"
++
++	n "github.com/mellowforge/jsontrans-go/experiments/messages/nats"
++)
++
++func TestFocusedObjectConfiguration(t *testing.T) {
++	got, err := loadConfigurations("object-one-worker", 10*time.Second, false)
++	want := []n.Config{{Engine: "jsonata", Kind: "object", Fanout: 1, Workers: 1, Rate: 5000, Count: 50000, Queue: 64, Size: 1024}, {Engine: "jsonata", Kind: "object", Fanout: 4, Workers: 1, Rate: 5000, Count: 50000, Queue: 64, Size: 1024}}
++	if err != nil || !reflect.DeepEqual(got, want) {
++		t.Fatalf("got %#v %v, want %#v", got, err, want)
++	}
++	for _, tc := range []struct {
++		profile  string
++		duration time.Duration
++		smoke    bool
++	}{{"unknown", time.Second, false}, {"full", 6 * time.Second, false}, {"object-one-worker", 11 * time.Second, false}, {"object-one-worker", 10 * time.Second, true}, {"object-one-worker", 0, false}, {"object-one-worker", time.Nanosecond, false}} {
++		if _, err := loadConfigurations(tc.profile, tc.duration, tc.smoke); err == nil {
++			t.Fatalf("accepted %+v", tc)
++		}
++	}
++	full, err := loadConfigurations("full", time.Second, false)
++	if err != nil || len(full) != 54 || full[0].Count != 1000 || full[1].Count != 5000 {
++		t.Fatalf("default matrix changed: %d %v", len(full), err)
++	}
++	smoke, err := loadConfigurations("full", time.Second, true)
++	if err != nil || len(smoke) != 2 || smoke[0].Count != 128 {
++		t.Fatalf("smoke changed: %#v %v", smoke, err)
++	}
++}
+diff --git a/experiments/messages/nats/summarize.py b/experiments/messages/nats/summarize.py
+index 60bf393..5d71e05 100644
+--- a/experiments/messages/nats/summarize.py
++++ b/experiments/messages/nats/summarize.py
+@@ -9,13 +9,21 @@ import statistics
+ import re
+ 
+ 
++def duration_seconds(meta):
++    match=re.fullmatch(r"([0-9.]+)(ns|us|µs|ms|s)",meta['duration'])
++    if not match:raise ValueError('unsupported duration')
++    return float(match.group(1))*{'ns':1e-9,'us':1e-6,'µs':1e-6,'ms':1e-3,'s':1}[match.group(2)]
++
++
+ def expected_keys(meta):
+-    if meta['cases_per_round']==6:
++    if meta.get('workload_profile')=='object-one-worker':
++        seconds=duration_seconds(meta)
++        if meta['cases_per_round']!=6 or not 1<=seconds<=10:raise ValueError('invalid focused matrix/duration')
++        cases=[('jsonata','object',n,1,5000,int(seconds*5000),64,1024) for n in [1,4]]
++    elif meta['cases_per_round']==6:
+         cases=[('mixed','mixed',n,2,500,128,128,1024) for n in [1,4]]
+     elif meta['cases_per_round']==162:
+-        match=re.fullmatch(r"([0-9.]+)(ns|us|µs|ms|s)",meta['duration'])
+-        if not match:raise ValueError('unsupported duration')
+-        seconds=float(match.group(1))*{'ns':1e-9,'us':1e-6,'µs':1e-6,'ms':1e-3,'s':1}[match.group(2)]
++        seconds=duration_seconds(meta)
+         count=lambda rate:max(1,int(seconds*rate))
+         cases=[(engine,kind,n,w,r,count(r),w*64,1024)
+                for engine,kind in [('jsonata','scalar'),('jsonata','object'),('mixed','mixed')]
+@@ -24,7 +32,7 @@ def expected_keys(meta):
+     return {(round_id,*case,strategy) for round_id in range(1,meta['rounds']+1) for case in cases for strategy in ['direct','prepared','batch']}
+ 
+ 
+-def summarize(directory):
++def summarize(directory, write_output=True):
+     meta=json.loads((directory/'metadata.json').read_text())
+     if not meta.get('completed') or not meta.get('container_removed') or meta.get('cleanup_error'):
+         raise ValueError('run or cleanup incomplete')
+@@ -65,6 +73,8 @@ def summarize(directory):
+                     'e2e_p99_us':median(lambda r:r['end_to_end']['p99_ns']/1000),
+                     'pacing_late_max_us':max(r['max_pacing_lateness_ns']/1000 for r in values),
+                     'allocated_bytes_median':median(lambda r:r['allocated_bytes_during_run'])})
++    if not write_output:
++        return out
+     (directory/'summary.json').write_text(json.dumps(out,indent=2)+'\n')
+     with (directory/'summary.csv').open('w',newline='') as f:
+         writer=csv.DictWriter(f,fieldnames=list(out[0]),lineterminator='\n');writer.writeheader();writer.writerows(out)
+diff --git a/experiments/messages/nats/test_summarize.py b/experiments/messages/nats/test_summarize.py
+index 7bdfe8d..eac0fe0 100644
+--- a/experiments/messages/nats/test_summarize.py
++++ b/experiments/messages/nats/test_summarize.py
+@@ -19,6 +19,15 @@ class Reports(unittest.TestCase):
+             rows.append({'round':round_,'report':r})
+         self.write(d,rows);return rows
+     def write(self,d,rows):(d/'runs.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
++    def test_focused_long_matrix(self):
++        meta={'workload_profile':'object-one-worker','cases_per_round':6,'rounds':1,'duration':'10s'}
++        keys=expected_keys(meta)
++        self.assertEqual(len(keys),6)
++        self.assertTrue(all(k[1:3]==('jsonata','object') and k[4:9]==(1,5000,50000,64,1024) for k in keys))
++        for duration in ['11s','0s','nan','1ns']:
++            with self.subTest(duration=duration),self.assertRaises(ValueError):
++                expected_keys({**meta,'duration':duration})
++
+     def test_complete_and_lossy_accounting(self):
+         with tempfile.TemporaryDirectory() as tmp:
+             d=Path(tmp);rows=self.fixture(d)

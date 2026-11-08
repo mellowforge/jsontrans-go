@@ -29,12 +29,18 @@ func run() (returned error) {
 	image := flag.String("image", n.DefaultImage, "immutable NATS image digest")
 	output := flag.String("output", "", "new report directory")
 	rounds := flag.Int("rounds", 3, "repeated process-local rounds")
+	roundOffset := flag.Int("round-offset", 0, "starting case/strategy rotation for separately paired runs (0..5)")
 	duration := flag.Duration("duration", time.Second, "offered publish window per case")
+	profile := flag.String("profile", "full", "workload profile: full or object-one-worker")
 	smoke := flag.Bool("smoke", false, "small lossless transport validation")
 	brokerCPUs := flag.String("broker-cpus", "16,17", "broker affinity on Bertram; empty disables")
 	flag.Parse()
-	if *output == "" || *rounds < 1 || *rounds > 6 || *duration <= 0 || *duration > 5*time.Second {
+	if *output == "" || *rounds < 1 || *rounds > 6 || *roundOffset < 0 || *roundOffset > 5 {
 		return fmt.Errorf("invalid output/round/duration")
+	}
+	configs, err := loadConfigurations(*profile, *duration, *smoke)
+	if err != nil {
+		return err
 	}
 	if err := os.Mkdir(*output, 0755); err != nil {
 		return err
@@ -48,6 +54,11 @@ func run() (returned error) {
 		return err
 	}
 	metadata := map[string]any{"image": *image, "container_id": broker.Container.GetContainerID(), "broker_cpus": *brokerCPUs, "broker_memory_bytes": 512 << 20, "client_affinity": "external driver pins performance cores", "go": runtime.Version(), "rounds": *rounds, "duration": duration.String(), "completed": false, "load": "paced deterministic arrivals; all completed-output percentiles exclude rejected/failed inputs; loss counters retained", "mode": "Core NATS, no persistence, TLS or acknowledgements; trace/debug disabled"}
+	metadata["workload_profile"] = *profile
+	if *smoke {
+		metadata["workload_profile"] = "smoke"
+	}
+	metadata["round_offset"] = *roundOffset
 	metadata["api_profile"] = "public-prepared-json-v1"
 	metadata["entry_points"] = map[string]string{
 		"direct":   "jsontrans.EvalJSON",
@@ -86,28 +97,6 @@ func run() (returned error) {
 			}
 		}
 	}
-	configs := []n.Config{}
-	for _, family := range []string{"scalar", "object", "mixed"} {
-		for _, fanout := range []int{1, 4, 16} {
-			for _, workers := range []int{1, 4, 8} {
-				for _, rate := range []int{1000, 5000} {
-					kind, engine := family, "jsonata"
-					if family == "mixed" {
-						kind = "mixed"
-						engine = "mixed"
-					}
-					count := int(duration.Seconds() * float64(rate))
-					if count < 1 {
-						count = 1
-					}
-					configs = append(configs, n.Config{Engine: engine, Kind: kind, Fanout: fanout, Workers: workers, Rate: rate, Count: count, Queue: workers * 64, Size: 1024})
-				}
-			}
-		}
-	}
-	if *smoke {
-		configs = []n.Config{{Engine: "mixed", Kind: "mixed", Fanout: 1, Workers: 2, Rate: 500, Count: 128, Queue: 128, Size: 1024}, {Engine: "mixed", Kind: "mixed", Fanout: 4, Workers: 2, Rate: 500, Count: 128, Queue: 128, Size: 1024}}
-	}
 	file, err := os.Create(filepath.Join(*output, "runs.jsonl"))
 	if err != nil {
 		return err
@@ -116,11 +105,12 @@ func run() (returned error) {
 	enc := json.NewEncoder(file)
 	for round := 0; round < *rounds; round++ {
 		// Rotate both configuration order and strategy order across repetitions.
-		offset := round % len(configs)
+		rotation := round + *roundOffset
+		offset := rotation % len(configs)
 		order := append(append([]n.Config(nil), configs[offset:]...), configs[:offset]...)
 		for caseIndex, config := range order {
 			for si := 0; si < 3; si++ {
-				strategy := []m.Strategy{m.Direct, m.Prepared, m.Batched}[(si+round)%3]
+				strategy := []m.Strategy{m.Direct, m.Prepared, m.Batched}[(si+rotation)%3]
 				config.Strategy = strategy
 				warm := config
 				warm.Count = 32

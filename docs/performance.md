@@ -1,5 +1,40 @@
 # Performance measurements
 
+## Focused one-worker tail follow-up (2026-11-08)
+
+Six paired ten-second trials do not reproduce the earlier single-rule prepared
+or four-rule batch regressions: end-to-end p99 medians are 5.51 → 1.71 ms and
+3.12 → 3.07 ms respectively. Four separate prepared evaluations remain higher
+on main in all six pairs (3.18 → 3.92 ms), despite lower processing and queue
+costs. A separate one-worker runtime-slot control shows configuration sensitivity;
+it does not prove an engine fault or justify a universal GOMAXPROCS change.
+
+The [focused investigation](benchmarks/nats-focused-linux-2026-11-08/README.md)
+retains all 72 primary cases, per-pair observations, isolated execution-trace
+summaries, exploratory controls, limitations and reproduction commands. GC
+world-stop pauses are short in the diagnostic traces, but concurrent GC and
+other scheduling effects remain possible. The longer runs also retain larger
+correlation arrays, so differences from one-second trials are not attributable
+to duration alone.
+
+## Matched NATS validation after encoding/materialization changes (2026-11-08)
+
+The serial three-pair comparison on Bertram validates 972 cases against the
+pre-optimization baseline with the same Go 1.27.3 toolchain, corpus and pinned
+broker. All 324 prepared/batch cases on merged main are lossless versus 314/324
+before; their application-queue rejection falls from 14,456 inputs to zero.
+The eight-worker, 16-rule object batch's median per-run end-to-end p99 falls
+7.85 → 1.15 ms. Single-worker tails are mixed: single-object p99 rises
+3.38 → 3.62 ms and the four-rule object batch rises 2.76 → 4.01 ms despite lower
+processing costs. These short paced trials do not establish universal SLO or
+capacity improvements.
+
+The [complete matched load report](benchmarks/nats-optimization-linux-2026-11-08/README.md)
+retains loss, actual offered load, per-run ranges, p50/p95/p99, client-pipeline
+allocation/GC data and all raw observations. No transformation, transport or
+output-validation errors occurred. The remaining queue overload is on the
+unchanged direct `EvalJSON` control path.
+
 ## Selective materialization (2026-11-08)
 
 Prepared object transformations can avoid full-document materialization: eligible
