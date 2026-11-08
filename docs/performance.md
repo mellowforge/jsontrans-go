@@ -1,5 +1,21 @@
 # Performance measurements
 
+## Selective materialization (2026-11-08)
+
+Prepared object transformations can avoid full-document materialization: eligible
+JSONata root constructors read singular scalar fields from the index, and
+JSONPath singular selections materialize only their selected subtree. On Bertram
+with Go 1.27.3, target-1-KiB object batches of 16 rules take 330.70 → 46.55 µs
+for JSONata and 216.08 → 44.76 µs for JSONPath, including preparation and encoding.
+Single-rule calls take about 41–50% less time. Scalar controls remain near
+baseline, and Go 1.26 controls confirm the object gains. These results depend
+on expression eligibility and the measured corpus.
+
+The [measurement and profile report](benchmarks/selective-materialization-linux-2026-11-08/README.md)
+retains all cases, ranges, source reconstruction and verification. Unsupported
+shapes retain native fallback, and input validation, ownership and limits remain
+in place.
+
 ## Prepared-result encoding (2026-11-08)
 
 Prepared byte-result calls now reuse validated result sizes and traverse without

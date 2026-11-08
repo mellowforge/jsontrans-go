@@ -225,6 +225,19 @@ func MaterializeWithBudget(d *Document, b *budget.Budget) (any, error) {
 	return d.Root().materialize(b)
 }
 
+// MaterializeNodeWithBudget converts only a selected subtree while retaining
+// the whole document's input dimension checks. The caller supplies its current
+// evaluation budget, so traversal shares work, depth and cancellation accounting.
+func MaterializeNodeWithBudget(n Node, b *budget.Budget) (any, error) {
+	if b == nil {
+		return nil, fmt.Errorf("%w: nil budget", jsonvalue.ErrInvalid)
+	}
+	if err := n.doc.CheckLimits(b.Context(), b.Limits); err != nil {
+		return nil, err
+	}
+	return n.materialize(b)
+}
+
 func (n Node) materialize(b *budget.Budget) (any, error) {
 	if err := b.Enter(); err != nil {
 		return nil, err

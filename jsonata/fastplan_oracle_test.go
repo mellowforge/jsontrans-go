@@ -16,8 +16,14 @@ import (
 )
 
 func TestNestedFastPlansReference(t *testing.T) {
-	expressions := []string{`Account.Order.Product.SKU`, `Account.Order.Product[UnitPrice>50].SKU`, `$sum(Account.Order.Product.(UnitPrice * Quantity * (1 - Discount)))`}
+	expressions := []string{`Account.Order.Product.SKU`, `Account.Order.Product[UnitPrice>50].SKU`, `$sum(Account.Order.Product.(UnitPrice * Quantity * (1 - Discount)))`, `{"name":customer.name,"code":meta.id+2}`, `{"n":(meta.id*3)-1,"missing":absent,"null":nil}`, `{"zero":meta.id*0}`, `{"a":meta.id,"a":missing}`, `{customer.name:meta.id}`, `{missing:$error("must not run"),"present":null}`}
 	inputs := []string{
+		`{"customer":{"name":"Ada"},"meta":{"id":4},"nil":null}`,
+		`{"customer":{"name":"é😀"},"meta":{"id":-0},"nil":false}`,
+		`{"customer":[{"name":"A"},{"name":"B"}],"meta":{"id":2}}`,
+		`{"customer":{"name":"A"},"meta":{"id":"bad"}}`,
+		`{"meta":{"id":1e308}}`,
+		`[{"customer":{"name":"X"},"meta":{"id":1}}]`,
 		`{"Account":{"Order":[{"Product":[{"SKU":"A","UnitPrice":10,"Quantity":2,"Discount":0.25},{"SKU":"B","UnitPrice":60,"Quantity":3,"Discount":0.5}]},{"Product":{"SKU":"C","UnitPrice":5,"Quantity":4,"Discount":0}}]}}`,
 		`{"Account":{"Order":{"Product":[]}}}`,
 		`{"Account":{"Order":{"Product":{"SKU":null,"UnitPrice":70,"Quantity":1,"Discount":0}}}}`,

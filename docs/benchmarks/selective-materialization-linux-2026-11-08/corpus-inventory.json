@@ -1,0 +1,602 @@
+[
+  {
+    "corpus_sha256": "fc9687471bfdfa901c47f5d5d8bd3633bd2a84099e830254159778bc00d80dfd",
+    "engine": "jsonata",
+    "expressions": [
+      "metrics.v0"
+    ],
+    "fanout": 1,
+    "input_bytes": [
+      1024,
+      1040,
+      1024,
+      1040,
+      1024,
+      1040,
+      1024,
+      1040
+    ],
+    "kind": "scalar",
+    "target_bytes": 1024,
+    "total_output_bytes": [
+      1,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  {
+    "corpus_sha256": "fc9687471bfdfa901c47f5d5d8bd3633bd2a84099e830254159778bc00d80dfd",
+    "engine": "jsonata",
+    "expressions": [
+      "metrics.v0",
+      "metrics.v1",
+      "metrics.v2",
+      "metrics.v3",
+      "metrics.v4",
+      "metrics.v5",
+      "metrics.v6",
+      "metrics.v7",
+      "metrics.v8",
+      "metrics.v9",
+      "metrics.v10",
+      "metrics.v11",
+      "metrics.v12",
+      "metrics.v13",
+      "metrics.v14",
+      "metrics.v15"
+    ],
+    "fanout": 16,
+    "input_bytes": [
+      1024,
+      1040,
+      1024,
+      1040,
+      1024,
+      1040,
+      1024,
+      1040
+    ],
+    "kind": "scalar",
+    "target_bytes": 1024,
+    "total_output_bytes": [
+      22,
+      48,
+      48,
+      48,
+      48,
+      48,
+      48,
+      48
+    ]
+  },
+  {
+    "corpus_sha256": "2b992a625110b0b5800edb881d40205266229e65b24e5b5ae8b56ad57d653030",
+    "engine": "jsonata",
+    "expressions": [
+      "metrics.v0"
+    ],
+    "fanout": 1,
+    "input_bytes": [
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552
+    ],
+    "kind": "scalar",
+    "target_bytes": 65536,
+    "total_output_bytes": [
+      1,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  {
+    "corpus_sha256": "2b992a625110b0b5800edb881d40205266229e65b24e5b5ae8b56ad57d653030",
+    "engine": "jsonata",
+    "expressions": [
+      "metrics.v0",
+      "metrics.v1",
+      "metrics.v2",
+      "metrics.v3",
+      "metrics.v4",
+      "metrics.v5",
+      "metrics.v6",
+      "metrics.v7",
+      "metrics.v8",
+      "metrics.v9",
+      "metrics.v10",
+      "metrics.v11",
+      "metrics.v12",
+      "metrics.v13",
+      "metrics.v14",
+      "metrics.v15"
+    ],
+    "fanout": 16,
+    "input_bytes": [
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552
+    ],
+    "kind": "scalar",
+    "target_bytes": 65536,
+    "total_output_bytes": [
+      22,
+      48,
+      48,
+      48,
+      48,
+      48,
+      48,
+      48
+    ]
+  },
+  {
+    "corpus_sha256": "18268ddfb7d6aa9069606338481ea64736d84679df6df7613bcc42b55fc3263e",
+    "engine": "jsonata",
+    "expressions": [
+      "{\"name\":customer.name,\"code\":meta.id+0}"
+    ],
+    "fanout": 1,
+    "input_bytes": [
+      1024,
+      1060,
+      1108,
+      1156,
+      1206,
+      1024,
+      1067,
+      1117
+    ],
+    "kind": "object",
+    "target_bytes": 1024,
+    "total_output_bytes": [
+      29,
+      29,
+      29,
+      29,
+      29,
+      29,
+      29,
+      29
+    ]
+  },
+  {
+    "corpus_sha256": "18268ddfb7d6aa9069606338481ea64736d84679df6df7613bcc42b55fc3263e",
+    "engine": "jsonata",
+    "expressions": [
+      "{\"name\":customer.name,\"code\":meta.id+0}",
+      "{\"name\":customer.name,\"code\":meta.id+1}",
+      "{\"name\":customer.name,\"code\":meta.id+2}",
+      "{\"name\":customer.name,\"code\":meta.id+3}",
+      "{\"name\":customer.name,\"code\":meta.id+4}",
+      "{\"name\":customer.name,\"code\":meta.id+5}",
+      "{\"name\":customer.name,\"code\":meta.id+6}",
+      "{\"name\":customer.name,\"code\":meta.id+7}",
+      "{\"name\":customer.name,\"code\":meta.id+8}",
+      "{\"name\":customer.name,\"code\":meta.id+9}",
+      "{\"name\":customer.name,\"code\":meta.id+10}",
+      "{\"name\":customer.name,\"code\":meta.id+11}",
+      "{\"name\":customer.name,\"code\":meta.id+12}",
+      "{\"name\":customer.name,\"code\":meta.id+13}",
+      "{\"name\":customer.name,\"code\":meta.id+14}",
+      "{\"name\":customer.name,\"code\":meta.id+15}"
+    ],
+    "fanout": 16,
+    "input_bytes": [
+      1024,
+      1060,
+      1108,
+      1156,
+      1206,
+      1024,
+      1067,
+      1117
+    ],
+    "kind": "object",
+    "target_bytes": 1024,
+    "total_output_bytes": [
+      470,
+      471,
+      472,
+      473,
+      474,
+      475,
+      476,
+      477
+    ]
+  },
+  {
+    "corpus_sha256": "41bab1d1318039178dbcbc6b7e8674b214e591c89ee066cdcd329e4cc3a499fb",
+    "engine": "jsonata",
+    "expressions": [
+      "{\"name\":customer.name,\"code\":meta.id+0}"
+    ],
+    "fanout": 1,
+    "input_bytes": [
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552
+    ],
+    "kind": "object",
+    "target_bytes": 65536,
+    "total_output_bytes": [
+      29,
+      29,
+      29,
+      29,
+      29,
+      29,
+      29,
+      29
+    ]
+  },
+  {
+    "corpus_sha256": "41bab1d1318039178dbcbc6b7e8674b214e591c89ee066cdcd329e4cc3a499fb",
+    "engine": "jsonata",
+    "expressions": [
+      "{\"name\":customer.name,\"code\":meta.id+0}",
+      "{\"name\":customer.name,\"code\":meta.id+1}",
+      "{\"name\":customer.name,\"code\":meta.id+2}",
+      "{\"name\":customer.name,\"code\":meta.id+3}",
+      "{\"name\":customer.name,\"code\":meta.id+4}",
+      "{\"name\":customer.name,\"code\":meta.id+5}",
+      "{\"name\":customer.name,\"code\":meta.id+6}",
+      "{\"name\":customer.name,\"code\":meta.id+7}",
+      "{\"name\":customer.name,\"code\":meta.id+8}",
+      "{\"name\":customer.name,\"code\":meta.id+9}",
+      "{\"name\":customer.name,\"code\":meta.id+10}",
+      "{\"name\":customer.name,\"code\":meta.id+11}",
+      "{\"name\":customer.name,\"code\":meta.id+12}",
+      "{\"name\":customer.name,\"code\":meta.id+13}",
+      "{\"name\":customer.name,\"code\":meta.id+14}",
+      "{\"name\":customer.name,\"code\":meta.id+15}"
+    ],
+    "fanout": 16,
+    "input_bytes": [
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552
+    ],
+    "kind": "object",
+    "target_bytes": 65536,
+    "total_output_bytes": [
+      470,
+      471,
+      472,
+      473,
+      474,
+      475,
+      476,
+      477
+    ]
+  },
+  {
+    "corpus_sha256": "fc9687471bfdfa901c47f5d5d8bd3633bd2a84099e830254159778bc00d80dfd",
+    "engine": "jsonpath",
+    "expressions": [
+      "$.metrics.v0"
+    ],
+    "fanout": 1,
+    "input_bytes": [
+      1024,
+      1040,
+      1024,
+      1040,
+      1024,
+      1040,
+      1024,
+      1040
+    ],
+    "kind": "scalar",
+    "target_bytes": 1024,
+    "total_output_bytes": [
+      3,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ]
+  },
+  {
+    "corpus_sha256": "fc9687471bfdfa901c47f5d5d8bd3633bd2a84099e830254159778bc00d80dfd",
+    "engine": "jsonpath",
+    "expressions": [
+      "$.metrics.v0",
+      "$.metrics.v1",
+      "$.metrics.v2",
+      "$.metrics.v3",
+      "$.metrics.v4",
+      "$.metrics.v5",
+      "$.metrics.v6",
+      "$.metrics.v7",
+      "$.metrics.v8",
+      "$.metrics.v9",
+      "$.metrics.v10",
+      "$.metrics.v11",
+      "$.metrics.v12",
+      "$.metrics.v13",
+      "$.metrics.v14",
+      "$.metrics.v15"
+    ],
+    "fanout": 16,
+    "input_bytes": [
+      1024,
+      1040,
+      1024,
+      1040,
+      1024,
+      1040,
+      1024,
+      1040
+    ],
+    "kind": "scalar",
+    "target_bytes": 1024,
+    "total_output_bytes": [
+      54,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80
+    ]
+  },
+  {
+    "corpus_sha256": "2b992a625110b0b5800edb881d40205266229e65b24e5b5ae8b56ad57d653030",
+    "engine": "jsonpath",
+    "expressions": [
+      "$.metrics.v0"
+    ],
+    "fanout": 1,
+    "input_bytes": [
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552
+    ],
+    "kind": "scalar",
+    "target_bytes": 65536,
+    "total_output_bytes": [
+      3,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ]
+  },
+  {
+    "corpus_sha256": "2b992a625110b0b5800edb881d40205266229e65b24e5b5ae8b56ad57d653030",
+    "engine": "jsonpath",
+    "expressions": [
+      "$.metrics.v0",
+      "$.metrics.v1",
+      "$.metrics.v2",
+      "$.metrics.v3",
+      "$.metrics.v4",
+      "$.metrics.v5",
+      "$.metrics.v6",
+      "$.metrics.v7",
+      "$.metrics.v8",
+      "$.metrics.v9",
+      "$.metrics.v10",
+      "$.metrics.v11",
+      "$.metrics.v12",
+      "$.metrics.v13",
+      "$.metrics.v14",
+      "$.metrics.v15"
+    ],
+    "fanout": 16,
+    "input_bytes": [
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552
+    ],
+    "kind": "scalar",
+    "target_bytes": 65536,
+    "total_output_bytes": [
+      54,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80
+    ]
+  },
+  {
+    "corpus_sha256": "18268ddfb7d6aa9069606338481ea64736d84679df6df7613bcc42b55fc3263e",
+    "engine": "jsonpath",
+    "expressions": [
+      "$.objects.o0"
+    ],
+    "fanout": 1,
+    "input_bytes": [
+      1024,
+      1060,
+      1108,
+      1156,
+      1206,
+      1024,
+      1067,
+      1117
+    ],
+    "kind": "object",
+    "target_bytes": 1024,
+    "total_output_bytes": [
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31
+    ]
+  },
+  {
+    "corpus_sha256": "18268ddfb7d6aa9069606338481ea64736d84679df6df7613bcc42b55fc3263e",
+    "engine": "jsonpath",
+    "expressions": [
+      "$.objects.o0",
+      "$.objects.o1",
+      "$.objects.o2",
+      "$.objects.o3",
+      "$.objects.o4",
+      "$.objects.o5",
+      "$.objects.o6",
+      "$.objects.o7",
+      "$.objects.o8",
+      "$.objects.o9",
+      "$.objects.o10",
+      "$.objects.o11",
+      "$.objects.o12",
+      "$.objects.o13",
+      "$.objects.o14",
+      "$.objects.o15"
+    ],
+    "fanout": 16,
+    "input_bytes": [
+      1024,
+      1060,
+      1108,
+      1156,
+      1206,
+      1024,
+      1067,
+      1117
+    ],
+    "kind": "object",
+    "target_bytes": 1024,
+    "total_output_bytes": [
+      502,
+      503,
+      504,
+      505,
+      506,
+      507,
+      508,
+      509
+    ]
+  },
+  {
+    "corpus_sha256": "41bab1d1318039178dbcbc6b7e8674b214e591c89ee066cdcd329e4cc3a499fb",
+    "engine": "jsonpath",
+    "expressions": [
+      "$.objects.o0"
+    ],
+    "fanout": 1,
+    "input_bytes": [
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552
+    ],
+    "kind": "object",
+    "target_bytes": 65536,
+    "total_output_bytes": [
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31,
+      31
+    ]
+  },
+  {
+    "corpus_sha256": "41bab1d1318039178dbcbc6b7e8674b214e591c89ee066cdcd329e4cc3a499fb",
+    "engine": "jsonpath",
+    "expressions": [
+      "$.objects.o0",
+      "$.objects.o1",
+      "$.objects.o2",
+      "$.objects.o3",
+      "$.objects.o4",
+      "$.objects.o5",
+      "$.objects.o6",
+      "$.objects.o7",
+      "$.objects.o8",
+      "$.objects.o9",
+      "$.objects.o10",
+      "$.objects.o11",
+      "$.objects.o12",
+      "$.objects.o13",
+      "$.objects.o14",
+      "$.objects.o15"
+    ],
+    "fanout": 16,
+    "input_bytes": [
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552,
+      65536,
+      65552
+    ],
+    "kind": "object",
+    "target_bytes": 65536,
+    "total_output_bytes": [
+      502,
+      503,
+      504,
+      505,
+      506,
+      507,
+      508,
+      509
+    ]
+  }
+]

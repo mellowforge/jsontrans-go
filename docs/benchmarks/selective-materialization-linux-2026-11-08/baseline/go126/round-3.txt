@@ -1,0 +1,29 @@
+goos: linux
+goarch: amd64
+pkg: github.com/mellowforge/jsontrans-go/experiments/messages
+cpu: 13th Gen Intel(R) Core(TM) i9-13900K
+BenchmarkBytes/jsonata/scalar/1024/N1/batch   	   26632	      8982 ns/op	   15493 B/op	      46 allocs/op
+BenchmarkBytes/jsonata/scalar/1024/N1/direct  	    3081	     76938 ns/op	   57304 B/op	    1279 allocs/op
+BenchmarkBytes/jsonata/scalar/1024/N1/prepared         	   26804	      9005 ns/op	   15429 B/op	      45 allocs/op
+BenchmarkBytes/jsonata/scalar/1024/N16/batch           	   14175	     16932 ns/op	   16893 B/op	     121 allocs/op
+BenchmarkBytes/jsonata/scalar/1024/N16/direct          	     195	   1230204 ns/op	  905006 B/op	   20353 allocs/op
+BenchmarkBytes/jsonata/scalar/1024/N16/prepared        	   10000	     22929 ns/op	   20830 B/op	     165 allocs/op
+BenchmarkBytes/jsonata/object/1024/N1/batch            	    6337	     36268 ns/op	   50103 B/op	     448 allocs/op
+BenchmarkBytes/jsonata/object/1024/N1/direct           	    1587	    153570 ns/op	  120831 B/op	    2722 allocs/op
+BenchmarkBytes/jsonata/object/1024/N1/prepared         	    7125	     34992 ns/op	   49889 B/op	     445 allocs/op
+BenchmarkBytes/jsonata/object/1024/N16/batch           	     729	    334162 ns/op	  364950 B/op	    6459 allocs/op
+BenchmarkBytes/jsonata/object/1024/N16/direct          	      99	   2489055 ns/op	 1920323 B/op	   43428 allocs/op
+BenchmarkBytes/jsonata/object/1024/N16/prepared        	     724	    335512 ns/op	  366169 B/op	    6472 allocs/op
+BenchmarkBytes/jsonpath/scalar/1024/N1/batch           	   26648	      8970 ns/op	   15449 B/op	      48 allocs/op
+BenchmarkBytes/jsonpath/scalar/1024/N1/direct          	    3248	     73201 ns/op	   56719 B/op	    1255 allocs/op
+BenchmarkBytes/jsonpath/scalar/1024/N1/prepared        	   26307	      9103 ns/op	   15545 B/op	      49 allocs/op
+BenchmarkBytes/jsonpath/scalar/1024/N16/batch          	   12480	     19211 ns/op	   17729 B/op	     183 allocs/op
+BenchmarkBytes/jsonpath/scalar/1024/N16/direct         	     206	   1154677 ns/op	  896010 B/op	   19966 allocs/op
+BenchmarkBytes/jsonpath/scalar/1024/N16/prepared       	   10000	     24710 ns/op	   22626 B/op	     229 allocs/op
+BenchmarkBytes/jsonpath/object/1024/N1/batch           	    8499	     28293 ns/op	   48328 B/op	     396 allocs/op
+BenchmarkBytes/jsonpath/object/1024/N1/direct          	    1602	    146939 ns/op	  120879 B/op	    2689 allocs/op
+BenchmarkBytes/jsonpath/object/1024/N1/prepared        	    9313	     28537 ns/op	   48424 B/op	     397 allocs/op
+BenchmarkBytes/jsonpath/object/1024/N16/batch          	    1096	    215096 ns/op	  337769 B/op	    5644 allocs/op
+BenchmarkBytes/jsonpath/object/1024/N16/direct         	     100	   2293845 ns/op	 1922414 B/op	   42908 allocs/op
+BenchmarkBytes/jsonpath/object/1024/N16/prepared       	    1042	    227575 ns/op	  342625 B/op	    5690 allocs/op
+PASS

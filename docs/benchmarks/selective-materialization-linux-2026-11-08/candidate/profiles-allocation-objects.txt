@@ -1,0 +1,139 @@
+Profile: jsonata-object-N1-prepared.alloc-objects.txt
+File: messages.test
+Build ID: fc425f4701129366c4812d8bf26710fd198cba1c
+Type: alloc_objects
+Time: 2026-11-08 16:27:21 +04
+Showing nodes accounting for 595098, 97.52% of 610239 total
+Dropped 213 nodes (cum <= 3051)
+Showing top 25 nodes out of 65
+      flat  flat%   sum%        cum   cum%
+    305268 50.02% 50.02%     305268 50.02%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+     63880 10.47% 60.49%      63880 10.47%  reflect.unsafe_New
+     35948  5.89% 66.38%     350203 57.39%  github.com/mellowforge/jsontrans-go/internal/document.Parse
+     34824  5.71% 72.09%      57817  9.47%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+     34824  5.71% 77.80%      34824  5.71%  github.com/mellowforge/jsontrans-go/jsonata.(*fastPlan).evalWithMemo.func2
+     26970  4.42% 82.22%      35970  5.89%  context.WithDeadlineCause
+     26961  4.42% 86.63%      26961  4.42%  github.com/mellowforge/jsontrans-go/internal/budget.initFastResolved
+     13803  2.26% 88.90%      13803  2.26%  internal/stringslite.Clone (inline)
+     13228  2.17% 91.06%      13228  2.17%  bytes.Clone (inline)
+      8992  1.47% 92.54%       8992  1.47%  time.newTimer
+      8991  1.47% 94.01%      44961  7.37%  github.com/mellowforge/jsontrans-go/internal/budget.New
+      8987  1.47% 95.48%     110615 18.13%  github.com/mellowforge/jsontrans-go/internal/prepared.Evaluate
+      6055  0.99% 96.48%       6173  1.01%  regexp.makeOnePass.func1
+      3115  0.51% 96.99%       3115  0.51%  regexp/syntax.(*compiler).inst (inline)
+       962  0.16% 97.14%      23365  3.83%  regexp.compile
+       689  0.11% 97.26%      20894  3.42%  github.com/mellowforge/jsontrans-go/experiments/messages.BenchmarkBytes
+       606 0.099% 97.36%       8807  1.44%  regexp.makeOnePass
+       606 0.099% 97.46%       7648  1.25%  regexp/syntax.parse
+       304  0.05% 97.50%       3870  0.63%  github.com/mellowforge/jsontrans-go/jsonata.parseSignature
+        65 0.011% 97.52%       3935  0.64%  github.com/mellowforge/jsontrans-go/jsonata.wrapSignature
+         9 0.0015% 97.52%      20688  3.39%  testing.(*B).Run
+         3 0.00049% 97.52%       4142  0.68%  github.com/mellowforge/jsontrans-go/experiments/messages.NewPlan
+         3 0.00049% 97.52%       6313  1.03%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture
+         3 0.00049% 97.52%       4052  0.66%  github.com/mellowforge/jsontrans-go/jsonata.New
+         2 0.00033% 97.52%     609887 99.94%  testing.(*B).runN
+
+Profile: jsonata-object-N16-batch.alloc-objects.txt
+File: messages.test
+Build ID: fc425f4701129366c4812d8bf26710fd198cba1c
+Type: alloc_objects
+Time: 2026-11-08 16:27:26 +04
+Showing nodes accounting for 482678, 97.65% of 494303 total
+Dropped 214 nodes (cum <= 2471)
+Showing top 25 nodes out of 65
+      flat  flat%   sum%        cum   cum%
+    157326 31.83% 31.83%     157326 31.83%  reflect.unsafe_New
+     88469 17.90% 49.73%     141492 28.62%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+     87106 17.62% 67.35%      87106 17.62%  github.com/mellowforge/jsontrans-go/jsonata.(*fastPlan).evalWithMemo.func2
+     46601  9.43% 76.78%      46601  9.43%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+     35931  7.27% 84.04%      35931  7.27%  bytes.Clone (inline)
+     30819  6.23% 90.28%      30819  6.23%  internal/stringslite.Clone (inline)
+      6050  1.22% 91.50%       6168  1.25%  regexp.makeOnePass.func1
+      5540  1.12% 92.62%      53526 10.83%  github.com/mellowforge/jsontrans-go/internal/document.Parse
+      4209  0.85% 93.48%       5697  1.15%  context.WithDeadlineCause
+      3115  0.63% 94.11%       3115  0.63%  regexp/syntax.(*compiler).inst (inline)
+      2770  0.56% 94.67%       2770  0.56%  github.com/mellowforge/jsontrans-go/internal/budget.initFastResolved
+      2770  0.56% 95.23%       2770  0.56%  github.com/mellowforge/jsontrans-go/jsonata.(*preparedBatchPlan).NewState
+      2665  0.54% 95.77%       2665  0.54%  regexp/syntax.(*parser).newRegexp (inline)
+      1823  0.37% 96.13%       2986   0.6%  regexp/syntax.(*parser).push
+      1431  0.29% 96.42%       2986   0.6%  github.com/mellowforge/jsontrans-go/experiments/messages.NewFixture
+      1419  0.29% 96.71%       7116  1.44%  github.com/mellowforge/jsontrans-go/internal/budget.New
+      1385  0.28% 96.99%     403897 81.71%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+       963  0.19% 97.19%      23367  4.73%  regexp.compile
+       689  0.14% 97.33%      20906  4.23%  github.com/mellowforge/jsontrans-go/experiments/messages.BenchmarkBytes
+       606  0.12% 97.45%       8802  1.78%  regexp.makeOnePass
+       606  0.12% 97.57%       7655  1.55%  regexp/syntax.parse
+       304 0.062% 97.63%       3871  0.78%  github.com/mellowforge/jsontrans-go/jsonata.parseSignature
+        65 0.013% 97.64%       3936   0.8%  github.com/mellowforge/jsontrans-go/jsonata.wrapSignature
+         9 0.0018% 97.65%      20693  4.19%  testing.(*B).Run
+         7 0.0014% 97.65%       5010  1.01%  github.com/mellowforge/jsontrans-go/experiments/messages.NewPlan
+
+Profile: jsonpath-object-N1-prepared.alloc-objects.txt
+File: messages.test
+Build ID: fc425f4701129366c4812d8bf26710fd198cba1c
+Type: alloc_objects
+Time: 2026-11-08 16:27:29 +04
+Showing nodes accounting for 548965, 97.28% of 564290 total
+Dropped 196 nodes (cum <= 2821)
+Showing top 25 nodes out of 57
+      flat  flat%   sum%        cum   cum%
+    268442 47.57% 47.57%     268442 47.57%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+     56056  9.93% 57.51%      72243 12.80%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+     32032  5.68% 63.18%      47875  8.48%  github.com/mellowforge/jsontrans-go/internal/document.Node.materialize
+     32032  5.68% 68.86%     308482 54.67%  github.com/mellowforge/jsontrans-go/internal/document.Parse
+     31858  5.65% 74.50%      31858  5.65%  internal/stringslite.Clone (inline)
+     24393  4.32% 78.83%      24393  4.32%  reflect.unsafe_New
+     24033  4.26% 83.09%      32054  5.68%  context.WithDeadlineCause
+     24024  4.26% 87.34%      24024  4.26%  github.com/mellowforge/jsontrans-go/internal/budget.initFastResolved
+     16016  2.84% 90.18%     136134 24.12%  github.com/mellowforge/jsontrans-go/jsonpath.(*program).evalPrepared
+      8026  1.42% 91.60%       8026  1.42%  bytes.Clone (inline)
+      8013  1.42% 93.02%       8013  1.42%  time.newTimer
+      8012  1.42% 94.44%      40066  7.10%  github.com/mellowforge/jsontrans-go/internal/budget.New
+      8008  1.42% 95.86%     152150 26.96%  github.com/mellowforge/jsontrans-go/internal/prepared.Evaluate
+      5500  0.97% 96.84%       5500  0.97%  regexp.makeOnePass.func1
+       841  0.15% 96.99%      19670  3.49%  regexp.compile
+       689  0.12% 97.11%      20650  3.66%  github.com/mellowforge/jsontrans-go/experiments/messages.BenchmarkBytes
+       489 0.087% 97.20%       7849  1.39%  regexp.makeOnePass
+       489 0.087% 97.28%       6019  1.07%  regexp/syntax.parse
+         9 0.0016% 97.28%      20444  3.62%  testing.(*B).Run
+         2 0.00035% 97.28%     563937 99.94%  testing.(*B).runN
+         1 0.00018% 97.28%     541073 95.89%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0% 97.28%      32054  5.68%  context.WithDeadline (inline)
+         0     0% 97.28%      32054  5.68%  context.WithTimeout
+         0     0% 97.28%      32845  5.82%  encoding/json.Marshal (inline)
+         0     0% 97.28%      32845  5.82%  encoding/json/v2.Marshal
+
+Profile: jsonpath-object-N16-batch.alloc-objects.txt
+File: messages.test
+Build ID: fc425f4701129366c4812d8bf26710fd198cba1c
+Type: alloc_objects
+Time: 2026-11-08 16:27:34 +04
+Showing nodes accounting for 456937, 97.56% of 468372 total
+Dropped 191 nodes (cum <= 2341)
+Showing top 25 nodes out of 59
+      flat  flat%   sum%        cum   cum%
+    135632 28.96% 28.96%     174418 37.24%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.(*copier).copy
+     77504 16.55% 45.51%      97034 20.72%  github.com/mellowforge/jsontrans-go/internal/document.Node.materialize
+     58812 12.56% 58.06%      58812 12.56%  reflect.unsafe_New
+     58282 12.44% 70.51%      58282 12.44%  internal/stringslite.Clone (inline)
+     41634  8.89% 79.40%      41634  8.89%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+     38752  8.27% 87.67%     310204 66.23%  github.com/mellowforge/jsontrans-go/jsonpath.(*program).evalPrepared
+     19514  4.17% 91.84%      19514  4.17%  bytes.Clone (inline)
+      5498  1.17% 93.01%       5498  1.17%  regexp.makeOnePass.func1
+      4844  1.03% 94.04%      47689 10.18%  github.com/mellowforge/jsontrans-go/internal/document.Parse
+      3687  0.79% 94.83%       5001  1.07%  context.WithDeadlineCause
+      2606  0.56% 95.39%       2606  0.56%  regexp/syntax.(*compiler).inst (inline)
+      2422  0.52% 95.90%       2422  0.52%  github.com/mellowforge/jsontrans-go/internal/budget.initFastResolved
+      1466  0.31% 96.22%       2605  0.56%  regexp/syntax.(*parser).push
+      1303  0.28% 96.50%       2343   0.5%  github.com/mellowforge/jsontrans-go/experiments/messages.NewFixture
+      1245  0.27% 96.76%       6246  1.33%  github.com/mellowforge/jsontrans-go/internal/budget.New
+      1211  0.26% 97.02%     390205 83.31%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+       843  0.18% 97.20%      19674  4.20%  regexp.compile
+       689  0.15% 97.35%      20656  4.41%  github.com/mellowforge/jsontrans-go/experiments/messages.BenchmarkBytes
+       489   0.1% 97.45%       7847  1.68%  regexp.makeOnePass
+       489   0.1% 97.56%       6026  1.29%  regexp/syntax.parse
+         9 0.0019% 97.56%      20448  4.37%  testing.(*B).Run
+         3 0.00064% 97.56%       3377  0.72%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture
+         2 0.00043% 97.56%     468021 99.93%  testing.(*B).runN
+         1 0.00021% 97.56%     443954 94.79%  github.com/mellowforge/jsontrans-go/experiments/messages.benchmarkFixture.func1
+         0     0% 97.56%       5001  1.07%  context.WithDeadline (inline)

@@ -12,6 +12,7 @@ import (
 // fastPlan retains only immutable syntax. Unsupported runtime shapes fall back.
 type fastPlan struct {
 	root            *node
+	objectKeys      []string
 	projection      []*node
 	sumProjection   bool
 	memoIDs         map[*node]int
@@ -38,9 +39,46 @@ func compileFastPlan(n *node) *fastPlan {
 		return false
 	}
 	rootNode := n
+	// Constructor arithmetic is deliberately numeric and singular. Runtime
+	// arrays, missing operands and type errors retain the interpreter fallback.
+	var arithmeticSupported func(*node) bool
+	arithmeticSupported = func(n *node) bool {
+		switch n.op {
+		case "number":
+			return true
+		case "block":
+			return len(n.children) == 1 && arithmeticSupported(n.children[0])
+		case "+", "-", "*":
+			return arithmeticSupported(n.children[0]) && arithmeticSupported(n.children[1])
+		}
+		return pathSupported(n)
+	}
+	var objectKeys []string
 	var supported func(*node) bool
 	supported = func(n *node) bool {
 		switch n.op {
+		case "object":
+			// Restrict this extension to the root constructor. Existing scalar
+			// operators must not start receiving new container-valued operands.
+			if n != rootNode {
+				return false
+			}
+			seen := make(map[string]bool)
+			for i := 0; i < len(n.children); i += 2 {
+				key := n.children[i]
+				if key.op != "string" || !supported(n.children[i+1]) {
+					return false
+				}
+				name := jsonvalue.CanonicalString(key.val.(string))
+				if seen[name] {
+					return false // preserve D1009 and its source position
+				}
+				seen[name] = true
+				objectKeys = append(objectKeys, name)
+			}
+			return true
+		case "+", "-", "*", "block":
+			return rootNode.op == "object" && arithmeticSupported(n)
 		case "name", "number", "string", "literal":
 			return true
 		case "variable":
@@ -93,7 +131,7 @@ func compileFastPlan(n *node) *fastPlan {
 	if depth(n) > 120 {
 		return nil
 	}
-	plan := &fastPlan{root: n, projection: projection, sumProjection: sumProjection && projection != nil}
+	plan := &fastPlan{root: n, objectKeys: objectKeys, projection: projection, sumProjection: sumProjection && projection != nil}
 	switch n.op {
 	case "=", "!=", "<", ">", "<=", ">=":
 		if n.children[1].op == "number" && pathSupported(n.children[0]) {
@@ -213,6 +251,50 @@ func (p *fastPlan) evalWithMemo(root jsontrans.Node, bd *budget.Budget, memo *ba
 		}
 		defer bd.Leave()
 		switch n.op {
+		case "object":
+			if evalErr = bd.Collection(len(p.objectKeys)); evalErr != nil {
+				return nil, false
+			}
+			out := make(map[string]any, len(p.objectKeys))
+			for i, key := range p.objectKeys {
+				value, handled := eval(n.children[2*i+1])
+				if !handled {
+					return nil, false
+				}
+				if !IsUndefined(value) {
+					out[key] = value
+				}
+			}
+			return out, true
+		case "block":
+			return eval(n.children[0])
+		case "+", "-", "*":
+			a, handled := eval(n.children[0])
+			if !handled {
+				return nil, false
+			}
+			b, handled := eval(n.children[1])
+			if !handled {
+				return nil, false
+			}
+			x, xok := a.(float64)
+			y, yok := b.(float64)
+			if !xok || !yok {
+				return nil, false
+			}
+			var value float64
+			switch n.op {
+			case "+":
+				value = x + y
+			case "-":
+				value = x - y
+			case "*":
+				value = x * y
+			}
+			if math.IsInf(value, 0) || math.IsNaN(value) {
+				return nil, false
+			}
+			return value + 0, true // JSONata renders negative zero as zero.
 		case "name", ".", "filter", "variable":
 			if n == p.root && n.op == "." && n.children[1].op == "name" && (n.children[0].op == "name" || (n.children[0].op == "filter" && n.children[0].children[0].op == "name" && n.children[0].children[1].op != "number")) {
 				left := n.children[0]
