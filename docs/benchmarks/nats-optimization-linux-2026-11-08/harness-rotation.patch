@@ -1,0 +1,41 @@
+diff --git a/experiments/messages/nats/cmd/load/main.go b/experiments/messages/nats/cmd/load/main.go
+index 2e2db59..8ecdead 100644
+--- a/experiments/messages/nats/cmd/load/main.go
++++ b/experiments/messages/nats/cmd/load/main.go
+@@ -29,11 +29,12 @@ func run() (returned error) {
+ 	image := flag.String("image", n.DefaultImage, "immutable NATS image digest")
+ 	output := flag.String("output", "", "new report directory")
+ 	rounds := flag.Int("rounds", 3, "repeated process-local rounds")
++	roundOffset := flag.Int("round-offset", 0, "starting case/strategy rotation for separately paired runs (0..5)")
+ 	duration := flag.Duration("duration", time.Second, "offered publish window per case")
+ 	smoke := flag.Bool("smoke", false, "small lossless transport validation")
+ 	brokerCPUs := flag.String("broker-cpus", "16,17", "broker affinity on Bertram; empty disables")
+ 	flag.Parse()
+-	if *output == "" || *rounds < 1 || *rounds > 6 || *duration <= 0 || *duration > 5*time.Second {
++	if *output == "" || *rounds < 1 || *rounds > 6 || *roundOffset < 0 || *roundOffset > 5 || *duration <= 0 || *duration > 5*time.Second {
+ 		return fmt.Errorf("invalid output/round/duration")
+ 	}
+ 	if err := os.Mkdir(*output, 0755); err != nil {
+@@ -48,6 +49,7 @@ func run() (returned error) {
+ 		return err
+ 	}
+ 	metadata := map[string]any{"image": *image, "container_id": broker.Container.GetContainerID(), "broker_cpus": *brokerCPUs, "broker_memory_bytes": 512 << 20, "client_affinity": "external driver pins performance cores", "go": runtime.Version(), "rounds": *rounds, "duration": duration.String(), "completed": false, "load": "paced deterministic arrivals; all completed-output percentiles exclude rejected/failed inputs; loss counters retained", "mode": "Core NATS, no persistence, TLS or acknowledgements; trace/debug disabled"}
++	metadata["round_offset"] = *roundOffset
+ 	metadata["api_profile"] = "public-prepared-json-v1"
+ 	metadata["entry_points"] = map[string]string{
+ 		"direct":   "jsontrans.EvalJSON",
+@@ -116,11 +118,12 @@ func run() (returned error) {
+ 	enc := json.NewEncoder(file)
+ 	for round := 0; round < *rounds; round++ {
+ 		// Rotate both configuration order and strategy order across repetitions.
+-		offset := round % len(configs)
++		rotation := round + *roundOffset
++		offset := rotation % len(configs)
+ 		order := append(append([]n.Config(nil), configs[offset:]...), configs[:offset]...)
+ 		for caseIndex, config := range order {
+ 			for si := 0; si < 3; si++ {
+-				strategy := []m.Strategy{m.Direct, m.Prepared, m.Batched}[(si+round)%3]
++				strategy := []m.Strategy{m.Direct, m.Prepared, m.Batched}[(si+rotation)%3]
+ 				config.Strategy = strategy
+ 				warm := config
+ 				warm.Count = 32

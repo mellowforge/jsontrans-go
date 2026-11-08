@@ -19,6 +19,15 @@ class Reports(unittest.TestCase):
             rows.append({'round':round_,'report':r})
         self.write(d,rows);return rows
     def write(self,d,rows):(d/'runs.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
+    def test_focused_long_matrix(self):
+        meta={'workload_profile':'object-one-worker','cases_per_round':6,'rounds':1,'duration':'10s'}
+        keys=expected_keys(meta)
+        self.assertEqual(len(keys),6)
+        self.assertTrue(all(k[1:3]==('jsonata','object') and k[4:9]==(1,5000,50000,64,1024) for k in keys))
+        for duration in ['11s','0s','nan','1ns']:
+            with self.subTest(duration=duration),self.assertRaises(ValueError):
+                expected_keys({**meta,'duration':duration})
+
     def test_complete_and_lossy_accounting(self):
         with tempfile.TemporaryDirectory() as tmp:
             d=Path(tmp);rows=self.fixture(d)

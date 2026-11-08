@@ -1,0 +1,37 @@
+START pair=1 version=baseline offset=0 2026-11-08T14:09:11Z
+VALIDATED round-1 cases 6 lossless 5 queue_rejected 30524 container removed
+COMPLETE pair=1 version=baseline 2026-11-08T14:10:13Z
+START pair=1 version=main offset=0 2026-11-08T14:10:13Z
+VALIDATED round-1 cases 6 lossless 5 queue_rejected 30481 container removed
+COMPLETE pair=1 version=main 2026-11-08T14:11:14Z
+START pair=2 version=main offset=1 2026-11-08T14:11:14Z
+VALIDATED round-2 cases 6 lossless 5 queue_rejected 30500 container removed
+COMPLETE pair=2 version=main 2026-11-08T14:12:16Z
+START pair=2 version=baseline offset=1 2026-11-08T14:12:16Z
+VALIDATED round-2 cases 6 lossless 5 queue_rejected 30441 container removed
+COMPLETE pair=2 version=baseline 2026-11-08T14:13:17Z
+START pair=3 version=baseline offset=2 2026-11-08T14:13:17Z
+VALIDATED round-3 cases 6 lossless 5 queue_rejected 30409 container removed
+COMPLETE pair=3 version=baseline 2026-11-08T14:14:18Z
+START pair=3 version=main offset=2 2026-11-08T14:14:18Z
+VALIDATED round-3 cases 6 lossless 5 queue_rejected 30398 container removed
+COMPLETE pair=3 version=main 2026-11-08T14:15:20Z
+START pair=4 version=main offset=3 2026-11-08T14:15:20Z
+VALIDATED round-4 cases 6 lossless 5 queue_rejected 30382 container removed
+COMPLETE pair=4 version=main 2026-11-08T14:16:21Z
+START pair=4 version=baseline offset=3 2026-11-08T14:16:21Z
+VALIDATED round-4 cases 6 lossless 5 queue_rejected 30454 container removed
+COMPLETE pair=4 version=baseline 2026-11-08T14:17:22Z
+START pair=5 version=baseline offset=4 2026-11-08T14:17:23Z
+VALIDATED round-5 cases 6 lossless 5 queue_rejected 30656 container removed
+COMPLETE pair=5 version=baseline 2026-11-08T14:18:24Z
+START pair=5 version=main offset=4 2026-11-08T14:18:24Z
+VALIDATED round-5 cases 6 lossless 5 queue_rejected 30717 container removed
+COMPLETE pair=5 version=main 2026-11-08T14:19:25Z
+START pair=6 version=main offset=5 2026-11-08T14:19:25Z
+VALIDATED round-6 cases 6 lossless 5 queue_rejected 30486 container removed
+COMPLETE pair=6 version=main 2026-11-08T14:20:26Z
+START pair=6 version=baseline offset=5 2026-11-08T14:20:27Z
+VALIDATED round-6 cases 6 lossless 5 queue_rejected 30359 container removed
+COMPLETE pair=6 version=baseline 2026-11-08T14:21:28Z
+ALL SIX RUNS COMPLETE

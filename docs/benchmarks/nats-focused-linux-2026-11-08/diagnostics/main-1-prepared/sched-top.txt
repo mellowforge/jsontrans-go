@@ -1,0 +1,26 @@
+File: diagnose
+Type: delay
+Showing nodes accounting for 1007.81ms, 79.41% of 1269.06ms total
+Dropped 73 nodes (cum <= 6.35ms)
+Showing top 20 nodes out of 33
+      flat  flat%   sum%        cum   cum%
+  542.38ms 42.74% 42.74%   542.38ms 42.74%  runtime.selectnbsend
+  235.13ms 18.53% 61.27%   235.13ms 18.53%  sync.(*Cond).Signal
+  184.33ms 14.52% 75.79%   184.33ms 14.52%  runtime.systemstack_switch
+   23.26ms  1.83% 77.62%    23.26ms  1.83%  runtime.chansend1
+   22.49ms  1.77% 79.40%    22.49ms  1.77%  runtime.goschedIfBusy
+    0.22ms 0.018% 79.41%    63.51ms  5.00%  runtime.growslice
+         0     0% 79.41%    50.82ms  4.00%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0% 79.41%    64.80ms  5.11%  github.com/mellowforge/jsontrans-go/experiments/messages/nats.Run
+         0     0% 79.41%    24.54ms  1.93%  github.com/mellowforge/jsontrans-go/experiments/messages/nats.Run.func3
+         0     0% 79.41%   548.66ms 43.23%  github.com/mellowforge/jsontrans-go/experiments/messages/nats.Run.func4
+         0     0% 79.41%    46.14ms  3.64%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+         0     0% 79.41%    49.09ms  3.87%  github.com/mellowforge/jsontrans-go/internal/document.Parse
+         0     0% 79.41%   542.32ms 42.73%  github.com/nats-io/nats%2ego.(*Conn).PublishMsg
+         0     0% 79.41%   237.78ms 18.74%  github.com/nats-io/nats%2ego.(*Conn).parse
+         0     0% 79.41%   237.77ms 18.74%  github.com/nats-io/nats%2ego.(*Conn).processMsg
+         0     0% 79.41%   542.32ms 42.73%  github.com/nats-io/nats%2ego.(*Conn).publish
+         0     0% 79.41%   237.79ms 18.74%  github.com/nats-io/nats%2ego.(*Conn).readLoop
+         0     0% 79.41%    24.54ms  1.93%  github.com/nats-io/nats%2ego.(*Conn).waitForMsgs
+         0     0% 79.41%    64.80ms  5.11%  main.main
+         0     0% 79.41%    64.80ms  5.11%  main.run

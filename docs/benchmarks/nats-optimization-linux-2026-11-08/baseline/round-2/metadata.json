@@ -1,0 +1,602 @@
+{
+  "api_profile": "public-prepared-json-v1",
+  "broker_cpus": "16,17",
+  "broker_memory_bytes": 536870912,
+  "build_info": {
+    "GoVersion": "go1.27.3",
+    "Path": "github.com/mellowforge/jsontrans-go/experiments/messages/nats/cmd/load",
+    "Main": {
+      "Path": "github.com/mellowforge/jsontrans-go/experiments/messages/nats",
+      "Version": "(devel)"
+    },
+    "Deps": [
+      {
+        "Path": "dario.cat/mergo",
+        "Version": "v1.0.2",
+        "Sum": "h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8="
+      },
+      {
+        "Path": "github.com/cenkalti/backoff/v4",
+        "Version": "v4.3.0",
+        "Sum": "h1:MyRJ/UdXutAwSAT+s3wNd7MfTIcy71VQueUuFK343L8="
+      },
+      {
+        "Path": "github.com/cespare/xxhash/v2",
+        "Version": "v2.3.0",
+        "Sum": "h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs="
+      },
+      {
+        "Path": "github.com/containerd/errdefs",
+        "Version": "v1.0.0",
+        "Sum": "h1:tg5yIfIlQIrxYtu9ajqY42W3lpS19XqdxRQeEwYG8PI="
+      },
+      {
+        "Path": "github.com/containerd/errdefs/pkg",
+        "Version": "v0.3.0",
+        "Sum": "h1:9IKJ06FvyNlexW690DXuQNx2KA2cUJXx151Xdx3ZPPE="
+      },
+      {
+        "Path": "github.com/containerd/log",
+        "Version": "v0.1.0",
+        "Sum": "h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I="
+      },
+      {
+        "Path": "github.com/containerd/platforms",
+        "Version": "v0.2.1",
+        "Sum": "h1:zvwtM3rz2YHPQsF2CHYM8+KtB5dvhISiXh5ZpSBQv6A="
+      },
+      {
+        "Path": "github.com/cpuguy83/dockercfg",
+        "Version": "v0.3.2",
+        "Sum": "h1:DlJTyZGBDlXqUZ2Dk2Q3xHs/FtnooJJVaad2S9GKorA="
+      },
+      {
+        "Path": "github.com/distribution/reference",
+        "Version": "v0.6.0",
+        "Sum": "h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5QvfrDyIgxBk="
+      },
+      {
+        "Path": "github.com/dlclark/regexp2/v2",
+        "Version": "v2.12.0",
+        "Sum": "h1:GsCgDZZeHluUDHASr2yqQonZk4Tma5LFmLH9CSsFFEE="
+      },
+      {
+        "Path": "github.com/docker/go-connections",
+        "Version": "v0.8.2",
+        "Sum": "h1:9d9DEokx5W7qlr0shkFXIxEA7+TTD+llwzcykSlxMNc="
+      },
+      {
+        "Path": "github.com/docker/go-units",
+        "Version": "v0.5.0",
+        "Sum": "h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4="
+      },
+      {
+        "Path": "github.com/felixge/httpsnoop",
+        "Version": "v1.1.0",
+        "Sum": "h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeORc="
+      },
+      {
+        "Path": "github.com/go-logr/logr",
+        "Version": "v1.4.3",
+        "Sum": "h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI="
+      },
+      {
+        "Path": "github.com/go-logr/stdr",
+        "Version": "v1.2.2",
+        "Sum": "h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag="
+      },
+      {
+        "Path": "github.com/google/uuid",
+        "Version": "v1.6.0",
+        "Sum": "h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0="
+      },
+      {
+        "Path": "github.com/klauspost/compress",
+        "Version": "v1.20.0",
+        "Sum": "h1:a3C1ke2ohxFymNlb2HWAHjDeKCI90scRskErZkR0ezA="
+      },
+      {
+        "Path": "github.com/magiconair/properties",
+        "Version": "v1.18.12",
+        "Sum": "h1:sT9zQpvTB3B4gzrX0tmZNTEaGyg8Zw55MFYRE32Mr9I="
+      },
+      {
+        "Path": "github.com/mellowforge/jsontrans-go",
+        "Version": "v1.2.0",
+        "Replace": {
+          "Path": "../../..",
+          "Version": "(devel)"
+        }
+      },
+      {
+        "Path": "github.com/mellowforge/jsontrans-go/experiments/messages",
+        "Version": "v0.0.0",
+        "Replace": {
+          "Path": "..",
+          "Version": "(devel)"
+        }
+      },
+      {
+        "Path": "github.com/mellowforge/jsontrans-go/javascript",
+        "Version": "v1.0.0",
+        "Replace": {
+          "Path": "../../../javascript",
+          "Version": "(devel)"
+        }
+      },
+      {
+        "Path": "github.com/moby/docker-image-spec",
+        "Version": "v1.3.1",
+        "Sum": "h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3Nl2EsFP0="
+      },
+      {
+        "Path": "github.com/moby/go-archive",
+        "Version": "v0.3.3",
+        "Sum": "h1:OxxR9paxsluYi+zDUEXTTaIxtkK3viymW+Ka7vRhhME="
+      },
+      {
+        "Path": "github.com/moby/moby/api",
+        "Version": "v1.56.1",
+        "Sum": "h1:PpWkvVPB7Fr/No8w+TfyJ/I6rWZ2YPZhT3JorIg+06c="
+      },
+      {
+        "Path": "github.com/moby/moby/client",
+        "Version": "v0.6.2",
+        "Sum": "h1:ekSPlMccrZGcw6Scb8T9D39qE0mB+XupU/yS0zNw9N4="
+      },
+      {
+        "Path": "github.com/moby/patternmatcher",
+        "Version": "v0.6.1",
+        "Sum": "h1:qlhtafmr6kgMIJjKJMDmMWq7WLkKIo23hsrpR3x084U="
+      },
+      {
+        "Path": "github.com/moby/sys/sequential",
+        "Version": "v0.7.0",
+        "Sum": "h1:ASQNGNROJSuOO6LL6bPHbKvuZu6NU8P4ldPWk31zj/8="
+      },
+      {
+        "Path": "github.com/moby/sys/user",
+        "Version": "v0.4.1",
+        "Sum": "h1:RgjRlaDKi/Xmyrz4t8lyzXT6v2ooFeO/7xtchmhVWE0="
+      },
+      {
+        "Path": "github.com/moby/sys/userns",
+        "Version": "v0.1.0",
+        "Sum": "h1:tVLXkFOxVu9A64/yh59slHVv9ahO9UIev4JZusOLG/g="
+      },
+      {
+        "Path": "github.com/moby/term",
+        "Version": "v0.5.2",
+        "Sum": "h1:6qk3FJAFDs6i/q3W/pQ97SX192qKfZgGjCQqfCJkgzQ="
+      },
+      {
+        "Path": "github.com/nats-io/nats.go",
+        "Version": "v1.55.0",
+        "Sum": "h1:Ng8QKHdvdHIWoaiq0+d/aH1BWkxvcJxWJ0Y/9BPKx3M="
+      },
+      {
+        "Path": "github.com/nats-io/nkeys",
+        "Version": "v0.4.16",
+        "Sum": "h1:rd5oAuLOb8mnAycB0xleuEBNS1pVVnN0fv/FF34Eypg="
+      },
+      {
+        "Path": "github.com/nats-io/nuid",
+        "Version": "v1.0.1",
+        "Sum": "h1:5iA8DT8V7q8WK2EScv2padNa/rTESc1KdnPw4TC2paw="
+      },
+      {
+        "Path": "github.com/opencontainers/go-digest",
+        "Version": "v1.0.0",
+        "Sum": "h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U="
+      },
+      {
+        "Path": "github.com/opencontainers/image-spec",
+        "Version": "v1.1.1",
+        "Sum": "h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJwooC2xJA040="
+      },
+      {
+        "Path": "github.com/shirou/gopsutil/v4",
+        "Version": "v4.26.6",
+        "Sum": "h1:Mzr/npDtQC/xpeEuQKHZt8Zo9CmPvhTj8nkR8w5TLDs="
+      },
+      {
+        "Path": "github.com/sirupsen/logrus",
+        "Version": "v1.9.4",
+        "Sum": "h1:TsZE7l11zFCLZnZ+teH4Umoq5BhEIfIzfRDZ1Uzql2w="
+      },
+      {
+        "Path": "github.com/stretchr/testify",
+        "Version": "v1.12.1",
+        "Sum": "h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE="
+      },
+      {
+        "Path": "github.com/testcontainers/testcontainers-go",
+        "Version": "v0.45.0",
+        "Sum": "h1:ss9Stm9KDX6JLgGL4jr2fC5dwpabTbCBsRcGadBPR9k="
+      },
+      {
+        "Path": "github.com/testcontainers/testcontainers-go/modules/nats",
+        "Version": "v0.45.0",
+        "Sum": "h1:wVjmRsQRZ7nMu37APHCS+NZJo9qPUXXxQy5sKG8DtoE="
+      },
+      {
+        "Path": "github.com/tetratelabs/wazero",
+        "Version": "v1.12.0",
+        "Sum": "h1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU="
+      },
+      {
+        "Path": "github.com/tklauser/go-sysconf",
+        "Version": "v0.4.0",
+        "Sum": "h1:7H0uAN+7RkwWRaxhYXDLqa5V3LPrJeV8wmD9dRUgPQU="
+      },
+      {
+        "Path": "github.com/tklauser/numcpus",
+        "Version": "v0.12.0",
+        "Sum": "h1:NR85qdvHA9pFse3x3weVZ0r0ST8R6l5RHbZrlRaqob4="
+      },
+      {
+        "Path": "go.opentelemetry.io/auto/sdk",
+        "Version": "v1.2.1",
+        "Sum": "h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64="
+      },
+      {
+        "Path": "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp",
+        "Version": "v0.69.0",
+        "Sum": "h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo="
+      },
+      {
+        "Path": "go.opentelemetry.io/otel",
+        "Version": "v1.44.0",
+        "Sum": "h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU="
+      },
+      {
+        "Path": "go.opentelemetry.io/otel/metric",
+        "Version": "v1.44.0",
+        "Sum": "h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc="
+      },
+      {
+        "Path": "go.opentelemetry.io/otel/trace",
+        "Version": "v1.44.0",
+        "Sum": "h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk="
+      },
+      {
+        "Path": "go.yaml.in/yaml/v3",
+        "Version": "v3.0.5",
+        "Sum": "h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw="
+      },
+      {
+        "Path": "golang.org/x/crypto",
+        "Version": "v0.58.0",
+        "Sum": "h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54="
+      },
+      {
+        "Path": "golang.org/x/sys",
+        "Version": "v0.49.0",
+        "Sum": "h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA="
+      },
+      {
+        "Path": "golang.org/x/text",
+        "Version": "v0.43.0",
+        "Sum": "h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc="
+      }
+    ],
+    "Settings": [
+      {
+        "Key": "-buildmode",
+        "Value": "exe"
+      },
+      {
+        "Key": "-compiler",
+        "Value": "gc"
+      },
+      {
+        "Key": "DefaultGODEBUG",
+        "Value": "tracebacklabels=0,x509sslcertoverrideplatform=0"
+      },
+      {
+        "Key": "CGO_ENABLED",
+        "Value": "1"
+      },
+      {
+        "Key": "CGO_CFLAGS"
+      },
+      {
+        "Key": "CGO_CPPFLAGS"
+      },
+      {
+        "Key": "CGO_CXXFLAGS"
+      },
+      {
+        "Key": "CGO_LDFLAGS"
+      },
+      {
+        "Key": "GOARCH",
+        "Value": "amd64"
+      },
+      {
+        "Key": "GOOS",
+        "Value": "linux"
+      },
+      {
+        "Key": "GOAMD64",
+        "Value": "v1"
+      }
+    ]
+  },
+  "cases_per_round": 162,
+  "client_affinity": "external driver pins performance cores",
+  "completed": true,
+  "container_id": "c1559f90c31e3f0ffc82da84f43b713f29cabed9e457290a0d5ea88581fa6574",
+  "container_inspect": {
+    "Id": "c1559f90c31e3f0ffc82da84f43b713f29cabed9e457290a0d5ea88581fa6574",
+    "Created": "2026-11-08T13:20:08.920385442Z",
+    "Path": "docker-entrypoint.sh",
+    "Args": [
+      "-config",
+      "/etc/nats.conf"
+    ],
+    "State": {
+      "Status": "running",
+      "Running": true,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 1741402,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-11-08T13:20:08.986592676Z",
+      "FinishedAt": "0001-01-01T00:00:00Z"
+    },
+    "Image": "sha256:2eaf1cb5e75ad9cc23d8833bfc2dbf9a0b763d89d944a253af5f560982c4c6d0",
+    "ResolvConfPath": "/var/lib/docker/containers/c1559f90c31e3f0ffc82da84f43b713f29cabed9e457290a0d5ea88581fa6574/resolv.conf",
+    "HostnamePath": "/var/lib/docker/containers/c1559f90c31e3f0ffc82da84f43b713f29cabed9e457290a0d5ea88581fa6574/hostname",
+    "HostsPath": "/var/lib/docker/containers/c1559f90c31e3f0ffc82da84f43b713f29cabed9e457290a0d5ea88581fa6574/hosts",
+    "LogPath": "/var/lib/docker/containers/c1559f90c31e3f0ffc82da84f43b713f29cabed9e457290a0d5ea88581fa6574/c1559f90c31e3f0ffc82da84f43b713f29cabed9e457290a0d5ea88581fa6574-json.log",
+    "Name": "/naughty_meitner",
+    "RestartCount": 0,
+    "Driver": "overlay2",
+    "Platform": "linux",
+    "MountLabel": "",
+    "ProcessLabel": "",
+    "AppArmorProfile": "docker-default",
+    "ExecIDs": null,
+    "HostConfig": {
+      "Binds": null,
+      "ContainerIDFile": "",
+      "LogConfig": {
+        "Type": "json-file",
+        "Config": {}
+      },
+      "NetworkMode": "bridge",
+      "PortBindings": {
+        "4222/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "0"
+          }
+        ]
+      },
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "AutoRemove": false,
+      "VolumeDriver": "",
+      "VolumesFrom": null,
+      "ConsoleSize": [
+        0,
+        0
+      ],
+      "CapAdd": null,
+      "CapDrop": null,
+      "CgroupnsMode": "private",
+      "Dns": null,
+      "DnsOptions": null,
+      "DnsSearch": null,
+      "ExtraHosts": null,
+      "GroupAdd": null,
+      "IpcMode": "private",
+      "Cgroup": "",
+      "Links": null,
+      "OomScoreAdj": 0,
+      "PidMode": "",
+      "Privileged": false,
+      "PublishAllPorts": false,
+      "ReadonlyRootfs": false,
+      "SecurityOpt": null,
+      "UTSMode": "",
+      "UsernsMode": "",
+      "ShmSize": 67108864,
+      "Runtime": "runc",
+      "Isolation": "",
+      "CpuShares": 0,
+      "Memory": 536870912,
+      "NanoCpus": 0,
+      "CgroupParent": "",
+      "BlkioWeight": 0,
+      "BlkioWeightDevice": null,
+      "BlkioDeviceReadBps": null,
+      "BlkioDeviceWriteBps": null,
+      "BlkioDeviceReadIOps": null,
+      "BlkioDeviceWriteIOps": null,
+      "CpuPeriod": 0,
+      "CpuQuota": 0,
+      "CpuRealtimePeriod": 0,
+      "CpuRealtimeRuntime": 0,
+      "CpusetCpus": "16,17",
+      "CpusetMems": "",
+      "Devices": null,
+      "DeviceCgroupRules": null,
+      "DeviceRequests": null,
+      "MemoryReservation": 0,
+      "MemorySwap": 1073741824,
+      "MemorySwappiness": null,
+      "OomKillDisable": null,
+      "PidsLimit": null,
+      "Ulimits": null,
+      "CpuCount": 0,
+      "CpuPercent": 0,
+      "IOMaximumIOps": 0,
+      "IOMaximumBandwidth": 0,
+      "MaskedPaths": [
+        "/proc/acpi",
+        "/proc/asound",
+        "/proc/interrupts",
+        "/proc/kcore",
+        "/proc/keys",
+        "/proc/latency_stats",
+        "/proc/sched_debug",
+        "/proc/scsi",
+        "/proc/timer_list",
+        "/proc/timer_stats",
+        "/sys/devices/virtual/powercap",
+        "/sys/firmware",
+        "/sys/devices/system/cpu/cpu0/thermal_throttle",
+        "/sys/devices/system/cpu/cpu1/thermal_throttle",
+        "/sys/devices/system/cpu/cpu2/thermal_throttle",
+        "/sys/devices/system/cpu/cpu3/thermal_throttle",
+        "/sys/devices/system/cpu/cpu4/thermal_throttle",
+        "/sys/devices/system/cpu/cpu5/thermal_throttle",
+        "/sys/devices/system/cpu/cpu6/thermal_throttle",
+        "/sys/devices/system/cpu/cpu7/thermal_throttle",
+        "/sys/devices/system/cpu/cpu8/thermal_throttle",
+        "/sys/devices/system/cpu/cpu9/thermal_throttle",
+        "/sys/devices/system/cpu/cpu10/thermal_throttle",
+        "/sys/devices/system/cpu/cpu11/thermal_throttle",
+        "/sys/devices/system/cpu/cpu12/thermal_throttle",
+        "/sys/devices/system/cpu/cpu13/thermal_throttle",
+        "/sys/devices/system/cpu/cpu14/thermal_throttle",
+        "/sys/devices/system/cpu/cpu15/thermal_throttle",
+        "/sys/devices/system/cpu/cpu16/thermal_throttle",
+        "/sys/devices/system/cpu/cpu17/thermal_throttle",
+        "/sys/devices/system/cpu/cpu18/thermal_throttle",
+        "/sys/devices/system/cpu/cpu19/thermal_throttle",
+        "/sys/devices/system/cpu/cpu20/thermal_throttle",
+        "/sys/devices/system/cpu/cpu21/thermal_throttle",
+        "/sys/devices/system/cpu/cpu22/thermal_throttle",
+        "/sys/devices/system/cpu/cpu23/thermal_throttle",
+        "/sys/devices/system/cpu/cpu24/thermal_throttle",
+        "/sys/devices/system/cpu/cpu25/thermal_throttle",
+        "/sys/devices/system/cpu/cpu26/thermal_throttle",
+        "/sys/devices/system/cpu/cpu27/thermal_throttle",
+        "/sys/devices/system/cpu/cpu28/thermal_throttle",
+        "/sys/devices/system/cpu/cpu29/thermal_throttle",
+        "/sys/devices/system/cpu/cpu30/thermal_throttle",
+        "/sys/devices/system/cpu/cpu31/thermal_throttle"
+      ],
+      "ReadonlyPaths": [
+        "/proc/bus",
+        "/proc/fs",
+        "/proc/irq",
+        "/proc/sys",
+        "/proc/sysrq-trigger"
+      ]
+    },
+    "GraphDriver": {
+      "Data": {
+        "ID": "c1559f90c31e3f0ffc82da84f43b713f29cabed9e457290a0d5ea88581fa6574",
+        "LowerDir": "/var/lib/docker/overlay2/4d018d0a867b900ff93a8fcf2b796567a621939bc5276203f25312fb23f13b66-init/diff:/var/lib/docker/overlay2/5bad5570d607530a3f6179212e7c795ff83aa677528a99134018b63ea321dedb/diff:/var/lib/docker/overlay2/dd6ffc3f47ce9e90be59127ff9e51308105a5b65735bce53aa33772182206993/diff:/var/lib/docker/overlay2/f16d39f1bfbcb5ba31ea755ee3e9d1020bc9ca4f05fd5d8ca708b99e89f2d1a5/diff:/var/lib/docker/overlay2/51d2fc2bf3e716456c863acf04b53a9b41ae775b7e380058491be85c20109e28/diff",
+        "MergedDir": "/var/lib/docker/overlay2/4d018d0a867b900ff93a8fcf2b796567a621939bc5276203f25312fb23f13b66/merged",
+        "UpperDir": "/var/lib/docker/overlay2/4d018d0a867b900ff93a8fcf2b796567a621939bc5276203f25312fb23f13b66/diff",
+        "WorkDir": "/var/lib/docker/overlay2/4d018d0a867b900ff93a8fcf2b796567a621939bc5276203f25312fb23f13b66/work"
+      },
+      "Name": "overlay2"
+    },
+    "Mounts": [],
+    "Config": {
+      "Hostname": "c1559f90c31e",
+      "Domainname": "",
+      "User": "",
+      "AttachStdin": false,
+      "AttachStdout": false,
+      "AttachStderr": false,
+      "ExposedPorts": {
+        "4222/tcp": {},
+        "6222/tcp": {},
+        "8222/tcp": {}
+      },
+      "Tty": false,
+      "OpenStdin": false,
+      "StdinOnce": false,
+      "Env": [
+        "GOMAXPROCS=2",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "NATS_SERVER=2.15.2"
+      ],
+      "Cmd": [
+        "-config",
+        "/etc/nats.conf"
+      ],
+      "Image": "nats@sha256:afae2fdbe2e326c65e1246cb83b9d05d319188734f3bd577ac8072daae78a10f",
+      "Volumes": null,
+      "WorkingDir": "/",
+      "Entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "Labels": {
+        "org.opencontainers.image.description": "NATS is an open-source, high-performance, cloud native messaging system.",
+        "org.opencontainers.image.documentation": "https://docs.nats.io",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.source": "https://github.com/nats-io/nats-docker",
+        "org.opencontainers.image.title": "NATS Server",
+        "org.opencontainers.image.url": "https://nats.io",
+        "org.opencontainers.image.vendor": "NATS.io",
+        "org.opencontainers.image.version": "2.15.2",
+        "org.testcontainers": "true",
+        "org.testcontainers.lang": "go",
+        "org.testcontainers.reap": "true",
+        "org.testcontainers.sessionId": "28e12a5390cca9375a949e97c4571bb5f4ab5ecfff2e12f9fc9f1faecfed947f",
+        "org.testcontainers.version": "0.45.0"
+      }
+    },
+    "NetworkSettings": {
+      "SandboxID": "632a0abae9dccecec7e3bfd16053e2649fb405839533c4c6996818174058b7ab",
+      "SandboxKey": "/var/run/docker/netns/632a0abae9dc",
+      "Ports": {
+        "4222/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "32782"
+          }
+        ],
+        "6222/tcp": null,
+        "8222/tcp": null
+      },
+      "Networks": {
+        "bridge": {
+          "IPAMConfig": null,
+          "Links": null,
+          "Aliases": null,
+          "DriverOpts": null,
+          "GwPriority": 0,
+          "NetworkID": "959700c8667dc9e65713f8d0b9d09c00bdc2188d69838f7d521064cfe530ca46",
+          "EndpointID": "83e62f08885d4b5adcd850c0265eeac20839d1615f5ff71a658971ddf726a9d5",
+          "Gateway": "172.17.0.1",
+          "IPAddress": "172.17.0.5",
+          "MacAddress": "7e:6b:e7:d1:80:f8",
+          "IPPrefixLen": 16,
+          "IPv6Gateway": "",
+          "GlobalIPv6Address": "",
+          "GlobalIPv6PrefixLen": 0,
+          "DNSNames": null
+        }
+      }
+    }
+  },
+  "container_removed": true,
+  "duration": "1s",
+  "entry_points": {
+    "batch": "Batch.EvalPreparedJSON",
+    "direct": "jsontrans.EvalJSON",
+    "prepared": "jsontrans.EvalPreparedJSON"
+  },
+  "go": "go1.27.3",
+  "image": "nats@sha256:afae2fdbe2e326c65e1246cb83b9d05d319188734f3bd577ac8072daae78a10f",
+  "image_version_tag": "nats:2.15.2-alpine",
+  "load": "paced deterministic arrivals; all completed-output percentiles exclude rejected/failed inputs; loss counters retained",
+  "mode": "Core NATS, no persistence, TLS or acknowledgements; trace/debug disabled",
+  "notes": "One broker reused; broker setup/image pulls/compilation/warmup excluded. Eight subject-specific plans per case; immutable shared state, worker-local scratch. Partial transport delivery is not transactional; transform errors publish no outputs",
+  "round_offset": 1,
+  "rounds": 1
+}

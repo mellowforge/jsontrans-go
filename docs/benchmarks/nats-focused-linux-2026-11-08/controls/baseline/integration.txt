@@ -1,0 +1,2 @@
+ok  	github.com/mellowforge/jsontrans-go/experiments/messages/nats	1.456s
+ok  	github.com/mellowforge/jsontrans-go/experiments/messages/nats/cmd/load	0.024s [no tests to run]

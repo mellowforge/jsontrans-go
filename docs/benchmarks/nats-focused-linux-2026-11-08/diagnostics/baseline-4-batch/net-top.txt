@@ -1,0 +1,10 @@
+File: diagnose
+Type: delay
+Showing nodes accounting for 9.55s, 100% of 9.55s total
+Dropped 21 nodes (cum <= 0.05s)
+      flat  flat%   sum%        cum   cum%
+     9.55s   100%   100%      9.55s   100%  internal/poll.(*FD).Read
+         0     0%   100%      9.55s   100%  github.com/nats-io/nats%2ego.(*Conn).readLoop
+         0     0%   100%      9.55s   100%  github.com/nats-io/nats%2ego.(*natsReader).Read
+         0     0%   100%      9.55s   100%  net.(*conn).Read
+         0     0%   100%      9.55s   100%  net.(*netFD).Read

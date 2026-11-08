@@ -1,0 +1,20 @@
+File: diagnose
+Type: delay
+Showing nodes accounting for 46.02s, 100% of 46.02s total
+Dropped 11 nodes (cum <= 0.23s)
+      flat  flat%   sum%        cum   cum%
+    19.66s 42.73% 42.73%     19.66s 42.73%  sync.(*Cond).Wait
+    12.65s 27.48% 70.21%     12.65s 27.48%  runtime.chanrecv2
+     8.91s 19.37% 89.58%      8.91s 19.37%  runtime.chanrecv1
+     4.79s 10.42%   100%      4.79s 10.42%  runtime.selectgo
+         0     0%   100%      4.79s 10.42%  github.com/mellowforge/jsontrans-go/experiments/messages/nats.Run
+         0     0%   100%      3.57s  7.77%  github.com/mellowforge/jsontrans-go/experiments/messages/nats.Run.func4
+         0     0%   100%      9.07s 19.71%  github.com/nats-io/nats%2ego.(*Conn).flusher
+         0     0%   100%      9.64s 20.96%  github.com/nats-io/nats%2ego.(*Conn).waitForMsgs
+         0     0%   100%     10.02s 21.78%  github.com/nats-io/nats%2ego.(*asyncCallbacksHandler).asyncCBDispatcher
+         0     0%   100%      4.79s 10.42%  main.main
+         0     0%   100%      4.79s 10.42%  main.run
+         0     0%   100%         4s  8.69%  runtime.(*traceAdvancerState).start.func1
+         0     0%   100%      8.91s 19.37%  runtime.(*wakeableSleep).sleep
+         0     0%   100%      4.91s 10.68%  runtime.traceStartReadCPU.func1
+         0     0%   100%      3.57s  7.77%  sync.(*WaitGroup).Go.func1

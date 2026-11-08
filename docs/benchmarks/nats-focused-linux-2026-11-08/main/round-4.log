@@ -1,0 +1,28 @@
+2026/11/08 18:15:20 github.com/testcontainers/testcontainers-go - Connected to docker:
+  Server Version: 29.1.3
+  API Version: 1.52
+  Operating System: Ubuntu 24.04.5 LTS
+  Total Memory: 128577 MB
+  Testcontainers for Go Version: v0.45.0
+  Resolved Docker Host: unix:///var/run/docker.sock
+  Resolved Docker Socket Path: /var/run/docker.sock
+  Test SessionID: edda8298bd15e23a82f4ebbf0f282d5a85aaf414445c3aef99daa84d80cea141
+  Test ProcessID: 03a4a61c-105f-467f-96c4-da20e462f09f
+2026/11/08 18:15:20 🐳 Creating container for image nats@sha256:afae2fdbe2e326c65e1246cb83b9d05d319188734f3bd577ac8072daae78a10f
+2026/11/08 18:15:20 ⏳ Waiting for Reaper "412df761" to be ready
+2026/11/08 18:15:20 🔥 Reaper obtained from Docker for this test session 412df761
+2026/11/08 18:15:20 ✅ Container created: f4f227a1ad84
+2026/11/08 18:15:20 🐳 Starting container: f4f227a1ad84
+2026/11/08 18:15:20 ✅ Container started: f4f227a1ad84
+2026/11/08 18:15:20 ⏳ Waiting for container id f4f227a1ad84 image: nats@sha256:afae2fdbe2e326c65e1246cb83b9d05d319188734f3bd577ac8072daae78a10f. Waiting for: all of: [port 4222/tcp to be listening]
+2026/11/08 18:15:20 🔔 Container is ready: f4f227a1ad84
+ROUND 1 jsonata/object N4 W1 R5000 direct complete=19618/50000 rejected=30382 valid=true
+ROUND 1 jsonata/object N4 W1 R5000 prepared complete=50000/50000 rejected=0 valid=true
+ROUND 1 jsonata/object N4 W1 R5000 batch complete=50000/50000 rejected=0 valid=true
+ROUND 1 jsonata/object N1 W1 R5000 direct complete=50000/50000 rejected=0 valid=true
+ROUND 1 jsonata/object N1 W1 R5000 prepared complete=50000/50000 rejected=0 valid=true
+ROUND 1 jsonata/object N1 W1 R5000 batch complete=50000/50000 rejected=0 valid=true
+2026/11/08 18:16:21 🐳 Stopping container: f4f227a1ad84
+2026/11/08 18:16:21 ✅ Container stopped: f4f227a1ad84
+2026/11/08 18:16:21 🐳 Terminating container: f4f227a1ad84
+2026/11/08 18:16:21 🚫 Container terminated: f4f227a1ad84

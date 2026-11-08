@@ -1,0 +1,26 @@
+File: diagnose
+Type: delay
+Showing nodes accounting for 2.12s, 79.05% of 2.68s total
+Dropped 78 nodes (cum <= 0.01s)
+Showing top 20 nodes out of 56
+      flat  flat%   sum%        cum   cum%
+     1.60s 59.62% 59.62%      1.60s 59.62%  runtime.selectnbsend
+     0.39s 14.42% 74.04%      0.39s 14.42%  runtime.systemstack_switch
+     0.08s  3.17% 77.22%      0.08s  3.17%  sync.(*Cond).Signal
+     0.05s  1.84% 79.05%      0.05s  1.84%  runtime.goschedIfBusy
+         0     0% 79.05%      0.24s  8.84%  github.com/mellowforge/jsontrans-go.(*Batch).EvalPreparedJSON
+         0     0% 79.05%      0.23s  8.73%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalNative
+         0     0% 79.05%      0.23s  8.66%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalNative.func1
+         0     0% 79.05%      0.23s  8.73%  github.com/mellowforge/jsontrans-go.(*preparedEntry).evalResolved
+         0     0% 79.05%      0.24s  8.81%  github.com/mellowforge/jsontrans-go.preparedEntry.evalJSON
+         0     0% 79.05%      0.33s 12.20%  github.com/mellowforge/jsontrans-go/experiments/messages.(*Worker).Eval
+         0     0% 79.05%      0.03s     1%  github.com/mellowforge/jsontrans-go/experiments/messages/nats.Run
+         0     0% 79.05%      1.91s 71.18%  github.com/mellowforge/jsontrans-go/experiments/messages/nats.Run.func4
+         0     0% 79.05%      0.08s  3.08%  github.com/mellowforge/jsontrans-go/internal/document.(*scanner).value
+         0     0% 79.05%      0.20s  7.63%  github.com/mellowforge/jsontrans-go/internal/document.MaterializeWithBudget
+         0     0% 79.05%      0.20s  7.63%  github.com/mellowforge/jsontrans-go/internal/document.Node.materialize
+         0     0% 79.05%      0.09s  3.31%  github.com/mellowforge/jsontrans-go/internal/document.Parse
+         0     0% 79.05%      0.07s  2.64%  github.com/mellowforge/jsontrans-go/internal/jsonvalue.RememberObject
+         0     0% 79.05%      0.23s  8.73%  github.com/mellowforge/jsontrans-go/internal/prepared.Evaluate
+         0     0% 79.05%      0.23s  8.69%  github.com/mellowforge/jsontrans-go/internal/prepared.evaluate
+         0     0% 79.05%      0.23s  8.66%  github.com/mellowforge/jsontrans-go/jsonata.(*Program).evalPrepared
