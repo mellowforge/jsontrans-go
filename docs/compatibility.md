@@ -20,8 +20,9 @@ its [restricted execution profile](javascript-execution-contract.md) and
 
 Core [v1.2.0](releases/v1.2.0.md) introduces the prepared JSON-result helpers and
 optional adapter limit-support declarations while preserving these language
-targets and the Go 1.26 minimum. The release notes include merged-commit
-installation instructions until the stable tag is published.
+targets and the Go 1.26 minimum. Core [v1.2.1](releases/v1.2.1.md) reduces
+prepared-result copying and materialization and corrects missing computed
+object-key handling, with no API, dependency or minimum-version changes.
 
 Pinned suites execute both ordinary evaluation and prepared evaluation for
 every representable JSON input. JSONata fixtures with undefined input retain the

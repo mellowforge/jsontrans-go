@@ -15,15 +15,16 @@ function expressions without adding JavaScript dependencies to the native engine
 Compile an expression once, prepare a document once, and reuse them wherever
 your application needs to evaluate JSON rules.
 
-> **Versions:** [Core v1.2.0 release notes](docs/releases/v1.2.0.md) cover the new
-> prepared JSON-result APIs. See [published releases](https://github.com/mellowforge/jsontrans-go/releases)
-> for available tags and the release notes for installation before publication.
+> **Versions:** [Core v1.2.1 release notes](docs/releases/v1.2.1.md) describe the
+> prepared-result optimizations and JSONata correction being prepared for release.
+> See [published releases](https://github.com/mellowforge/jsontrans-go/releases)
+> for available tags. The prepared JSON-result APIs require core v1.2.0 or newer.
 > The optional JavaScript processor is approved for production in
-> [javascript/v1.0.0](javascript/README.md). See the
+> [javascript/v1.0.1](javascript/README.md). See the
 > [compatibility policy](docs/compatibility.md) for coverage and documented differences.
 
 The [JavaScript v1.0.1 patch notes](docs/releases/javascript-v1.0.1.md) describe
-the stable core v1.2.0 minimum and installation options before patch publication.
+its stable core v1.2.0 minimum and independent module versioning.
 
 [Quick start](#quick-start) · [Document reuse](#prepare-once-evaluate-many) ·
 [Use cases and diagrams](docs/use-cases.md) ·
@@ -75,8 +76,7 @@ go get github.com/mellowforge/jsontrans-go
 
 The root package is named `jsontrans`. Built-in processors live in the
 `jsonpath` and `jsonata` subpackages.
-The prepared JSON-result helpers require core v1.2.0 or the
-[verified merged commit](docs/releases/v1.2.0.md#install) before that tag is published.
+The prepared JSON-result helpers require core v1.2.0 or newer.
 
 ## Quick start
 
@@ -276,7 +276,8 @@ batches, host functions, and JSONata's raw-value API.
 
 ## Explore further
 
-- [Core v1.2.0 release notes](docs/releases/v1.2.0.md)
+- [Core v1.2.1 release notes](docs/releases/v1.2.1.md) (release preparation)
+- [Core v1.2.0 API additions](docs/releases/v1.2.0.md)
 - [Runnable basic example](examples/basic/main.go)
 - [Prepared-document example](examples/prepared/main.go)
 - [Prepared JSON-result example](examples/prepared-json/main.go)

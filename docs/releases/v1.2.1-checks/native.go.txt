@@ -1,0 +1,82 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	jt "github.com/mellowforge/jsontrans-go"
+	"github.com/mellowforge/jsontrans-go/jsonata"
+	"github.com/mellowforge/jsontrans-go/jsonpath"
+)
+
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+func main() {
+	ctx := context.Background()
+	ata, err := jsonata.New()
+	must(err)
+	path, err := jsonpath.New()
+	must(err)
+	x, err := jt.New(map[string]jt.Processor{"ata": ata, "path": path})
+	must(err)
+	p, err := x.Compile(ctx, "ata", `{"total":$sum(items.price)}`)
+	must(err)
+	pp, err := x.Compile(ctx, "path", `$.items[*].price`)
+	must(err)
+	missing, err := x.Compile(ctx, "ata", `absent`)
+	must(err)
+	null, err := x.Compile(ctx, "ata", `nil`)
+	must(err)
+	input := []byte(`{"items":[{"price":4},{"price":7}],"nil":null}`)
+	d, err := jt.PrepareJSON(ctx, input, jt.PrepareOptions{})
+	must(err)
+	r, err := jt.EvalPreparedJSON(ctx, p, d, jt.EvalOptions{})
+	must(err)
+	if !r.Defined || string(r.Value) != `{"total":11}` {
+		panic(fmt.Sprint(r))
+	}
+	batch, err := jt.NewBatch([]jt.Program{p, pp, missing, null})
+	must(err)
+	results, err := batch.EvalPreparedJSON(ctx, d, nil, jt.EvalOptions{})
+	must(err)
+	if len(results) != 4 || string(results[0].Value) != `{"total":11}` || string(results[1].Value) != `[4,7]` || results[2].Defined || results[2].Value != nil || !results[3].Defined || string(results[3].Value) != `null` {
+		panic(fmt.Sprint(results))
+	}
+	retained := results[0].Value
+	again, err := batch.EvalPreparedJSON(ctx, d, results, jt.EvalOptions{})
+	must(err)
+	again[0].Value[0] = 'x'
+	if string(retained) != `{"total":11}` {
+		panic("output buffer alias")
+	}
+	old, err := x.ProcessJSON(ctx, "ata", input, `$sum(items.price)`, jt.EvalOptions{})
+	must(err)
+	if !old.Defined || string(old.Value) != "11" {
+		panic(fmt.Sprint(old))
+	}
+	value, err := jt.EvalPrepared(ctx, pp, d, jt.EvalOptions{})
+	must(err)
+	if !value.Defined {
+		panic("old prepared API")
+	}
+	fixed, err := x.ProcessJSON(ctx, "ata", []byte(`{}`), `{missing:$error("must not run"),"present":null}`, jt.EvalOptions{})
+	must(err)
+	if !fixed.Defined || string(fixed.Value) != `{"present":null}` {
+		panic(fmt.Sprint(fixed))
+	}
+	selective, err := x.Compile(ctx, "ata", `{"total":items[0].price+2}`)
+	must(err)
+	selected, err := jt.EvalPreparedJSON(ctx, selective, d, jt.EvalOptions{})
+	must(err)
+	if !selected.Defined || string(selected.Value) != `{"total":6}` {
+		panic(fmt.Sprint(selected))
+	}
+	obj, err := x.ProcessJSON(ctx, "path", []byte(`{"obj":{"number":9007199254740993}}`), `$.obj`, jt.EvalOptions{})
+	must(err)
+	if !obj.Defined || string(obj.Value) != `[{"number":9007199254740993}]` {
+		panic(fmt.Sprint(obj))
+	}
+	fmt.Println("native outside consumer: PASS")
+}
