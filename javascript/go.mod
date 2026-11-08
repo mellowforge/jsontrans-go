@@ -5,7 +5,7 @@ go 1.26.0
 toolchain go1.26.10
 
 require (
-	github.com/mellowforge/jsontrans-go v1.1.1-0.20261103173822-e9b9c0c71fe0
+	github.com/mellowforge/jsontrans-go v1.2.0
 	github.com/tetratelabs/wazero v1.12.0
 )
 
