@@ -5,7 +5,7 @@ go 1.26.0
 toolchain go1.26.10
 
 require (
-	github.com/mellowforge/jsontrans-go v1.1.1-0.20261103173822-e9b9c0c71fe0
+	github.com/mellowforge/jsontrans-go v1.2.0
 	github.com/mellowforge/jsontrans-go/experiments/messages v0.0.0
 	github.com/moby/moby/api v1.56.1
 	github.com/nats-io/nats.go v1.55.0

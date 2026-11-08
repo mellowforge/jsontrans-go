@@ -33,10 +33,9 @@ and cache resources. Programs cannot be used after closure; errors.Is finds
 ErrClosed and context cancellation through registry/JSON/prepared/batch helpers.
 The root `EvalPreparedJSON` and `Batch.EvalPreparedJSON` helpers also work with
 compiled JavaScript programs, through detached materialization and the same
-fresh-runtime profile. They require core v1.2.0 or the
-[verified merged commit](../docs/releases/v1.2.0.md#install) before publication;
-the adapter's existing minimum dependency does not include them. JavaScript
-v1.0.0 works with the new core without an adapter upgrade. See
+fresh-runtime profile. The v1.0.1 patch requires stable core v1.2.0, so the
+declared minimum includes these helpers. JavaScript v1.0.0 also works when the
+application explicitly selects core v1.2.0. See
 [prepared JSON results](../docs/prepared-json-results.md).
 
 ```go
@@ -69,18 +68,21 @@ grant trusted ErrLimit/ErrConversion classification.
 ## Installation and versions
 
 Module path: `github.com/mellowforge/jsontrans-go/javascript`; package: javascript.
-Install the separately versioned public module:
+Install the separately versioned public module after the
+`javascript/v1.0.1` tag is published:
 
 ```sh
-go get github.com/mellowforge/jsontrans-go/javascript@v1.0.0
+go get github.com/mellowforge/jsontrans-go/javascript@v1.0.1
 ```
 
 The first supported version is **v1.0.0**, tagged `javascript/v1.0.0` in this
 repository. JavaScript tags use the nested module prefix `javascript/vX.Y.Z`;
-root-library tags use `vX.Y.Z`. The minimum
-root dependency is the real merged version
-`v1.1.1-0.20261103173822-e9b9c0c71fe0`, containing registry limit forwarding;
-released core v1.1.0 is too old for this adapter. Go 1.26 or newer is required.
+root-library tags use `vX.Y.Z`. The v1.0.1 patch replaces the original
+minimum-core pseudo-version with **v1.2.0**. Go 1.26 or newer is required.
+The [v1.0.1 release notes](../docs/releases/javascript-v1.0.1.md) include
+installation instructions using released v1.0.0 plus core v1.2.0 while the patch
+tag is pending. The original [v1.0.0 notes](../docs/releases/javascript-v1.0.0.md)
+retain that release's historical requirement and acceptance evidence.
 
 The [historical dependency/security review](../docs/javascript-security-review.md)
 identified unsafe patterns and a reproducible trap in the old guest. The

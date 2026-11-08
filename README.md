@@ -22,6 +22,9 @@ your application needs to evaluate JSON rules.
 > [javascript/v1.0.0](javascript/README.md). See the
 > [compatibility policy](docs/compatibility.md) for coverage and documented differences.
 
+The [JavaScript v1.0.1 patch notes](docs/releases/javascript-v1.0.1.md) describe
+the stable core v1.2.0 minimum and installation options before patch publication.
+
 [Quick start](#quick-start) · [Document reuse](#prepare-once-evaluate-many) ·
 [Use cases and diagrams](docs/use-cases.md) ·
 [Performance](#performance) · [API reference](https://pkg.go.dev/github.com/mellowforge/jsontrans-go)

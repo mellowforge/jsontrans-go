@@ -63,7 +63,7 @@ def main():
         cache = work / 'cache'
         env = original | dict(GOWORK='off', GOTOOLCHAIN='local', GOMODCACHE=str(cache),
                               GOSUMDB='off', GOPRIVATE=CORE, CGO_ENABLED='0')
-        # Canonical archive and pseudo-version validation by Go itself.
+        # Canonical archive and version validation by Go itself.
         download_core(go, core_version, work, env, ROOT)
         proxy = work / 'proxy'
         versions = proxy / MODULE / '@v'
@@ -90,6 +90,12 @@ import("context";"errors";"fmt";jt "github.com/mellowforge/jsontrans-go";js "git
 func main(){ctx:=context.Background();e,err:=js.New(ctx,js.Config{});if err!=nil{panic(err)};defer e.Close()
 x,err:=jt.New(map[string]jt.Processor{"js":e});if err!=nil{panic(err)}
 r,err:=x.ProcessJSON(ctx,"js",[]byte(`{"x":3}`),`(x,b)=>x.x+b.n`,jt.EvalOptions{Bindings:map[string]any{"n":2}});if err!=nil||string(r.Value)!="5"{panic(fmt.Sprint(r,err))}
+prepared,err:=x.Compile(ctx,"js",`(x,b)=>x.x+b.n`);if err!=nil{panic(err)}
+doc,err:=jt.PrepareJSON(ctx,[]byte(`{"x":3}`),jt.PrepareOptions{});if err!=nil{panic(err)}
+options:=jt.EvalOptions{Bindings:map[string]any{"n":2}}
+encoded,err:=jt.EvalPreparedJSON(ctx,prepared,doc,options);if err!=nil||!encoded.Defined||string(encoded.Value)!="5"{panic(fmt.Sprint(encoded,err))}
+batch,err:=jt.NewBatch([]jt.Program{prepared});if err!=nil{panic(err)}
+results,err:=batch.EvalPreparedJSON(ctx,doc,nil,options);if err!=nil||len(results)!=1||!results[0].Defined||string(results[0].Value)!="5"{panic(fmt.Sprint(results,err))}
 p,err:=e.Compile(ctx,`()=>{throw new TypeError('sentinel')}`);if err!=nil{panic(err)};_,err=p.Eval(ctx,nil,jt.EvalOptions{});var ex *js.Exception;if !errors.As(err,&ex)||ex.Name!="TypeError"{panic(fmt.Sprint(err))}
 if err=e.Close();err!=nil{panic(err)};_,err=p.Eval(ctx,nil,jt.EvalOptions{});if !errors.Is(err,js.ErrClosed){panic(fmt.Sprint(err))};fmt.Println("outside consumer: PASS")}
 ''')
