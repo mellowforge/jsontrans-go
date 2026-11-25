@@ -465,7 +465,7 @@ func TestPreparedFilteredProjectionNonArray(t *testing.T) {
 	}
 }
 
-func TestPreparedSumOverflowNativeError(t *testing.T) {
+func TestPreparedSumOverflowSerializesAsNull(t *testing.T) {
 	ctx := context.Background()
 	e, _ := New()
 	p, err := e.CompileRaw(ctx, `$sum(a)`)
@@ -480,10 +480,14 @@ func TestPreparedSumOverflowNativeError(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, wantErr := p.Eval(ctx, value, jsontrans.EvalOptions{})
-	_, gotErr := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
-	if !errors.Is(gotErr, jsontrans.ErrConversion) || !errors.Is(wantErr, jsontrans.ErrConversion) || fmt.Sprint(gotErr) != fmt.Sprint(wantErr) {
-		t.Fatalf("got %v; want %v", gotErr, wantErr)
+	want := jsontrans.Result{Defined: true}
+	ordinary, err := p.Eval(ctx, value, jsontrans.EvalOptions{})
+	if err != nil || !reflect.DeepEqual(ordinary, want) {
+		t.Fatalf("ordinary = %+v, %v, want defined null", ordinary, err)
+	}
+	got, err := p.EvalPrepared(ctx, d, jsontrans.EvalOptions{})
+	if err != nil || !reflect.DeepEqual(got, want) {
+		t.Fatalf("prepared = %+v, %v, want defined null", got, err)
 	}
 	_, handled, fastErr := p.fast.eval(d.Root(), mustBudget(t))
 	if fastErr != nil || handled {

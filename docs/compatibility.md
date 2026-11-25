@@ -93,7 +93,26 @@ JSONata regex and string ordering (comparison operators, order-by and `$sort`)
 operate on UTF-16 code units like the pinned reference. The raw API
 represents isolated units using WTF-8 strings internally; common results use the
 lossless `UTF16String` and `UTF16Object` JSON marshalers only where needed. Adjacent
-surrogate pairs canonicalize to ordinary Unicode scalars.
+surrogate pairs canonicalize to ordinary Unicode scalars. URI decoding copies
+literal isolated surrogates and requires percent escapes to encode valid UTF-8
+scalars. URI encoding reports `D3140` for an isolated surrogate.
+
+A JSONata regex literal creates a matcher each time the literal is evaluated.
+Direct calls and continuations of that matcher share its UTF-16 offset. Direct
+calls use the reference's subject and starting-offset coercions, while the
+matching built-ins still validate their arguments against their signatures.
+
+Number, integer, and date pictures preserve isolated UTF-16 surrogates in
+literals and formatting symbols, including numeric grouping and timezone
+separators. Date parsing uses a per-call mapping to unused private-use scalars
+when a picture or subject contains an isolated surrogate. This preserves
+distinct surrogate values and real private-use characters while matching.
+Number pictures validate both sign subpictures and use the reference's
+UTF-16 indexes for exponent and fractional grouping. Exponent scaling uses
+inclusive bounds taken from the pinned Node reference's binary64 powers of
+ten. After decimal half-even rounding, fixed-point rendering handles exact
+ties with the reference's larger-magnitude rule. Regression tests cover
+passive prefixes, localized separators, and optional fractional digits.
 
 ## Behavior pinned beyond the upstream suites
 
@@ -123,14 +142,15 @@ case; null and other non-string keys still report their native type error.
 Regression coverage is in `jsonata/prepared_object_test.go` and the extended
 Node reference comparison.
 
+JSONata's JSON result APIs serialize computed NaN and infinities as `null`,
+including inside arrays and objects. For example, an overflowing
+`$parseInteger` produces signed infinity during evaluation and defined JSON
+`null` if returned. `EvalRaw` and `Invoke` preserve native numbers.
+
 ## Differences at the Go boundary
 
 These are deliberate and documented rather than conformance failures:
 
-- Non-finite arithmetic results (for example `1e308 * 10`) are values inside
-  the language, as in the reference, but cannot be returned as JSON and fail
-  with `ErrConversion`. Raw `Invoke` results preserve these numbers, including
-  inside containers, and use output rather than input size limits.
 - Host function results are validated: Go numbers become JSONata numbers, and
   unsupported types, cycles, NaN and Infinity fail with `ErrConversion`. The
   JavaScript reference passes host values through unchanged.

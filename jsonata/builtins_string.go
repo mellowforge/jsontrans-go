@@ -201,34 +201,69 @@ func builtinEncodeURI(c *CallContext, s string, component bool) (Value, error) {
 	return b.String(), nil
 }
 func builtinDecodeURI(c *CallContext, s string, component bool) (Value, error) {
+	name := "decodeUrl"
+	if component {
+		name = "decodeUrlComponent"
+	}
+	invalid := func() error { return builtinError("D3140", name) }
 	b := boundedStringBuilder{c: c}
-	for i := 0; i < len(s); i++ {
+	for i := 0; i < len(s); {
 		if s[i] != '%' {
-			b.WriteByte(s[i])
-			continue
-		}
-		if i+2 >= len(s) {
-			return nil, builtinError("D3140", "decodeUrl")
-		}
-		x, e := strconv.ParseUint(s[i+1:i+3], 16, 8)
-		if e != nil {
-			return nil, builtinError("D3140", "decodeUrl")
-		}
-		if !component && strings.ContainsRune(";/?:@&=+$,#", rune(x)) {
-			b.WriteString(s[i : i+3])
+			// JavaScript copies literal UTF-16 code units unchanged, including
+			// isolated surrogates stored in Go strings as WTF-8.
+			r, size := regexDecodeRune(s[i:])
+			if r == utf8.RuneError && size == 1 {
+				return nil, invalid()
+			}
+			b.WriteString(s[i : i+size])
+			i += size
 		} else {
-			b.WriteByte(byte(x))
+			first, ok := uriEscapeByte(s[i:])
+			if !ok {
+				return nil, invalid()
+			}
+			switch {
+			case first >= utf8.RuneSelf:
+				// An encoded scalar is made entirely of consecutive percent
+				// escapes. UTF-8 encodings of surrogate units are invalid.
+				var encoded [utf8.UTFMax]byte
+				encoded[0] = first
+				i += 3
+				n := 1
+				for !utf8.FullRune(encoded[:n]) {
+					next, ok := uriEscapeByte(s[i:])
+					if !ok {
+						return nil, invalid()
+					}
+					encoded[n] = next
+					n++
+					i += 3
+				}
+				if r, size := utf8.DecodeRune(encoded[:n]); r == utf8.RuneError && size == 1 {
+					return nil, invalid()
+				}
+				b.WriteString(string(encoded[:n]))
+			case !component && strings.ContainsRune(";/?:@&=+$,#", rune(first)):
+				b.WriteString(s[i : i+3])
+				i += 3
+			default:
+				b.WriteByte(first)
+				i += 3
+			}
 		}
-		i += 2
+		if b.err != nil {
+			return nil, b.err
+		}
 	}
-	if b.err != nil {
-		return nil, b.err
+	return b.String(), nil
+}
+
+func uriEscapeByte(s string) (byte, bool) {
+	if len(s) < 3 || s[0] != '%' {
+		return 0, false
 	}
-	out := b.String()
-	if !utf8.ValidString(out) {
-		return nil, builtinError("D3140", "decodeUrl")
-	}
-	return out, nil
+	value, err := strconv.ParseUint(s[1:3], 16, 8)
+	return byte(value), err == nil
 }
 
 func builtinUnicodeCase(c *CallContext, s string, upper bool) (Value, error) {
