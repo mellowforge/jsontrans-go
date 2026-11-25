@@ -304,3 +304,148 @@ func TestRegexTimeoutCappedByEvaluationDeadline(t *testing.T) {
 		t.Fatalf("got %v", err)
 	}
 }
+
+func TestRegexLiteralContinuationState(t *testing.T) {
+	for _, tt := range []struct {
+		expression string
+		want       any
+	}{
+		{`($m := /a/("😀a a"); [$m.start, $m.end, $m.next().start, $m.next().start])`, []any{float64(2), float64(3), float64(4)}},
+		{`($r := /a/; $m := $r("aaa"); $r("aa", 1); $m.next().start)`, float64(2)},
+		{`($r := /a/; $m := $r("aaa"); $r("bbb"); $m.next().start)`, float64(0)},
+	} {
+		t.Run(tt.expression, func(t *testing.T) {
+			program := compileRegexTest(t, tt.expression)
+			// Reusing the compiled program must create fresh matcher state.
+			for range 4 {
+				t.Run("evaluation", func(t *testing.T) {
+					t.Parallel()
+					result, err := program.Eval(context.Background(), nil, jsontrans.EvalOptions{})
+					if err != nil || !result.Defined || !reflect.DeepEqual(result.Value, tt.want) {
+						t.Fatalf("got %#v, %v, want %#v", result, err, tt.want)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestRegexLiteralArgumentCoercion(t *testing.T) {
+	for _, tt := range []struct {
+		expression string
+		input      any
+		want       any
+	}{
+		{`($r := /a/; $m := $r("aba", "2"); $n := /1/(123); [$m.start, $n.match])`, nil, []any{float64(2), "1"}},
+		{`($m := /undefined/(); $m.match)`, nil, "undefined"},
+		{`($m := /null/(null); $m.match)`, nil, "null"},
+		{`($m := /true/(true); $m.match)`, nil, "true"},
+		{`($m := /1,,2,3/([1, null, [2, 3]]); $m.match)`, nil, "1,,2,3"},
+		{`($m := /\[object Object\]/($); $m.match)`, map[string]any{}, "[object Object]"},
+		{`($m := /async function/($sum); $m.match)`, nil, "async function"},
+		{`($r := /fromIndex/; $f := /a/; $m := $r([$f]); $m.match)`, nil, "fromIndex"},
+		{`($r := /re\.lastIndex/; $f := /a/("aa").next; $m := $r([$f]); $m.match)`, nil, "re.lastIndex"},
+		{`($r := /async function/; $f := $r(?); $m := $f(function($x){$x}); $m.match)`, nil, "async function"},
+		{`($r := /async function/; $f := function($x){$x} ~> $r; $m := $f($sum); $m.match)`, nil, "async function"},
+		{`($f := function($x){[$x]}; $r := /async function/; $m := $r($f($sum)); $m.match)`, nil, "async function"},
+		{`($r := /async function/; $f := function($x){$x ~> $r()}; $m := $f($sum); $m.match)`, nil, "async function"},
+		{`($m := /a/("aba", true); $m.start)`, nil, float64(2)},
+		{`($f := /./; $map(["ab","ab","ab"], $f).match)`, nil, []any{"a", "b"}},
+		{`($m := /a/("aba", [2]); $m.start)`, nil, float64(2)},
+		{`($m := /a/("aba", "0x2"); $m.start)`, nil, float64(2)},
+		{`($m := /a/("aba", -1); $m.start)`, nil, float64(0)},
+		{`$exists(/a/("aba", "Infinity"))`, nil, false},
+		{`($m := /a/("aba", "1_2"); $m.start)`, nil, float64(0)},
+		{`($m := /1/(123); [$m.next().start, $m.next().start])`, nil, []any{float64(0)}},
+	} {
+		t.Run(tt.expression, func(t *testing.T) {
+			result, err := compileRegexTest(t, tt.expression).Eval(context.Background(), tt.input, jsontrans.EvalOptions{})
+			if err != nil || !result.Defined || !reflect.DeepEqual(result.Value, tt.want) {
+				t.Fatalf("got %#v, %v, want %#v", result, err, tt.want)
+			}
+		})
+	}
+}
+
+func compileRegexTest(t *testing.T, expression string) *Program {
+	t.Helper()
+	engine, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	program, err := engine.CompileRaw(context.Background(), expression)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return program
+}
+
+func TestRegexLiteralRejectsUnsupportedGroupSyntax(t *testing.T) {
+	engine, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, expression := range []string{
+		`/(?i:a)/`,
+		`/(?<x>a)|(?<x>b)/`,
+		`/(?:(?<x>a)|(?<x>b))\k<x>/`,
+		`/(?<\u0078>a)|(?<x>b)/`,
+		`/(?<\u{78}>a)|(?<x>b)/`,
+		`/a/ii`,
+	} {
+		_, err := engine.Compile(context.Background(), expression)
+		var native *jsontrans.Error
+		if !errors.As(err, &native) || native.Phase != jsontrans.PhaseCompile || native.Code != "" {
+			t.Errorf("%s: got %v, want uncoded compile error", expression, err)
+		}
+	}
+	for _, expression := range []string{
+		`/\(\?i:a\)/`,
+		`/[(?i:a)]/`,
+		`/(?<\u0078>a)\k<x>/`,
+		`/(?<=a)b/`,
+		`/(?:a)(?=b)/`,
+	} {
+		if _, err := engine.Compile(context.Background(), expression); err != nil {
+			t.Errorf("%s: %v", expression, err)
+		}
+	}
+}
+
+func TestRegexArgumentDetectionDoesNotWalkSharedComposition(t *testing.T) {
+	expression := `($f := function($x){$x};` +
+		strings.Repeat(`$f := $f ~> $f;`, 40) +
+		`$f($sum))`
+	program := compileRegexTest(t, expression)
+	_, err := program.Eval(context.Background(), nil, jsontrans.EvalOptions{
+		Limits: &jsontrans.Limits{MaxSteps: 500},
+	})
+	if !errors.Is(err, jsontrans.ErrLimit) {
+		t.Fatalf("got %v, want step limit from evaluating the composition", err)
+	}
+}
+
+func TestRegexCoercionTracksObjectPrototype(t *testing.T) {
+	for _, subject := range []string{
+		`{"x":1}`,
+		`[1]{"x":$}`,
+		`$merge([{"x":1}])`,
+		`$spread({"x":1})`,
+		`$sift({"x":1}, function(){true})`,
+	} {
+		t.Run(subject, func(t *testing.T) {
+			program := compileRegexTest(t, `($m := /object/(`+subject+`); $m.match)`)
+			_, err := program.Eval(context.Background(), nil, jsontrans.EvalOptions{})
+			var native *jsontrans.Error
+			if !errors.As(err, &native) || native.Phase != jsontrans.PhaseEvaluate || native.Code != "" ||
+				!strings.Contains(err.Error(), "cannot convert object to primitive value") {
+				t.Fatalf("got %v, want uncoded object coercion error", err)
+			}
+		})
+	}
+	program := compileRegexTest(t, `($m := /object/($clone({"x":1})); $m.match)`)
+	result, err := program.Eval(context.Background(), nil, jsontrans.EvalOptions{})
+	if err != nil || !result.Defined || result.Value != "object" {
+		t.Fatalf("got %#v, %v, want cloned object to stringify", result, err)
+	}
+}

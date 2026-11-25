@@ -275,7 +275,9 @@ func builtinObjects(m map[string]Callable) {
 					if err := builtinCollection(c, len(out)+1); err != nil {
 						return err
 					}
-					out = append(out, map[string]any{k: x[k]})
+					item := map[string]any{k: x[k]}
+					recordConstructedObject(c.state, item, nil)
+					out = append(out, item)
 				}
 			case []any:
 				for _, y := range x {
@@ -366,6 +368,7 @@ func builtinObjects(m map[string]Callable) {
 				if len(filtered) == 0 {
 					return Undefined, nil
 				}
+				recordConstructedObject(c.state, filtered, nil)
 				return filtered, nil
 			}
 			if len(out) == 0 {

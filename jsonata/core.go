@@ -204,8 +204,8 @@ func (e *Engine) CompileRaw(ctx context.Context, expr string) (*Program, error) 
 }
 
 // Eval evaluates the program over JSON-shaped input. Numbers become binary64.
-// Undefined input is rejected with ErrInvalidInput; results that are not JSON,
-// such as functions, fail with ErrConversion.
+// Non-finite numbers serialize as null. Undefined input is rejected with
+// ErrInvalidInput, and function-valued results fail with ErrConversion.
 func (p *Program) Eval(ctx context.Context, input any, opts jsontrans.EvalOptions) (jsontrans.Result, error) {
 	v, err := p.evaluate(ctx, input, opts, false)
 	if err != nil {
@@ -289,7 +289,7 @@ func (p *Program) evaluateOwned(input Value, bindings map[string]any, b *budget.
 		}
 		return v, 0, nil
 	}
-	v, err = materializeChecked(v, b)
+	v, err = materializeChecked(v, b, true)
 	if err != nil {
 		return nil, 0, fmt.Errorf("%w: %w", jsontrans.ErrConversion, err)
 	}
@@ -718,7 +718,7 @@ func (p *parser) parse(min int) *node {
 			i++
 		}
 		matcher := RegexMatcher{Pattern: pattern, Flags: p.s[flagStart:i]}
-		if _, err := matcher.compile(&CallContext{Budget: p.b}); err != nil {
+		if err := matcher.validateLiteral(&CallContext{Budget: p.b}); err != nil {
 			if errors.Is(err, errInvalidRegex) {
 				p.failAt("", start, err)
 			} else if p.err == nil {
@@ -1142,8 +1142,10 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		return Undefined, nil
 	case "placeholder":
 		return nil, evalError("S0211", n.pos, "", fmt.Errorf("placeholder outside function arguments"))
-	case "number", "string", "literal", "regex":
+	case "number", "string", "literal":
 		return n.val, nil
+	case "regex":
+		return &regexClosure{RegexMatcher: n.val.(RegexMatcher)}, nil
 	case "variable":
 		s := n.val.(string)
 		if s == "$" {
@@ -1335,7 +1337,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				out[s] = v
 			}
 		}
-		e.objectOrder[uintptr(reflect.ValueOf(out).UnsafePointer())] = objectOrderEntry{value: out, keys: order}
+		recordConstructedObject(e, out, order)
 		return out, e.b.Collection(len(out))
 	case "conditional":
 		v, err := e.eval(n.children[0], focus)
@@ -1532,6 +1534,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				out[k] = value
 			}
 		}
+		recordConstructedObject(e, out, nil)
 		return out, e.b.Collection(len(out))
 	case "sort":
 		v, err := e.eval(n.children[0], focus)
@@ -1900,6 +1903,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 				}
 				args = append(args, e.argument(v))
 			}
+			wrapExplicitFunctionArguments(args[1:])
 			result, err := e.invoke(fn, args, focus)
 			if err != nil {
 				return nil, callErrorPosition(err, right.pos)
@@ -1972,6 +1976,7 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		if hasPlaceholder {
 			return partial{fn: fn, args: args}, nil
 		}
+		wrapExplicitFunctionArguments(args)
 		result, err := e.invoke(fn, args, focus)
 		return result, callErrorPosition(err, n.pos)
 	}
@@ -2017,11 +2022,11 @@ func (e *evaluator) eval(n *node, focus Value) (result Value, err error) {
 		if IsUndefined(a) || IsUndefined(b) {
 			return false, nil
 		}
-		left, err := materializeChecked(a, e.b)
+		left, err := materializeChecked(a, e.b, false)
 		if err != nil {
 			return nil, err
 		}
-		right, err := materializeChecked(b, e.b)
+		right, err := materializeChecked(b, e.b, false)
 		if err != nil {
 			return nil, err
 		}
@@ -2303,7 +2308,8 @@ func (e *evaluator) evalTail(n *node, focus Value) (result Value, err error) {
 		if err != nil {
 			return nil, err
 		}
-		fn, ok := f.(*closure)
+		callable, _ := f.(Callable)
+		fn, ok := unwrapExplicitFunctionArgument(callable).(*closure)
 		if !ok {
 			if entered {
 				e.depth.leave()
@@ -2326,6 +2332,7 @@ func (e *evaluator) evalTail(n *node, focus Value) (result Value, err error) {
 			}
 			args = append(args, e.argument(v))
 		}
+		wrapExplicitFunctionArguments(args)
 		return tailCall{fn: fn, args: args}, nil
 	}
 	return e.eval(n, focus)
@@ -2345,7 +2352,7 @@ func stringValue(v Value, b *budget.Budget) (string, error) {
 	case bool:
 		return strconv.FormatBool(x), nil
 	default:
-		normalized, err := materializeChecked(v, b)
+		normalized, err := materializeChecked(v, b, false)
 		if err != nil {
 			return "", err
 		}
@@ -2410,13 +2417,13 @@ func (e *evaluator) invoke(fn Callable, args []Value, focus Value) (Value, error
 			return nil
 		}
 		entry, ok := e.objectOrder[uintptr(reflect.ValueOf(m).UnsafePointer())]
-		if ok {
+		if ok && entry.keys != nil {
 			return jsonvalue.EnumerationKeys(entry.keys)
 		}
 		return jsonvalue.ObjectKeys(e.b.Context(), m)
 	}
 	cc.Invoke = func(f Callable, a []Value) (Value, error) {
-		v, err := f.Call(cc, a)
+		v, err := unwrapExplicitFunctionArgument(f).Call(cc, a)
 		if err != nil {
 			return nil, err
 		}
@@ -2452,6 +2459,28 @@ func (e *evaluator) invoke(fn Callable, args []Value, focus Value) (Value, error
 	return cc.Invoke(fn, args)
 }
 
+// JSONata wraps functions passed as explicit arguments. The marker preserves
+// the wrapper's JavaScript string coercion without changing call dispatch.
+// Values passed as pipeline context keep their existing provenance.
+type explicitFunctionArgument struct{ Callable }
+
+func wrapExplicitFunctionArguments(args []Value) {
+	for i, value := range args {
+		if fn, ok := value.(Callable); ok {
+			if _, wrapped := fn.(explicitFunctionArgument); !wrapped {
+				args[i] = explicitFunctionArgument{fn}
+			}
+		}
+	}
+}
+
+func unwrapExplicitFunctionArgument(fn Callable) Callable {
+	if wrapped, ok := fn.(explicitFunctionArgument); ok {
+		return wrapped.Callable
+	}
+	return fn
+}
+
 type composed struct{ first, second Callable }
 
 func (c composed) Arity() int { return c.first.Arity() }
@@ -2477,7 +2506,7 @@ func (t *transform) Call(ctx *CallContext, args []Value) (Value, error) {
 	if len(args) == 0 || IsUndefined(args[0]) {
 		return Undefined, nil
 	}
-	value, err := materializeChecked(args[0], ctx.Budget)
+	value, err := materializeChecked(args[0], ctx.Budget, false)
 	if err != nil {
 		return nil, err
 	}
@@ -2600,8 +2629,9 @@ func orderable(v Value) bool {
 	return false
 }
 
-// materializeChecked bounds output conversion and detects cycles returned by host functions.
-func materializeChecked(v Value, b *budget.Budget) (Value, error) {
+// materializeChecked bounds conversion and detects cycles. Only the JSON result
+// boundary replaces non-finite language numbers with null.
+func materializeChecked(v Value, b *budget.Budget, jsonOutput bool) (Value, error) {
 	active := map[uintptr]bool{}
 	var convert func(Value) (Value, error)
 	convert = func(v Value) (Value, error) {
@@ -2684,6 +2714,9 @@ func materializeChecked(v Value, b *budget.Budget) (Value, error) {
 			}
 			return out, nil
 		case float64:
+			if jsonOutput && (math.IsInf(x, 0) || math.IsNaN(x)) {
+				return nil, nil
+			}
 			// JSON has no negative zero; the reference prints -0 as 0.
 			return x + 0, nil
 		default:
@@ -2771,8 +2804,19 @@ func containsParent(n *node) bool {
 }
 
 type objectOrderEntry struct {
-	value map[string]any
-	keys  []string
+	value       map[string]any
+	keys        []string
+	constructed bool
+}
+
+// JSONata constructors have no JavaScript prototype. Keep that provenance
+// alongside object ordering without assigning a new order to built-in results.
+func recordConstructedObject(e *evaluator, value map[string]any, keys []string) {
+	if e != nil {
+		e.objectOrder[uintptr(reflect.ValueOf(value).UnsafePointer())] = objectOrderEntry{
+			value: value, keys: keys, constructed: true,
+		}
+	}
 }
 
 // definingLimits returns the configured limits of the engine whose evaluation
@@ -2791,6 +2835,8 @@ func definingLimits(fn Callable) budget.Limits {
 		return definingLimits(f.fn)
 	case composed:
 		return definingLimits(f.first)
+	case explicitFunctionArgument:
+		return definingLimits(f.Callable)
 	}
 	return budget.DefaultLimits()
 }

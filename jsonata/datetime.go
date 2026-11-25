@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode"
+	"unicode/utf8"
 )
 
 func builtinDateTime(m map[string]Callable) {
@@ -55,7 +55,7 @@ func builtinDateTime(m map[string]Callable) {
 	}}
 }
 func dateFromMillis(c *CallContext, n float64, picture, timezone Value) (Value, error) {
-	offset := 0
+	hours, minutes := 0, 0
 	if z, ok := timezone.(string); ok && z != "" {
 		// As the reference: parseInt(timezone), then floor(v/100) hours and
 		// v%100 minutes, so "-0530" is -06:30 and "+05:30" is +00:05.
@@ -63,12 +63,12 @@ func dateFromMillis(c *CallContext, n float64, picture, timezone Value) (Value, 
 		if !ok {
 			return nil, builtinError("D3134", "fromMillis")
 		}
-		hours := v / 100
-		if v < 0 && v%100 != 0 {
+		hours, minutes = v/100, v%100
+		if minutes < 0 {
 			hours--
 		}
-		offset = hours*60 + v%100
 	}
+	offset := hours*60 + minutes
 	// JavaScript dates span ±8.64e15 ms after the offset is applied; beyond
 	// that every component of the reference's Date is NaN.
 	local := n + float64(offset)*60000
@@ -123,16 +123,14 @@ func dateFromMillis(c *CallContext, n float64, picture, timezone Value) (Value, 
 				return nil, builtinError("D3135", "fromMillis")
 			}
 			j += i + 1
-			marker := strings.Map(func(r rune) rune {
-				if unicode.IsSpace(r) {
-					return -1
-				}
-				return r
-			}, p[i+1:j])
+			marker, err := dateMarkerText(c, p[i+1:j])
+			if err != nil {
+				return nil, err
+			}
 			if marker == "" {
 				return nil, builtinError("D3132", "fromMillis")
 			}
-			v, e := dateFormatMarker(c, t, marker, offset, invalid)
+			v, e := dateFormatMarker(c, t, marker, hours, minutes, invalid)
 			if e != nil {
 				return nil, e
 			}
@@ -182,9 +180,8 @@ func jsParseInt(s string) (int, bool) {
 // cannot format either: it fails without a JSONata code.
 var errInvalidDate = errors.New("fromMillis: date outside the representable range")
 
-func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, invalid bool) (string, error) {
-	comp := marker[0]
-	pic := marker[1:]
+func datePresentation(text string) (string, string) {
+	pic := text
 	width := ""
 	if i := strings.LastIndex(pic, ","); i >= 0 {
 		tail := pic[i+1:]
@@ -193,6 +190,12 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, in
 			pic = pic[:i]
 		}
 	}
+	return pic, width
+}
+
+func dateFormatMarker(c *CallContext, t time.Time, marker string, hours, minutes int, invalid bool) (string, error) {
+	comp := marker[0]
+	pic, width := datePresentation(marker[1:])
 	if pic == "" {
 		switch comp {
 		case 'm', 's':
@@ -214,34 +217,7 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, in
 		}
 	}
 	if comp == 'Z' || comp == 'z' {
-		if len(strings.ReplaceAll(strings.TrimSuffix(pic, "t"), ":", "")) > 4 {
-			return "", builtinError("D3134", "fromMillis")
-		}
-		if strings.HasSuffix(pic, "t") && offset == 0 {
-			return "Z", nil
-		}
-		sign := "+"
-		if offset < 0 {
-			sign = "-"
-			offset = -offset
-		}
-		h, min := offset/60, offset%60
-		z := ""
-		switch strings.TrimSuffix(pic, "t") {
-		case "0", "1":
-			z = fmt.Sprintf("%s%d", sign, h)
-			if min != 0 {
-				z += fmt.Sprintf(":%02d", min)
-			}
-		case "0101", "0001":
-			z = fmt.Sprintf("%s%02d%02d", sign, h, min)
-		default:
-			z = fmt.Sprintf("%s%02d:%02d", sign, h, min)
-		}
-		if comp == 'z' {
-			z = "GMT" + z
-		}
-		return z, nil
+		return dateFormatTimezone(c, comp, pic, hours, minutes)
 	}
 	if invalid {
 		return invalidDateMarker(c, comp, pic, width)
@@ -389,6 +365,53 @@ func dateFormatMarker(c *CallContext, t time.Time, marker string, offset int, in
 	return v.(string), nil
 }
 
+func dateFormatTimezone(c *CallContext, component byte, picture string, hours, minutes int) (string, error) {
+	pic := strings.TrimSuffix(picture, "t")
+	separator, err := integerTimezoneGrouping(c, pic, "fromMillis")
+	if err != nil {
+		return "", err
+	}
+	offset := hours*100 + minutes
+	value := offset
+	appendMinutes := false
+	if separator == "" {
+		switch countIntegerDigits(pic) {
+		case 1, 2:
+			value, appendMinutes = hours, minutes != 0
+		case 3, 4:
+		default:
+			return "", builtinError("D3134", "fromMillis")
+		}
+	}
+	if strings.HasSuffix(picture, "t") && offset == 0 {
+		return "Z", nil
+	}
+	text, err := formatInteger(c, float64(value), pic)
+	if err != nil {
+		return "", err
+	}
+	out := boundedStringBuilder{c: c}
+	if component == 'z' {
+		out.WriteString("GMT")
+	}
+	if offset >= 0 {
+		out.WriteByte('+')
+	}
+	out.WriteString(text.(string))
+	if appendMinutes {
+		fraction, err := formatInteger(c, float64(minutes), "00")
+		if err != nil {
+			return "", err
+		}
+		out.WriteByte(':')
+		out.WriteString(fraction.(string))
+	}
+	if out.err != nil {
+		return "", out.err
+	}
+	return out.String(), nil
+}
+
 // invalidDateMarker formats a component of an invalid date as the reference
 // does: numbers are NaN, zero-padded to the picture's digits or minimum width.
 func invalidDateMarker(c *CallContext, comp byte, pic, width string) (string, error) {
@@ -445,7 +468,7 @@ func invalidDateMarker(c *CallContext, comp byte, pic, width string) (string, er
 func countIntegerDigits(s string) int {
 	n := 0
 	for _, r := range s {
-		if unicode.IsDigit(r) {
+		if integerDecimalZero(r) != 0 {
 			n++
 		}
 	}
@@ -453,9 +476,17 @@ func countIntegerDigits(s string) int {
 }
 
 func dateParsePicture(c *CallContext, s, p string) (Value, error) {
+	s, p, err := projectDatePicture(c, s, p)
+	if err != nil {
+		return nil, err
+	}
 	var re strings.Builder
 	re.WriteString("(?i)^")
-	markers := []string{}
+	type dateMarker struct {
+		text          string
+		zoneSeparator string
+	}
+	var markers []dateMarker
 	for i := 0; i < len(p); {
 		if err := builtinStep(c); err != nil {
 			return nil, err
@@ -471,24 +502,45 @@ func dateParsePicture(c *CallContext, s, p string) (Value, error) {
 				return nil, builtinError("D3135", "toMillis")
 			}
 			j += i + 1
-			marker := strings.Map(func(r rune) rune {
-				if unicode.IsSpace(r) {
-					return -1
-				}
-				return r
-			}, p[i+1:j])
+			marker, err := dateMarkerText(c, p[i+1:j])
+			if err != nil {
+				return nil, err
+			}
 			if marker == "" || !strings.ContainsRune("YMDdXxWwFHhmsfPZzCE", rune(marker[0])) {
 				return nil, builtinError("D3132", "toMillis")
 			}
 			if len(marker) > 1 && marker[1] == 'N' && !strings.ContainsRune("MFxP", rune(marker[0])) {
 				return nil, builtinError("D3133", "toMillis")
 			}
-			markers = append(markers, marker)
+			item := dateMarker{text: marker}
 			pic := marker[1:]
+			if marker[0] != 'Z' && marker[0] != 'z' {
+				presentation, _ := datePresentation(pic)
+				if _, err := readDecimalIntegerPicture(c, presentation, "toMillis"); err != nil {
+					return nil, err
+				}
+			}
 			nextAdjacent := j+1 < len(p) && p[j+1] == '[' && (j+2 >= len(p) || p[j+2] != '[')
 			switch {
 			case marker[0] == 'Z' || marker[0] == 'z':
-				re.WriteString(`(GMT[+-][0-9:]+|[+-][0-9:]+|Z)`)
+				pic, _ := datePresentation(pic)
+				if pic == "" {
+					pic = "01:01"
+				}
+				item.zoneSeparator, err = integerTimezoneGrouping(c, strings.TrimSuffix(pic, "t"), "toMillis")
+				if err != nil {
+					return nil, err
+				}
+				re.WriteByte('(')
+				if marker[0] == 'z' {
+					re.WriteString("GMT")
+				}
+				re.WriteString(`[+-][0-9]+`)
+				if item.zoneSeparator != "" {
+					re.WriteString(regexp.QuoteMeta(item.zoneSeparator))
+					re.WriteString(`[0-9]+`)
+				}
+				re.WriteByte(')')
 			case marker[0] == 'P':
 				re.WriteString(`(am|pm)`)
 			case strings.HasPrefix(pic, "N") || strings.HasPrefix(pic, "n"):
@@ -514,19 +566,21 @@ func dateParsePicture(c *CallContext, s, p string) (Value, error) {
 			default:
 				re.WriteString(`([0-9]+(?:st|nd|rd|th)?)`)
 			}
+			markers = append(markers, item)
 			i = j + 1
 		} else if p[i] == ']' && i+1 < len(p) && p[i+1] == ']' {
 			re.WriteString(`\]`)
 			i += 2
 		} else {
-			re.WriteString(regexp.QuoteMeta(p[i : i+1]))
-			i++
+			_, size := utf8.DecodeRuneInString(p[i:])
+			re.WriteString(regexp.QuoteMeta(p[i : i+size]))
+			i += size
 		}
 	}
 	re.WriteString("$")
 	hasISO := false
 	for _, marker := range markers {
-		if strings.ContainsRune("XxWw", rune(marker[0])) {
+		if strings.ContainsRune("XxWw", rune(marker.text[0])) {
 			hasISO = true
 		}
 	}
@@ -550,8 +604,12 @@ func dateParsePicture(c *CallContext, s, p string) (Value, error) {
 	hasY, hasM, hasD, hasDay, hasHour, hasMinute, hasSecond := false, false, false, false, false, false, false
 	dayYear := 0
 	pm := ""
-	offset := 0
-	for i, marker := range markers {
+	offset := float64(0)
+	for i, item := range markers {
+		if err := builtinStep(c); err != nil {
+			return nil, err
+		}
+		marker := item.text
 		v := matches[i+1]
 		comp := marker[0]
 		pic := marker[1:]
@@ -582,21 +640,7 @@ func dateParsePicture(c *CallContext, s, p string) (Value, error) {
 		case 'P':
 			pm = strings.ToLower(v)
 		case 'Z', 'z':
-			z := strings.TrimPrefix(v, "GMT")
-			if z != "Z" {
-				sign := 1
-				if strings.HasPrefix(z, "-") {
-					sign = -1
-				}
-				z = strings.TrimLeft(z, "+-")
-				z = strings.ReplaceAll(z, ":", "")
-				num, _ := strconv.Atoi(z)
-				if len(z) <= 2 {
-					offset = sign * num * 60
-				} else {
-					offset = sign * (num/100*60 + num%100)
-				}
-			}
+			offset = datePictureOffset(v, comp, item.zoneSeparator)
 		case 'F', 'C', 'E':
 			continue
 		default:
@@ -667,11 +711,39 @@ func dateParsePicture(c *CallContext, s, p string) (Value, error) {
 	if year < -300000 || year > 300000 {
 		return math.NaN(), nil
 	}
-	t := time.Date(year, time.Month(month), day, hour, min, sec, millis*1e6, time.FixedZone("", offset*60))
-	if ms := t.UnixMilli(); ms < -8.64e15 || ms > 8.64e15 {
+	t := time.Date(year, time.Month(month), day, hour, min, sec, millis*1e6, time.UTC)
+	ms := float64(t.UnixMilli())
+	if ms < -8.64e15 || ms > 8.64e15 {
 		return math.NaN(), nil
 	}
-	return float64(t.UnixMilli()), nil
+	// As Date.UTC in the reference, clip the local timestamp before applying
+	// the binary64 timezone offset. The sign on the hours is independent of
+	// the minutes in a timezone picture.
+	if offset != 0 && !math.IsNaN(offset) {
+		ms -= offset * 60 * 1000
+	}
+	return ms, nil
+}
+
+func datePictureOffset(text string, component byte, separator string) float64 {
+	if component == 'z' {
+		text = text[3:]
+	}
+	number := func(s string) float64 {
+		n, err := strconv.ParseFloat(s, 64)
+		if err != nil && !errors.Is(err, strconv.ErrRange) {
+			return math.NaN()
+		}
+		return n
+	}
+	if separator != "" {
+		hours, minutes, _ := strings.Cut(text, separator)
+		return number(hours)*60 + number(minutes)
+	}
+	if len(text) <= 3 {
+		return number(text) * 60
+	}
+	return number(text[:3])*60 + number(text[3:])
 }
 
 func monthWeek(t time.Time) (int, int) {

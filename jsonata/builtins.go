@@ -794,6 +794,7 @@ func builtins() map[string]Callable {
 				out[k] = y
 			}
 		}
+		recordConstructedObject(c.state, out, nil)
 		return out, nil
 	})
 	add("error", 1, func(c *CallContext, a []Value) (Value, error) { return nil, builtinError("D3137", "error") })

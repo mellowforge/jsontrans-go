@@ -585,3 +585,15 @@ func TestReferenceInvalidDateYearWidth(t *testing.T) {
 		{`$fromMillis(0/0, "[Y,4-*]")`, `{}`, `"0NaN"`},
 	})
 }
+
+func TestReferenceURIDecodePreservesLiteralSurrogates(t *testing.T) {
+	checkReferenceCases(t, []referenceCase{
+		{`$decodeUrl($)`, `"\ud800%41\udc00%2f%3F"`, `"\ud800A\udc00%2f%3F"`},
+		{`$decodeUrlComponent($)`, `"\udc00%F0%9F%98%80%2f"`, `"\udc00😀/"`},
+		{`$decodeUrl("%ED%A0%80\ud800")`, `null`, "ERR D3140"},
+		{`$decodeUrlComponent("%F0\ud800%9F%98%80")`, `null`, "ERR D3140"},
+		{`$decodeUrlComponent("%e2%82")`, `null`, "ERR D3140"},
+		{`$decodeUrlComponent("%EF%BF%BD")`, `null`, `"�"`},
+		{`$encodeUrl("\ud800")`, `null`, "ERR D3140"},
+	})
+}

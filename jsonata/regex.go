@@ -3,14 +3,18 @@ package jsonata
 import (
 	"errors"
 	"fmt"
-	"github.com/mellowforge/jsontrans-go"
-	"github.com/mellowforge/jsontrans-go/internal/budget"
+	"math"
+	"reflect"
+	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/dlclark/regexp2/v2"
+	"github.com/mellowforge/jsontrans-go"
+	"github.com/mellowforge/jsontrans-go/internal/budget"
 )
 
 // RegexMatcher is an immutable regex literal. Each call compiles its own
@@ -22,20 +26,274 @@ type RegexMatcher struct {
 
 func (RegexMatcher) Arity() int { return 1 }
 func (r RegexMatcher) Call(c *CallContext, a []Value) (Value, error) {
-	s, ok := builtinArg(a, 0).(string)
-	if !ok {
-		return nil, builtinError("T0410", "regex")
-	}
-	units, err := regexInputUnits(c, s)
+	return r.call(c, a, nil)
+}
+
+// Each evaluation of a regex literal creates one matcher. Its direct calls and
+// .next continuations share an offset, just like RegExp.lastIndex in JSONata.
+// The cursor stays race-safe when the callable escapes through EvalRaw.
+type regexClosure struct {
+	RegexMatcher
+	lastIndex atomic.Int64
+}
+
+// The reference closure takes a subject and an optional starting offset.
+func (*regexClosure) Arity() int { return 2 }
+
+func (r *regexClosure) Call(c *CallContext, args []Value) (Value, error) {
+	return r.RegexMatcher.call(c, args, r)
+}
+
+type regexContinuation struct{ NativeFunction }
+
+type regexSubject struct {
+	units   []rune
+	length  Value
+	nullish string
+}
+
+func (r RegexMatcher) call(c *CallContext, args []Value, state *regexClosure) (Value, error) {
+	value := builtinArg(args, 0)
+	text, err := regexSubjectString(c, value)
 	if err != nil {
 		return nil, err
 	}
-	return r.search(c, units, 0, false)
+	units, err := regexInputUnits(c, text)
+	if err != nil {
+		return nil, err
+	}
+	subject := regexSubject{units: units, length: Undefined}
+	switch x := value.(type) {
+	case nil, undefinedValue:
+		subject.nullish = text
+	case string:
+		subject.length = float64(len(units))
+	case []any:
+		subject.length = float64(len(x))
+	case Sequence:
+		subject.length = float64(len(x))
+	case map[string]any:
+		if length, ok := x["length"]; ok {
+			subject.length = length
+		}
+	case *regexClosure:
+		subject.length = float64(2)
+	case explicitFunctionArgument, regexContinuation:
+		subject.length = float64(0)
+	}
+	fromIndex, err := regexToNumber(c, builtinArg(args, 1))
+	if err != nil {
+		return nil, err
+	}
+	return r.search(c, subject, max(0, floatToInt(fromIndex)), false, state)
+}
+
+func regexSubjectString(c *CallContext, subject Value) (string, error) {
+	if text, ok := subject.(string); ok {
+		return text, nil
+	}
+	out := boundedStringBuilder{c: c}
+	var appendValue func(Value, int) error
+	appendValue = func(value Value, depth int) error {
+		if c.Budget != nil {
+			if err := c.Budget.Enter(); err != nil {
+				return err
+			}
+			defer c.Budget.Leave()
+		} else if depth > 256 {
+			return budget.ErrLimit
+		}
+		switch v := value.(type) {
+		case nil:
+			out.WriteString("null")
+		case undefinedValue:
+			out.WriteString("undefined")
+		case string:
+			out.WriteString(v)
+		case bool:
+			out.WriteString(strconv.FormatBool(v))
+		case float64:
+			if v != 0 && math.Abs(v) < 1e-6 {
+				out.WriteString(strings.Replace(strconv.FormatFloat(v, 'e', -1, 64), "e-0", "e-", 1))
+			} else {
+				out.WriteString(jsNumberString(v + 0))
+			}
+		case []any, Sequence:
+			for i, item := range builtinArray(v) {
+				if i > 0 {
+					if err := out.WriteByte(','); err != nil {
+						return err
+					}
+				}
+				if item == nil || IsUndefined(item) {
+					continue
+				}
+				if err := appendValue(item, depth+1); err != nil {
+					return err
+				}
+			}
+		case map[string]any:
+			_, overridesToString := v["toString"]
+			var constructed bool
+			if c.state != nil {
+				entry := c.state.objectOrder[uintptr(reflect.ValueOf(v).UnsafePointer())]
+				constructed = entry.constructed
+			}
+			if overridesToString || constructed {
+				return errors.New("cannot convert object to primitive value")
+			}
+			out.WriteString("[object Object]")
+		case explicitFunctionArgument:
+			out.WriteString(regexArgumentFunctionSource)
+		case *regexClosure:
+			out.WriteString(regexClosureFunctionSource)
+		case regexContinuation:
+			out.WriteString(regexContinuationFunctionSource)
+		case Callable:
+			out.WriteString("[object Object]")
+		default:
+			return builtinError("T0410", "regex")
+		}
+		return out.err
+	}
+	if err := appendValue(subject, 0); err != nil {
+		return "", err
+	}
+	return out.String(), nil
+}
+
+func regexToNumber(c *CallContext, value Value) (float64, error) {
+	switch v := value.(type) {
+	case nil:
+		return 0, nil
+	case undefinedValue, explicitFunctionArgument:
+		return math.NaN(), nil
+	case bool:
+		if v {
+			return 1, nil
+		}
+		return 0, nil
+	case float64:
+		return v, nil
+	}
+	text, err := regexSubjectString(c, value)
+	if err != nil {
+		return 0, err
+	}
+	// Charge for trimming and parsing the complete subject before either pass.
+	for i := 0; i < len(text); i += 64 {
+		if err := builtinStep(c); err != nil {
+			return 0, err
+		}
+	}
+	text = strings.TrimFunc(text, func(r rune) bool {
+		switch r {
+		case '\t', '\n', '\v', '\f', '\r', ' ', 0x00a0, 0x1680, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000, 0xfeff:
+			return true
+		}
+		return r >= 0x2000 && r <= 0x200a
+	})
+	switch text {
+	case "":
+		return 0, nil
+	case "Infinity", "+Infinity":
+		return math.Inf(1), nil
+	case "-Infinity":
+		return math.Inf(-1), nil
+	}
+	if len(text) > 2 && text[0] == '0' {
+		base := 0
+		switch text[1] {
+		case 'x', 'X':
+			base = 16
+		case 'b', 'B':
+			base = 2
+		case 'o', 'O':
+			base = 8
+		}
+		if base != 0 {
+			var n float64
+			for _, digit := range text[2:] {
+				d := strings.IndexRune("0123456789abcdef", digit)
+				if d < 0 {
+					d = strings.IndexRune("0123456789ABCDEF", digit)
+				}
+				if d < 0 || d >= base {
+					return math.NaN(), nil
+				}
+				n = n*float64(base) + float64(d)
+			}
+			return n, nil
+		}
+	}
+	if strings.ContainsAny(text, "_xXpPnNiIfF") {
+		return math.NaN(), nil
+	}
+	if n, err := strconv.ParseFloat(text, 64); err == nil || errors.Is(err, strconv.ErrRange) {
+		return n, nil
+	}
+	return math.NaN(), nil
 }
 
 // errInvalidRegex marks patterns the reference rejects with an uncoded
 // SyntaxError when tokenizing.
 var errInvalidRegex = errors.New("invalid regular expression")
+
+// validateLiteral keeps syntax accepted by the pinned Node reference separate
+// from regexp2 extensions available to standalone RegexMatcher callers.
+func (r RegexMatcher) validateLiteral(c *CallContext) error {
+	if strings.Count(r.Flags, "i") > 1 || strings.Count(r.Flags, "m") > 1 {
+		return fmt.Errorf("%w: duplicate flag", errInvalidRegex)
+	}
+	re, err := r.compile(c)
+	if err != nil || !strings.Contains(r.Pattern, "(?") {
+		return err
+	}
+	inClass, escaped := false, false
+	for i := 0; i < len(r.Pattern); i++ {
+		if i%64 == 0 {
+			if err := builtinStep(c); err != nil {
+				return err
+			}
+		}
+		if escaped {
+			escaped = false
+			continue
+		}
+		switch r.Pattern[i] {
+		case '\\':
+			escaped = true
+		case '[':
+			inClass = true
+		case ']':
+			inClass = false
+		case '(':
+			if !inClass && i+2 < len(r.Pattern) && r.Pattern[i+1] == '?' {
+				switch r.Pattern[i+2] {
+				case ':', '<', '=', '!':
+					// Noncapturing, named capture, or lookaround.
+				default:
+					return fmt.Errorf("%w: unsupported group prefix", errInvalidRegex)
+				}
+			}
+		}
+	}
+	// regexp2 reports group names after decoding Unicode escapes.
+	names := make(map[string]struct{})
+	for _, name := range re.GetGroupNames() {
+		if err := builtinStep(c); err != nil {
+			return err
+		}
+		if name == "" {
+			continue
+		}
+		if _, duplicate := names[name]; duplicate {
+			return fmt.Errorf("%w: duplicate capture group name", errInvalidRegex)
+		}
+		names[name] = struct{}{}
+	}
+	return nil
+}
 
 // compile returns a fresh matcher, so timeouts stay evaluation-local.
 func (r RegexMatcher) compile(c *CallContext) (*regexp2.Regexp, error) {
@@ -62,7 +320,7 @@ func (r RegexMatcher) compile(c *CallContext) (*regexp2.Regexp, error) {
 	}
 	return re, nil
 }
-func (r RegexMatcher) search(c *CallContext, units []rune, start int, subsequent bool) (Value, error) {
+func (r RegexMatcher) search(c *CallContext, subject regexSubject, start int, subsequent bool, state *regexClosure) (Value, error) {
 	re, err := r.compile(c)
 	if err != nil {
 		return nil, err
@@ -83,8 +341,14 @@ func (r RegexMatcher) search(c *CallContext, units []rune, start int, subsequent
 			}
 		}
 	}
+	if start > len(subject.units) {
+		if state != nil {
+			state.lastIndex.Store(0)
+		}
+		return Undefined, nil
+	}
 	re.MatchTimeout = timeout
-	match, err := re.FindRunesMatchStartingAt(units, start)
+	match, err := re.FindRunesMatchStartingAt(subject.units, start)
 	if err != nil {
 		if c.Budget != nil {
 			if e := c.Budget.Check(); e != nil {
@@ -101,18 +365,25 @@ func (r RegexMatcher) search(c *CallContext, units []rune, start int, subsequent
 			return nil, err
 		}
 	}
-	if subsequent && match != nil && match.RuneLength == 0 {
+	if match == nil {
+		if state != nil {
+			state.lastIndex.Store(0)
+		}
+		return Undefined, nil
+	}
+	if state != nil {
+		state.lastIndex.Store(int64(match.RuneIndex + match.RuneLength))
+	}
+	if subsequent && match.RuneLength == 0 {
 		return nil, builtinError("D1004", "regex")
 	}
-	return regexResult(c, r, match, units)
+	return regexResult(c, r, match, subject, state)
 }
-func regexResult(c *CallContext, r RegexMatcher, m *regexp2.Match, units []rune) (Value, error) {
+func regexResult(c *CallContext, r RegexMatcher, m *regexp2.Match, subject regexSubject, state *regexClosure) (Value, error) {
 	if err := builtinStep(c); err != nil {
 		return nil, err
 	}
-	if m == nil {
-		return Undefined, nil
-	}
+	units := subject.units
 	groups := m.Groups()
 	if err := builtinCollection(c, len(groups)-1); err != nil {
 		return nil, err
@@ -127,18 +398,29 @@ func regexResult(c *CallContext, r RegexMatcher, m *regexp2.Match, units []rune)
 	}
 	start := m.RuneIndex
 	end := start + m.RuneLength
-	next := NativeFunction{N: 0, Fn: func(c *CallContext, _ []Value) (Value, error) {
+	next := regexContinuation{NativeFunction{N: 0, Fn: func(c *CallContext, _ []Value) (Value, error) {
 		if err := builtinStep(c); err != nil {
 			return nil, err
 		}
-		if end >= len(units) {
+		cursor := end
+		if state != nil {
+			cursor = int(state.lastIndex.Load())
+		}
+		if subject.nullish != "" {
+			return nil, fmt.Errorf("cannot read properties of %s (reading 'length')", subject.nullish)
+		}
+		length, err := regexToNumber(c, subject.length)
+		if err != nil {
+			return nil, err
+		}
+		if float64(cursor) >= length {
 			return Undefined, nil
 		}
-		if m.RuneLength == 0 {
+		if state == nil && m.RuneLength == 0 {
 			return nil, builtinError("D1004", "regex")
 		}
-		return r.search(c, units, end, true)
-	}}
+		return r.search(c, subject, cursor, true, state)
+	}}}
 	return map[string]any{"match": regexUnitsString(units[start:end]), "start": float64(start), "end": float64(end), "groups": g, "next": next}, nil
 }
 
